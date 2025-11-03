@@ -59,6 +59,13 @@
   function ouvrirLien() {
     const matiere = document.getElementById('matiere').value;
     const base = "https://iut-info.univ-reims.fr/users/";
-    const lienFinal = base + matiere + "/restricted/";
+  
+    let lienFinal;
+    if (matiere === "coutant") {
+      lienFinal = base + matiere + "/";
+    } else {
+      ienFinal = base + matiere + "/restricted/";
+    }
+
     window.open(lienFinal);
   }
