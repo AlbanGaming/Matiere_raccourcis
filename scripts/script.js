@@ -64,7 +64,7 @@
     if (matiere === "coutant") {
       lienFinal = base + matiere + "/";
     } else {
-      ienFinal = base + matiere + "/restricted/";
+      lienFinal = base + matiere + "/restricted/";
     }
 
     window.open(lienFinal);
