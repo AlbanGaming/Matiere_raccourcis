@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>Accès rapide aux matières</title>
+    <link rel="stylesheet" href="styles/styles.css" />
+</head>
+<body>
+
+  <!-- Bouton de switch de thème -->
+  <div class="theme-switch-container">
+    <label class="switch">
+      <input type="checkbox" id="themeToggle" />
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <a href="https://www.youtube.com/" target="_blank">
+    <img id="easter_egg" class="easter_egg" src="styles/easter_egg.png" alt=""/>
+  </a>
+
+   <!-- Bouton menu en haut à droite -->
+  <button id="menuToggle" class="menu-toggle">⚙️</button>
+
+  <!-- Menu caché à droite -->
+  <div id="sideMenu" class="side-menu hidden">
+    <a href="https://iut-info.univ-reims.fr/hub" target="_blank">
+      <img id="logo" class="logo" src="styles/Jupyter-Notebook-Tutorial.png" alt="Logo Jupyter" />
+    </a>
+
+    <a href="https://ent.univ-reims.fr/" target="_blank">
+      <img id="Urca" class="Urca" src="styles/logo_URCA.png" alt="Logo URCA" />
+    </a>
+
+    <a href="https://cours.univ-reims.fr/login/index.php" target="_blank">
+      <img id="Moodle" class="Moodle" src="styles/logo_Moodle.png" alt="Logo Moodle" />
+    </a>
+  </div>
+
+  <!-- Conteneur principal -->
+  <div class="container">
+    <h2>Choisissez une matière :</h2>
+    <select id="matiere">
+      <option value="romaniuk">Dev/codage (Romaniuk)</option>
+      <option value="nourrit">Système (Nourrit)</option>
+      <option value="sandron">Base de données (Sandron)</option>
+      <option value="gillard">Dev web (Gillard)</option>
+    </select>
+    <button onclick="ouvrirLien()">Ouvrir le lien</button>
+  </div>
+
+<script type="text/javascript" src="script/script.js"></script>
+
+</body>
+<footer class="footer">
+  &copy; 2025 AlbanIndustries - Tous droits réservés
+</footer>
+</html>
