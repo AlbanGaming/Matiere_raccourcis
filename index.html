@@ -1,49 +1,49 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8" />
-    <title>Accès rapide aux matières</title>
-    <link rel="stylesheet" href="styles/styles.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Accès rapide aux matières</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="styles/styles.css" />
 </head>
 <body>
-
-  <!-- Bouton de switch de thème -->
-  <div class="theme-switch-container">
+  <!-- Switch thème -->
+  <div class="theme-switch">
     <label class="switch">
       <input type="checkbox" id="themeToggle" />
       <span class="slider"></span>
     </label>
   </div>
 
-  <a href="https://www.youtube.com/" target="_blank">
-    <img id="easter_egg" class="easter_egg" src="styles/easter_egg.png" alt=""/>
-  </a>
+  <!-- Menu hamburger -->
+  <button id="menuToggle" class="menu-toggle">
+    <i class="fas fa-cog"></i>
+  </button>
 
-   <!-- Bouton menu en haut à droite -->
-  <button id="menuToggle" class="menu-toggle">⚙️</button>
-
-  <!-- Menu caché à droite -->
-  <div id="sideMenu" class="side-menu hidden">
-    <a href="https://iut-info.univ-reims.fr/hub" target="_blank">
-      <img id="logo" class="logo" src="styles/Jupyter-Notebook-Tutorial.png" alt="Logo Jupyter" />
+  <!-- Menu latéral -->
+  <nav id="sideMenu" class="side-menu hidden">
+    <a href="https://iut-info.univ-reims.fr/hub" target="_blank" aria-label="Jupyter Notebook">
+      <i class="fab fa-python"></i>
+      <span>Jupyter</span>
     </a>
-
-    <a href="https://ent.univ-reims.fr/" target="_blank">
-      <img id="Urca" class="Urca" src="styles/logo_URCA.png" alt="Logo URCA" />
+    <a href="https://ent.univ-reims.fr/" target="_blank" aria-label="ENT URCA">
+      <i class="fas fa-university"></i>
+      <span>URCA</span>
     </a>
-
-    <a href="https://cours.univ-reims.fr/login/index.php" target="_blank">
-      <img id="Moodle" class="Moodle" src="styles/logo_Moodle.png" alt="Logo Moodle" />
+    <a href="https://cours.univ-reims.fr/login/index.php" target="_blank" aria-label="Moodle">
+      <i class="fas fa-book"></i>
+      <span>Moodle</span>
     </a>
-
-    <a href="https://iut-info.univ-reims.fr/gitlab/users/sign_in" target="_blank">
-      <img id="GitLab" class="GitLab" src="styles/logo_GitLab.png" alt="Logo GitLab" />
+    <a href="https://iut-info.univ-reims.fr/gitlab/users/sign_in" target="_blank" aria-label="GitLab">
+      <i class="fab fa-gitlab"></i>
+      <span>GitLab</span>
     </a>
-  </div>
+  </nav>
 
-  <!-- Conteneur principal -->
-  <div class="container">
-    <h2>Choisissez une matière :</h2>
+  <!-- Contenu principal -->
+  <main class="container">
+    <h1>Accès rapide</h1>
     <select id="matiere">
       <option value="romaniuk">Dev/codage (Romaniuk)</option>
       <option value="nourrit">Système (Nourrit)</option>
@@ -52,13 +52,17 @@
       <option value="coutant">Outils maths (Coutant)</option>
     </select>
     <button onclick="ouvrirLien()">Ouvrir le lien</button>
-  </div>
+  </main>
 
-<script type="text/javascript" src="scripts/script.js"></script>
+  <!-- Easter egg discret -->
+  <a href="https://www.youtube.com/" target="_blank" aria-label="Easter egg" class="easter-egg">
+    <i class="fab fa-youtube"></i>
+  </a>
 
+  <footer class="footer">
+    &copy; 2025 AlbanIndustries
+  </footer>
+
+  <script src="scripts/script.js"></script>
 </body>
-<footer class="footer">
-  &copy; 2025 AlbanIndustries - Tous droits réservés
-</footer>
 </html>
-
