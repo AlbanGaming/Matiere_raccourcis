@@ -1,38 +1,120 @@
+/* Définir les couleurs principales */
 :root {
-  --primary-color: #121212;
-  --secondary-color: #f5f5f5;
-  --accent-color: #6c63ff;
-  --text-color: #e0e0e0;
-  --input-bg: #1e1e2d;
-  --shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  --glass: rgba(255, 255, 255, 0.05);
+    --primary-color: #1e2a3a; /* Un bleu nuit foncé */
+    --secondary-color: #f0f1f6; /* Gris clair */
+    --accent-color: #555B61; /* Vert lumineux pour le bouton */
+    --text-color: #e0e0e0; /* Texte clair */
+    --input-bg-color: #2e3b4e; /* Fond des champs d'entrée */
+    --input-border-color: #3c4858; /* Bordure des champs */
 }
 
 body {
-  font-family: 'Inter', sans-serif;
-  background-color: var(--primary-color);
-  color: var(--text-color);
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transition: background-color 0.4s;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    box-sizing: border-box;
 }
 
-body.light-mode {
-  --primary-color: #f5f5f5;
-  --secondary-color: #121212;
-  --text-color: #121212;
-  --input-bg: #ffffff;
-  --accent-color: #7c3aed;
-  background-color: var(--primary-color);
+.container {
+    background-color: #232e3c; /* Un fond sombre pour la boîte */
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 400px;
+    padding: 30px;
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
 }
 
-/* Switch thème */
-.theme-switch {
-  position: fixed;
+.container:hover {
+    transform: translateY(-10px); /* Légère animation au survol */
+}
+
+h2 {
+    color: var(--secondary-color);
+    font-size: 1.8em;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+select {
+    width: 350px;
+    padding: 12px;
+    margin: 15px 20px;
+    border: 2px solid var(--input-border-color);
+    border-radius: 6px;
+    background-color: var(--input-bg-color);
+    color: var(--text-color);
+    font-size: 1.1em;
+    transition: border-color 0.3s ease;
+}
+
+select:focus {
+    border-color: var(--accent-color);
+    outline: none;
+}
+
+button {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s ease;
+}
+
+button:hover {
+    background-color: #293133;
+    transform: scale(1.05);
+}
+
+footer {
+    margin-top: 20px;
+    font-size: 0.9em;
+    color: var(--secondary-color);
+}
+
+@media (max-width: 600px) {
+    h2 {
+        font-size: 1.5em;
+    }
+
+    button {
+        font-size: 1.1em;
+        padding: 12px 20px;
+    }
+
+    select {
+        font-size: 1em;
+        padding: 10px;
+    }
+}
+
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.041);
+    color: var(--secondary-color);
+    text-align: center;
+    padding: 10px 0;
+    font-size: 0.9em;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.712);
+    z-index: 1000;
+}
+
+/* === Switch Theme Button === */
+.theme-switch-container {
+  position: absolute;
   top: 20px;
   left: 20px;
   z-index: 1000;
@@ -41,8 +123,8 @@ body.light-mode {
 .switch {
   position: relative;
   display: inline-block;
-  width: 60px;
-  height: 30px;
+  width: 90px;
+  height: 42px;
 }
 
 .switch input {
@@ -54,177 +136,217 @@ body.light-mode {
 .slider {
   position: absolute;
   cursor: pointer;
+  background-color: #ccc;
+  border-radius: 51px;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ccc;
   transition: 0.4s;
-  border-radius: 34px;
 }
 
 .slider:before {
-  position: absolute;
   content: "";
-  height: 22px;
-  width: 22px;
-  left: 4px;
-  bottom: 4px;
+  position: absolute;
+  height: 31.5px;
+  width: 31.5px;
+  left: 5.5px;
+  bottom: 5.5px;
   background-color: white;
-  transition: 0.4s;
   border-radius: 50%;
+  transition: 0.4s;
 }
 
 input:checked + .slider {
-  background-color: var(--accent-color);
+  background-color: #2196F3;
 }
 
 input:checked + .slider:before {
-  transform: translateX(30px);
+  transform: translateX(45px);
 }
 
-/* Menu hamburger */
+/* === Thème clair activé avec .light-mode === */
+body.light-mode {
+  --primary-color: #f0f1f6;
+  --secondary-color: #1e2a3a;
+  --accent-color: #007bff;
+  --text-color: #121212;
+  --input-bg-color: #ffffff;
+  --input-border-color: #cccccc;
+  background-color: var(--primary-color);
+  color: var(--text-color);
+}
+
+body.light-mode .container {
+  background-color: white;
+}
+
+body.light-mode .footer {
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+}
+
+body.light-mode select {
+  background-color: var(--input-bg-color);
+  color: var(--text-color);
+  border-color: var(--input-border-color);
+}
+
+body.light-mode button {
+  background-color: var(--accent-color);
+}
+
+body.light-mode h2 {
+  color: var(--secondary-color);
+}
+
+
+
+.easter_egg {
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    left: 200px;
+    bottom: 300px;
+}
+
+
+
+/* Bouton menu en haut à droite */
 .menu-toggle {
   position: fixed;
-  top: 20px;
-  right: 20px;
-  background: var(--accent-color);
-  color: white;
+  top: 10px;
+  right: 10px;
+  background-color: var(--accent-color);
+  color: var(--text-color);
   border: none;
-  padding: 8px 12px;
-  border-radius: 50%;
+  padding: 8px 14px;
   cursor: pointer;
-  z-index: 1001;
-  transition: all 0.3s;
+  font-size: 18px;
+  border-radius: 6px;
+  z-index: 1001; /* au-dessus de tout */
+  transition: background-color 0.3s ease;
 }
 
 .menu-toggle:hover {
-  transform: scale(1.1);
+  background-color: #3a4758;
 }
 
-/* Menu latéral */
+.menu-toggle:hidden {
+  transform: translateX(110%);
+}
+
+/* Menu latéral caché */
 .side-menu {
   position: fixed;
   top: 0;
   right: 0;
-  width: 200px;
+  width: 220px;
   height: 100%;
-  background: var(--input-bg);
-  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
+  background-color: var(--primary-color);
+  padding: 30px 20px;
+  box-shadow: -3px 0 8px rgba(0,0,0,0.7);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 60px 0 20px;
-  gap: 20px;
-  z-index: 1000;
-  transform: translateX(100%);
+  gap: 50px;
   transition: transform 0.3s ease;
+  z-index: 1000;
+  
 }
 
+/* Menu caché : on le déplace complètement hors écran à droite */
 .side-menu.hidden {
   transform: translateX(100%);
 }
 
-.side-menu a {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: var(--text-color);
-  text-decoration: none;
-  padding: 10px;
-  transition: all 0.2s;
-}
-
-.side-menu a:hover {
-  color: var(--accent-color);
-  transform: scale(1.1);
-}
-
-.side-menu i {
-  font-size: 2rem;
-  margin-bottom: 5px;
-}
-
-.side-menu span {
-  font-size: 0.9rem;
-}
-
-/* Conteneur principal */
-.container {
-  background: var(--input-bg);
-  border-radius: 12px;
-  box-shadow: var(--shadow);
-  width: 90%;
-  max-width: 400px;
-  padding: 2rem;
-  margin: 80px 0 2rem;
-  text-align: center;
-  transition: all 0.4s;
-}
-
-.container h1 {
-  margin-bottom: 1.5rem;
-  color: var(--accent-color);
-}
-
-select, button {
-  width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  border-radius: 8px;
-  border: none;
-  font-size: 1rem;
-  transition: all 0.3s;
-}
-
-select {
-  background: var(--input-bg);
-  color: var(--text-color);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-button {
-  background: var(--accent-color);
-  color: white;
-  font-weight: 600;
+/* Images dans le menu */
+.side-menu img {
+  width: 140px;
+  height: auto;
   cursor: pointer;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
 }
 
-button:hover {
-  opacity: 0.9;
-  transform: translateY(-2px);
+.side-menu img:hover {
+  transform: scale(1.05);
 }
 
-/* Easter egg */
-.easter-egg {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  color: var(--accent-color);
-  font-size: 1.5rem;
-  z-index: 1000;
-  transition: all 0.3s;
+.side-menu #logo {
+  margin-top: 65px; /* augmente cette valeur selon ce que tu veux */
 }
 
-.easter-egg:hover {
-  transform: rotate(15deg);
+/* Suppression des positions absolues pour les images, 
+elles seront désormais dans le menu latéral */
+.logo, .Urca {
+  position: static;
+  left: auto;
+  bottom: auto;
+  height: auto;
+  width: 140px;
 }
 
-/* Footer */
-.footer {
-  margin-top: auto;
-  padding: 1rem;
-  text-align: center;
-  color: var(--text-color);
-  opacity: 0.7;
+/* ajustement de la taille des images avec un zoom */
+.logo {
+  zoom: 75%;
 }
 
-/* Animation rotation */
+.Moodle {
+  zoom : 95%;
+}
+
+.Urca {
+  zoom: 110%;
+}
+
+/* Pour conserver le style light-mode, adapte la couleur de fond du menu */
+
+
+/* Responsive : le menu sera plus étroit sur petits écrans */
+@media (max-width: 600px) {
+  .side-menu {
+    width: 160px;
+    padding: 20px 10px;
+    gap: 20px;
+  }
+  
+  .side-menu img {
+    width: 110px;
+  }
+
+  .menu-toggle {
+    font-size: 16px;
+    padding: 6px 12px;
+  }
+}
+
+
 @keyframes rotation {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.menu-toggle {
+  font-size: 40px; /* plus grand */
+  background-color: transparent !important; /* Forcer fond transparent */
+  border: none !important;  /* Pas de bordure */
+  box-shadow: none !important; /* Supprimer toute ombre */
+  outline: none !important;     /* Enlever le focus outline */
+  cursor: pointer;
+  color: var(--text-color);
+  transition: color 0.3s ease;
+  user-select: none;
+}
+
+.menu-toggle:hover {
+  color: var(--accent-color);
 }
 
 .menu-toggle.rotating {
-  animation: rotation 0.7s linear;
+  animation: rotation 1s linear;
 }
