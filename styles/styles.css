@@ -1,353 +1,90 @@
-/* Définir les couleurs principales */
 :root {
-    --primary-color: #1e2a3a; /* Un bleu nuit foncé */
-    --secondary-color: #f0f1f6; /* Gris clair */
-    --accent-color: #555B61; /* Vert lumineux pour le bouton */
-    --text-color: #e0e0e0; /* Texte clair */
-    --input-bg-color: #2e3b4e; /* Fond des champs d'entrée */
-    --input-border-color: #3c4858; /* Bordure des champs */
+  --primary-color: #0a0a1a; /* Noir profond */
+  --secondary-color: #f8f9fa; /* Blanc cassé */
+  --accent-color: #6c63ff; /* Violet électrique */
+  --text-color: #e0e0e0;
+  --input-bg-color: #1a1a2e;
+  --input-border-color: #3a3a4e;
+  --glass-effect: rgba(255, 255, 255, 0.05);
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--primary-color);
-    color: var(--text-color);
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    box-sizing: border-box;
-}
-
-.container {
-    background-color: #232e3c; /* Un fond sombre pour la boîte */
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    width: 100%;
-    max-width: 400px;
-    padding: 30px;
-    text-align: center;
-    transition: transform 0.3s ease-in-out;
-}
-
-.container:hover {
-    transform: translateY(-10px); /* Légère animation au survol */
-}
-
-h2 {
-    color: var(--secondary-color);
-    font-size: 1.8em;
-    margin-bottom: 20px;
-    font-weight: 600;
-}
-
-select {
-    width: 350px;
-    padding: 12px;
-    margin: 15px 20px;
-    border: 2px solid var(--input-border-color);
-    border-radius: 6px;
-    background-color: var(--input-bg-color);
-    color: var(--text-color);
-    font-size: 1.1em;
-    transition: border-color 0.3s ease;
-}
-
-select:focus {
-    border-color: var(--accent-color);
-    outline: none;
-}
-
-button {
-    background-color: var(--accent-color);
-    color: white;
-    border: none;
-    padding: 15px 25px;
-    border-radius: 8px;
-    font-size: 1.2em;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s ease;
-}
-
-button:hover {
-    background-color: #293133;
-    transform: scale(1.05);
-}
-
-footer {
-    margin-top: 20px;
-    font-size: 0.9em;
-    color: var(--secondary-color);
-}
-
-@media (max-width: 600px) {
-    h2 {
-        font-size: 1.5em;
-    }
-
-    button {
-        font-size: 1.1em;
-        padding: 12px 20px;
-    }
-
-    select {
-        font-size: 1em;
-        padding: 10px;
-    }
-}
-
-
-.footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.041);
-    color: var(--secondary-color);
-    text-align: center;
-    padding: 10px 0;
-    font-size: 0.9em;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.712);
-    z-index: 1000;
-}
-
-/* === Switch Theme Button === */
-.theme-switch-container {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  z-index: 1000;
-}
-
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 90px;
-  height: 42px;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  background-color: #ccc;
-  border-radius: 51px;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  transition: 0.4s;
-}
-
-.slider:before {
-  content: "";
-  position: absolute;
-  height: 31.5px;
-  width: 31.5px;
-  left: 5.5px;
-  bottom: 5.5px;
-  background-color: white;
-  border-radius: 50%;
-  transition: 0.4s;
-}
-
-input:checked + .slider {
-  background-color: #2196F3;
-}
-
-input:checked + .slider:before {
-  transform: translateX(45px);
-}
-
-/* === Thème clair activé avec .light-mode === */
-body.light-mode {
-  --primary-color: #f0f1f6;
-  --secondary-color: #1e2a3a;
-  --accent-color: #007bff;
-  --text-color: #121212;
-  --input-bg-color: #ffffff;
-  --input-border-color: #cccccc;
-  background-color: var(--primary-color);
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, var(--primary-color), #16213e);
   color: var(--text-color);
-}
-
-body.light-mode .container {
-  background-color: white;
-}
-
-body.light-mode .footer {
-  background-color: var(--primary-color);
-  color: var(--secondary-color);
-}
-
-body.light-mode select {
-  background-color: var(--input-bg-color);
-  color: var(--text-color);
-  border-color: var(--input-border-color);
-}
-
-body.light-mode button {
-  background-color: var(--accent-color);
-}
-
-body.light-mode h2 {
-  color: var(--secondary-color);
-}
-
-
-
-.easter_egg {
-    position: absolute;
-    height: 20px;
-    width: 20px;
-    left: 200px;
-    bottom: 300px;
-}
-
-
-
-/* Bouton menu en haut à droite */
-.menu-toggle {
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  background-color: var(--accent-color);
-  color: var(--text-color);
-  border: none;
-  padding: 8px 14px;
-  cursor: pointer;
-  font-size: 18px;
-  border-radius: 6px;
-  z-index: 1001; /* au-dessus de tout */
-  transition: background-color 0.3s ease;
-}
-
-.menu-toggle:hover {
-  background-color: #3a4758;
-}
-
-.menu-toggle:hidden {
-  transform: translateX(110%);
-}
-
-/* Menu latéral caché */
-.side-menu {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 220px;
-  height: 100%;
-  background-color: var(--primary-color);
-  padding: 30px 20px;
-  box-shadow: -3px 0 8px rgba(0,0,0,0.7);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 50px;
-  transition: transform 0.3s ease;
-  z-index: 1000;
-  
 }
 
-/* Menu caché : on le déplace complètement hors écran à droite */
-.side-menu.hidden {
-  transform: translateX(100%);
+.container {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid var(--glass-effect);
+  box-shadow: var(--shadow);
+  width: 90%;
+  max-width: 450px;
+  padding: 2rem;
+  margin: 2rem 0;
+  transition: all 0.4s ease;
 }
 
-/* Images dans le menu */
+select, button {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 10px 0;
+  border-radius: 12px;
+  border: none;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+button {
+  background: var(--accent-color);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Menu latéral */
+.side-menu {
+  background: rgba(20, 20, 30, 0.95);
+  backdrop-filter: blur(10px);
+  border-left: 1px solid var(--glass-effect);
+  padding: 1.5rem;
+  gap: 1.5rem;
+}
+
 .side-menu img {
-  width: 140px;
-  height: auto;
-  cursor: pointer;
-  border-radius: 8px;
-  transition: transform 0.3s ease;
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.3));
 }
 
-.side-menu img:hover {
-  transform: scale(1.05);
+/* Footer */
+.footer {
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(5px);
 }
 
-.side-menu #logo {
-  margin-top: 65px; /* augmente cette valeur selon ce que tu veux */
-}
-
-/* Suppression des positions absolues pour les images, 
-elles seront désormais dans le menu latéral */
-.logo, .Urca {
-  position: static;
-  left: auto;
-  bottom: auto;
-  height: auto;
-  width: 140px;
-}
-
-/* ajustement de la taille des images avec un zoom */
-.logo {
-  zoom: 75%;
-}
-
-.Moodle {
-  zoom : 95%;
-}
-
-.Urca {
-  zoom: 110%;
-}
-
-/* Pour conserver le style light-mode, adapte la couleur de fond du menu */
-
-
-/* Responsive : le menu sera plus étroit sur petits écrans */
-@media (max-width: 600px) {
-  .side-menu {
-    width: 160px;
-    padding: 20px 10px;
-    gap: 20px;
-  }
-  
-  .side-menu img {
-    width: 110px;
-  }
-
-  .menu-toggle {
-    font-size: 16px;
-    padding: 6px 12px;
-  }
-}
-
-
-@keyframes rotation {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.menu-toggle {
-  font-size: 40px; /* plus grand */
-  background-color: transparent !important; /* Forcer fond transparent */
-  border: none !important;  /* Pas de bordure */
-  box-shadow: none !important; /* Supprimer toute ombre */
-  outline: none !important;     /* Enlever le focus outline */
-  cursor: pointer;
+/* Thème clair */
+body.light-mode {
+  --primary-color: #f8f9fa;
+  --secondary-color: #0a0a1a;
+  --accent-color: #7c3aed;
+  --text-color: #121212;
+  --input-bg-color: #ffffff;
+  --input-border-color: #e0e0e0;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
   color: var(--text-color);
-  transition: color 0.3s ease;
-  user-select: none;
 }
-
-.menu-toggle:hover {
-  color: var(--accent-color);
-}
-
-.menu-toggle.rotating {
-  animation: rotation 1s linear;
-}
-
