@@ -352,11 +352,11 @@ elles seront désormais dans le menu latéral */
 }
 
 
-/* Bouton rond pulsant */
+/* Bouton rond pulsant (logo comme bouton) */
 .pulse-button-container {
   position: fixed;
-  top: 20px;
-  left: 20px;
+  top: 110px;       /* Positionné en dessous du switch */
+  left: 150px;      /* Un peu plus à droite */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -364,46 +364,53 @@ elles seront désormais dans le menu latéral */
   z-index: 1000;
 }
 
-.pulse-button {
-  width: 60px;
-  height: 60px;
+.pulse-button-container img {
+  width: 128px !important;
+  height: 128px !important;
+  max-width: none !important;
+  max-height: none !important;
+  transform: none !important;
+  zoom: 1 !important;
+  
+  object-fit: cover;      /* 🔥 REMPLIT le rond */
+  object-position: center;
+
+  animation: pulse 2s infinite; /* ✅ C’EST ÇA QUI MANQUAIT */
   border-radius: 50%;
-  background-color: #007bff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
-  animation: pulse 2s infinite;
-  transition: all 0.3s ease;
 }
 
-.pulse-button:hover {
-  transform: scale(1.1);
-}
 
-.pulse-button-image {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
+
+.pulse-logo:hover {
+  transform: scale(1.1) !important;
 }
 
 .pulse-button-text {
-  margin-top: 5px;
-  color: #333;
-  font-size: 12px;
+  margin-top: 3px; /* Espacement réduit */
+  color: var(--text-color); /* Adapté au thème */
+  font-size: 10px; /* Texte plus petit */
   font-weight: bold;
   text-align: center;
 }
 
+/* Animation adaptée au thème */
 @keyframes pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
+    box-shadow: 0 0 0 0 rgba(85, 91, 97, 0.7);
   }
   70% {
-    box-shadow: 0 0 0 10px rgba(0, 123, 255, 0);
+    box-shadow: 0 0 0 6px rgba(85, 91, 97, 0); /* Pulsation plus petite */
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
+    box-shadow: 0 0 0 0 rgba(85, 91, 97, 0);
   }
 }
+
+/* Adaptation au thème clair */
+body.light-mode .pulse-logo {
+  box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
+}
+
+
+
 
