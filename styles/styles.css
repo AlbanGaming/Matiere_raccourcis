@@ -350,3 +350,60 @@ elles seront désormais dans le menu latéral */
 .menu-toggle.rotating {
   animation: rotation 1s linear;
 }
+
+
+/* Bouton rond pulsant */
+.pulse-button-container {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  z-index: 1000;
+}
+
+.pulse-button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #007bff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
+  animation: pulse 2s infinite;
+  transition: all 0.3s ease;
+}
+
+.pulse-button:hover {
+  transform: scale(1.1);
+}
+
+.pulse-button-image {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+.pulse-button-text {
+  margin-top: 5px;
+  color: #333;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(0, 123, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
+  }
+}
+
