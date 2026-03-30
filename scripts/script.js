@@ -61,7 +61,7 @@
     const base = "https://iut-info.univ-reims.fr/users/";
   
     let lienFinal;
-    if (matiere === "coutant") {
+    if (matiere === "coutant" || matiere === "blanchard") {
       lienFinal = base + matiere + "/";
     } else {
       lienFinal = base + matiere + "/restricted/";
