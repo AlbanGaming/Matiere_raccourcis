@@ -76,7 +76,7 @@
     if (matiere === "coutant" || matiere === "blanchard") {
       lienFinal = base + matiere + "/";
     } 
-    elif (matiere === "prevost") {
+    else if (matiere === "prevost") {
       lienFinal = "http://prevost/Menu.php";
     }
     
