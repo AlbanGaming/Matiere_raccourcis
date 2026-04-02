@@ -75,7 +75,12 @@
     let lienFinal;
     if (matiere === "coutant" || matiere === "blanchard") {
       lienFinal = base + matiere + "/";
-    } else {
+    } 
+    elif (matiere === "prevost") {
+      lienFinal = "http://prevost/Menu.php";
+    }
+    
+    else {
       lienFinal = base + matiere + "/restricted/";
     }
 
