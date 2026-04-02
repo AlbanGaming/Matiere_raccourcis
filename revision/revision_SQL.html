@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL Oracle — Fiche de Révision</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f0f13;
+  --surface: #16161d;
+  --surface2: #1e1e28;
+  --border: rgba(255,255,255,0.07);
+  --text: #f0eeff;
+  --muted: #8b87a8;
+  --accent1: #7c6bff;
+  --accent2: #ff6b9d;
+  --accent3: #43e8c8;
+  --accent4: #ffb443;
+  --accent5: #ff7043;
+  --accent6: #4fc3f7;
+  --tab-colors: #7c6bff,#ff6b9d,#43e8c8,#ffb443,#ff7043,#4fc3f7,#a8e063;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* BG GRID */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(124,107,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124,107,255,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* HEADER */
+header {
+  position: relative;
+  z-index: 10;
+  padding: 3rem 2rem 0;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.header-inner {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.header-badge {
+  background: linear-gradient(135deg, var(--accent1), var(--accent2));
+  border-radius: 16px;
+  padding: 1rem 1.2rem;
+  font-size: 2rem;
+  line-height: 1;
+  flex-shrink: 0;
+  box-shadow: 0 0 40px rgba(124,107,255,0.3);
+}
+
+.header-text h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  background: linear-gradient(90deg, #fff 0%, var(--accent3) 60%, var(--accent1) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header-text p {
+  margin-top: .5rem;
+  color: var(--muted);
+  font-size: .95rem;
+  line-height: 1.5;
+}
+
+.header-meta {
+  display: flex;
+  gap: .5rem;
+  margin-top: .8rem;
+  flex-wrap: wrap;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  font-size: .72rem;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 99px;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+.pill-purple { background: rgba(124,107,255,0.15); color: var(--accent1); border: 1px solid rgba(124,107,255,0.3); }
+.pill-teal   { background: rgba(67,232,200,0.12); color: var(--accent3); border: 1px solid rgba(67,232,200,0.25); }
+.pill-yellow { background: rgba(255,180,67,0.12); color: var(--accent4); border: 1px solid rgba(255,180,67,0.25); }
+
+/* PROGRESS STRIP */
+.progress-strip {
+  display: flex;
+  gap: 4px;
+  margin-top: 1.5rem;
+}
+.progress-strip span {
+  height: 3px;
+  border-radius: 2px;
+  flex: 1;
+  transition: opacity .3s;
+}
+
+/* TABS NAV */
+.tabs-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(15,15,19,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+}
+
+.tabs-nav-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tabs-nav-inner::-webkit-scrollbar { display: none; }
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .85rem 1.1rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .82rem;
+  font-weight: 500;
+  color: var(--muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color .2s, border-color .2s;
+  position: relative;
+}
+
+.tab-btn .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  opacity: .5;
+  transition: opacity .2s, transform .2s;
+}
+
+.tab-btn.active { color: #fff; }
+.tab-btn.active .dot { opacity: 1; transform: scale(1.3); }
+
+/* MAIN */
+main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 2rem 4rem;
+  position: relative;
+  z-index: 1;
+}
+
+.tab-panel { display: none; animation: fadeUp .25s ease; }
+.tab-panel.active { display: block; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* SECTION TITLE */
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+}
+.section-title span { font-size: 1.1rem; }
+
+/* CARDS GRID */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem; }
+.cards.single { grid-template-columns: 1fr; }
+.cards.two { grid-template-columns: 1fr 1fr; }
+@media(max-width:700px) { .cards.two { grid-template-columns: 1fr; } }
+
+/* CARD */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.2rem 1.4rem;
+  position: relative;
+  overflow: hidden;
+  transition: border-color .2s, transform .2s;
+}
+.card:hover { border-color: rgba(255,255,255,0.14); transform: translateY(-1px); }
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  border-radius: 14px 14px 0 0;
+}
+
+.card.c1::before { background: var(--accent1); }
+.card.c2::before { background: var(--accent2); }
+.card.c3::before { background: var(--accent3); }
+.card.c4::before { background: var(--accent4); }
+.card.c5::before { background: var(--accent5); }
+.card.c6::before { background: var(--accent6); }
+
+.card h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: .95rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: .7rem;
+}
+
+.card p, .card li {
+  font-size: .875rem;
+  color: var(--muted);
+  line-height: 1.65;
+}
+.card ul { padding-left: 1.1rem; }
+.card ul li { margin-bottom: .2rem; }
+
+/* CODE BLOCK */
+pre {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: .9rem 1rem;
+  font-family: 'DM Mono', monospace;
+  font-size: .78rem;
+  line-height: 1.65;
+  overflow-x: auto;
+  margin: .7rem 0;
+  color: #c8c2f0;
+  white-space: pre;
+}
+
+.kw  { color: #7c6bff; font-weight: 500; }
+.fn  { color: #43e8c8; }
+.str { color: #ffb443; }
+.cm  { color: #4a4666; font-style: italic; }
+.hi  { color: #ff6b9d; }
+
+/* RULE BOX */
+.rule {
+  background: rgba(124,107,255,0.08);
+  border: 1px solid rgba(124,107,255,0.2);
+  border-left: 3px solid var(--accent1);
+  border-radius: 0 10px 10px 0;
+  padding: .7rem 1rem;
+  margin: .7rem 0;
+}
+.rule p { font-size: .82rem; color: #a09cc4; line-height: 1.5; }
+.rule.warn {
+  background: rgba(255,180,67,0.07);
+  border-color: rgba(255,180,67,0.2);
+  border-left-color: var(--accent4);
+}
+.rule.warn p { color: #b89a65; }
+.rule.danger {
+  background: rgba(255,107,157,0.07);
+  border-color: rgba(255,107,157,0.2);
+  border-left-color: var(--accent2);
+}
+.rule.danger p { color: #b07090; }
+.rule.ok {
+  background: rgba(67,232,200,0.07);
+  border-color: rgba(67,232,200,0.2);
+  border-left-color: var(--accent3);
+}
+.rule.ok p { color: #5ba898; }
+
+/* BADGE */
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 5px;
+  margin: 2px;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: .02em;
+}
+.badge-r { background: rgba(124,107,255,.18); color: var(--accent1); }
+.badge-w { background: rgba(255,180,67,.15); color: var(--accent4); }
+.badge-e { background: rgba(255,107,157,.15); color: var(--accent2); }
+.badge-g { background: rgba(67,232,200,.12); color: var(--accent3); }
+
+/* TABLE */
+table.info { width: 100%; border-collapse: collapse; font-size: .82rem; }
+table.info td { padding: .45rem .6rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+table.info td:first-child { color: var(--muted); white-space: nowrap; width: 35%; }
+table.info td:last-child { color: var(--text); font-family: 'DM Mono', monospace; font-size: .78rem; }
+
+/* TWO-COL inside card */
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+@media(max-width:600px) { .split { grid-template-columns: 1fr; } }
+
+.mini-label {
+  font-size: .7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--muted);
+  margin-bottom: .35rem;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-badge">🗄️</div>
+    <div class="header-text">
+      <h1>SQL Oracle — Fiche de Révision</h1>
+      <p>Toutes les notions des TP01 à TP05 — IUT Reims BUT S2</p>
+      <div class="header-meta">
+        <span class="pill pill-purple">Oracle SQL</span>
+        <span class="pill pill-teal">50 requêtes</span>
+        <span class="pill pill-yellow">R1 → R50</span>
+      </div>
+    </div>
+  </div>
+  <div class="progress-strip" id="progressStrip"></div>
+</header>
+
+<nav class="tabs-nav">
+  <div class="tabs-nav-inner" id="tabsNav"></div>
+</nav>
+
+<main id="mainContent"></main>
+
+<script>
+const TABS = [
+  { id: 'jointures', label: 'Jointures', dot: '#7c6bff', emoji: '🔗' },
+  { id: 'agreg',     label: 'Agrégation', dot: '#ff6b9d', emoji: '📊' },
+  { id: 'sous',      label: 'Sous-requêtes', dot: '#43e8c8', emoji: '🔍' },
+  { id: 'ens',       label: 'Ensemblistes', dot: '#ffb443', emoji: '⊕' },
+  { id: 'exists',    label: 'EXISTS', dot: '#ff7043', emoji: '✓' },
+  { id: 'arbo',      label: 'Arborescences', dot: '#4fc3f7', emoji: '🌲' },
+  { id: 'pieges',    label: 'Pièges', dot: '#a8e063', emoji: '⚠️' },
+];
+
+const CONTENT = {
+
+jointures: `
+<div class="section-title"><span>🔗</span> Jointures & requêtes de base</div>
+<div class="cards">
+
+  <div class="card c1">
+    <h3>Syntaxe SQL2 — JOIN (préférée du prof)</h3>
+    <pre><span class="kw">SELECT</span> c.nom, v.imtrcl
+<span class="kw">FROM</span> locvec.client c
+  <span class="kw">JOIN</span> locvec.contrat co  <span class="kw">ON</span> (co.cdcli = c.cdcli)
+  <span class="kw">JOIN</span> locvec.vehicule v   <span class="kw">ON</span> (v.cdvhc = co.cdvhc)
+  <span class="kw">JOIN</span> locvec.modele m     <span class="kw">ON</span> (m.cdmdl = v.cdmdl)
+<span class="kw">WHERE</span> ...</pre>
+    <div class="rule ok"><p>Toujours préfixer les colonnes ambiguës avec l'alias de table (ex: c.cdcli). Mettre la condition ON entre parenthèses.</p></div>
+    <span class="badge badge-r">R1</span><span class="badge badge-r">R2</span><span class="badge badge-r">R3</span>
+  </div>
+
+  <div class="card c1">
+    <h3>Jointure externe — LEFT JOIN</h3>
+    <pre><span class="cm">-- SQL2 (préféré) :</span>
+<span class="kw">FROM</span> categorie c
+  <span class="kw">LEFT JOIN</span> modele m <span class="kw">ON</span> (c.cdctg = m.cdctg)
+<span class="kw">WHERE</span> m.cdctg <span class="kw">IS NULL</span>  <span class="cm">-- ceux sans modèle</span>
+
+<span class="cm">-- Oracle old-style :</span>
+<span class="kw">WHERE</span> c.cdctg = m.cdctg(+)
+<span class="kw">AND</span> tpvhc = 2</pre>
+    <div class="rule warn"><p>IS NULL sur la clé de la table de droite = lignes sans correspondance. Impossible sans jointure externe !</p></div>
+    <span class="badge badge-r">R6</span><span class="badge badge-r">R7</span><span class="badge badge-r">R8</span><span class="badge badge-r">R22</span>
+  </div>
+
+  <div class="card c1">
+    <h3>Autojointure — hiérarchie employé/supérieur</h3>
+    <pre><span class="cm">-- R9 : employés AVEC supérieur</span>
+<span class="kw">SELECT</span> e.nom employe, s.nom superieur
+<span class="kw">FROM</span> locvec.employe e, locvec.employe s
+<span class="kw">WHERE</span> e.cdsup = s.cdemp  <span class="cm">-- sens crucial !</span>
+
+<span class="cm">-- R10 : TOUS les employés (jointure ext.)</span>
+<span class="kw">FROM</span> employe e, employe s
+<span class="kw">WHERE</span> e.cdsup = s.cdemp(+)
+
+<span class="cm">-- Nom du sup ou étoiles si absent</span>
+<span class="fn">NVL2</span>(s.cdemp, s.nom||<span class="str">'-'</span>||s.prnm, <span class="str">'***'</span>)
+<span class="cm">-- Qualif : directeur ou ancien selon datdpt</span>
+<span class="fn">NVL</span>(s.qualif, <span class="fn">NVL2</span>(e.datdpt,<span class="str">'ancien employe'</span>,<span class="str">'Directeur'</span>))</pre>
+    <div class="rule danger"><p>Sens de la jointure : cdsup (de l'employé) = cdemp (du supérieur). Ne jamais inverser !</p></div>
+    <span class="badge badge-r">R9</span><span class="badge badge-r">R10</span>
+  </div>
+
+  <div class="card c1">
+    <h3>Fonctions de dates essentielles</h3>
+    <div class="split">
+      <div>
+        <div class="mini-label">Extraire</div>
+        <pre><span class="fn">EXTRACT</span>(YEAR <span class="kw">FROM</span> datpmc)
+<span class="fn">EXTRACT</span>(MONTH <span class="kw">FROM</span> datctr)
+<span class="fn">TO_CHAR</span>(datctr, <span class="str">'MM-YYYY'</span>)</pre>
+      </div>
+      <div>
+        <div class="mini-label">Calculer</div>
+        <pre><span class="cm">-- Ancienneté (années)</span>
+<span class="fn">TRUNC</span>((sysdate-datpmc)/365.25)
+<span class="cm">-- Mois écoulés</span>
+<span class="fn">MONTHS_BETWEEN</span>(sysdate,datprms)
+<span class="cm">-- Âge entre 50 et 60</span>
+(sysdate-datns)/365.25
+  <span class="kw">BETWEEN</span> 50 <span class="kw">AND</span> 60</pre>
+      </div>
+    </div>
+    <div class="rule danger"><p>Ne jamais faire TO_DATE sur 'MM-YYYY' (pas de jour). Utiliser TO_CHAR pour comparer un mois+année.</p></div>
+  </div>
+
+  <div class="card c1">
+    <h3>DECODE, NVL, NVL2, NVL2</h3>
+    <pre><span class="cm">-- DECODE : CASE WHEN simplifié</span>
+<span class="fn">DECODE</span>(tpvhc, 1,<span class="str">'Tourisme'</span>, 2,<span class="str">'Utilitaire'</span>, 3,<span class="str">'Exception'</span>)
+<span class="fn">DECODE</span>(cdsx, <span class="str">'1'</span>,<span class="str">'M.'</span>, <span class="str">'2'</span>,<span class="str">'Mme'</span>, <span class="str">'Mlle'</span>)
+
+<span class="cm">-- NVL(expr, valeur_si_null)</span>
+<span class="fn">NVL</span>(prfs, <span class="str">'SANS PROFESSION'</span>)
+
+<span class="cm">-- NVL2(expr, si_non_null, si_null)</span>
+<span class="fn">NVL2</span>(e.datdpt, <span class="str">'ancien'</span>, <span class="str">'Directeur'</span>)
+
+<span class="cm">-- NVL2 + NVL combinés (R10)</span>
+<span class="fn">NVL</span>(s.qualif, <span class="fn">NVL2</span>(e.datdpt,<span class="str">'ancien employe'</span>,<span class="str">'Directeur agence'</span>))</pre>
+  </div>
+
+</div>
+`,
+
+agreg: `
+<div class="section-title"><span>📊</span> Fonctions d'agrégation & GROUP BY</div>
+<div class="cards">
+
+  <div class="card c2">
+    <h3>Les fonctions d'agrégation</h3>
+    <pre><span class="fn">COUNT</span>(cdemp)           <span class="cm">-- non-NULL seulement</span>
+<span class="fn">COUNT</span>(datdpr)          <span class="cm">-- partis (date non nulle)</span>
+<span class="fn">COUNT</span>(*) - <span class="fn">COUNT</span>(datdpr)  <span class="cm">-- présents</span>
+<span class="fn">COUNT</span>(<span class="kw">DISTINCT</span> qualif)  <span class="cm">-- valeurs uniques</span>
+<span class="fn">SUM</span>(salaire)
+<span class="fn">AVG</span>(salaire)
+<span class="fn">MAX</span>(salaire) / <span class="fn">MIN</span>(salaire)
+<span class="fn">ROUND</span>(<span class="fn">AVG</span>(salaire), 2)   <span class="cm">-- 2 décimales</span>
+<span class="fn">ROUND</span>(<span class="fn">AVG</span>(salaire), -2)  <span class="cm">-- centaine d'€</span></pre>
+    <span class="badge badge-r">R11</span><span class="badge badge-r">R12</span><span class="badge badge-r">R13</span>
+  </div>
+
+  <div class="card c2">
+    <h3>Structure GROUP BY — règles absolues</h3>
+    <pre><span class="kw">SELECT</span> qualif,
+       <span class="fn">COUNT</span>(cdemp)            <span class="str">"Nb Employés"</span>,
+       <span class="fn">ROUND</span>(<span class="fn">AVG</span>(salaire), -2)  <span class="str">"Salaire moyen"</span>
+<span class="kw">FROM</span>   locvec.employe
+<span class="kw">GROUP BY</span> qualif   <span class="cm">-- tous les SELECT non-agrégats</span>
+<span class="kw">ORDER BY</span> 1;</pre>
+    <div class="rule danger"><p>Règle absolue : toute colonne dans le SELECT qui n'est pas une fonction d'agrégation DOIT être dans le GROUP BY. Les alias ne peuvent PAS être utilisés dans le GROUP BY.</p></div>
+    <div class="rule warn"><p>Si tu projettes nom||' '||prnm, mets nom, prnm séparément dans le GROUP BY, pas la concaténation.</p></div>
+    <span class="badge badge-r">R17</span><span class="badge badge-r">R18</span><span class="badge badge-r">R19</span>
+  </div>
+
+  <div class="card c2">
+    <h3>HAVING — filtrer les groupes</h3>
+    <pre><span class="cm">-- R23 : modèles avec ≥ 2 véhicules</span>
+<span class="kw">GROUP BY</span> intctg, marque, tpmdl
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(cdvhc) >= 2
+
+<span class="cm">-- R25 : > 2 contrats ET ≥ 10 jours</span>
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(cdctr) > 2
+   <span class="kw">AND</span> <span class="fn">SUM</span>(datrtr - datdpt) >= 10</pre>
+    <div class="rule ok"><p>WHERE filtre les LIGNES avant groupement. HAVING filtre les GROUPES après. Ne jamais mettre une condition sur un agrégat dans WHERE.</p></div>
+    <span class="badge badge-r">R23</span><span class="badge badge-r">R24</span><span class="badge badge-r">R25</span>
+  </div>
+
+  <div class="card c2">
+    <h3>Agrégat imbriqué dans HAVING (MAX d'un COUNT)</h3>
+    <pre><span class="cm">-- R26b : véhicule avec le plus de contrats</span>
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(cdctr) = (
+  <span class="kw">SELECT</span> <span class="fn">MAX</span>(<span class="fn">COUNT</span>(cdctr))
+  <span class="kw">FROM</span> locvec.contrat
+  <span class="kw">GROUP BY</span> cdvhc
+)
+
+<span class="cm">-- R27 : clients au-dessus de la moyenne</span>
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(cdctr) > (
+  <span class="kw">SELECT</span> <span class="fn">AVG</span>(<span class="fn">COUNT</span>(cdctr))
+  <span class="kw">FROM</span> locvec.contrat
+  <span class="kw">GROUP BY</span> cdcli
+)</pre>
+    <span class="badge badge-r">R26</span><span class="badge badge-r">R27</span>
+  </div>
+
+  <div class="card c2">
+    <h3>Division relationnelle (HAVING COUNT = total)</h3>
+    <pre><span class="cm">-- R28c : marques dans TOUTES les catégories type 1</span>
+<span class="kw">SELECT</span> m.marque
+<span class="kw">FROM</span> locvec.modele m, locvec.categorie c
+<span class="kw">WHERE</span> m.cdctg = c.cdctg <span class="kw">AND</span> tpvhc = 1
+<span class="kw">GROUP BY</span> m.marque
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(m.cdctg) = (
+  <span class="kw">SELECT</span> <span class="fn">COUNT</span>(cdctg)
+  <span class="kw">FROM</span> locvec.categorie
+  <span class="kw">WHERE</span> tpvhc = 1
+);
+
+<span class="cm">-- R29 : clients avec tous les types de contrat</span>
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(<span class="kw">DISTINCT</span> cdtpctr) = (
+  <span class="kw">SELECT</span> <span class="fn">COUNT</span>(cdtpctr)
+  <span class="kw">FROM</span> locvec.typecontrat
+)</pre>
+    <span class="badge badge-r">R28</span><span class="badge badge-r">R29</span>
+  </div>
+
+</div>
+`,
+
+sous: `
+<div class="section-title"><span>🔍</span> Sous-requêtes</div>
+<div class="cards">
+
+  <div class="card c3">
+    <h3>Sous-requête simple (scalaire)</h3>
+    <pre><span class="cm">-- R14 : employé avec le salaire max</span>
+<span class="kw">WHERE</span> salaire = (
+  <span class="kw">SELECT</span> <span class="fn">MAX</span>(salaire)
+  <span class="kw">FROM</span> employe
+)
+
+<span class="cm">-- R15 : répéter le filtre dans la sous-requête !</span>
+<span class="kw">WHERE</span> <span class="fn">EXTRACT</span>(YEAR <span class="kw">FROM</span> datpmc) = 2005
+<span class="kw">AND</span> kmactl = (
+  <span class="kw">SELECT</span> <span class="fn">MAX</span>(kmactl)
+  <span class="kw">FROM</span> locvec.vehicule
+  <span class="kw">WHERE</span> <span class="fn">EXTRACT</span>(YEAR <span class="kw">FROM</span> datpmc) = 2005  <span class="hi">← répéter !</span>
+)</pre>
+    <div class="rule danger"><p>Quand la sous-requête porte sur un sous-ensemble filtré, le filtre doit être répété à l'intérieur de la sous-requête !</p></div>
+    <span class="badge badge-r">R14</span><span class="badge badge-r">R15</span><span class="badge badge-r">R16</span>
+  </div>
+
+  <div class="card c3">
+    <h3>Sous-requête multi-niveaux (IN imbriqué)</h3>
+    <pre><span class="cm">-- R4 : clients ayant souscrit un FORFAITAIRE</span>
+<span class="kw">WHERE</span> cdcli <span class="kw">IN</span> (
+  <span class="kw">SELECT</span> cdcli <span class="kw">FROM</span> locvec.contrat
+  <span class="kw">WHERE</span> cdtpctr <span class="kw">IN</span> (
+    <span class="kw">SELECT</span> cdtpctr
+    <span class="kw">FROM</span> locvec.typecontrat
+    <span class="kw">WHERE</span> <span class="fn">UPPER</span>(inttpctr) <span class="kw">LIKE</span> <span class="str">'%FORFAITAIRE%'</span>
+  )
+)</pre>
+    <div class="rule ok"><p>Chaque niveau IN fait une jointure logique vers le niveau inférieur. Équivalent à des JOIN mais en procédural.</p></div>
+    <span class="badge badge-r">R4</span><span class="badge badge-r">R5</span>
+  </div>
+
+  <div class="card c3">
+    <h3>Sous-requête synchronisée</h3>
+    <pre><span class="cm">-- R39 : employé avec salaire max de sa qualif</span>
+<span class="kw">WHERE</span> salaire = (
+  <span class="kw">SELECT</span> <span class="fn">MAX</span>(salaire)
+  <span class="kw">FROM</span> locvec.employe s
+  <span class="kw">WHERE</span> e.qualif = s.qualif  <span class="hi">← synchronisation</span>
+  <span class="kw">GROUP BY</span> qualif
+)
+
+<span class="cm">-- R38 : embauché la même année que son sup</span>
+<span class="kw">WHERE</span> <span class="fn">EXTRACT</span>(YEAR <span class="kw">FROM</span> datemb) = (
+  <span class="kw">SELECT</span> <span class="fn">EXTRACT</span>(YEAR <span class="kw">FROM</span> datEmb)
+  <span class="kw">FROM</span> locvec.Employe s
+  <span class="kw">WHERE</span> e.cdsup = s.cdemp  <span class="hi">← synchronisation</span>
+)</pre>
+    <div class="rule ok"><p>Une sous-requête synchronisée référence une colonne de la requête externe. Alias distincts obligatoires (e/s).</p></div>
+    <span class="badge badge-r">R36</span><span class="badge badge-r">R37</span><span class="badge badge-r">R38</span><span class="badge badge-r">R39</span>
+  </div>
+
+  <div class="card c3">
+    <h3>Sous-requête sur plusieurs colonnes (R37)</h3>
+    <pre><span class="cm">-- Même profession ET même localité (sauf elle-même)</span>
+<span class="kw">WHERE</span> (prfs, localite) = (
+  <span class="kw">SELECT</span> prfs, localite
+  <span class="kw">FROM</span> client m
+  <span class="kw">WHERE</span> <span class="fn">UPPER</span>(prnm||nom) = <span class="str">'MARCELLELECOMTE'</span>
+  <span class="kw">AND</span> c.cdcli != m.cdcli  <span class="hi">← synchro pour l'exclusion</span>
+)</pre>
+    <div class="rule ok"><p>On peut comparer un tuple (col1, col2) avec une sous-requête qui retourne 2 colonnes — très élégant pour les conditions multi-critères.</p></div>
+    <span class="badge badge-r">R37</span>
+  </div>
+
+</div>
+`,
+
+ens: `
+<div class="section-title"><span>⊕</span> Opérateurs ensemblistes</div>
+<div class="cards">
+
+  <div class="card c4">
+    <h3>UNION — réunion sans doublons</h3>
+    <pre><span class="cm">-- R31 : personnes (employés + clients) nées avant 1960</span>
+<span class="kw">SELECT</span> nom||<span class="str">' '</span>||prnm PERSONNE, datns, qualif, <span class="str">'EMPLOYE'</span> statut
+<span class="kw">FROM</span> locvec.employe
+<span class="kw">WHERE</span> <span class="fn">EXTRACT</span>(YEAR <span class="kw">FROM</span> datns) < 1960
+<span class="kw">UNION</span>
+<span class="kw">SELECT</span> nom||<span class="str">' '</span>||prnm, datns, prfs, <span class="str">'CLIENT'</span>  <span class="cm">-- pas d'alias</span>
+<span class="kw">FROM</span> locvec.client
+<span class="kw">WHERE</span> <span class="fn">EXTRACT</span>(YEAR <span class="kw">FROM</span> datns) < 1960
+<span class="kw">ORDER BY</span> 3, 2 <span class="kw">DESC</span>;  <span class="cm">-- 1 seul ORDER BY à la fin</span></pre>
+    <span class="badge badge-r">R30</span><span class="badge badge-r">R31</span><span class="badge badge-r">R35</span>
+  </div>
+
+  <div class="card c4">
+    <h3>Règles impératives UNION / INTERSECT / MINUS</h3>
+    <table class="info">
+      <tr><td>Nb colonnes</td><td>Même nombre dans chaque SELECT</td></tr>
+      <tr><td>Types</td><td>Compatibles colonne par colonne</td></tr>
+      <tr><td>Alias</td><td>Uniquement dans le 1er SELECT</td></tr>
+      <tr><td>ORDER BY</td><td>Un seul, en toute fin de requête</td></tr>
+      <tr><td>UNION vs ALL</td><td>UNION supprime les doublons, UNION ALL les conserve</td></tr>
+    </table>
+  </div>
+
+  <div class="card c4">
+    <h3>MINUS — dans A mais pas dans B</h3>
+    <pre><span class="cm">-- R33 : modèles sans véhicule</span>
+<span class="kw">SELECT</span> marque||<span class="str">' '</span>||tpmdl, intctg
+<span class="kw">FROM</span> categorie c, modele m
+<span class="kw">WHERE</span> c.cdctg = m.cdctg
+<span class="kw">MINUS</span>
+<span class="kw">SELECT</span> marque||<span class="str">' '</span>||tpmdl, intctg
+<span class="kw">FROM</span> categorie c, modele m, vehicule v
+<span class="kw">WHERE</span> c.cdctg = m.cdctg <span class="kw">AND</span> m.cdmdl = v.cdmdl
+<span class="kw">ORDER BY</span> 1;
+
+<span class="cm">-- R32c : commerciaux sans contrat</span>
+<span class="kw">SELECT</span> nom||<span class="str">' '</span>||prnm <span class="kw">FROM</span> employe
+<span class="kw">WHERE</span> <span class="fn">UPPER</span>(qualif) = <span class="str">'COMMERCIAL'</span>
+<span class="kw">MINUS</span>
+<span class="kw">SELECT</span> nom||<span class="str">' '</span>||prnm
+<span class="kw">FROM</span> employe e <span class="kw">JOIN</span> contrat c <span class="kw">ON</span> e.cdemp = c.cdemp</pre>
+    <span class="badge badge-r">R32</span><span class="badge badge-r">R33</span>
+  </div>
+
+  <div class="card c4">
+    <h3>INTERSECT — professions communes</h3>
+    <pre><span class="cm">-- R34 : professions communes employés & clients</span>
+<span class="kw">SELECT</span> qualif <span class="kw">FROM</span> locvec.employe
+<span class="kw">INTERSECT</span>
+<span class="kw">SELECT</span> prfs   <span class="kw">FROM</span> locvec.client;
+<span class="cm">-- Résultat : 4 professions communes</span></pre>
+    <span class="badge badge-r">R34</span>
+  </div>
+
+</div>
+`,
+
+exists: `
+<div class="section-title"><span>✓</span> Opérateur EXISTS</div>
+<div class="cards">
+
+  <div class="card c5">
+    <h3>EXISTS vs IN — comparaison</h3>
+    <pre><span class="cm">-- IN : liste de valeurs (procédural)</span>
+<span class="kw">WHERE</span> cdemp <span class="kw">IN</span> (<span class="kw">SELECT</span> cdemp <span class="kw">FROM</span> locvec.contrat)
+
+<span class="cm">-- EXISTS : vérifie l'existence d'une ligne</span>
+<span class="kw">WHERE</span> <span class="kw">EXISTS</span> (
+  <span class="kw">SELECT</span> <span class="hi">NULL</span>              <span class="cm">← toujours NULL</span>
+  <span class="kw">FROM</span> locvec.contrat c
+  <span class="kw">WHERE</span> c.cdemp = e.cdemp  <span class="cm">← synchronisation obligatoire</span>
+)</pre>
+    <div class="rule ok"><p>EXISTS retourne vrai si la sous-requête ramène AU MOINS une ligne. On écrit SELECT NULL (pas SELECT *). La synchronisation est obligatoire.</p></div>
+    <span class="badge badge-r">R40</span><span class="badge badge-r">R41</span>
+  </div>
+
+  <div class="card c5">
+    <h3>EXISTS avec plusieurs conditions (R41)</h3>
+    <pre><span class="cm">-- Véhicules OPEL/RENAULT/PEUGEOT déjà loués</span>
+<span class="kw">FROM</span> locvec.vehicule v
+<span class="kw">WHERE</span> <span class="kw">EXISTS</span> (
+  <span class="kw">SELECT</span> <span class="hi">NULL</span> <span class="kw">FROM</span> locvec.modele m
+  <span class="kw">WHERE</span> marque <span class="kw">IN</span> (<span class="str">'RENAULT'</span>,<span class="str">'OPEL'</span>,<span class="str">'PEUGEOT'</span>)
+  <span class="kw">AND</span> m.cdmdl = v.cdmdl
+)
+<span class="kw">AND</span> <span class="kw">EXISTS</span> (
+  <span class="kw">SELECT</span> <span class="hi">NULL</span> <span class="kw">FROM</span> locvec.contrat c
+  <span class="kw">WHERE</span> v.cdvhc = c.cdvhc
+)</pre>
+    <span class="badge badge-r">R41</span><span class="badge badge-r">R42</span>
+  </div>
+
+  <div class="card c5">
+    <h3>NOT EXISTS — division (double négation)</h3>
+    <pre><span class="cm">-- R44 : clients ayant TOUS les types de contrat</span>
+<span class="kw">SELECT</span> nom||<span class="str">' '</span>||prnm client
+<span class="kw">FROM</span> locvec.client cl
+<span class="kw">WHERE</span> <span class="hi">NOT EXISTS</span> (
+  <span class="kw">SELECT</span> <span class="hi">NULL</span> <span class="kw">FROM</span> locvec.typecontrat t
+  <span class="kw">WHERE</span> <span class="hi">NOT EXISTS</span> (
+    <span class="kw">SELECT</span> <span class="hi">NULL</span> <span class="kw">FROM</span> locvec.contrat c
+    <span class="kw">WHERE</span> c.cdtpctr = t.cdtpctr
+    <span class="kw">AND</span>   c.cdcli   = cl.cdcli
+  )
+);</pre>
+    <div class="rule ok"><p>Lecture : client pour lequel il n'existe PAS de type de contrat qui ne lui soit PAS associé. Résultat : Aurélie MAUROY.</p></div>
+    <span class="badge badge-r">R44</span>
+  </div>
+
+  <div class="card c5">
+    <h3>EXISTS imbriqués profonds (R43c)</h3>
+    <pre><span class="cm">-- Clients avec contrat "STANDARD JOUR + KM"</span>
+<span class="cm">-- et véhicule de catégorie "STANDARD"</span>
+<span class="kw">WHERE</span> <span class="kw">EXISTS</span> (
+  <span class="kw">SELECT</span> <span class="hi">NULL</span> <span class="kw">FROM</span> locvec.contrat c
+  <span class="kw">WHERE</span> cl.cdcli = c.cdcli
+  <span class="kw">AND</span> <span class="kw">EXISTS</span> (
+    <span class="kw">SELECT</span> <span class="hi">NULL</span> <span class="kw">FROM</span> locvec.typeContrat tp
+    <span class="kw">WHERE</span> c.cdtpctr = tp.cdtpctr
+    <span class="kw">AND</span> <span class="fn">UPPER</span>(inttpctr) = <span class="str">'STANDARD JOUR + KM'</span>
+  )
+  <span class="kw">AND</span> <span class="kw">EXISTS</span> (
+    <span class="kw">SELECT</span> <span class="hi">NULL</span> <span class="kw">FROM</span> locvec.vehicule v
+    <span class="kw">WHERE</span> c.cdvhc = v.cdvhc
+    <span class="kw">AND</span> <span class="kw">EXISTS</span> (
+      <span class="kw">SELECT</span> <span class="hi">NULL</span> <span class="kw">FROM</span> locvec.modele m
+      <span class="kw">WHERE</span> v.cdmdl = m.cdmdl
+      <span class="kw">AND</span> <span class="kw">EXISTS</span> (
+        <span class="kw">SELECT</span> <span class="hi">NULL</span> <span class="kw">FROM</span> locvec.categorie c
+        <span class="kw">WHERE</span> m.cdctg = c.cdctg
+        <span class="kw">AND</span> <span class="fn">UPPER</span>(intctg) = <span class="str">'STANDARD'</span>
+      )
+    )
+  )
+)</pre>
+    <span class="badge badge-r">R43</span>
+  </div>
+
+</div>
+`,
+
+arbo: `
+<div class="section-title"><span>🌲</span> Structures arborescentes Oracle</div>
+<div class="cards">
+
+  <div class="card c6">
+    <h3>Syntaxe de base — CONNECT BY</h3>
+    <pre><span class="cm">-- R45 : toute la hiérarchie (15 lignes)</span>
+<span class="kw">SELECT</span>
+  <span class="fn">LPAD</span>(<span class="str">' '</span>, 3*(<span class="hi">LEVEL</span>-1), <span class="str">' '</span>)||<span class="fn">TO_CHAR</span>(<span class="hi">LEVEL</span>) niveau,
+  <span class="fn">DECODE</span>(cdsx,<span class="str">'1'</span>,<span class="str">' M. '</span>,<span class="str">' Mme '</span>)||nom||<span class="str">' '</span>||prnm employe,
+  qualif
+<span class="kw">FROM</span> locvec.employe
+<span class="kw">CONNECT BY</span> cdsup = <span class="hi">PRIOR</span> cdemp   <span class="cm">← parent vers enfant</span>
+<span class="kw">START WITH</span> cdsup <span class="kw">IS NULL</span>;         <span class="cm">← racine = sans supérieur</span></pre>
+    <div class="rule danger"><p>PRIOR porte sur le côté parent : cdsup = PRIOR cdemp signifie "mon supérieur (cdsup) est le cdemp du niveau précédent". Ne pas inverser !</p></div>
+    <span class="badge badge-r">R45</span>
+  </div>
+
+  <div class="card c6">
+    <h3>WHERE vs CONNECT BY — différence cruciale</h3>
+    <div class="split">
+      <div>
+        <div class="mini-label">WHERE — filtre les nœuds affichés</div>
+        <pre><span class="cm">-- R46 : exclut les partis</span>
+<span class="cm">-- mais parcourt quand même</span>
+<span class="cm">-- tous les enfants</span>
+<span class="kw">WHERE</span> datdpt <span class="kw">IS NULL</span>
+<span class="kw">CONNECT BY</span>
+  cdsup=<span class="hi">PRIOR</span> cdemp
+<span class="kw">START WITH</span>
+  cdsup <span class="kw">IS NULL</span></pre>
+      </div>
+      <div>
+        <div class="mini-label">CONNECT BY — coupe la branche entière</div>
+        <pre><span class="cm">-- R49 : chef d'atelier</span>
+<span class="cm">-- ET ses subordonnés</span>
+<span class="cm">-- exclus d'un coup</span>
+<span class="kw">CONNECT BY</span>
+  cdsup=<span class="hi">PRIOR</span> cdemp
+  <span class="kw">AND</span> <span class="fn">UPPER</span>(qualif)
+  <span class="kw">NOT LIKE</span> <span class="str">'CHEF%'</span></pre>
+      </div>
+    </div>
+    <span class="badge badge-r">R46</span><span class="badge badge-r">R47</span><span class="badge badge-r">R48</span><span class="badge badge-r">R49</span>
+  </div>
+
+  <div class="card c6">
+    <h3>START WITH — changer la racine</h3>
+    <pre><span class="cm">-- R47 : démarrer depuis CHEF D'ATELIER</span>
+<span class="kw">START WITH</span> <span class="fn">UPPER</span>(qualif) = <span class="str">'CHEF D''ATELIER'</span>
+<span class="cm">-- R48 : démarrer depuis la racine, afficher femmes</span>
+<span class="kw">WHERE</span> datdpt <span class="kw">IS NULL</span> <span class="kw">AND</span> cdsx = 2
+<span class="kw">CONNECT BY</span> cdsup=<span class="hi">PRIOR</span> cdemp
+<span class="kw">START WITH</span> cdsup <span class="kw">IS NULL</span></pre>
+  </div>
+
+  <div class="card c6">
+    <h3>Fonctions arborescentes avancées (R50)</h3>
+    <pre><span class="hi">LEVEL</span>                      <span class="cm">-- profondeur (1 = racine)</span>
+<span class="hi">PRIOR</span> nom                  <span class="cm">-- valeur du parent direct</span>
+<span class="hi">CONNECT_BY_ISLEAF</span>          <span class="cm">-- 1 si nœud feuille, 0 sinon</span>
+<span class="hi">CONNECT_BY_ROOT</span>(nom)       <span class="cm">-- valeur de la racine</span>
+<span class="fn">SYS_CONNECT_BY_PATH</span>(cdEmp,<span class="str">':'</span>) <span class="cm">-- chemin depuis la racine</span>
+<span class="kw">CONNECT BY NOCYCLE PRIOR</span>   <span class="cm">-- évite les boucles infinies</span>
+<span class="kw">ORDER SIBLINGS BY</span> nom       <span class="cm">-- tri au sein du même niveau</span></pre>
+    <span class="badge badge-r">R50</span>
+  </div>
+
+</div>
+`,
+
+pieges: `
+<div class="section-title"><span>⚠️</span> Pièges fréquents à l'examen</div>
+<div class="cards">
+
+  <div class="card c2">
+    <h3>🔴 UPPER/LOWER manquant sur les données</h3>
+    <pre><span class="cm">-- ✗ Sensible à la casse :</span>
+<span class="kw">WHERE</span> qualif = <span class="str">'commercial'</span>
+
+<span class="cm">-- ✓ Toujours normaliser la donnée :</span>
+<span class="kw">WHERE</span> <span class="fn">UPPER</span>(qualif)   = <span class="str">'COMMERCIAL'</span>
+<span class="kw">WHERE</span> <span class="fn">UPPER</span>(inttpctr) <span class="kw">LIKE</span> <span class="str">'%FORFAITAIRE%'</span>
+<span class="kw">WHERE</span> <span class="fn">UPPER</span>(intctg)   = <span class="str">'STANDARD'</span>
+<span class="kw">WHERE</span> <span class="fn">UPPER</span>(marque)   <span class="kw">IN</span> (<span class="str">'OPEL'</span>,<span class="str">'RENAULT'</span>)</pre>
+    <div class="rule danger"><p>La base Oracle est sensible à la casse. Toujours UPPER() sur les données comparées, jamais sur la constante seule.</p></div>
+  </div>
+
+  <div class="card c2">
+    <h3>🔴 Filtre à répéter dans la sous-requête</h3>
+    <pre><span class="cm">-- ✗ La sous-requête prend le MAX tous véhicules 2005+autre</span>
+<span class="kw">WHERE</span> <span class="fn">EXTRACT</span>(YEAR <span class="kw">FROM</span> datpmc) = 2005
+<span class="kw">AND</span> kmactl = (<span class="kw">SELECT</span> <span class="fn">MAX</span>(kmactl) <span class="kw">FROM</span> locvec.vehicule)
+
+<span class="cm">-- ✓ Répéter le filtre à l'intérieur :</span>
+<span class="kw">AND</span> kmactl = (
+  <span class="kw">SELECT</span> <span class="fn">MAX</span>(kmactl) <span class="kw">FROM</span> locvec.vehicule
+  <span class="kw">WHERE</span> <span class="fn">EXTRACT</span>(YEAR <span class="kw">FROM</span> datpmc) = 2005  <span class="hi">← !</span>
+)</pre>
+    <span class="badge badge-w">R15</span><span class="badge badge-w">R16</span>
+  </div>
+
+  <div class="card c2">
+    <h3>🔴 GROUP BY : ce qui doit y figurer</h3>
+    <pre><span class="cm">-- ✗ Concaténation dans le GROUP BY (inutile)</span>
+<span class="kw">GROUP BY</span> nom||<span class="str">' '</span>||prnm
+
+<span class="cm">-- ✓ Colonnes séparées</span>
+<span class="kw">GROUP BY</span> e.cdemp, nom, prnm, inttpctr
+
+<span class="cm">-- ✗ Alias dans le GROUP BY</span>
+<span class="kw">GROUP BY</span> <span class="str">"Employé"</span>  <span class="cm">-- interdit !</span>
+
+<span class="cm">-- ✓ Nom de colonne réel</span>
+<span class="kw">GROUP BY</span> nom</pre>
+    <span class="badge badge-w">R18</span><span class="badge badge-w">R21</span>
+  </div>
+
+  <div class="card c2">
+    <h3>🔴 DISTINCT oublié avec JOIN + contrats</h3>
+    <pre><span class="cm">-- Un client avec 3 contrats apparaît 3 fois !</span>
+<span class="cm">-- ✓ Ajouter DISTINCT ou GROUP BY</span>
+<span class="kw">SELECT DISTINCT</span> nom||<span class="str">' '</span>||prnm, prfs
+<span class="kw">FROM</span> client cl
+  <span class="kw">JOIN</span> contrat c     <span class="kw">ON</span> cl.cdcli = c.cdcli
+  <span class="kw">JOIN</span> typeContrat tp <span class="kw">ON</span> c.cdtpctr = tp.cdtpctr
+<span class="kw">WHERE</span> <span class="fn">UPPER</span>(inttpctr) = <span class="str">'STANDARD JOUR + KM'</span>
+...</pre>
+    <span class="badge badge-w">R43a</span>
+  </div>
+
+  <div class="card c2">
+    <h3>🔴 NOT IN dangereux avec NULL</h3>
+    <pre><span class="cm">-- Si la sous-requête peut retourner NULL :</span>
+<span class="cm">-- NOT IN retourne 0 ligne !</span>
+<span class="kw">WHERE</span> prfs <span class="kw">NOT IN</span> (<span class="kw">SELECT</span> prfs <span class="kw">FROM</span> client)
+<span class="cm">-- DANGER si un prfs est NULL</span>
+
+<span class="cm">-- ✓ Préférer NOT EXISTS dans ce cas</span>
+<span class="kw">WHERE</span> <span class="hi">NOT EXISTS</span> (
+  <span class="kw">SELECT</span> <span class="hi">NULL</span> <span class="kw">FROM</span> client c2
+  <span class="kw">WHERE</span> c2.prfs = c.prfs
+)</pre>
+    <div class="rule danger"><p>NOT IN avec une sous-requête pouvant ramener NULL → résultat toujours vide ! Utiliser NOT EXISTS à la place.</p></div>
+  </div>
+
+  <div class="card c2">
+    <h3>🔴 TO_DATE sur une date incomplète</h3>
+    <pre><span class="cm">-- ✗ Impossible : pas de jour dans 'MM-YYYY'</span>
+<span class="fn">TO_DATE</span>(<span class="str">'09-2018'</span>, <span class="str">'MM-YYYY'</span>)
+
+<span class="cm">-- ✓ Comparer avec TO_CHAR sur la colonne</span>
+<span class="fn">TO_CHAR</span>(datctr, <span class="str">'MM-YYYY'</span>) = <span class="str">'09-2018'</span>
+
+<span class="cm">-- ou EXTRACT séparé</span>
+<span class="fn">EXTRACT</span>(MONTH <span class="kw">FROM</span> datctr) = 9
+<span class="kw">AND</span> <span class="fn">EXTRACT</span>(YEAR <span class="kw">FROM</span> datctr) = 2018</pre>
+    <span class="badge badge-w">R2</span>
+  </div>
+
+  <div class="card c2">
+    <h3>🟡 IS NULL après jointure externe seulement</h3>
+    <pre><span class="cm">-- cdvhc IS NULL n'est possible</span>
+<span class="cm">-- QUE si vehicule est en jointure externe !</span>
+<span class="kw">FROM</span> modele m
+  <span class="kw">LEFT JOIN</span> vehicule v <span class="kw">ON</span> (m.cdmdl = v.cdmdl)
+<span class="kw">WHERE</span> v.cdvhc <span class="kw">IS NULL</span>  <span class="hi">← lignes sans véhicule</span>
+
+<span class="cm">-- Avec old-style Oracle :</span>
+<span class="kw">WHERE</span> m.cdmdl = v.cdmdl(+)
+<span class="kw">AND</span> v.cdvhc <span class="kw">IS NULL</span></pre>
+    <span class="badge badge-w">R8</span><span class="badge badge-w">R6</span>
+  </div>
+
+  <div class="card c2">
+    <h3>🟡 Sens autojointure & CONNECT BY</h3>
+    <pre><span class="cm">-- Autojointure : sens employé → supérieur</span>
+e.cdsup = s.cdemp   <span class="hi">✓</span>
+e.cdemp = s.cdsup   <span class="hi">✗</span>
+
+<span class="cm">-- CONNECT BY : parent → enfant</span>
+<span class="kw">CONNECT BY</span> cdsup = <span class="hi">PRIOR</span> cdemp  <span class="hi">✓</span>
+<span class="cm">-- PRIOR est sur la colonne parent (cdemp du niveau sup)</span>
+
+<span class="cm">-- ORDER SIBLINGS (pas ORDER BY seul !)</span>
+<span class="kw">ORDER SIBLINGS BY</span> nom  <span class="hi">✓</span>
+<span class="kw">ORDER BY</span> nom            <span class="hi">✗ casse la hiérarchie</span></pre>
+  </div>
+
+</div>
+`
+};
+
+// Build nav
+const nav = document.getElementById('tabsNav');
+const strip = document.getElementById('progressStrip');
+const main = document.getElementById('mainContent');
+
+TABS.forEach((t, i) => {
+  const btn = document.createElement('button');
+  btn.className = 'tab-btn' + (i === 0 ? ' active' : '');
+  btn.innerHTML = `<span class="dot" style="background:${t.dot}"></span>${t.label}`;
+  btn.setAttribute('data-id', t.id);
+  btn.style.setProperty('--c', t.dot);
+  btn.addEventListener('click', () => switchTab(t.id));
+  if (i === 0) btn.style.borderBottomColor = t.dot;
+  btn.dataset.color = t.dot;
+  nav.appendChild(btn);
+
+  const s = document.createElement('span');
+  s.style.background = t.dot;
+  s.style.opacity = i === 0 ? '1' : '0.2';
+  s.dataset.id = t.id;
+  strip.appendChild(s);
+
+  const panel = document.createElement('div');
+  panel.id = 'panel-' + t.id;
+  panel.className = 'tab-panel' + (i === 0 ? ' active' : '');
+  panel.innerHTML = CONTENT[t.id];
+  main.appendChild(panel);
+});
+
+function switchTab(id) {
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.remove('active');
+    b.style.borderBottomColor = 'transparent';
+  });
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.progress-strip span').forEach(s => s.style.opacity = '0.2');
+
+  const btn = document.querySelector(`.tab-btn[data-id="${id}"]`);
+  btn.classList.add('active');
+  btn.style.borderBottomColor = btn.dataset.color;
+
+  document.getElementById('panel-' + id).classList.add('active');
+  document.querySelector(`.progress-strip span[data-id="${id}"]`).style.opacity = '1';
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>

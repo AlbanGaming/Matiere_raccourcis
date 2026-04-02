@@ -1,7 +1,17 @@
   const toggle = document.getElementById('themeToggle');
-  const logo = document.getElementById('logo');
+  const logo_jupyter = document.getElementById('logo_jupyter');
+  const logo_open_neb = document.getElementById('logo_open_neb');
   const menuToggle = document.getElementById('menuToggle');
   const sideMenu = document.getElementById('sideMenu');
+
+  const revisionToggle = document.getElementById('revisionToggle');
+  const revisionMenu = document.getElementById('revisionMenu');
+
+  revisionToggle.addEventListener('click', () => {
+  revisionMenu.classList.toggle('hidden');
+  revisionToggle.classList.add('rotating');
+  setTimeout(() => revisionToggle.classList.remove('rotating'), 750);
+});
 
   menuToggle.addEventListener('click', () => {
   sideMenu.classList.toggle('hidden');
@@ -18,9 +28,11 @@
 
   function updateLogo(theme) {
     if (theme === 'light') {
-      logo.src = 'styles/Jupyter_logo_clair.png';
+      logo_jupyter.src = 'styles/Jupyter_logo_clair.png';
+      logo_open_neb.src = 'styles/OpenNebula_logo_clair.png';
     } else {
-      logo.src = 'styles/Jupyter_logo_sombre.png';
+      logo_jupyter.src = 'styles/Jupyter_logo_sombre.png';
+      logo_open_neb.src = 'styles/OpenNebula_logo_sombre.png';
     }
   }
 
