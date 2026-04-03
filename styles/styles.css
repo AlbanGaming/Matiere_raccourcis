@@ -421,7 +421,8 @@ body.light-mode .pulse-logo {
   top: 10px;
   left: 125px; /* à côté du switch thème */
   font-size: 28px;
-  background: transparent;
+  background: transparent !important;
+  background-color: transparent !important;
   border: none;
   cursor: pointer;
   z-index: 1001;
