@@ -412,7 +412,7 @@ elles seront désormais dans le menu latéral */
 
 /* Adaptation au thème clair */
 body.light-mode .pulse-logo {
-  box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
+  box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
 }
 
 /* === Bouton révision gauche === */
