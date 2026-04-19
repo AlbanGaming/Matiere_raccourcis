@@ -1,0 +1,2447 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MR205 — Services Réseaux</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg2: #0f1525;
+    --bg3: #141c30;
+    --card: #161e32;
+    --border: #1e2d4a;
+    --accent: #00d4ff;
+    --accent2: #7c3aed;
+    --accent3: #10b981;
+    --accent4: #f59e0b;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --danger: #ef4444;
+    --success: #10b981;
+    --font-display: 'Syne', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-display);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── NOISE TEXTURE ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: .4;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(10,14,26,.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .nav-logo {
+    font-family: var(--font-mono);
+    font-size: .85rem;
+    color: var(--accent);
+    letter-spacing: .1em;
+    white-space: nowrap;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: .25rem;
+    list-style: none;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .nav-links a {
+    color: var(--text2);
+    text-decoration: none;
+    font-size: .75rem;
+    font-weight: 600;
+    letter-spacing: .05em;
+    padding: .3rem .6rem;
+    border-radius: 4px;
+    transition: all .2s;
+    text-transform: uppercase;
+  }
+
+  .nav-links a:hover { color: var(--accent); background: rgba(0,212,255,.08); }
+
+  /* ─── HERO ─── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 6rem 2rem 4rem;
+    overflow: hidden;
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridMove 20s linear infinite;
+  }
+
+  @keyframes gridMove {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(60px); }
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,212,255,.12) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    animation: pulse 4s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: .6; }
+    50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+  }
+
+  .hero-badge {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    background: rgba(0,212,255,.1);
+    border: 1px solid rgba(0,212,255,.3);
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: .75rem;
+    letter-spacing: .15em;
+    padding: .35rem .9rem;
+    border-radius: 999px;
+    margin-bottom: 1.5rem;
+    animation: fadeInDown .6s ease both;
+  }
+
+  .hero-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: blink 1.5s ease infinite;
+  }
+
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+  .hero h1 {
+    position: relative;
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-weight: 800;
+    line-height: .95;
+    letter-spacing: -.03em;
+    animation: fadeInUp .7s ease .1s both;
+  }
+
+  .hero h1 .line1 { color: var(--text); display: block; }
+  .hero h1 .line2 {
+    display: block;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    position: relative;
+    color: var(--text2);
+    font-size: 1.1rem;
+    max-width: 520px;
+    margin: 1.5rem auto;
+    line-height: 1.6;
+    animation: fadeInUp .7s ease .2s both;
+  }
+
+  .hero-stats {
+    position: relative;
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 2.5rem;
+    animation: fadeInUp .7s ease .3s both;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: var(--font-mono);
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .stat-label {
+    font-size: .75rem;
+    color: var(--text3);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+
+  .hero-cta {
+    position: relative;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 2.5rem;
+    animation: fadeInUp .7s ease .4s both;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #0099bb);
+    color: #000;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: .875rem;
+    letter-spacing: .05em;
+    padding: .75rem 1.75rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all .2s;
+    border: none;
+    cursor: pointer;
+  }
+
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,212,255,.4); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: .875rem;
+    letter-spacing: .05em;
+    padding: .75rem 1.75rem;
+    border-radius: 8px;
+    text-decoration: none;
+    border: 1px solid var(--border);
+    transition: all .2s;
+    cursor: pointer;
+  }
+
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  @keyframes fadeInDown { from { opacity:0; transform: translateY(-20px); } to { opacity:1; transform: none; } }
+  @keyframes fadeInUp { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: none; } }
+
+  /* ─── SECTIONS ─── */
+  section {
+    position: relative;
+    z-index: 1;
+    padding: 5rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-header {
+    margin-bottom: 3rem;
+  }
+
+  .section-tag {
+    font-family: var(--font-mono);
+    font-size: .7rem;
+    color: var(--accent);
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    margin-bottom: .75rem;
+  }
+
+  .section-title {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 800;
+    letter-spacing: -.02em;
+    line-height: 1.1;
+  }
+
+  .section-title span {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ─── CHAPTER CARDS ─── */
+  .chapters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .chapter-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    cursor: pointer;
+    transition: all .25s;
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .chapter-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--card-accent, rgba(0,212,255,.04)), transparent);
+    opacity: 0;
+    transition: opacity .25s;
+  }
+
+  .chapter-card:hover::before { opacity: 1; }
+
+  .chapter-card:hover {
+    border-color: var(--card-color, var(--accent));
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0,0,0,.4);
+  }
+
+  .chapter-num {
+    font-family: var(--font-mono);
+    font-size: .65rem;
+    letter-spacing: .2em;
+    color: var(--card-color, var(--accent));
+    text-transform: uppercase;
+    margin-bottom: .75rem;
+  }
+
+  .chapter-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: .5rem;
+    line-height: 1.3;
+  }
+
+  .chapter-desc {
+    font-size: .8rem;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+
+  .chapter-topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35rem;
+    margin-top: 1rem;
+  }
+
+  .topic-tag {
+    font-family: var(--font-mono);
+    font-size: .65rem;
+    padding: .2rem .5rem;
+    border-radius: 4px;
+    background: rgba(255,255,255,.05);
+    color: var(--text3);
+    letter-spacing: .05em;
+  }
+
+  /* ─── FULL-WIDTH CONTENT PAGE ─── */
+  .content-page {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: var(--bg);
+    overflow-y: auto;
+    padding: 80px 0 4rem;
+  }
+
+  .content-page.active { display: block; }
+
+  .content-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .content-back {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    color: var(--text2);
+    font-size: .875rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 2rem;
+    transition: color .2s;
+    background: none;
+    border: none;
+    font-family: var(--font-display);
+    letter-spacing: .05em;
+  }
+
+  .content-back:hover { color: var(--accent); }
+
+  .content-page h1 {
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    font-weight: 800;
+    letter-spacing: -.03em;
+    margin-bottom: .5rem;
+  }
+
+  .content-page .subtitle {
+    color: var(--text2);
+    font-size: 1rem;
+    margin-bottom: 3rem;
+  }
+
+  /* ─── LESSON CONTENT ─── */
+  .lesson-section {
+    margin-bottom: 3rem;
+  }
+
+  .lesson-section h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--accent);
+    border-left: 3px solid var(--accent);
+    padding-left: .875rem;
+    margin-bottom: 1.25rem;
+    letter-spacing: -.01em;
+  }
+
+  .lesson-section h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: .75rem;
+    margin-top: 1.25rem;
+  }
+
+  .lesson-section p {
+    color: var(--text2);
+    font-size: .9rem;
+    line-height: 1.8;
+    margin-bottom: .75rem;
+  }
+
+  .lesson-section ul, .lesson-section ol {
+    color: var(--text2);
+    font-size: .875rem;
+    line-height: 1.8;
+    padding-left: 1.5rem;
+    margin-bottom: .75rem;
+  }
+
+  .lesson-section li { margin-bottom: .25rem; }
+
+  /* ─── INFO BOXES ─── */
+  .info-box {
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin: 1rem 0;
+    font-size: .875rem;
+    line-height: 1.7;
+    display: flex;
+    gap: .75rem;
+  }
+
+  .info-box .icon { font-size: 1.1rem; flex-shrink: 0; margin-top: .1rem; }
+  .info-box .content { flex: 1; }
+  .info-box .content strong { display: block; font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; margin-bottom: .35rem; }
+
+  .info-important { background: rgba(0,212,255,.07); border: 1px solid rgba(0,212,255,.2); color: var(--text); }
+  .info-important .content strong { color: var(--accent); }
+  .info-warning { background: rgba(245,158,11,.07); border: 1px solid rgba(245,158,11,.2); color: var(--text); }
+  .info-warning .content strong { color: var(--accent4); }
+  .info-tip { background: rgba(16,185,129,.07); border: 1px solid rgba(16,185,129,.2); color: var(--text); }
+  .info-tip .content strong { color: var(--accent3); }
+
+  /* ─── CODE BLOCKS ─── */
+  .code-block {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 1rem 0;
+  }
+
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .6rem 1rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,.02);
+  }
+
+  .code-lang {
+    font-family: var(--font-mono);
+    font-size: .65rem;
+    color: var(--text3);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+
+  .code-block pre {
+    font-family: var(--font-mono);
+    font-size: .8rem;
+    color: #e6edf3;
+    padding: 1rem;
+    line-height: 1.7;
+    white-space: pre;
+  }
+
+  .code-block .kw { color: #ff7b72; }
+  .code-block .str { color: #a5d6ff; }
+  .code-block .cm { color: #6e7681; font-style: italic; }
+  .code-block .num { color: #79c0ff; }
+  .code-block .fn { color: #d2a8ff; }
+
+  /* ─── TABLE ─── */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .85rem;
+    margin: 1rem 0;
+  }
+
+  .data-table th {
+    background: var(--bg3);
+    color: var(--accent);
+    font-size: .7rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: .75rem 1rem;
+    text-align: left;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .data-table td {
+    padding: .75rem 1rem;
+    color: var(--text2);
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: .8rem;
+  }
+
+  .data-table tr:hover td { background: rgba(255,255,255,.02); color: var(--text); }
+
+  /* ─── SCHEMA DIAGRAM ─── */
+  .diagram {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    overflow-x: auto;
+  }
+
+  .diagram pre {
+    font-family: var(--font-mono);
+    font-size: .78rem;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+
+  /* ─── QUIZ ─── */
+  .quiz-container {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .quiz-question {
+    font-size: .975rem;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .quiz-question .q-num {
+    font-family: var(--font-mono);
+    font-size: .7rem;
+    color: var(--text3);
+    display: block;
+    margin-bottom: .35rem;
+    letter-spacing: .1em;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+  }
+
+  .quiz-option {
+    display: flex;
+    align-items: flex-start;
+    gap: .75rem;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: .875rem 1rem;
+    cursor: pointer;
+    transition: all .2s;
+    font-size: .875rem;
+    color: var(--text2);
+    text-align: left;
+    font-family: var(--font-display);
+    width: 100%;
+  }
+
+  .quiz-option:hover { border-color: var(--accent); color: var(--text); background: rgba(0,212,255,.05); }
+
+  .quiz-option .opt-letter {
+    font-family: var(--font-mono);
+    font-size: .75rem;
+    color: var(--text3);
+    width: 20px;
+    flex-shrink: 0;
+    margin-top: .05rem;
+  }
+
+  .quiz-option.correct { border-color: var(--success) !important; background: rgba(16,185,129,.1) !important; color: var(--text) !important; }
+  .quiz-option.wrong { border-color: var(--danger) !important; background: rgba(239,68,68,.1) !important; color: var(--text) !important; }
+  .quiz-option.revealed { border-color: rgba(16,185,129,.4) !important; background: rgba(16,185,129,.05) !important; }
+
+  .quiz-feedback {
+    display: none;
+    margin-top: 1rem;
+    padding: .875rem 1rem;
+    border-radius: 8px;
+    font-size: .85rem;
+    line-height: 1.6;
+  }
+
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background: rgba(16,185,129,.1); border: 1px solid rgba(16,185,129,.3); color: var(--accent3); }
+  .quiz-feedback.ko { background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.3); color: #f87171; }
+
+  .quiz-score {
+    font-family: var(--font-mono);
+    font-size: .8rem;
+    color: var(--text3);
+    margin-top: 1rem;
+    text-align: right;
+  }
+
+  /* ─── FLASHCARD ─── */
+  .flashcard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+
+  .flashcard {
+    perspective: 1000px;
+    height: 160px;
+    cursor: pointer;
+  }
+
+  .flashcard-inner {
+    position: relative;
+    width: 100%; height: 100%;
+    transform-style: preserve-3d;
+    transition: transform .5s cubic-bezier(.4,0,.2,1);
+  }
+
+  .flashcard:hover .flashcard-inner,
+  .flashcard.flipped .flashcard-inner {
+    transform: rotateY(180deg);
+  }
+
+  .flashcard-front, .flashcard-back {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    border-radius: 10px;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .flashcard-front {
+    background: var(--card);
+    border: 1px solid var(--border);
+    font-size: .95rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .flashcard-back {
+    background: var(--bg3);
+    border: 1px solid var(--accent2);
+    transform: rotateY(180deg);
+    font-size: .82rem;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+
+  .flashcard-front .fc-label {
+    font-family: var(--font-mono);
+    font-size: .6rem;
+    color: var(--accent);
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: .5rem;
+  }
+
+  /* ─── PROGRESS ─── */
+  .progress-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-bottom: .5rem;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    transition: width .4s ease;
+  }
+
+  /* ─── TABS ─── */
+  .tab-bar {
+    display: flex;
+    gap: .25rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .tab-btn {
+    font-family: var(--font-display);
+    font-size: .8rem;
+    font-weight: 600;
+    letter-spacing: .05em;
+    padding: .6rem 1rem;
+    color: var(--text3);
+    cursor: pointer;
+    border: none;
+    background: none;
+    border-bottom: 2px solid transparent;
+    transition: all .2s;
+    margin-bottom: -1px;
+  }
+
+  .tab-btn:hover { color: var(--text2); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ─── DNS TREE ─── */
+  .dns-tree {
+    font-family: var(--font-mono);
+    font-size: .82rem;
+    color: var(--text2);
+    line-height: 2;
+    padding: 1.25rem;
+  }
+
+  .dns-tree .root { color: var(--accent); font-weight: 700; }
+  .dns-tree .tld { color: var(--accent3); }
+  .dns-tree .domain { color: var(--accent4); }
+  .dns-tree .host { color: var(--text); }
+
+  /* ─── DHCP FLOW ─── */
+  .flow-steps {
+    display: flex;
+    gap: 0;
+    align-items: stretch;
+    margin: 1.5rem 0;
+    flex-wrap: wrap;
+  }
+
+  .flow-step {
+    flex: 1;
+    min-width: 140px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 1rem;
+    text-align: center;
+    position: relative;
+  }
+
+  .flow-step:not(:last-child)::after {
+    content: '→';
+    position: absolute;
+    right: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--accent);
+    font-size: 1rem;
+    z-index: 2;
+  }
+
+  .flow-step:first-child { border-radius: 8px 0 0 8px; }
+  .flow-step:last-child { border-radius: 0 8px 8px 0; }
+
+  .flow-step .step-name {
+    font-family: var(--font-mono);
+    font-size: .7rem;
+    color: var(--accent);
+    letter-spacing: .1em;
+    margin-bottom: .35rem;
+  }
+
+  .flow-step .step-desc {
+    font-size: .75rem;
+    color: var(--text2);
+    line-height: 1.4;
+  }
+
+  /* ─── ACCORDION ─── */
+  .accordion {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: .75rem;
+  }
+
+  .accordion-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    background: var(--card);
+    font-size: .9rem;
+    font-weight: 600;
+    transition: background .2s;
+  }
+
+  .accordion-header:hover { background: var(--bg3); }
+
+  .accordion-arrow {
+    color: var(--text3);
+    transition: transform .3s;
+    font-size: .75rem;
+  }
+
+  .accordion.open .accordion-arrow { transform: rotate(180deg); }
+
+  .accordion-body {
+    display: none;
+    padding: 1.25rem;
+    background: var(--bg2);
+    font-size: .875rem;
+    color: var(--text2);
+    line-height: 1.7;
+    border-top: 1px solid var(--border);
+  }
+
+  .accordion.open .accordion-body { display: block; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: .75rem;
+    color: var(--text3);
+    letter-spacing: .05em;
+    position: relative;
+    z-index: 1;
+  }
+
+  footer span { color: var(--accent); }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 640px) {
+    nav { padding: 0 1rem; }
+    .nav-links { display: none; }
+    section { padding: 3rem 1rem; }
+    .flow-steps { flex-direction: column; }
+    .flow-step::after { display: none; }
+    .flow-step { border-radius: 0; border-bottom: none; }
+    .flow-step:first-child { border-radius: 8px 8px 0 0; }
+    .flow-step:last-child { border-radius: 0 0 8px 8px; border-bottom: 1px solid var(--border); }
+  }
+
+  /* ─── HIGHLIGHT ─── */
+  .hl-blue { color: var(--accent); font-weight: 700; }
+  .hl-green { color: var(--accent3); font-weight: 700; }
+  .hl-amber { color: var(--accent4); font-weight: 700; }
+  .hl-purple { color: var(--accent2); font-weight: 700; }
+
+  .badge {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: .65rem;
+    padding: .15rem .45rem;
+    border-radius: 4px;
+    letter-spacing: .05em;
+    vertical-align: middle;
+    margin-left: .35rem;
+  }
+
+  .badge-port { background: rgba(0,212,255,.15); color: var(--accent); }
+  .badge-proto { background: rgba(124,58,237,.15); color: #a78bfa; }
+  .badge-secure { background: rgba(16,185,129,.15); color: var(--accent3); }
+  .badge-unsafe { background: rgba(239,68,68,.15); color: #f87171; }
+
+  /* ─── QUIZ SCORE SUMMARY ─── */
+  .score-summary {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    margin-top: 2rem;
+    display: none;
+  }
+
+  .score-summary.show { display: block; }
+
+  .score-big {
+    font-family: var(--font-mono);
+    font-size: 3rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .score-label {
+    color: var(--text2);
+    font-size: .9rem;
+    margin-top: .25rem;
+  }
+
+  .reset-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text2);
+    font-family: var(--font-display);
+    font-size: .8rem;
+    font-weight: 600;
+    padding: .5rem 1.25rem;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: all .2s;
+    letter-spacing: .05em;
+  }
+
+  .reset-btn:hover { border-color: var(--accent); color: var(--accent); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">MR205 // SERVICES RÉSEAUX</div>
+  <ul class="nav-links">
+    <li><a href="#chapitres">Cours</a></li>
+    <li><a href="#flashcards">Flashcards</a></li>
+    <li><a href="#quiz">Quiz</a></li>
+    <li><a href="#recap">Récap</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+
+  <div class="hero-badge">BUT Informatique — IUT Reims</div>
+
+  <h1>
+    <span class="line1">Services</span>
+    <span class="line2">Réseaux</span>
+  </h1>
+
+  <p class="hero-sub">Révisions complètes pour le module <strong>MR205</strong> — DHCP, DNS, FTP, SSH, messagerie, LDAP et outils d'analyse.</p>
+
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">2</div>
+      <div class="stat-label">Chapitres</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">3</div>
+      <div class="stat-label">TP couverts</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">40+</div>
+      <div class="stat-label">Questions</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">30+</div>
+      <div class="stat-label">Flashcards</div>
+    </div>
+  </div>
+
+  <div class="hero-cta">
+    <a href="#chapitres" class="btn-primary">Commencer →</a>
+    <a href="#quiz" class="btn-secondary">Tester mes connaissances</a>
+  </div>
+</div>
+
+<!-- CHAPITRES -->
+<section id="chapitres">
+  <div class="section-header">
+    <div class="section-tag">// 01 — Programme</div>
+    <h2 class="section-title">Chapitres du <span>module</span></h2>
+  </div>
+
+  <div class="chapters-grid">
+    <a class="chapter-card" style="--card-color:#00d4ff;--card-accent:rgba(0,212,255,.08)" onclick="openPage('page-ch1')">
+      <div class="chapter-num">Chapitre 01</div>
+      <div class="chapter-title">Services réseaux de base</div>
+      <div class="chapter-desc">DHCP, DNS, FTP, SSH, Telnet et outils d'analyse réseau.</div>
+      <div class="chapter-topics">
+        <span class="topic-tag">DHCP</span>
+        <span class="topic-tag">DNS</span>
+        <span class="topic-tag">FTP</span>
+        <span class="topic-tag">SSH</span>
+        <span class="topic-tag">Wireshark</span>
+      </div>
+    </a>
+
+    <a class="chapter-card" style="--card-color:#7c3aed;--card-accent:rgba(124,58,237,.08)" onclick="openPage('page-ch2')">
+      <div class="chapter-num">Chapitre 02</div>
+      <div class="chapter-title">Applications clientes réseau</div>
+      <div class="chapter-desc">Connexion distante, transfert de fichiers, messagerie et annuaire LDAP.</div>
+      <div class="chapter-topics">
+        <span class="topic-tag">SSH/Telnet</span>
+        <span class="topic-tag">NFS/SMB</span>
+        <span class="topic-tag">SMTP/IMAP</span>
+        <span class="topic-tag">LDAP</span>
+      </div>
+    </a>
+
+    <a class="chapter-card" style="--card-color:#10b981;--card-accent:rgba(16,185,129,.08)" onclick="openPage('page-tp')">
+      <div class="chapter-num">TP 1 → 3</div>
+      <div class="chapter-title">Travaux pratiques</div>
+      <div class="chapter-desc">Résumé des manipulations clés : DHCP/DNS sur Packet Tracer, FTP, SSH, mail et installation vsftpd.</div>
+      <div class="chapter-topics">
+        <span class="topic-tag">Packet Tracer</span>
+        <span class="topic-tag">vsftpd</span>
+        <span class="topic-tag">Cisco CLI</span>
+        <span class="topic-tag">dig/nslookup</span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- FLASHCARDS -->
+<section id="flashcards">
+  <div class="section-header">
+    <div class="section-tag">// 02 — Mémorisation</div>
+    <h2 class="section-title">Flash<span>cards</span></h2>
+    <p style="color:var(--text2);font-size:.875rem;margin-top:.75rem">Passe ta souris (ou clique) sur une carte pour révéler la réponse.</p>
+  </div>
+
+  <div class="flashcard-grid" id="fc-grid"></div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-header">
+    <div class="section-tag">// 03 — Auto-évaluation</div>
+    <h2 class="section-title">Quiz <span>interactif</span></h2>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('q-dhcp-dns', this)">DHCP & DNS</button>
+    <button class="tab-btn" onclick="switchTab('q-apps', this)">Applications</button>
+    <button class="tab-btn" onclick="switchTab('q-secu', this)">Sécurité & Protocoles</button>
+    <button class="tab-btn" onclick="switchTab('q-tp', this)">Pratique TP</button>
+  </div>
+
+  <div id="q-dhcp-dns" class="tab-content active"></div>
+  <div id="q-apps" class="tab-content"></div>
+  <div id="q-secu" class="tab-content"></div>
+  <div id="q-tp" class="tab-content"></div>
+</section>
+
+<!-- RECAP -->
+<section id="recap">
+  <div class="section-header">
+    <div class="section-tag">// 04 — Mémo rapide</div>
+    <h2 class="section-title">Ports & <span>protocoles</span></h2>
+  </div>
+
+  <div style="overflow-x:auto">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Protocole</th>
+        <th>Port(s)</th>
+        <th>Transport</th>
+        <th>Rôle</th>
+        <th>Sécurité</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>FTP</td><td>21 (ctrl) / 20 (data)</td><td>TCP</td><td>Transfert de fichiers</td><td>❌ Clair</td></tr>
+      <tr><td>SFTP / FTP over SSH</td><td>22</td><td>TCP</td><td>FTP chiffré</td><td>✅ Chiffré</td></tr>
+      <tr><td>SSH</td><td>22</td><td>TCP</td><td>Shell distant sécurisé</td><td>✅ Chiffré</td></tr>
+      <tr><td>Telnet</td><td>23</td><td>TCP</td><td>Shell distant (historique)</td><td>❌ Clair</td></tr>
+      <tr><td>SMTP</td><td>25</td><td>TCP</td><td>Envoi de mails</td><td>⚠️ Variable</td></tr>
+      <tr><td>DNS</td><td>53</td><td>UDP/TCP</td><td>Résolution de noms</td><td>—</td></tr>
+      <tr><td>HTTP</td><td>80</td><td>TCP</td><td>Web</td><td>❌ Clair</td></tr>
+      <tr><td>POP3</td><td>110</td><td>TCP</td><td>Téléchargement mails</td><td>⚠️ Variable</td></tr>
+      <tr><td>IMAP</td><td>143</td><td>TCP</td><td>Accès mails distants</td><td>⚠️ Variable</td></tr>
+      <tr><td>LDAP</td><td>389</td><td>TCP/UDP</td><td>Annuaire</td><td>⚠️ Variable</td></tr>
+      <tr><td>HTTPS</td><td>443</td><td>TCP</td><td>Web sécurisé</td><td>✅ Chiffré</td></tr>
+      <tr><td>SMB</td><td>445</td><td>TCP</td><td>Partage fichiers Windows</td><td>⚠️ Variable</td></tr>
+      <tr><td>DHCP</td><td>67/68</td><td>UDP</td><td>Attribution IP dynamique</td><td>—</td></tr>
+      <tr><td>NFS</td><td>2049</td><td>TCP/UDP</td><td>Partage fichiers Unix</td><td>⚠️ Variable</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="section-header" style="margin-top:3rem">
+    <div class="section-tag">// Enregistrements DNS</div>
+    <h2 class="section-title">Types de <span>records</span></h2>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem">
+    <div class="accordion open">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span><span class="hl-blue">A</span> — Address</span>
+        <span class="accordion-arrow">▼</span>
+      </div>
+      <div class="accordion-body">Associe un <strong>FQDN</strong> à une adresse <strong>IPv4</strong>.<br><br><code style="font-family:var(--font-mono);color:var(--accent3)">ns1 IN A 192.168.1.2</code></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span><span class="hl-blue">AAAA</span> — Address IPv6</span>
+        <span class="accordion-arrow">▼</span>
+      </div>
+      <div class="accordion-body">Comme A, mais pour les adresses <strong>IPv6</strong>.</div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span><span class="hl-green">CNAME</span> — Alias</span>
+        <span class="accordion-arrow">▼</span>
+      </div>
+      <div class="accordion-body">Définit un <strong>alias</strong> vers un autre nom canonique.<br><br><code style="font-family:var(--font-mono);color:var(--accent3)">www IN CNAME ns1</code></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span><span class="hl-amber">MX</span> — Mail eXchanger</span>
+        <span class="accordion-arrow">▼</span>
+      </div>
+      <div class="accordion-body">Désigne le(s) serveur(s) de <strong>messagerie</strong> d'une zone. La <strong>priorité</strong> (valeur basse = préféré) est obligatoire.</div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span><span class="hl-purple">NS</span> — Name Server</span>
+        <span class="accordion-arrow">▼</span>
+      </div>
+      <div class="accordion-body">Indique les serveurs <strong>DNS autoritaires</strong> pour la zone.</div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span><span class="hl-blue">PTR</span> — Pointer (reverse)</span>
+        <span class="accordion-arrow">▼</span>
+      </div>
+      <div class="accordion-body">Résolution <strong>inverse</strong> : adresse IP → nom de domaine. Utilisé dans la zone <code>in-addr.arpa</code>.</div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span><span class="hl-amber">SOA</span> — Start Of Authority</span>
+        <span class="accordion-arrow">▼</span>
+      </div>
+      <div class="accordion-body">Premier enregistrement obligatoire. Définit le serveur <strong>primaire</strong>, l'email du responsable et les paramètres de synchronisation (serial, refresh, retry, expire, TTL).</div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span><span class="hl-green">TXT</span> — Text</span>
+        <span class="accordion-arrow">▼</span>
+      </div>
+      <div class="accordion-body">Données texte libres, utilisées notamment pour la <strong>vérification SPF, DKIM</strong> (anti-spam).</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CONTENT PAGES ═══════════════ -->
+
+<!-- CH1 -->
+<div class="content-page" id="page-ch1">
+  <div class="content-inner">
+    <button class="content-back" onclick="closePage('page-ch1')">← Retour</button>
+    <div class="hero-badge" style="position:static;margin-bottom:1rem">Chapitre 01</div>
+    <h1>Services réseaux de base</h1>
+    <p class="subtitle">DHCP · DNS · FTP · SSH · Telnet · Analyse réseau</p>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('ch1-dhcp', this)">DHCP</button>
+      <button class="tab-btn" onclick="switchTab('ch1-dns', this)">DNS</button>
+      <button class="tab-btn" onclick="switchTab('ch1-bind', this)">Conf. BIND</button>
+      <button class="tab-btn" onclick="switchTab('ch1-ftp-ssh', this)">FTP / SSH</button>
+      <button class="tab-btn" onclick="switchTab('ch1-outils', this)">Outils</button>
+    </div>
+
+    <!-- DHCP -->
+    <div id="ch1-dhcp" class="tab-content active">
+      <div class="lesson-section">
+        <h2>1. DHCP — Dynamic Host Configuration Protocol</h2>
+        <p>DHCP permet l'<strong>allocation automatique d'adresses IP</strong> à des clients sur un réseau, sans configuration manuelle.</p>
+
+        <h3>Les 3 types d'allocation</h3>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.75rem;margin:1rem 0">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem">
+            <div style="font-family:var(--font-mono);font-size:.7rem;color:var(--accent);margin-bottom:.5rem">STATIQUE</div>
+            <div style="font-size:.85rem;color:var(--text2)">Toujours la même IP pour un hôte donné (liaison MAC→IP).</div>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem">
+            <div style="font-family:var(--font-mono);font-size:.7rem;color:var(--accent4);margin-bottom:.5rem">DYNAMIQUE TEMPORAIRE</div>
+            <div style="font-size:.85rem;color:var(--text2)">IP avec un <strong>bail</strong> (lease) limité dans le temps. Redistribuée à expiration.</div>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem">
+            <div style="font-family:var(--font-mono);font-size:.7rem;color:var(--accent3);margin-bottom:.5rem">DYNAMIQUE PERMANENTE</div>
+            <div style="font-size:.85rem;color:var(--text2)">IP "réservée" à un PC. Bail très long = quasi-statique.</div>
+          </div>
+        </div>
+
+        <h3>Séquence DORA — Obtention d'une adresse</h3>
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="step-name">DISCOVER</div>
+            <div class="step-desc">Client broadcast pour trouver un serveur DHCP</div>
+          </div>
+          <div class="flow-step">
+            <div class="step-name">OFFER</div>
+            <div class="step-desc">Serveur propose une adresse IP</div>
+          </div>
+          <div class="flow-step">
+            <div class="step-name">REQUEST</div>
+            <div class="step-desc">Client accepte et demande officiellement l'IP</div>
+          </div>
+          <div class="flow-step">
+            <div class="step-name">ACK</div>
+            <div class="step-desc">Serveur confirme l'attribution</div>
+          </div>
+        </div>
+
+        <div class="info-box info-warning">
+          <div class="icon">⚠️</div>
+          <div class="content">
+            <strong>Attention</strong>
+            Si client et serveur sont sur des LAN différents, il faut un <strong>relais DHCP</strong> car les routeurs ne transmettent pas les broadcasts Ethernet !
+          </div>
+        </div>
+
+        <h3>Configuration Cisco — Pool DHCP</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Cisco IOS</span></div>
+          <pre><span class="cm">! Activation du service</span>
+R(config)# <span class="kw">service dhcp</span>
+
+<span class="cm">! Création d'un pool nommé</span>
+R(config)# <span class="kw">ip dhcp pool</span> campus
+R(dhcp-config)# <span class="kw">network</span> <span class="num">172.16.12.0</span> <span class="num">255.255.255.0</span>
+R(dhcp-config)# <span class="kw">default-router</span> <span class="num">172.16.12.1</span>
+R(dhcp-config)# <span class="kw">dns-server</span> <span class="num">10.10.10.1</span>
+R(dhcp-config)# <span class="kw">domain-name</span> <span class="str">iut-info.test</span>
+
+<span class="cm">! Exclure des adresses (passerelle, serveurs...)</span>
+R(config)# <span class="kw">ip dhcp excluded-address</span> <span class="num">172.16.12.1</span> <span class="num">172.16.12.10</span>
+
+<span class="cm">! Vérification des baux</span>
+R# <span class="fn">show ip dhcp binding</span></pre>
+        </div>
+
+        <div class="info-box info-important">
+          <div class="icon">💡</div>
+          <div class="content">
+            <strong>À retenir</strong>
+            La commande <code>ip dhcp excluded-address</code> doit être saisie <em>avant</em> la création du pool pour éviter que ces IPs soient distribuées.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DNS -->
+    <div id="ch1-dns" class="tab-content">
+      <div class="lesson-section">
+        <h2>2. DNS — Domain Name System</h2>
+        <p>Base de données <strong>distribuée et hiérarchique</strong> qui traduit les noms de domaine en adresses IP (et inversement).</p>
+
+        <h3>Arborescence DNS</h3>
+        <div class="diagram">
+          <pre class="dns-tree"><span class="root">. (racine)</span>
+├── <span class="tld">fr</span>
+│   └── <span class="domain">univ-reims</span>
+│       └── <span class="host">iut-info</span>  →  iut-info.univ-reims.fr.
+├── <span class="tld">com</span>
+│   └── <span class="domain">google</span>
+│       └── <span class="host">www</span>  →  www.google.com.
+└── <span class="tld">org</span>
+    └── <span class="domain">ietf</span></pre>
+        </div>
+
+        <h3>Types de TLD</h3>
+        <ul>
+          <li><span class="hl-blue">Organisationnel</span> : <code>.com</code> <code>.org</code> <code>.edu</code> <code>.gov</code> <code>.mil</code></li>
+          <li><span class="hl-green">Géographique</span> : <code>.fr</code> <code>.jp</code> <code>.de</code> <code>.eu</code></li>
+          <li><span class="hl-amber">Inverse</span> : <code>in-addr.arpa</code> (résolution IP→nom)</li>
+        </ul>
+
+        <h3>Résolution inverse</h3>
+        <p>Pour trouver le nom à partir d'une IP, on <strong>inverse les octets</strong> et on ajoute <code>.in-addr.arpa</code> :</p>
+        <div class="diagram">
+          <pre>192.168.1.5  →  5.1.168.192.in-addr.arpa</pre>
+        </div>
+
+        <h3>Serveur primaire vs secondaire</h3>
+        <ul>
+          <li><span class="hl-blue">Primaire (master)</span> : maintient le fichier de zone, fait autorité.</li>
+          <li><span class="hl-green">Secondaire</span> : copie les données du primaire (redondance).</li>
+        </ul>
+
+        <h3>Résolution récursive</h3>
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="step-name">Application</div>
+            <div class="step-desc">Demande l'IP de www.example.fr</div>
+          </div>
+          <div class="flow-step">
+            <div class="step-name">Résolveur local</div>
+            <div class="step-desc">Interroge le serveur DNS configuré</div>
+          </div>
+          <div class="flow-step">
+            <div class="step-name">Racine .</div>
+            <div class="step-desc">Délègue vers .fr</div>
+          </div>
+          <div class="flow-step">
+            <div class="step-name">Serveur .fr</div>
+            <div class="step-desc">Délègue vers example.fr</div>
+          </div>
+          <div class="flow-step">
+            <div class="step-name">Réponse</div>
+            <div class="step-desc">IP retournée à l'application</div>
+          </div>
+        </div>
+
+        <div class="info-box info-tip">
+          <div class="icon">🔍</div>
+          <div class="content">
+            <strong>Outils de diagnostic</strong>
+            <code>host</code>, <code>nslookup</code>, <code>dig</code> permettent d'interroger les serveurs DNS manuellement. <code>dig +trace</code> trace le chemin complet de délégation depuis la racine.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BIND CONFIG -->
+    <div id="ch1-bind" class="tab-content">
+      <div class="lesson-section">
+        <h2>3. Configuration BIND sous Linux</h2>
+
+        <h3>named.conf — Fichier principal</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">named.conf</span></div>
+          <pre><span class="cm">// Répertoire des fichiers de zone</span>
+options {
+  directory <span class="str">"/var/named"</span>;
+};
+
+<span class="cm">// Serveurs racine</span>
+zone <span class="str">"."</span> {
+  type hint;
+  file <span class="str">"named.root"</span>;
+};
+
+<span class="cm">// Zone reverse loopback</span>
+zone <span class="str">"0.0.127.in-addr.arpa"</span> {
+  type master;
+  file <span class="str">"localhost.rev"</span>;
+};
+
+<span class="cm">// Zone principale</span>
+zone <span class="str">"iut-info.test"</span> {
+  type master;
+  file <span class="str">"iut-info.test"</span>;
+};</pre>
+        </div>
+
+        <h3>Fichier de zone directe</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">iut-info.test (zone file)</span></div>
+          <pre>$TTL <span class="num">3600</span>
+iut-info.test.  IN  SOA  ns1.iut-info.test.  admin.iut-info.test. (
+                          <span class="num">2024010101</span>  <span class="cm">; Serial</span>
+                          <span class="num">10800</span>       <span class="cm">; Refresh (3h)</span>
+                          <span class="num">3600</span>        <span class="cm">; Retry (1h)</span>
+                          <span class="num">604800</span>      <span class="cm">; Expire (7j)</span>
+                          <span class="num">86400</span> )     <span class="cm">; Minimum TTL</span>
+
+        IN  NS    ns1.iut-info.test.
+        IN  NS    ns2.iut-info.test.
+        IN  MX <span class="num">10</span> mail.iut-info.test.
+        IN  A     <span class="num">10.10.10.1</span>
+
+ns1     IN  A     <span class="num">10.10.10.1</span>
+ns2     IN  A     <span class="num">10.10.10.2</span>
+www     IN  A     <span class="num">172.16.12.10</span>
+mail    IN  A     <span class="num">10.10.10.3</span>
+ftp     IN  CNAME www          <span class="cm">; alias</span></pre>
+        </div>
+
+        <h3>Fichier de zone reverse</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">zone reverse (in-addr.arpa)</span></div>
+          <pre>$TTL <span class="num">3600</span>
+<span class="num">10.10.10</span>.in-addr.arpa.  IN  SOA  ns1.iut-info.test.  admin.iut-info.test. (
+                           <span class="num">2024010101</span> <span class="num">10800</span> <span class="num">3600</span> <span class="num">604800</span> <span class="num">86400</span> )
+                       IN  NS   ns1.iut-info.test.
+
+<span class="num">1</span>  IN  PTR  ns1.iut-info.test.
+<span class="num">2</span>  IN  PTR  ns2.iut-info.test.
+<span class="num">3</span>  IN  PTR  mail.iut-info.test.</pre>
+        </div>
+
+        <div class="info-box info-important">
+          <div class="icon">📌</div>
+          <div class="content">
+            <strong>Le SOA en détail</strong>
+            <strong>Serial</strong> : numéro de version (incrémenté à chaque modif) · <strong>Refresh</strong> : fréquence de synchro secondaire → primaire · <strong>Retry</strong> : délai de nouvelle tentative · <strong>Expire</strong> : durée avant abandon · <strong>TTL</strong> : durée de cache chez les clients
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FTP SSH -->
+    <div id="ch1-ftp-ssh" class="tab-content">
+      <div class="lesson-section">
+        <h2>4. FTP — File Transfer Protocol</h2>
+
+        <p>FTP utilise <strong>deux connexions TCP distinctes</strong> :</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:1rem 0">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem">
+            <div style="font-family:var(--font-mono);font-size:.7rem;color:var(--accent);margin-bottom:.5rem">PORT 21 — CONTRÔLE</div>
+            <div style="font-size:.82rem;color:var(--text2)">Commandes client↔serveur (liste, renommage...). Connexion <strong>permanente</strong>, initiée par le client.</div>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem">
+            <div style="font-family:var(--font-mono);font-size:.7rem;color:var(--accent4);margin-bottom:.5rem">PORT 20 — DONNÉES</div>
+            <div style="font-size:.82rem;color:var(--text2)">Transfert des fichiers. Connexion <strong>temporaire</strong>, initiée par le serveur, fermée sur EOF.</div>
+          </div>
+        </div>
+
+        <div class="info-box info-warning">
+          <div class="icon">🔓</div>
+          <div class="content"><strong>FTP = non sécurisé</strong> Login et mot de passe transitent <strong>en clair</strong> ! Utiliser SFTP ou FTP over SSH à la place.</div>
+        </div>
+
+        <h3>Versions sécurisées</h3>
+        <ul>
+          <li><span class="hl-green">SFTP</span> (SSH File Transfer Protocol) : chiffrement complet données + commandes via SSH</li>
+          <li><span class="hl-blue">FTP over SSH</span> : tunnel SSH autour d'une session FTP classique</li>
+          <li><span class="hl-amber">FTPS</span> : FTP avec SSL/TLS (moins courant)</li>
+        </ul>
+
+        <h2 style="margin-top:2rem">5. SSH — Secure Shell</h2>
+
+        <p>SSH remplace Telnet et les outils <code>rsh/rlogin</code> en offrant :</p>
+        <ul>
+          <li>Authentification par <strong>clés RSA</strong> (privée + publique)</li>
+          <li>Chiffrement de <strong>tous les segments TCP</strong></li>
+          <li>Traversée des pare-feux</li>
+          <li>Création de <strong>tunnels TCP</strong></li>
+        </ul>
+
+        <h3>Tunnel SSH</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Bash</span></div>
+          <pre><span class="cm"># Forme générique</span>
+ssh [USER@]SSH_SERVER -L [LOCAL_IP:]LOCAL_PORT:DEST_IP:DEST_PORT
+
+<span class="cm"># Exemple : accéder à 192.168.1.10:80 via le serveur 1.2.3.4</span>
+ssh user@<span class="num">1.2.3.4</span> -L <span class="num">2023</span>:<span class="num">192.168.1.10</span>:<span class="num">80</span>
+
+<span class="cm"># Puis naviguer en local sur le port du tunnel</span>
+w3m http://localhost:<span class="num">2023</span></pre>
+        </div>
+
+        <h3>Telnet vs SSH</h3>
+        <table class="data-table">
+          <thead><tr><th>Critère</th><th>Telnet</th><th>SSH</th></tr></thead>
+          <tbody>
+            <tr><td>Port</td><td>23</td><td>22</td></tr>
+            <tr><td>Chiffrement</td><td>❌ Aucun</td><td>✅ RSA/AES</td></tr>
+            <tr><td>Authentification</td><td>Mot de passe en clair</td><td>Clés asymétriques</td></tr>
+            <tr><td>Tunnel</td><td>❌</td><td>✅</td></tr>
+            <tr><td>Statut</td><td>Obsolète</td><td>Standard actuel</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- OUTILS -->
+    <div id="ch1-outils" class="tab-content">
+      <div class="lesson-section">
+        <h2>6. Outils d'analyse réseau</h2>
+
+        <h3>Outils de capture</h3>
+        <div style="display:grid;gap:.75rem;margin:1rem 0">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem;display:flex;gap:1rem">
+            <div style="font-family:var(--font-mono);color:var(--accent);font-size:.8rem;min-width:80px">tcpdump</div>
+            <div style="font-size:.85rem;color:var(--text2)">Capture de paquets en ligne de commande. Léger, disponible partout.</div>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem;display:flex;gap:1rem">
+            <div style="font-family:var(--font-mono);color:var(--accent);font-size:.8rem;min-width:80px">Wireshark</div>
+            <div style="font-size:.85rem;color:var(--text2)">Interface graphique pour tcpdump. Analyse détaillée des protocoles, filtrage avancé.</div>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem;display:flex;gap:1rem">
+            <div style="font-family:var(--font-mono);color:var(--accent);font-size:.8rem;min-width:80px">traceroute</div>
+            <div style="font-size:.85rem;color:var(--text2)">Suivi du chemin réseau de bout en bout (sauts, latences).</div>
+          </div>
+        </div>
+
+        <h3>Commandes DNS (TP)</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Bash — Diagnostic DNS</span></div>
+          <pre><span class="cm"># Résolution simple</span>
+host www.free.fr
+
+<span class="cm"># Résolution inverse</span>
+host <span class="num">194.57.105.10</span>
+
+<span class="cm"># Serveurs DNS d'une zone</span>
+host -t NS google.com
+
+<span class="cm"># Serveurs mail d'une zone</span>
+host -t MX google.com
+
+<span class="cm"># Serveurs racine</span>
+host -t NS .
+
+<span class="cm"># nslookup interactif</span>
+nslookup
+<span class="fn">&gt; server 8.8.8.8</span>      <span class="cm"># changer de serveur DNS</span>
+<span class="fn">&gt; set type=NS</span>         <span class="cm"># changer le type de requête</span>
+<span class="fn">&gt; univ-reims.fr</span>
+
+<span class="cm"># dig : MX via un serveur spécifique + trace</span>
+dig @anne.univ-reims.fr univ-reims.fr MX
+dig +trace www.univ-reims.fr</pre>
+        </div>
+
+        <div class="info-box info-tip">
+          <div class="icon">🎯</div>
+          <div class="content">
+            <strong>dig +trace</strong>
+            Trace le chemin complet de délégation depuis le serveur racine <code>.</code> jusqu'à la réponse finale. Très utile pour comprendre la hiérarchie DNS en pratique.
+          </div>
+        </div>
+
+        <h3>Protocoles de cœur de réseau</h3>
+        <p>Pour analyser les flux au cœur du réseau (agrégation), on utilise des protocoles de collecte :</p>
+        <ul>
+          <li><span class="hl-blue">NetFlow</span> (Cisco), Jflow, AppFlow : propriétaires</li>
+          <li><span class="hl-green">IPFIX</span>, sFlow : ouverts, interopérables</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CH2 -->
+<div class="content-page" id="page-ch2">
+  <div class="content-inner">
+    <button class="content-back" onclick="closePage('page-ch2')">← Retour</button>
+    <div class="hero-badge" style="position:static;margin-bottom:1rem">Chapitre 02</div>
+    <h1>Applications clientes réseau</h1>
+    <p class="subtitle">Connexion distante · FTP · NFS/SMB · Messagerie · LDAP</p>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('ch2-connex', this)">Connexion distante</button>
+      <button class="tab-btn" onclick="switchTab('ch2-fichiers', this)">Fichiers distants</button>
+      <button class="tab-btn" onclick="switchTab('ch2-mail', this)">Messagerie</button>
+      <button class="tab-btn" onclick="switchTab('ch2-ldap', this)">LDAP</button>
+    </div>
+
+    <div id="ch2-connex" class="tab-content active">
+      <div class="lesson-section">
+        <h2>1. Connexion à distance</h2>
+        <p>Objectif : exécuter des commandes sur un <strong>ordinateur distant</strong> comme si on était devant lui.</p>
+
+        <h3>Comparaison des protocoles</h3>
+        <table class="data-table">
+          <thead><tr><th>Protocole</th><th>Port</th><th>Sécurité</th><th>Particularités</th></tr></thead>
+          <tbody>
+            <tr><td>Telnet</td><td>23</td><td>❌ Clair</td><td>Historique (1983), mot de passe en clair, obsolète</td></tr>
+            <tr><td>rlogin</td><td>513</td><td>❌ Clair</td><td>Unix uniquement, "machine de confiance" → faille inhérente</td></tr>
+            <tr><td>SSH</td><td>22</td><td>✅ Chiffré</td><td>Clés RSA, tunnels, remplace Telnet/rlogin/rsh</td></tr>
+          </tbody>
+        </table>
+
+        <h3>rlogin — La faille de confiance</h3>
+        <div class="info-box info-warning">
+          <div class="icon">⚠️</div>
+          <div class="content">
+            <strong>Faille de sécurité</strong>
+            rlogin repose sur la notion de "machine de confiance" : si A fait confiance à B, et B fait confiance à C, alors C peut accéder à A sans authentification. Cette <strong>confiance en chaîne</strong> est une faille grave.
+          </div>
+        </div>
+
+        <h3>SSH — Configuration Cisco (TP)</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Cisco IOS — Activer SSH</span></div>
+          <pre><span class="cm">! Prérequis : nom de domaine et hostname</span>
+Router(config)# <span class="kw">ip domain-name</span> iut-info.test
+Router(config)# <span class="kw">hostname</span> Router2
+
+<span class="cm">! Génération des clés RSA (min 512, recommandé 2048)</span>
+Router2(config)# <span class="kw">crypto key generate rsa</span>
+<span class="cm">! → Choose modulus: 768 (ou plus)</span>
+
+<span class="cm">! Forcer SSH v2</span>
+Router2(config)# <span class="kw">ip ssh version 2</span>
+
+<span class="cm">! Autoriser SSH sur les lignes VTY</span>
+Router2(config)# <span class="kw">line vty</span> <span class="num">0 4</span>
+Router2(config-line)# <span class="kw">transport input ssh</span>
+Router2(config-line)# <span class="kw">password</span> class
+
+<span class="cm">! Se connecter depuis un client</span>
+PC> ssh -l cisco <span class="num">172.16.1.5</span></pre>
+        </div>
+
+        <div class="info-box info-important">
+          <div class="icon">🔐</div>
+          <div class="content">
+            <strong>Pourquoi SSH est sécurisé ?</strong>
+            Les credentials ne transitent jamais en clair. L'échange initial établit des clés de session éphémères via Diffie-Hellman. Toutes les trames suivantes sont chiffrées et authentifiées.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="ch2-fichiers" class="tab-content">
+      <div class="lesson-section">
+        <h2>2. Accès aux fichiers distants</h2>
+
+        <h3>FTP vs NFS/SMB</h3>
+        <table class="data-table">
+          <thead><tr><th>Critère</th><th>FTP</th><th>NFS / SMB</th></tr></thead>
+          <tbody>
+            <tr><td>Usage</td><td>Copie intégrale de fichiers</td><td>Accès transparent, comme local</td></tr>
+            <tr><td>Modification</td><td>Téléchargement puis réupload</td><td>Édition directe sur le serveur</td></tr>
+            <tr><td>Montage</td><td>❌</td><td>✅ Intégré au système de fichiers</td></tr>
+            <tr><td>Domaine</td><td>Universel</td><td>NFS=Unix, SMB=Windows</td></tr>
+          </tbody>
+        </table>
+
+        <h3>NFS — Network File System</h3>
+        <p>Protocole Unix/Linux permettant de monter un répertoire distant comme s'il était local. <strong>NFS v4</strong> ajoute le chiffrement Kerberos 5.</p>
+
+        <h3>SMB / Samba</h3>
+        <p>Protocole Microsoft pour le partage de fichiers et d'imprimantes. Adresse du type :</p>
+        <div class="diagram">
+          <pre>\\serveur\partage\chemin\nom_fichier</pre>
+        </div>
+        <p><strong>Samba</strong> est l'implémentation Linux de SMB, permettant :</p>
+        <ul>
+          <li>Partage de disques entre Linux et Windows</li>
+          <li>Services d'impression pour clients Windows</li>
+          <li>Intégration dans un domaine <strong>Active Directory</strong></li>
+          <li>Agir comme contrôleur de domaine AD</li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="ch2-mail" class="tab-content">
+      <div class="lesson-section">
+        <h2>3. Messagerie électronique</h2>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.75rem;margin:1rem 0">
+          <div style="background:var(--card);border:1px solid rgba(0,212,255,.3);border-radius:8px;padding:1rem">
+            <div style="font-family:var(--font-mono);font-size:.65rem;color:var(--accent);margin-bottom:.5rem">MUA</div>
+            <div style="font-size:.85rem;font-weight:700;margin-bottom:.35rem">Mail User Agent</div>
+            <div style="font-size:.78rem;color:var(--text2)">Thunderbird, Outlook, Mutt, RoundCube...</div>
+          </div>
+          <div style="background:var(--card);border:1px solid rgba(124,58,237,.3);border-radius:8px;padding:1rem">
+            <div style="font-family:var(--font-mono);font-size:.65rem;color:#a78bfa;margin-bottom:.5rem">MTA</div>
+            <div style="font-size:.85rem;font-weight:700;margin-bottom:.35rem">Mail Transfer Agent</div>
+            <div style="font-size:.78rem;color:var(--text2)">Postfix, Sendmail, MS Exchange, Zimbra...</div>
+          </div>
+        </div>
+
+        <h3>Protocoles</h3>
+        <table class="data-table">
+          <thead><tr><th>Proto</th><th>Port</th><th>Rôle</th><th>Stockage</th></tr></thead>
+          <tbody>
+            <tr><td>SMTP</td><td>25</td><td>Envoi de messages</td><td>—</td></tr>
+            <tr><td>POP3</td><td>110</td><td>Téléchargement boîte</td><td>Local (supprimé du serveur)</td></tr>
+            <tr><td>IMAP</td><td>143</td><td>Accès distant boîte</td><td>Sur le serveur (synchronisé)</td></tr>
+          </tbody>
+        </table>
+
+        <h3>POP3 vs IMAP</h3>
+        <div class="info-box info-important">
+          <div class="icon">📱</div>
+          <div class="content">
+            <strong>IMAP = usage nomade</strong>
+            IMAP conserve les messages sur le serveur, permettant un accès synchronisé depuis plusieurs appareils (PC, smartphone...). POP3 télécharge et supprime — adapté à un usage mono-poste.
+          </div>
+        </div>
+
+        <h3>Webmail</h3>
+        <ul>
+          <li>Interface via <strong>navigateur</strong> uniquement (HTTP/HTTPS)</li>
+          <li>Aucune installation / configuration locale</li>
+          <li>Communique avec serveurs SMTP et IMAP en backend</li>
+          <li>Adapté aux usages itinérants</li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="ch2-ldap" class="tab-content">
+      <div class="lesson-section">
+        <h2>4. Annuaire LDAP</h2>
+        <p>LDAP organise des informations (utilisateurs, machines, imprimantes) dans une structure <strong>hiérarchique</strong> appelée <strong>DIT</strong> (Directory Information Tree).</p>
+
+        <h3>Différences LDAP vs SGBD</h3>
+        <table class="data-table">
+          <thead><tr><th>Critère</th><th>LDAP</th><th>SGBD classique</th></tr></thead>
+          <tbody>
+            <tr><td>Structure</td><td>Hiérarchique (arbre)</td><td>Tabulaire (tables)</td></tr>
+            <tr><td>Relations</td><td>Aucune dépendance</td><td>Clés étrangères</td></tr>
+            <tr><td>Schéma</td><td>Standardisé</td><td>Propriétaire</td></tr>
+            <tr><td>Optimisé pour</td><td>Lecture intensive</td><td>Lecture/écriture équilibrée</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Structure d'une entrée</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">LDIF</span></div>
+          <pre><span class="cm"># DN = Distinguished Name (identifiant unique)</span>
+dn: cn=John Doe,dc=example,dc=com
+cn: John Doe
+givenName: John
+sn: Doe
+telephoneNumber: +33 1 23 45 67 89
+mail: john@example.com
+manager: cn=Larry Smith,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: person
+objectClass: top</pre>
+        </div>
+
+        <h3>Terminologie clé</h3>
+        <ul>
+          <li><span class="hl-blue">DN</span> (Distinguished Name) : identifiant unique et complet de l'entrée</li>
+          <li><span class="hl-green">RDN</span> (Relative DN) : partie relative, ex. <code>cn=John Doe</code></li>
+          <li><span class="hl-amber">dc</span> : Domain Component — composant du domaine</li>
+          <li><span class="hl-purple">cn</span> : Common Name — nom commun</li>
+          <li><span class="hl-blue">ou</span> : Organizational Unit — unité organisationnelle</li>
+        </ul>
+
+        <h3>Principaux serveurs LDAP</h3>
+        <ul>
+          <li><strong>OpenLDAP</strong> — open source, très répandu sous Linux</li>
+          <li><strong>Active Directory</strong> (Microsoft) — LDAP + Kerberos</li>
+          <li><strong>389 Directory Server</strong> — RedHat/CentOS</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TP PAGE -->
+<div class="content-page" id="page-tp">
+  <div class="content-inner">
+    <button class="content-back" onclick="closePage('page-tp')">← Retour</button>
+    <div class="hero-badge" style="position:static;margin-bottom:1rem">TP 1 → 3</div>
+    <h1>Travaux pratiques</h1>
+    <p class="subtitle">Résumé des manipulations essentielles à maîtriser</p>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('tp1', this)">TP1 — DHCP/DNS</button>
+      <button class="tab-btn" onclick="switchTab('tp2', this)">TP2 — FTP/SSH/Mail</button>
+      <button class="tab-btn" onclick="switchTab('tp3', this)">TP3 — vsftpd</button>
+    </div>
+
+    <div id="tp1" class="tab-content active">
+      <div class="lesson-section">
+        <h2>TP1 — Configuration DHCP & DNS (Packet Tracer)</h2>
+
+        <h3>Étape 1 : Pool DHCP sur Router1</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Cisco IOS</span></div>
+          <pre><span class="cm">! 1. Créer le pool</span>
+Router1(config)# <span class="kw">ip dhcp pool</span> campus
+Router1(dhcp-config)# <span class="kw">network</span> <span class="num">172.16.12.0</span> <span class="num">255.255.255.0</span>
+Router1(dhcp-config)# <span class="kw">default-router</span> <span class="num">172.16.12.1</span>
+Router1(dhcp-config)# <span class="kw">dns-server</span> <span class="num">10.10.10.1</span>
+Router1(dhcp-config)# <span class="kw">domain-name</span> iut-info.test
+Router1(dhcp-config)# exit
+
+<span class="cm">! 2. Exclure les adresses réservées</span>
+Router1(config)# <span class="kw">ip dhcp excluded-address</span> <span class="num">172.16.12.1</span> <span class="num">172.16.12.10</span>
+
+<span class="cm">! 3. Routes statiques</span>
+Router1(config)# <span class="kw">ip route</span> <span class="num">10.0.0.0</span> <span class="num">255.0.0.0</span> <span class="num">172.16.1.5</span>
+Router2(config)# <span class="kw">ip route</span> <span class="num">172.16.12.0</span> <span class="num">255.255.255.0</span> <span class="num">172.16.1.6</span>
+
+<span class="cm">! 4. Vérification</span>
+Router1# <span class="fn">show ip dhcp binding</span></pre>
+        </div>
+
+        <h3>Ce que fait chaque commande</h3>
+        <div class="accordion open">
+          <div class="accordion-header" onclick="toggleAccordion(this)"><span>ip dhcp pool campus</span><span class="accordion-arrow">▼</span></div>
+          <div class="accordion-body">Crée un nouveau pool d'adresses DHCP nommé <strong>campus</strong>. Le nom n'a de signification que locale.</div>
+        </div>
+        <div class="accordion">
+          <div class="accordion-header" onclick="toggleAccordion(this)"><span>network 172.16.12.0 255.255.255.0</span><span class="accordion-arrow">▼</span></div>
+          <div class="accordion-body">Définit la plage d'adresses distribuables : tout le sous-réseau <strong>172.16.12.0/24</strong>.</div>
+        </div>
+        <div class="accordion">
+          <div class="accordion-header" onclick="toggleAccordion(this)"><span>default-router 172.16.12.1</span><span class="accordion-arrow">▼</span></div>
+          <div class="accordion-body">Indique la <strong>passerelle par défaut</strong> que recevront les clients (option DHCP 3).</div>
+        </div>
+        <div class="accordion">
+          <div class="accordion-header" onclick="toggleAccordion(this)"><span>dns-server 10.10.10.1</span><span class="accordion-arrow">▼</span></div>
+          <div class="accordion-body">Communique l'adresse du <strong>serveur DNS</strong> aux clients (option DHCP 6).</div>
+        </div>
+        <div class="accordion">
+          <div class="accordion-header" onclick="toggleAccordion(this)"><span>ip dhcp excluded-address</span><span class="accordion-arrow">▼</span></div>
+          <div class="accordion-body">Exclut les adresses <strong>172.16.12.1 à 172.16.12.10</strong> du pool pour éviter les conflits avec la passerelle et les serveurs.</div>
+        </div>
+
+        <h3>Étape 2 : Enregistrements DNS sur Server0</h3>
+        <p>Server0 (<code>10.10.10.1</code>) doit avoir autorité sur <code>iut-info.test</code>. Il faut saisir :</p>
+        <ul>
+          <li>Enregistrement <span class="hl-blue">SOA</span> : serveur primaire <code>ns.iut-info.test</code></li>
+          <li>Enregistrements <span class="hl-green">A</span> : <code>ns</code>, <code>www</code>, <code>mail</code>...</li>
+          <li>Enregistrement <span class="hl-amber">MX</span> : serveur de messagerie</li>
+        </ul>
+
+        <div class="info-box info-tip">
+          <div class="icon">🎯</div>
+          <div class="content">
+            <strong>Pour accéder à http://www.iut-info.test</strong>
+            Il faut : (1) que <code>www.iut-info.test</code> résolve vers <code>172.16.12.10</code> dans le DNS, (2) que le serveur HTTP soit actif sur cette machine, (3) que les PC clients aient bien <code>10.10.10.1</code> comme serveur DNS.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tp2" class="tab-content">
+      <div class="lesson-section">
+        <h2>TP2 — FTP, SSH & Messagerie</h2>
+
+        <h3>Négociation FTP observée</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">FTP Session</span></div>
+          <pre>PC> ftp <span class="num">10.10.10.1</span>
+<span class="cm">220- Welcome to PT Ftp server</span>
+
+Username: iut
+<span class="cm">331- Username ok, need password</span>
+
+Password:
+<span class="cm">230- Logged in (passive mode On)</span>
+
+ftp> <span class="fn">put</span> sampleFile.txt
+<span class="cm">Writing file... [Transfer complete - 16 bytes]</span></pre>
+        </div>
+
+        <div class="info-box info-warning">
+          <div class="icon">👁️</div>
+          <div class="content">
+            <strong>Visible dans Wireshark !</strong>
+            En mode simulation Packet Tracer, on peut retrouver le <strong>login et le mot de passe en clair</strong> dans les trames FTP sur la connexion de contrôle (port 21). C'est la démonstration de l'insécurité de FTP.
+          </div>
+        </div>
+
+        <h3>SSH sur routeur : succession des trames</h3>
+        <ul>
+          <li><strong>TCP SYN / SYN-ACK / ACK</strong> → établissement connexion TCP port 22</li>
+          <li><strong>SSH banner</strong> → échange de version SSH</li>
+          <li><strong>Key Exchange Init</strong> → négociation algorithmes</li>
+          <li><strong>Diffie-Hellman</strong> → échange de clés</li>
+          <li><strong>New Keys</strong> → activation du chiffrement</li>
+          <li>Tout le reste : <strong>chiffré</strong> → login/password invisibles ✅</li>
+        </ul>
+
+        <h3>Configuration email (Packet Tracer)</h3>
+        <table class="data-table">
+          <thead><tr><th>Paramètre</th><th>PC3 (Centre)</th><th>Sales (Branche)</th></tr></thead>
+          <tbody>
+            <tr><td>Email</td><td>iut-center@centralserver.pt.pka</td><td>iut-branch@branchserver.pt.pka</td></tr>
+            <tr><td>SMTP/POP3 server</td><td>10.10.10.2</td><td>172.16.0.3</td></tr>
+            <tr><td>Username</td><td>iut-center</td><td>iut-branch</td></tr>
+            <tr><td>Password</td><td>iutinfo</td><td>iutinfo</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="tp3" class="tab-content">
+      <div class="lesson-section">
+        <h2>TP3 — Installation vsftpd (VM Ubuntu)</h2>
+
+        <h3>Installation et mise à jour</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Bash — Ubuntu Server</span></div>
+          <pre><span class="cm"># Mise à jour du système</span>
+sudo apt update && sudo apt upgrade
+
+<span class="cm"># Installer SSH (si non coché à l'install)</span>
+sudo apt install openssh-server
+
+<span class="cm"># Installer vsftpd</span>
+sudo apt install vsftpd
+
+<span class="cm"># Accès root via sudo</span>
+sudo su -</pre>
+        </div>
+
+        <h3>Configuration vsftpd</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">/etc/vsftpd.conf</span></div>
+          <pre><span class="cm"># Mode autonome (IPv4 uniquement)</span>
+listen=YES
+listen_ipv6=NO
+
+<span class="cm"># Activer les utilisateurs locaux</span>
+local_enable=YES
+
+<span class="cm"># Autoriser l'écriture</span>
+write_enable=YES
+
+<span class="cm"># Connexions anonymes (TP)</span>
+anonymous_enable=YES
+
+<span class="cm"># Bannière personnalisée</span>
+ftpd_banner=Bienvenue sur le serveur FTP IUT !
+
+<span class="cm"># Empêcher de sortir du répertoire home</span>
+chroot_local_user=YES</pre>
+        </div>
+
+        <h3>Problème chroot + solution</h3>
+        <div class="info-box info-warning">
+          <div class="icon">🔒</div>
+          <div class="content">
+            <strong>Erreur avec chroot_local_user=YES</strong>
+            vsftpd refuse si le home a des droits d'écriture pour le propriétaire. Solution : créer un sous-dossier et retirer le droit d'écriture sur le home.
+          </div>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Bash — Fix chroot</span></div>
+          <pre><span class="cm"># Créer un répertoire accessible</span>
+mkdir /home/iut/Documents
+
+<span class="cm"># Retirer les droits d'écriture du home</span>
+chmod a-w /home/iut
+
+<span class="cm"># Redémarrer le service</span>
+sudo systemctl restart vsftpd
+
+<span class="cm"># Vérifier l'état</span>
+sudo systemctl status vsftpd</pre>
+        </div>
+
+        <h3>Directives importantes de vsftpd.conf</h3>
+        <table class="data-table">
+          <thead><tr><th>Directive</th><th>Valeur</th><th>Effet</th></tr></thead>
+          <tbody>
+            <tr><td>listen</td><td>YES</td><td>Mode autonome (pas xinetd)</td></tr>
+            <tr><td>listen_ipv6</td><td>NO</td><td>IPv4 uniquement (VM sans IPv6)</td></tr>
+            <tr><td>anonymous_enable</td><td>YES/NO</td><td>Autoriser le compte anonyme</td></tr>
+            <tr><td>local_enable</td><td>YES</td><td>Autoriser les comptes locaux</td></tr>
+            <tr><td>write_enable</td><td>YES</td><td>Autoriser les commandes d'écriture</td></tr>
+            <tr><td>chroot_local_user</td><td>YES</td><td>Confiner dans le home</td></tr>
+            <tr><td>ftpd_banner</td><td>texte</td><td>Message d'accueil</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  MR205 — Services Réseaux · BUT Informatique IUT Reims · Fait avec <span>♥</span> pour les révisions
+</footer>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────
+
+const flashcards = [
+  { q: "Que signifie DORA ?", a: "Discover → Offer → Request → Acknowledge. Les 4 étapes d'obtention d'une adresse DHCP." },
+  { q: "Port(s) utilisé(s) par FTP", a: "Port 21 (contrôle / commandes) et port 20 (transfert de données)." },
+  { q: "Port SSH", a: "Port 22 (TCP). SSH remplace Telnet (23) avec chiffrement et authentification par clés." },
+  { q: "Différence POP3 vs IMAP", a: "POP3 télécharge et supprime du serveur. IMAP laisse les mails sur le serveur (synchronisé multi-appareils)." },
+  { q: "Que signifie FQDN ?", a: "Fully Qualified Domain Name : nom complet incluant tous les niveaux. Ex: www.iut-info.univ-reims.fr." },
+  { q: "Enregistrement DNS A", a: "Associe un nom d'hôte (FQDN) à une adresse IPv4." },
+  { q: "Enregistrement DNS PTR", a: "Résolution inverse : adresse IP → nom de domaine. Utilisé dans la zone in-addr.arpa." },
+  { q: "Enregistrement DNS MX", a: "Mail eXchanger : désigne le(s) serveur(s) de messagerie d'une zone. Inclut une priorité numérique." },
+  { q: "Enregistrement DNS CNAME", a: "Canonical Name : crée un alias d'un nom vers un autre nom canonique. Ex: www IN CNAME ns1." },
+  { q: "Que signifie SOA ?", a: "Start Of Authority : premier enregistrement d'une zone, définit le serveur primaire, l'email responsable et les paramètres de synchronisation." },
+  { q: "Rôle de named.conf", a: "Fichier principal de BIND : spécifie les répertoires, le cache des serveurs racine, et déclare les zones avec leurs fichiers." },
+  { q: "Commande Cisco pour vérifier les baux DHCP", a: "show ip dhcp binding — affiche les associations IP/MAC actives." },
+  { q: "Différence NFS vs SMB", a: "NFS = monde Unix/Linux. SMB = monde Microsoft Windows. Tous deux montrent les fichiers distants de façon transparente." },
+  { q: "vsftpd : que fait chroot_local_user=YES ?", a: "Empêche l'utilisateur de sortir de son répertoire home (/home/user). Nécessite que le home n'ait pas de droits en écriture." },
+  { q: "Tunnel SSH : syntaxe générique", a: "ssh user@SSH_SERVER -L LOCAL_PORT:DEST_IP:DEST_PORT. Tout trafic vers LOCAL_PORT passe chiffré dans le tunnel." },
+  { q: "Qu'est-ce que le DIT en LDAP ?", a: "Directory Information Tree : arborescence hiérarchique organisant les données de l'annuaire LDAP." },
+  { q: "Que signifie DN en LDAP ?", a: "Distinguished Name : identifiant unique et complet d'une entrée. Ex: cn=John Doe,dc=example,dc=com." },
+  { q: "Port SMTP", a: "Port 25 (TCP). Protocole d'envoi de messages entre serveurs de messagerie." },
+  { q: "Serveur root DNS : combien d'autorités ?", a: "13 autorités (A à M), chacune représentée par de multiples serveurs géographiquement distribués." },
+  { q: "Commande dig pour tracer la délégation", a: "dig +trace www.example.fr — trace le chemin complet depuis le serveur racine . jusqu'à la réponse finale." },
+  { q: "Que signifie TTL dans DNS ?", a: "Time To Live : durée pendant laquelle un enregistrement peut être mis en cache par les résolveurs." },
+  { q: "Faille de sécurité de rlogin", a: "Confiance en chaîne : si A fait confiance à B et B fait confiance à C, C peut accéder à A sans authentification." },
+  { q: "Commande pour exclure des adresses DHCP (Cisco)", a: "ip dhcp excluded-address 172.16.12.1 172.16.12.10 (dans le mode config global, avant le pool)." },
+  { q: "Différence FTP vs SFTP", a: "FTP : credentials en clair, non sécurisé. SFTP : basé sur SSH, tout est chiffré (données + commandes)." },
+  { q: "Samba : à quoi sert-il ?", a: "Implémenter SMB sous Linux : partage fichiers/imprimantes entre Linux et Windows, intégration Active Directory." },
+  { q: "Qu'est-ce qu'un relais DHCP ?", a: "Équipement réseau qui transmet les broadcasts DHCP entre sous-réseaux, car les routeurs ne propagent pas les broadcasts Ethernet." },
+  { q: "Zone in-addr.arpa", a: "Zone DNS spéciale pour la résolution inverse (IP → nom). Les octets de l'IP sont inversés. Ex: 5.1.168.192.in-addr.arpa pour 192.168.1.5." },
+  { q: "Que signifie MUA ?", a: "Mail User Agent : client de messagerie de l'utilisateur final. Ex: Thunderbird, Outlook, RoundCube." },
+  { q: "Port LDAP", a: "Port 389 (TCP/UDP). Port 636 pour LDAPS (chiffré via TLS)." },
+  { q: "Commande vsftpd : redémarrer le service", a: "sudo systemctl restart vsftpd" }
+];
+
+const quizData = {
+  'q-dhcp-dns': [
+    {
+      q: "Quelle est la séquence correcte pour l'obtention d'une adresse DHCP ?",
+      opts: ["Discover → Request → Offer → Acknowledge", "Discover → Offer → Request → Acknowledge", "Offer → Discover → Request → Acknowledge", "Request → Discover → Offer → Acknowledge"],
+      ans: 1,
+      exp: "La séquence DORA : D = Discover (broadcast client), O = Offer (serveur propose), R = Request (client accepte), A = Acknowledge (serveur confirme)."
+    },
+    {
+      q: "Quel enregistrement DNS permet de faire la résolution inverse (IP → nom) ?",
+      opts: ["A", "CNAME", "PTR", "MX"],
+      ans: 2,
+      exp: "L'enregistrement PTR (Pointer) est utilisé dans la zone in-addr.arpa pour associer une adresse IP à un nom de domaine."
+    },
+    {
+      q: "Quelle commande Cisco affiche les baux DHCP actifs ?",
+      opts: ["show ip dhcp pool", "show ip dhcp binding", "show dhcp lease", "ip dhcp show binding"],
+      ans: 1,
+      exp: "La commande 'show ip dhcp binding' liste toutes les associations IP/MAC actives sur le serveur DHCP."
+    },
+    {
+      q: "Pour quelle raison faut-il un relais DHCP entre deux sous-réseaux ?",
+      opts: ["Le DHCP utilise TCP, pas UDP", "Les routeurs ne propagent pas les broadcasts Ethernet", "Le DHCP n'est pas supporté sur les routeurs Cisco", "Le client DHCP n'envoie que des unicasts"],
+      ans: 1,
+      exp: "DHCP repose sur des messages broadcast Ethernet. Les routeurs ne font pas de forwarding des broadcasts par défaut — il faut donc un agent relais (ip helper-address)."
+    },
+    {
+      q: "Combien d'autorités de noms gèrent le domaine racine du DNS ?",
+      opts: ["7", "10", "13", "26"],
+      ans: 2,
+      exp: "13 autorités identifiées de A à M (A.ROOT-SERVERS.NET à M.ROOT-SERVERS.NET), chacune représentée par de nombreux serveurs physiques dans le monde."
+    },
+    {
+      q: "Quel est le rôle de l'enregistrement SOA ?",
+      opts: ["Définir un alias", "Indiquer le serveur mail", "Déclarer l'autorité sur une zone avec ses paramètres de synchronisation", "Résolution inverse"],
+      ans: 2,
+      exp: "SOA = Start Of Authority. Obligatoire en tête de chaque zone, il définit le serveur primaire, l'email responsable, et les durées de refresh/retry/expire/TTL."
+    },
+    {
+      q: "Quelle commande dig trace le chemin de délégation depuis la racine ?",
+      opts: ["dig -v www.example.fr", "dig +trace www.example.fr", "dig +recursive www.example.fr", "dig @. www.example.fr"],
+      ans: 1,
+      exp: "dig +trace www.example.fr interroge les serveurs racine, puis les délègue progressivement jusqu'à obtenir la réponse finale."
+    },
+    {
+      q: "Dans la zone reverse, comment représente-t-on l'adresse 192.168.1.5 ?",
+      opts: ["192.168.1.5.in-addr.arpa", "5.1.168.192.in-addr.arpa", "in-addr.arpa.192.168.1.5", "reverse.192.168.1.5"],
+      ans: 1,
+      exp: "Pour la résolution inverse, les octets sont inversés et on ajoute .in-addr.arpa : 192.168.1.5 → 5.1.168.192.in-addr.arpa."
+    }
+  ],
+  'q-apps': [
+    {
+      q: "Quelle est la différence principale entre POP3 et IMAP ?",
+      opts: [
+        "POP3 est plus sécurisé qu'IMAP",
+        "POP3 télécharge et supprime les mails du serveur, IMAP les conserve sur le serveur",
+        "IMAP n'est utilisable que sur mobile",
+        "POP3 utilise le port 143, IMAP le port 110"
+      ],
+      ans: 1,
+      exp: "POP3 (port 110) télécharge les messages localement et les supprime du serveur. IMAP (port 143) laisse les messages sur le serveur et synchronise l'état entre appareils."
+    },
+    {
+      q: "Qu'est-ce que Samba ?",
+      opts: [
+        "Un client IMAP pour Linux",
+        "Un serveur FTP sécurisé",
+        "L'implémentation Linux/Unix du protocole SMB pour le partage de fichiers Windows",
+        "Un serveur DNS alternatif à BIND"
+      ],
+      ans: 2,
+      exp: "Samba est l'implémentation open-source du protocole SMB sous Linux. Il permet le partage de fichiers/imprimantes avec des machines Windows et peut agir comme contrôleur de domaine Active Directory."
+    },
+    {
+      q: "Quel protocole NFS v4 ajoute pour la sécurité ?",
+      opts: ["SSL/TLS", "Kerberos 5", "RSA seul", "WPA2"],
+      ans: 1,
+      exp: "NFS v4 intègre Kerberos 5 pour l'authentification et le chiffrement des échanges entre client et serveur."
+    },
+    {
+      q: "Quel est l'avantage principal du Webmail ?",
+      opts: [
+        "Il est plus rapide qu'IMAP",
+        "Il chiffre automatiquement tous les mails",
+        "Aucune installation ni configuration locale, accès depuis n'importe quel navigateur",
+        "Il supporte uniquement POP3"
+      ],
+      ans: 2,
+      exp: "Le Webmail utilise un navigateur comme interface unique via HTTP(S). Aucun client à installer, adapté aux usages itinérants et aux accès ponctuels."
+    },
+    {
+      q: "Quelle est la structure d'adresse SMB pour accéder à un fichier partagé ?",
+      opts: [
+        "smb://serveur/partage/fichier",
+        "\\\\serveur\\partage\\chemin\\fichier",
+        "ftp://serveur/partage/fichier",
+        "/mount/serveur/partage/fichier"
+      ],
+      ans: 1,
+      exp: "Les ressources SMB sont accessibles via la notation UNC (Universal Naming Convention) : \\\\serveur\\partage\\chemin\\fichier."
+    },
+    {
+      q: "Qu'est-ce qu'un MUA ?",
+      opts: [
+        "Mail Upload Agent — serveur d'envoi",
+        "Mail User Agent — client de messagerie de l'utilisateur",
+        "Mail Unix Application — commande Unix d'envoi",
+        "Multi User Authentification — protocole LDAP"
+      ],
+      ans: 1,
+      exp: "MUA = Mail User Agent : c'est le client de messagerie de l'utilisateur final (Thunderbird, Outlook, Mutt, RoundCube...)."
+    }
+  ],
+  'q-secu': [
+    {
+      q: "Pourquoi Telnet est-il obsolète ?",
+      opts: [
+        "Il est trop lent",
+        "Il ne supporte pas IPv6",
+        "Les données transitent en clair, le mot de passe est interceptable",
+        "Il utilise UDP et non TCP"
+      ],
+      ans: 2,
+      exp: "Telnet envoie tout en clair, caractère par caractère. Le login et le mot de passe sont visibles dans les trames réseau. SSH remplace Telnet avec chiffrement complet."
+    },
+    {
+      q: "Quel est le mécanisme d'authentification principal de SSH ?",
+      opts: [
+        "Mot de passe en clair",
+        "Certificat SSL uniquement",
+        "Paire de clés asymétriques (privée + publique)",
+        "Token LDAP"
+      ],
+      ans: 2,
+      exp: "SSH utilise des paires de clés asymétriques RSA (ou Ed25519). La clé publique est sur le serveur, la clé privée reste secrète chez le client. L'authentification ne nécessite pas d'envoyer de secret sur le réseau."
+    },
+    {
+      q: "FTP : quel problème de sécurité a-t-il ?",
+      opts: [
+        "Il utilise UDP, non fiable",
+        "Le login et le mot de passe transitent en clair sur le port 21",
+        "Il chiffre les données mais pas les commandes",
+        "Il est bloqué par tous les pare-feux modernes"
+      ],
+      ans: 1,
+      exp: "Sur la connexion de contrôle (port 21), les commandes USER et PASS contenant le login et le mot de passe transitent en texte brut, visibles avec Wireshark."
+    },
+    {
+      q: "Quel protocole utilise SSH pour l'échange initial de clés de session ?",
+      opts: ["RSA direct", "Diffie-Hellman", "AES-256", "MD5"],
+      ans: 1,
+      exp: "SSH utilise l'algorithme Diffie-Hellman pour établir une clé de session partagée sans jamais la transmettre sur le réseau. Les clés RSA servent à l'authentification."
+    },
+    {
+      q: "Quelle est la faille fondamentale de rlogin ?",
+      opts: [
+        "Utilisation du port 22 non sécurisé",
+        "La confiance en chaîne : une machine de confiance peut permettre l'accès à d'autres sans authentification",
+        "Absence de support des caractères accentués",
+        "Incompatibilité avec les routeurs Cisco"
+      ],
+      ans: 1,
+      exp: "rlogin repose sur la notion de 'machine de confiance'. Si A fait confiance à B et B fait confiance à C, alors C peut accéder à A sans s'authentifier. Cette transitivité de confiance est une faille majeure."
+    },
+    {
+      q: "Pour sécuriser FTP, quelle est la meilleure option ?",
+      opts: ["FTP sur le port 443", "FTPS (FTP + SSL/TLS)", "SFTP (SSH File Transfer Protocol)", "FTP en mode passif uniquement"],
+      ans: 2,
+      exp: "SFTP (SSH File Transfer Protocol) est le remplacement recommandé. Il chiffre à la fois les données et les commandes via SSH sur le port 22. À ne pas confondre avec FTPS (FTP + TLS)."
+    }
+  ],
+  'q-tp': [
+    {
+      q: "Quelle commande Cisco exclut des adresses d'un pool DHCP ?",
+      opts: [
+        "ip dhcp pool exclude 172.16.12.1 172.16.12.10",
+        "ip dhcp excluded-address 172.16.12.1 172.16.12.10",
+        "no ip dhcp pool 172.16.12.1",
+        "ip dhcp reserve 172.16.12.1 172.16.12.10"
+      ],
+      ans: 1,
+      exp: "ip dhcp excluded-address <début> <fin> — cette commande doit être saisie en mode config global, idéalement avant la création du pool."
+    },
+    {
+      q: "Dans vsftpd, quelle directive désactive IPv6 (nécessaire sur nos VMs) ?",
+      opts: ["ipv6_enable=NO", "listen_ipv6=NO", "disable_ipv6=YES", "no_ipv6=YES"],
+      ans: 1,
+      exp: "listen_ipv6=NO dans /etc/vsftpd.conf désactive le mode écoute IPv6. On doit aussi s'assurer que listen=YES est activé pour IPv4."
+    },
+    {
+      q: "Après chroot_local_user=YES, pourquoi vsftpd refuse-t-il la connexion ?",
+      opts: [
+        "Le service doit être réinstallé",
+        "Le répertoire home ne doit pas avoir de droits d'écriture pour le propriétaire",
+        "Le port 21 est bloqué",
+        "Il faut redémarrer la VM"
+      ],
+      ans: 1,
+      exp: "vsftpd exige que le répertoire chroot racine (home) ne soit pas accessible en écriture par son propriétaire. Solution : chmod a-w /home/iut."
+    },
+    {
+      q: "Dans Packet Tracer, comment configurer un PC en DHCP ?",
+      opts: [
+        "CLI > ip dhcp",
+        "Desktop > IP Configuration > passer de Static à DHCP",
+        "Services > DHCP > Enable",
+        "Config > FastEthernet > DHCP Mode"
+      ],
+      ans: 1,
+      exp: "Dans Packet Tracer, sur la fenêtre du PC : onglet Desktop → IP Configuration → sélectionner le bouton radio DHCP. Le PC envoie alors automatiquement un DHCP Discover."
+    },
+    {
+      q: "Quelle commande permet de générer les clés RSA pour SSH sur un routeur Cisco ?",
+      opts: [
+        "ip ssh key rsa 768",
+        "crypto key generate rsa",
+        "ssh keygen -t rsa",
+        "generate rsa-key 768"
+      ],
+      ans: 1,
+      exp: "crypto key generate rsa — le routeur demande la taille en bits (360-2048). Il faut au préalable avoir défini un hostname et un domain-name."
+    },
+    {
+      q: "Quelle directive vsftpd définit la bannière d'accueil ?",
+      opts: ["banner=", "welcome_message=", "ftpd_banner=", "login_banner="],
+      ans: 2,
+      exp: "ftpd_banner=Votre message — affiché juste après la connexion TCP, avant toute authentification."
+    },
+    {
+      q: "Pour accéder à http://www.iut-info.test depuis un client, que faut-il ?",
+      opts: [
+        "Uniquement que le serveur HTTP soit actif",
+        "Un enregistrement A dans le DNS + serveur HTTP actif + clients configurés avec le bon DNS",
+        "Configurer HTTPS obligatoirement",
+        "Seulement modifier le fichier /etc/hosts sur chaque client"
+      ],
+      ans: 1,
+      exp: "Il faut : (1) enregistrement A dans Server0 : www.iut-info.test → 172.16.12.10 ; (2) service HTTP actif sur 172.16.12.10 ; (3) les clients PC doivent recevoir l'adresse du DNS via DHCP."
+    }
+  ]
+};
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderFlashcards();
+  renderAllQuizzes();
+});
+
+// ── FLASHCARDS ────────────────────────────────────────────────────────────
+
+function renderFlashcards() {
+  const grid = document.getElementById('fc-grid');
+  grid.innerHTML = flashcards.map((fc, i) => `
+    <div class="flashcard" onclick="this.classList.toggle('flipped')">
+      <div class="flashcard-inner">
+        <div class="flashcard-front">
+          <div>
+            <span class="fc-label">Question ${i+1}/${flashcards.length}</span>
+            ${fc.q}
+          </div>
+        </div>
+        <div class="flashcard-back">${fc.a}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── QUIZ ──────────────────────────────────────────────────────────────────
+
+const quizState = {};
+
+function renderAllQuizzes() {
+  Object.entries(quizData).forEach(([tabId, questions]) => {
+    quizState[tabId] = { answers: new Array(questions.length).fill(null), score: 0 };
+    const container = document.getElementById(tabId);
+    container.innerHTML = questions.map((q, qi) => renderQuestion(q, qi, tabId)).join('') + `
+      <div class="score-summary" id="summary-${tabId}">
+        <div class="score-big" id="score-big-${tabId}">0/${questions.length}</div>
+        <div class="score-label">Bonne(s) réponse(s)</div>
+        <button class="reset-btn" onclick="resetQuiz('${tabId}')">Recommencer</button>
+      </div>
+    `;
+  });
+}
+
+function renderQuestion(q, qi, tabId) {
+  const letters = ['A', 'B', 'C', 'D'];
+  return `
+    <div class="quiz-container" id="qblock-${tabId}-${qi}">
+      <div class="quiz-question">
+        <span class="q-num">Question ${qi+1}</span>
+        ${q.q}
+      </div>
+      <div class="quiz-options">
+        ${q.opts.map((opt, oi) => `
+          <button class="quiz-option" onclick="answerQuiz('${tabId}', ${qi}, ${oi})">
+            <span class="opt-letter">${letters[oi]}.</span>
+            <span>${opt}</span>
+          </button>
+        `).join('')}
+      </div>
+      <div class="quiz-feedback" id="fb-${tabId}-${qi}"></div>
+    </div>
+  `;
+}
+
+function answerQuiz(tabId, qi, chosen) {
+  const state = quizState[tabId];
+  if (state.answers[qi] !== null) return;
+  state.answers[qi] = chosen;
+
+  const questions = quizData[tabId];
+  const q = questions[qi];
+  const block = document.getElementById(`qblock-${tabId}-${qi}`);
+  const fb = document.getElementById(`fb-${tabId}-${qi}`);
+  const buttons = block.querySelectorAll('.quiz-option');
+
+  buttons.forEach((btn, i) => {
+    if (i === q.ans) btn.classList.add('correct');
+    else if (i === chosen && chosen !== q.ans) btn.classList.add('wrong');
+    else btn.classList.add('revealed');
+    btn.disabled = true;
+  });
+
+  const correct = chosen === q.ans;
+  if (correct) state.score++;
+
+  fb.className = `quiz-feedback show ${correct ? 'ok' : 'ko'}`;
+  fb.innerHTML = `${correct ? '✅ Correct !' : '❌ Incorrect.'} — ${q.exp}`;
+
+  // Check if all answered
+  if (state.answers.every(a => a !== null)) {
+    const summary = document.getElementById(`summary-${tabId}`);
+    const scoreBig = document.getElementById(`score-big-${tabId}`);
+    summary.classList.add('show');
+    scoreBig.textContent = `${state.score}/${questions.length}`;
+  }
+}
+
+function resetQuiz(tabId) {
+  quizState[tabId] = { answers: new Array(quizData[tabId].length).fill(null), score: 0 };
+  const container = document.getElementById(tabId);
+  container.innerHTML = quizData[tabId].map((q, qi) => renderQuestion(q, qi, tabId)).join('') + `
+    <div class="score-summary" id="summary-${tabId}">
+      <div class="score-big" id="score-big-${tabId}">0/${quizData[tabId].length}</div>
+      <div class="score-label">Bonne(s) réponse(s)</div>
+      <button class="reset-btn" onclick="resetQuiz('${tabId}')">Recommencer</button>
+    </div>
+  `;
+}
+
+// ── TABS ──────────────────────────────────────────────────────────────────
+
+function switchTab(tabId, btn) {
+  const parent = btn.closest('.content-page') || document;
+  const allBtns = btn.closest('.tab-bar').querySelectorAll('.tab-btn');
+  const tabParent = btn.closest('.content-page') || document;
+
+  allBtns.forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  // Find sibling tab-contents
+  const tabBar = btn.closest('.tab-bar');
+  let el = tabBar.nextElementSibling;
+  while (el && el.classList.contains('tab-content')) {
+    el.classList.remove('active');
+    el = el.nextElementSibling;
+  }
+  document.getElementById(tabId).classList.add('active');
+}
+
+// ── PAGES ─────────────────────────────────────────────────────────────────
+
+function openPage(id) {
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function closePage(id) {
+  document.getElementById(id).classList.remove('active');
+}
+
+// ── ACCORDION ─────────────────────────────────────────────────────────────
+
+function toggleAccordion(header) {
+  header.closest('.accordion').classList.toggle('open');
+}
+</script>
+</body>
+</html>

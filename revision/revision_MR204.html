@@ -1,0 +1,2484 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>R2.04 - Révisions Réseau</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0d0f14;
+            --surface: #141720;
+            --surface2: #1c2030;
+            --border: #2a2f3d;
+            --accent: #4f9cf9;
+            --accent2: #7c3aed;
+            --green: #22c55e;
+            --red: #ef4444;
+            --orange: #f97316;
+            --yellow: #eab308;
+            --text: #e2e8f0;
+            --text-dim: #64748b;
+            --mono: 'JetBrains Mono', monospace;
+            --sans: 'Syne', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--sans);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* ── HEADER ── */
+        header {
+            border-bottom: 1px solid var(--border);
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: var(--surface);
+            position: sticky;
+            top: 0;
+            z-index: 200;
+        }
+
+        .logo {
+            font-size: 1.1em;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: var(--accent);
+        }
+
+        .logo span { color: var(--text-dim); font-weight: 400; }
+
+        nav {
+            margin-left: auto;
+            display: flex;
+            gap: 4px;
+        }
+
+        nav button {
+            padding: 7px 16px;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-family: var(--sans);
+            font-size: 0.85em;
+            font-weight: 600;
+            border-radius: 6px;
+            transition: all 0.15s;
+        }
+
+        nav button:hover { color: var(--text); background: var(--surface2); }
+        nav button.active { color: var(--accent); border-color: var(--accent); background: rgba(79,156,249,0.08); }
+
+        /* ── LAYOUT ── */
+        .container { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+
+        .section { display: none; }
+        .section.active { display: block; }
+
+        /* ── ACCUEIL ── */
+        .hero {
+            text-align: center;
+            padding: 60px 0 40px;
+        }
+
+        .hero h1 {
+            font-size: 3em;
+            font-weight: 800;
+            letter-spacing: -2px;
+            line-height: 1;
+            margin-bottom: 12px;
+        }
+
+        .hero h1 .hi { color: var(--accent); }
+
+        .hero p {
+            color: var(--text-dim);
+            font-size: 1em;
+            margin-bottom: 40px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 16px;
+            margin: 32px 0;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+
+        .card-icon {
+            font-size: 1.8em;
+            margin-bottom: 12px;
+        }
+
+        .card h3 {
+            font-size: 1em;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .card p { color: var(--text-dim); font-size: 0.85em; }
+
+        /* ── COURS ── */
+        .tab-bar {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 16px;
+        }
+
+        .tab-btn {
+            padding: 8px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            cursor: pointer;
+            font-family: var(--sans);
+            font-size: 0.85em;
+            font-weight: 600;
+            border-radius: 6px;
+            transition: all 0.15s;
+        }
+
+        .tab-btn:hover { color: var(--text); }
+        .tab-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        h2 {
+            font-size: 1.5em;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+        }
+
+        h3 {
+            font-size: 1.1em;
+            font-weight: 700;
+            margin: 24px 0 12px;
+            color: var(--accent);
+        }
+
+        h4 {
+            font-size: 0.95em;
+            font-weight: 700;
+            margin: 16px 0 8px;
+            color: var(--text);
+        }
+
+        .content-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 12px 0;
+        }
+
+        .content-box ul { margin-left: 20px; }
+        .content-box li { margin: 4px 0; font-size: 0.9em; color: var(--text-dim); }
+        .content-box li strong { color: var(--text); }
+        .content-box p { font-size: 0.9em; color: var(--text-dim); margin-bottom: 8px; }
+        .content-box p strong { color: var(--text); }
+
+        .kp {
+            background: rgba(79,156,249,0.08);
+            border: 1px solid rgba(79,156,249,0.3);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 0.85em;
+            margin: 12px 0;
+        }
+
+        pre {
+            background: #0a0c10;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            font-family: var(--mono);
+            font-size: 0.8em;
+            margin: 12px 0;
+            color: #a6e3a1;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85em;
+            margin: 12px 0;
+        }
+
+        th {
+            background: var(--surface2);
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 0.8em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-dim);
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-dim);
+        }
+
+        td strong { color: var(--text); }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            font-weight: 700;
+            font-family: var(--mono);
+        }
+
+        .tag-blue { background: rgba(79,156,249,0.15); color: var(--accent); }
+        .tag-green { background: rgba(34,197,94,0.15); color: var(--green); }
+        .tag-red { background: rgba(239,68,68,0.15); color: var(--red); }
+        .tag-orange { background: rgba(249,115,22,0.15); color: var(--orange); }
+
+        /* ── QUIZ ── */
+        .quiz-container { display: flex; flex-direction: column; gap: 20px; }
+
+        .quiz-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            transition: border-color 0.2s;
+        }
+
+        .quiz-card.answered-ok { border-color: var(--green); }
+        .quiz-card.answered-ko { border-color: var(--red); }
+
+        .quiz-label {
+            font-size: 0.75em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+
+        .quiz-q {
+            font-size: 1em;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .quiz-opts { display: flex; flex-direction: column; gap: 8px; }
+
+        .quiz-opt {
+            padding: 12px 16px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: var(--sans);
+            font-size: 0.9em;
+            color: var(--text);
+            text-align: left;
+            transition: all 0.15s;
+        }
+
+        .quiz-opt:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+        .quiz-opt:disabled { cursor: default; }
+        .quiz-opt.correct { background: rgba(34,197,94,0.1); border-color: var(--green); color: var(--green); }
+        .quiz-opt.wrong { background: rgba(239,68,68,0.1); border-color: var(--red); color: var(--red); }
+
+        .quiz-feedback {
+            margin-top: 12px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            display: none;
+        }
+
+        .quiz-feedback.show { display: block; }
+        .quiz-feedback.ok { background: rgba(34,197,94,0.1); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+        .quiz-feedback.ko { background: rgba(239,68,68,0.1); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
+
+        .btn {
+            padding: 10px 20px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: var(--sans);
+            font-weight: 700;
+            font-size: 0.9em;
+            transition: all 0.15s;
+        }
+
+        .btn:hover { opacity: 0.85; }
+        .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text-dim); }
+        .btn-ghost:hover { border-color: var(--text-dim); color: var(--text); opacity: 1; }
+
+        /* ── SCORE ── */
+        .score-bar {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 24px;
+        }
+
+        .score-num {
+            font-family: var(--mono);
+            font-size: 1.4em;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        /* ── MEMO ── */
+        .memo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .memo-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 18px;
+        }
+
+        .memo-card h3 {
+            font-size: 0.85em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent);
+            margin: 0 0 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .memo-card ul { margin-left: 16px; }
+        .memo-card li { font-size: 0.82em; color: var(--text-dim); margin: 4px 0; }
+        .memo-card li strong { color: var(--text); }
+        .memo-card code {
+            font-family: var(--mono);
+            font-size: 0.85em;
+            background: var(--surface2);
+            padding: 1px 5px;
+            border-radius: 3px;
+            color: var(--accent);
+        }
+
+        /* ── TPs ── */
+        .tp-layout {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .tp-sidebar {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            position: sticky;
+            top: 80px;
+        }
+
+        .tp-sidebar-title {
+            padding: 14px 16px;
+            font-size: 0.7em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tp-nav-btn {
+            display: flex;
+            flex-direction: column;
+            padding: 14px 16px;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            font-family: var(--sans);
+            text-align: left;
+            transition: background 0.15s;
+            width: 100%;
+        }
+
+        .tp-nav-btn:last-child { border-bottom: none; }
+        .tp-nav-btn:hover { background: var(--surface2); }
+
+        .tp-nav-btn.active {
+            background: rgba(79,156,249,0.1);
+            border-left: 3px solid var(--accent);
+        }
+
+        .tp-nav-num {
+            font-family: var(--mono);
+            font-size: 0.7em;
+            color: var(--text-dim);
+            margin-bottom: 3px;
+        }
+
+        .tp-nav-title {
+            font-size: 0.85em;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .tp-nav-sub {
+            font-size: 0.75em;
+            color: var(--text-dim);
+            margin-top: 2px;
+        }
+
+        .tp-content { display: none; }
+        .tp-content.active { display: block; }
+
+        .tp-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .tp-num {
+            font-family: var(--mono);
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--accent);
+            opacity: 0.3;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .tp-header h2 {
+            margin-bottom: 4px;
+        }
+
+        .tp-header p {
+            font-size: 0.85em;
+            color: var(--text-dim);
+        }
+
+        /* ── INTERACTIVE ACTIVITIES ── */
+        .activity {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+        }
+
+        .activity-title {
+            font-size: 0.7em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        .activity h3 {
+            font-size: 1em;
+            font-weight: 700;
+            color: var(--text);
+            margin: 0 0 16px;
+        }
+
+        /* DRAG & DROP OSI */
+        .dnd-zone {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .dnd-pool {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .dnd-pool-title {
+            font-size: 0.75em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            margin-bottom: 10px;
+        }
+
+        .dnd-items {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-height: 40px;
+        }
+
+        .dnd-item {
+            padding: 8px 12px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.85em;
+            font-family: var(--mono);
+            cursor: grab;
+            transition: all 0.15s;
+            user-select: none;
+        }
+
+        .dnd-item:active { cursor: grabbing; opacity: 0.7; }
+        .dnd-item:hover { border-color: var(--accent); color: var(--accent); }
+        .dnd-item.placed { background: rgba(79,156,249,0.1); border-color: var(--accent); color: var(--accent); }
+        .dnd-item.correct { background: rgba(34,197,94,0.1); border-color: var(--green); color: var(--green); }
+        .dnd-item.wrong { background: rgba(239,68,68,0.1); border-color: var(--red); color: var(--red); }
+
+        .dnd-targets {
+            flex: 1;
+            min-width: 220px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .dnd-target {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            background: var(--surface2);
+            border: 1px dashed var(--border);
+            border-radius: 6px;
+            min-height: 38px;
+            transition: border-color 0.15s;
+        }
+
+        .dnd-target.drag-over { border-color: var(--accent); background: rgba(79,156,249,0.05); }
+
+        .dnd-target-label {
+            font-size: 0.75em;
+            color: var(--text-dim);
+            white-space: nowrap;
+            font-family: var(--mono);
+            min-width: 60px;
+        }
+
+        .dnd-target-slot {
+            flex: 1;
+            font-size: 0.85em;
+            font-family: var(--mono);
+            color: var(--text-dim);
+        }
+
+        /* ORDERING */
+        .order-items {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .order-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: grab;
+            font-size: 0.9em;
+            transition: all 0.15s;
+            user-select: none;
+        }
+
+        .order-item:hover { border-color: var(--accent); }
+        .order-item.dragging { opacity: 0.4; }
+
+        .order-handle {
+            color: var(--text-dim);
+            font-size: 0.8em;
+        }
+
+        /* FILL IN */
+        .fill-code {
+            background: #0a0c10;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            font-family: var(--mono);
+            font-size: 0.82em;
+            line-height: 2;
+        }
+
+        .fill-blank {
+            display: inline-block;
+            min-width: 120px;
+            border-bottom: 2px solid var(--accent);
+            background: rgba(79,156,249,0.08);
+            padding: 0 6px;
+            border-radius: 4px;
+            color: var(--accent);
+            font-family: var(--mono);
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .fill-blank.correct { border-color: var(--green); background: rgba(34,197,94,0.1); color: var(--green); }
+        .fill-blank.wrong { border-color: var(--red); background: rgba(239,68,68,0.1); color: var(--red); }
+
+        .fill-choices {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .fill-choice {
+            padding: 6px 12px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: var(--mono);
+            font-size: 0.82em;
+            cursor: pointer;
+            transition: all 0.15s;
+            color: var(--text);
+        }
+
+        .fill-choice:hover { border-color: var(--accent); color: var(--accent); }
+        .fill-choice.used { opacity: 0.3; pointer-events: none; }
+
+        /* SUBNET CALC */
+        .subnet-calc {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .subnet-input {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .subnet-input label {
+            font-size: 0.85em;
+            color: var(--text-dim);
+            white-space: nowrap;
+        }
+
+        .subnet-input input {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: var(--mono);
+            font-size: 0.9em;
+            width: 160px;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .subnet-input input:focus { border-color: var(--accent); }
+
+        .subnet-result {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            display: none;
+        }
+
+        .subnet-result.show { display: block; }
+
+        .subnet-result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .subnet-field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .subnet-field-label {
+            font-size: 0.7em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+        }
+
+        .subnet-field-value {
+            font-family: var(--mono);
+            font-size: 0.9em;
+            color: var(--green);
+        }
+
+        /* FLASHCARD */
+        .flashcard-stack {
+            perspective: 1000px;
+            margin: 16px auto;
+            max-width: 500px;
+        }
+
+        .flashcard {
+            width: 100%;
+            height: 200px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.5s;
+            cursor: pointer;
+        }
+
+        .flashcard.flipped { transform: rotateY(180deg); }
+
+        .flashcard-face {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 24px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .flashcard-front {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+        }
+
+        .flashcard-back {
+            background: rgba(79,156,249,0.08);
+            border: 1px solid rgba(79,156,249,0.3);
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-hint {
+            font-size: 0.7em;
+            color: var(--text-dim);
+            margin-top: 8px;
+        }
+
+        .flashcard-q {
+            font-size: 1em;
+            font-weight: 700;
+        }
+
+        .flashcard-a {
+            font-size: 0.9em;
+            color: var(--accent);
+            font-family: var(--mono);
+        }
+
+        .flashcard-controls {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .flashcard-counter {
+            text-align: center;
+            font-size: 0.75em;
+            color: var(--text-dim);
+            font-family: var(--mono);
+            margin-bottom: 8px;
+        }
+
+        /* DIAGRAM */
+        .network-diagram {
+            background: #0a0c10;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .diagram-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin: 8px 0;
+            flex-wrap: wrap;
+        }
+
+        .diag-node {
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.8em;
+            font-family: var(--mono);
+            font-weight: 700;
+            border: 1px solid;
+        }
+
+        .diag-pc { background: rgba(79,156,249,0.1); border-color: var(--accent); color: var(--accent); }
+        .diag-sw { background: rgba(249,115,22,0.1); border-color: var(--orange); color: var(--orange); }
+        .diag-rt { background: rgba(124,58,237,0.1); border-color: var(--accent2); color: var(--accent2); }
+        .diag-ap { background: rgba(234,179,8,0.1); border-color: var(--yellow); color: var(--yellow); }
+
+        .diag-line {
+            color: var(--text-dim);
+            font-size: 0.9em;
+        }
+
+        .diag-vlan {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.7em;
+            font-family: var(--mono);
+            font-weight: 700;
+        }
+
+        .diag-v2 { background: rgba(79,156,249,0.15); color: var(--accent); }
+        .diag-v3 { background: rgba(34,197,94,0.15); color: var(--green); }
+
+        /* INFO BOX */
+        .info-box {
+            background: rgba(79,156,249,0.08);
+            border: 1px solid rgba(79,156,249,0.2);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 0.85em;
+            color: var(--text-dim);
+            margin: 12px 0;
+        }
+
+        .info-box strong { color: var(--text); }
+
+        .warn-box {
+            background: rgba(249,115,22,0.08);
+            border: 1px solid rgba(249,115,22,0.2);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 0.85em;
+            color: var(--text-dim);
+            margin: 12px 0;
+        }
+
+        /* REVEAL */
+        .reveal-item {
+            margin: 8px 0;
+        }
+
+        .reveal-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: var(--sans);
+            font-size: 0.88em;
+            color: var(--text);
+            width: 100%;
+            text-align: left;
+            transition: all 0.15s;
+        }
+
+        .reveal-btn:hover { border-color: var(--accent); }
+
+        .reveal-arrow {
+            margin-left: auto;
+            transition: transform 0.2s;
+            color: var(--text-dim);
+        }
+
+        .reveal-btn.open .reveal-arrow { transform: rotate(90deg); }
+
+        .reveal-answer {
+            display: none;
+            padding: 12px 16px;
+            background: rgba(79,156,249,0.05);
+            border: 1px solid rgba(79,156,249,0.15);
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            font-size: 0.85em;
+            color: var(--text-dim);
+            line-height: 1.7;
+        }
+
+        .reveal-answer strong { color: var(--text); }
+        .reveal-answer code {
+            font-family: var(--mono);
+            font-size: 0.88em;
+            background: var(--surface2);
+            padding: 1px 5px;
+            border-radius: 3px;
+            color: var(--accent);
+        }
+
+        /* PROGRESS */
+        .tp-progress {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .progress-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--border);
+        }
+
+        .progress-dot.done { background: var(--green); }
+        .progress-dot.active { background: var(--accent); }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .tp-layout { grid-template-columns: 1fr; }
+            .tp-sidebar { position: static; }
+            .tp-sidebar { display: flex; overflow-x: auto; }
+            .tp-nav-btn { min-width: 140px; border-bottom: none; border-right: 1px solid var(--border); }
+            header { flex-wrap: wrap; gap: 8px; }
+            nav { flex-wrap: wrap; }
+            .hero h1 { font-size: 2em; }
+        }
+
+        @media print {
+            header, nav, .tp-sidebar, .btn { display: none !important; }
+            body { background: white; color: black; }
+            .memo-card { border: 1px solid #ccc; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">R2.04 <span>/ Réseau Bas Niveau</span></div>
+    <nav>
+        <button class="active" onclick="showSection('accueil', this)">Accueil</button>
+        <button onclick="showSection('cours', this)">Cours</button>
+        <button onclick="showSection('tps', this)">TPs</button>
+        <button onclick="showSection('quiz', this)">Quiz</button>
+        <button onclick="showSection('memo', this)">Mémo</button>
+    </nav>
+</header>
+
+<!-- ═══════════════════════════════════════════════ ACCUEIL -->
+<div id="accueil" class="section active">
+    <div class="container">
+        <div class="hero">
+            <h1><span class="hi">R2.04</span><br>Réseau Bas Niveau</h1>
+            <p>IUT Informatique Reims — Ressources de révision</p>
+        </div>
+        <div class="cards">
+            <div class="card" onclick="showSection('cours', document.querySelector('nav button:nth-child(2)'))">
+                <div class="card-icon">📖</div>
+                <h3>Cours</h3>
+                <p>5 chapitres : équipements, TCP/IP, commutation, WiFi, sous-réseaux</p>
+            </div>
+            <div class="card" onclick="showSection('tps', document.querySelector('nav button:nth-child(3)'))">
+                <div class="card-icon">🧪</div>
+                <h3>TPs Interactifs</h3>
+                <p>6 TPs avec activités, exercices et questions guidées</p>
+            </div>
+            <div class="card" onclick="showSection('quiz', document.querySelector('nav button:nth-child(4)'))">
+                <div class="card-icon">⚡</div>
+                <h3>Quiz</h3>
+                <p>QCM et exercices de calcul avec correction immédiate</p>
+            </div>
+            <div class="card" onclick="showSection('memo', document.querySelector('nav button:nth-child(5)'))">
+                <div class="card-icon">📋</div>
+                <h3>Fiche Mémo</h3>
+                <p>L'essentiel du cours en une page — autorisée au contrôle</p>
+            </div>
+        </div>
+        <div class="info-box">
+            <strong>Programme :</strong> Équipements réseaux · Internet & TCP/IP · Adresses MAC & VLAN · Ethernet & WiFi · Configuration réseau & sous-réseaux
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ COURS -->
+<div id="cours" class="section">
+    <div class="container">
+        <h2>Cours par chapitre</h2>
+        <div class="tab-bar">
+            <button class="tab-btn active" onclick="showTab('ch0', this)">Ch.0 — Équipements</button>
+            <button class="tab-btn" onclick="showTab('ch1', this)">Ch.1 — TCP/IP</button>
+            <button class="tab-btn" onclick="showTab('ch2', this)">Ch.2 — Commutation</button>
+            <button class="tab-btn" onclick="showTab('ch3', this)">Ch.3 — Ethernet/WiFi</button>
+            <button class="tab-btn" onclick="showTab('ch4', this)">Ch.4 — Sous-réseaux</button>
+        </div>
+
+        <div id="ch0" class="tab-content active">
+            <div class="kp">💡 Chaque équipement agit sur une couche OSI différente — plus il est haut dans les couches, plus il est "intelligent".</div>
+            <h3>Hiérarchie des équipements</h3>
+            <table>
+                <tr><th>Équipement</th><th>Couche</th><th>Rôle</th><th>Statut</th></tr>
+                <tr><td><strong>Répéteur</strong></td><td><span class="tag tag-blue">L1</span></td><td>Amplifie le signal physique</td><td>WiFi domestique</td></tr>
+                <tr><td><strong>Hub</strong></td><td><span class="tag tag-blue">L1</span></td><td>Broadcast sur tous les ports → collisions</td><td><span class="tag tag-red">Obsolète</span></td></tr>
+                <tr><td><strong>Pont/Bridge</strong></td><td><span class="tag tag-orange">L2</span></td><td>Interconnecte 2 LANs, ports isolés</td><td>Rare</td></tr>
+                <tr><td><strong>Switch</strong></td><td><span class="tag tag-orange">L2/L3</span></td><td>Table MAC, full duplex, VLANs</td><td><span class="tag tag-green">Standard</span></td></tr>
+                <tr><td><strong>Routeur</strong></td><td><span class="tag tag-green">L3</span></td><td>Achemine entre réseaux, table de routage</td><td><span class="tag tag-green">Essentiel</span></td></tr>
+            </table>
+            <h3>Switch en détail</h3>
+            <div class="content-box">
+                <p><strong>Table MAC :</strong> association adresse MAC ↔ port, apprise dynamiquement.</p>
+                <ul>
+                    <li>Adresse connue → envoi sur le bon port uniquement</li>
+                    <li>Adresse inconnue → flooding (broadcast)</li>
+                    <li>Même port source = destination → trame ignorée</li>
+                    <li>Switch manageable : SNMP, VLANs, QoS, port mirroring, filtrage MAC</li>
+                </ul>
+            </div>
+            <h3>Routeur en détail</h3>
+            <div class="content-box">
+                <ul>
+                    <li>Utilise les adresses IP (couche 3), pas les MAC</li>
+                    <li><strong>Routage statique :</strong> table configurée manuellement</li>
+                    <li><strong>Routage dynamique :</strong> auto-apprentissage (OSPF, RIP...)</li>
+                    <li>Ne laisse pas passer les broadcasts → délimite les domaines</li>
+                    <li>NAT en IPv4 : masque les adresses internes</li>
+                    <li><strong>Obligatoire</strong> pour connecter un LAN à Internet</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="ch1" class="tab-content">
+            <h3>Deux types d'adresses</h3>
+            <div class="content-box">
+                <ul>
+                    <li><strong>MAC (physique) :</strong> unique par carte, communication locale uniquement</li>
+                    <li><strong>IP (réseau) :</strong> identification sur Internet, permet les sous-réseaux</li>
+                </ul>
+                <p style="margin-top: 10px;">Analogie : rue = réseau, immeuble = IP, boîte aux lettres = port</p>
+            </div>
+            <h3>Modèles OSI et TCP/IP</h3>
+            <table>
+                <tr><th>OSI</th><th>Couche</th><th>TCP/IP</th><th>Exemples</th></tr>
+                <tr><td>7 - Application</td><td rowspan="3" style="text-align:center">⬆</td><td rowspan="3">Application</td><td>HTTP, FTP, DNS</td></tr>
+                <tr><td>6 - Présentation</td><td>Chiffrement, format</td></tr>
+                <tr><td>5 - Session</td><td>Ouverture/fermeture</td></tr>
+                <tr><td>4 - Transport</td><td></td><td>Transport</td><td>TCP, UDP, ports</td></tr>
+                <tr><td>3 - Réseau</td><td></td><td>Internet</td><td>IP, ICMP, routage</td></tr>
+                <tr><td>2 - Liaison</td><td rowspan="2" style="text-align:center">⬇</td><td rowspan="2">Accès réseau</td><td>Ethernet, WiFi, MAC</td></tr>
+                <tr><td>1 - Physique</td><td>Signaux, bits</td></tr>
+            </table>
+            <h3>Adressage IPv4</h3>
+            <div class="content-box">
+                <p><strong>32 bits = 4 octets</strong> — ex: 192.168.1.1</p>
+                <ul>
+                    <li><strong>Classe A :</strong> 0-127.x.x.x → masque /8</li>
+                    <li><strong>Classe B :</strong> 128-191.x.x.x → masque /16</li>
+                    <li><strong>Classe C :</strong> 192-223.x.x.x → masque /24</li>
+                    <li>CIDR : notation /n (bits réseau), s'affranchit des classes</li>
+                </ul>
+            </div>
+            <h3>Adressage IPv6</h3>
+            <div class="content-box">
+                <p><strong>128 bits</strong> — 8 groupes hexadécimaux — ex: 2001:0db8:acad:00c8::1/64</p>
+                <ul>
+                    <li><strong>GUA :</strong> publique routable, commence par 2000::/3</li>
+                    <li><strong>LLA :</strong> fe80::/10, locale uniquement</li>
+                    <li>Préfixe recommandé : /64 (64 bits réseau + 64 bits interface)</li>
+                    <li>Élimine le besoin de NAT</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="ch2" class="tab-content">
+            <h3>Adresse MAC</h3>
+            <div class="content-box">
+                <p><strong>48 bits = 6 octets</strong> — format XX:XX:XX:XX:XX:XX</p>
+                <ul>
+                    <li>OUI (3 premiers octets) : identifiant fabricant</li>
+                    <li>3 derniers octets : numéro de série unique</li>
+                    <li><strong>Unicast :</strong> une destination précise</li>
+                    <li><strong>Broadcast :</strong> FF-FF-FF-FF-FF-FF (tous les équipements)</li>
+                </ul>
+            </div>
+            <h3>VLANs</h3>
+            <div class="content-box">
+                <p><strong>Topologie logique ≠ topologie physique</strong></p>
+                <ul>
+                    <li>VLAN niveau 1 (par port), niveau 2 (par MAC), niveau 3 (par IP)</li>
+                    <li>Séparation sécurité + optimisation bande passante</li>
+                    <li><strong>Trunk 802.1Q :</strong> un seul câble pour plusieurs VLANs (trames taguées)</li>
+                    <li>Pour communiquer entre VLANs → routeur obligatoire</li>
+                </ul>
+            </div>
+            <h3>Config VLAN Cisco</h3>
+            <pre>switch(config)# vlan 5
+switch(config-vlan)# name compta
+switch(config)# interface ethernet 0/1
+switch(config-if)# switchport mode access
+switch(config-if)# switchport access vlan 5
+
+# Trunk
+switch(config-if)# switchport mode trunk
+switch(config-if)# switchport trunk allowed vlan 2-3</pre>
+        </div>
+
+        <div id="ch3" class="tab-content">
+            <h3>Ethernet (802.3)</h3>
+            <div class="content-box">
+                <p><strong>CSMA/CD</strong> : écoute avant émission, détection de collision → attente aléatoire</p>
+                <p><strong>Trame Ethernet :</strong> Préambule · MAC dest · MAC src · EtherType · Données (46-1500o) · FCS</p>
+                <ul>
+                    <li>0x0800 = IPv4 · 0x86DD = IPv6 · 0x0806 = ARP</li>
+                </ul>
+            </div>
+            <h3>WiFi (802.11)</h3>
+            <div class="content-box">
+                <p><strong>CSMA/CA</strong> : évite les collisions (pas de détection possible en sans-fil)</p>
+                <p>Séquence : DIFS → RTS → CTS → Données → ACK</p>
+                <ul>
+                    <li><strong>2.4 GHz :</strong> canaux recommandés 1, 6, 11 — portée supérieure</li>
+                    <li><strong>5 GHz :</strong> moins d'interférences, débit supérieur</li>
+                    <li>Connexion : Probe → Authentication → Association</li>
+                    <li>Sécurité : WEP (obsolète ❌) · WPA · <strong>WPA2-AES</strong> (recommandé ✅)</li>
+                </ul>
+            </div>
+            <h3>Normes WiFi</h3>
+            <table>
+                <tr><th>Norme</th><th>Fréquence</th><th>Débit max</th></tr>
+                <tr><td>802.11b (1999)</td><td>2.4 GHz</td><td>11 Mb/s</td></tr>
+                <tr><td>802.11g (2003)</td><td>2.4 GHz</td><td>54 Mb/s</td></tr>
+                <tr><td>802.11n (2009)</td><td>2.4/5 GHz</td><td>450 Mb/s</td></tr>
+                <tr><td>802.11ac (2014)</td><td>5 GHz</td><td>1.3 Gb/s</td></tr>
+                <tr><td>802.11ax WiFi 6 (2021)</td><td>1–7 GHz</td><td>10 Gb/s</td></tr>
+            </table>
+        </div>
+
+        <div id="ch4" class="tab-content">
+            <h3>Formules clés</h3>
+            <div class="content-box">
+                <ul>
+                    <li>Nombre de sous-réseaux = 2^(bits empruntés)</li>
+                    <li>Nombre d'hôtes = 2^(bits hôte) − 2</li>
+                    <li>−2 car : adresse réseau (bits hôte = 0) + broadcast (bits hôte = 1)</li>
+                </ul>
+            </div>
+            <h3>Table de référence rapide</h3>
+            <table>
+                <tr><th>Masque</th><th>Décimal</th><th>Adresses</th><th>Hôtes</th></tr>
+                <tr><td>/24</td><td>255.255.255.0</td><td>256</td><td>254</td></tr>
+                <tr><td>/25</td><td>255.255.255.128</td><td>128</td><td>126</td></tr>
+                <tr><td>/26</td><td>255.255.255.192</td><td>64</td><td>62</td></tr>
+                <tr><td>/27</td><td>255.255.255.224</td><td>32</td><td>30</td></tr>
+                <tr><td>/28</td><td>255.255.255.240</td><td>16</td><td>14</td></tr>
+                <tr><td>/29</td><td>255.255.255.248</td><td>8</td><td>6</td></tr>
+                <tr><td>/30</td><td>255.255.255.252</td><td>4</td><td>2</td></tr>
+            </table>
+            <h3>IPv6 — Sous-réseaux</h3>
+            <div class="content-box">
+                <p>Incrémenter l'ID de sous-réseau (bits 49-64) :</p>
+                <ul>
+                    <li>2001:db8:acad:<strong>00c8</strong>::/64 (sous-réseau 0)</li>
+                    <li>2001:db8:acad:<strong>00c9</strong>::/64 (sous-réseau 1)</li>
+                    <li>2001:db8:acad:<strong>00ca</strong>::/64 (sous-réseau 2)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ TPS -->
+<div id="tps" class="section">
+    <div class="container">
+        <h2>Travaux Pratiques</h2>
+        <div class="tp-layout">
+
+            <!-- Sidebar -->
+            <div class="tp-sidebar">
+                <div class="tp-sidebar-title">Navigation</div>
+                <button class="tp-nav-btn active" onclick="showTP('tp1', this)">
+                    <span class="tp-nav-num">TP 01</span>
+                    <span class="tp-nav-title">HTTP & TCP/IP</span>
+                    <span class="tp-nav-sub">Packet Tracer</span>
+                </button>
+                <button class="tp-nav-btn" onclick="showTP('tp2', this)">
+                    <span class="tp-nav-num">TP 02</span>
+                    <span class="tp-nav-title">Wireshark ICMP</span>
+                    <span class="tp-nav-sub">ARP & Ping</span>
+                </button>
+                <button class="tp-nav-btn" onclick="showTP('tp3', this)">
+                    <span class="tp-nav-num">TP 03</span>
+                    <span class="tp-nav-title">Commutation</span>
+                    <span class="tp-nav-sub">VLANs & Trunk</span>
+                </button>
+                <button class="tp-nav-btn" onclick="showTP('tp4', this)">
+                    <span class="tp-nav-num">TP 04</span>
+                    <span class="tp-nav-title">Trames WiFi</span>
+                    <span class="tp-nav-sub">802.11 Wireshark</span>
+                </button>
+                <button class="tp-nav-btn" onclick="showTP('tp5', this)">
+                    <span class="tp-nav-num">TP 05</span>
+                    <span class="tp-nav-title">Config WiFi</span>
+                    <span class="tp-nav-sub">Routeur & AP</span>
+                </button>
+                <button class="tp-nav-btn" onclick="showTP('tp6', this)">
+                    <span class="tp-nav-num">TP 06</span>
+                    <span class="tp-nav-title">Sous-réseaux</span>
+                    <span class="tp-nav-sub">IPv4 & IPv6</span>
+                </button>
+            </div>
+
+            <!-- TP Contents -->
+            <div>
+
+                <!-- TP1 -->
+                <div id="tp1" class="tp-content active">
+                    <div class="tp-header">
+                        <div class="tp-num">01</div>
+                        <div>
+                            <h2>Simulation du protocole HTTP</h2>
+                            <p>Ce que le TP t'apprend : comment une requête HTTP traverse les couches OSI, le rôle de DNS, ARP, TCP dans une vraie communication web.</p>
+                        </div>
+                    </div>
+
+                    <!-- Activité 1 : Ordonner les couches OSI pour une requête HTTP -->
+                    <div class="activity">
+                        <div class="activity-title">Activité 1 — Ordre des couches</div>
+                        <h3>Remet les couches OSI dans l'ordre (requête HTTP sortante)</h3>
+                        <p style="font-size:0.85em; color:var(--text-dim); margin-bottom:16px;">Glisse les couches dans le bon ordre, de la plus haute (application) à la plus basse (physique).</p>
+                        <div id="osi-order" class="order-items"></div>
+                        <div style="display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;">
+                            <button class="btn" onclick="checkOSIOrder()">Vérifier</button>
+                            <button class="btn btn-ghost" onclick="resetOSIOrder()">Réinitialiser</button>
+                        </div>
+                        <div id="osi-feedback" class="quiz-feedback" style="margin-top:12px;"></div>
+                    </div>
+
+                    <!-- Activité 2 : Questions clés TP1 -->
+                    <div class="activity">
+                        <div class="activity-title">Activité 2 — Questions du TP</div>
+                        <h3>Les points essentiels à retenir</h3>
+
+                        <div class="reveal-item">
+                            <button class="reveal-btn" onclick="toggleReveal(this)">
+                                Quelle valeur Dst Port pour HTTP ?
+                                <span class="reveal-arrow">▶</span>
+                            </button>
+                            <div class="reveal-answer">
+                                <strong>Port 80</strong> pour HTTP, <strong>port 443</strong> pour HTTPS.<br>
+                                C'est la couche 4 (Transport / TCP) qui gère les ports.
+                            </div>
+                        </div>
+
+                        <div class="reveal-item">
+                            <button class="reveal-btn" onclick="toggleReveal(this)">
+                                Que voit-on à la couche 7 (Layer 7) dans Packet Tracer ?
+                                <span class="reveal-arrow">▶</span>
+                            </button>
+                            <div class="reveal-answer">
+                                La <strong>requête HTTP</strong> : méthode GET, l'hôte cible (ex: <code>www.osi.local</code>), la version HTTP. C'est le contenu applicatif pur.
+                            </div>
+                        </div>
+
+                        <div class="reveal-item">
+                            <button class="reveal-btn" onclick="toggleReveal(this)">
+                                Quels protocoles supplémentaires apparaissent si on retire le filtre HTTP ?
+                                <span class="reveal-arrow">▶</span>
+                            </button>
+                            <div class="reveal-answer">
+                                <strong>DNS</strong> (port 53) — résout www.osi.local → adresse IP<br>
+                                <strong>ARP</strong> — résout adresse IP → adresse MAC<br>
+                                <strong>TCP</strong> — établit la connexion (SYN / SYN-ACK / ACK)<br><br>
+                                Tout ça se passe AVANT même la requête HTTP !
+                            </div>
+                        </div>
+
+                        <div class="reveal-item">
+                            <button class="reveal-btn" onclick="toggleReveal(this)">
+                                Pourquoi le dernier événement HTTP a moins d'onglets ?
+                                <span class="reveal-arrow">▶</span>
+                            </button>
+                            <div class="reveal-answer">
+                                Le dernier PDU est <strong>la réponse du serveur</strong>. Il n'y a que l'onglet "Inbound" car c'est le client qui reçoit, sans couche sortante. Il n'y a plus de couche "Out" côté client.
+                            </div>
+                        </div>
+
+                        <div class="reveal-item">
+                            <button class="reveal-btn" onclick="toggleReveal(this)">
+                                Différence In Layers vs Out Layers au niveau du switch ?
+                                <span class="reveal-arrow">▶</span>
+                            </button>
+                            <div class="reveal-answer">
+                                Le switch travaille en <strong>couche 2 (Liaison)</strong>. Il lit les adresses MAC (In), décide du port de sortie selon sa table MAC, et réémet (Out). Les couches 3+ ne sont pas traitées — il ne lit pas les IPs.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Activité 3 : Flashcards encapsulation -->
+                    <div class="activity">
+                        <div class="activity-title">Activité 3 — Flashcards Encapsulation</div>
+                        <h3>Clique sur la carte pour voir la réponse</h3>
+                        <div class="flashcard-counter" id="tp1-fc-counter">1 / 5</div>
+                        <div class="flashcard-stack">
+                            <div class="flashcard" id="tp1-flashcard" onclick="flipCard('tp1')">
+                                <div class="flashcard-face flashcard-front">
+                                    <div class="flashcard-q" id="tp1-fc-q">Application envoie des données → comment s'appelle l'unité à la couche Transport ?</div>
+                                    <div class="flashcard-hint">Clique pour révéler</div>
+                                </div>
+                                <div class="flashcard-face flashcard-back">
+                                    <div class="flashcard-a" id="tp1-fc-a">Segment</div>
+                                    <div class="flashcard-hint">Application → Segment (ports ajoutés)</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flashcard-controls">
+                            <button class="btn btn-ghost" onclick="prevCard('tp1')">← Préc.</button>
+                            <button class="btn" onclick="nextCard('tp1')">Suiv. →</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TP2 -->
+                <div id="tp2" class="tp-content">
+                    <div class="tp-header">
+                        <div class="tp-num">02</div>
+                        <div>
+                            <h2>Wireshark — ICMP & ARP</h2>
+                            <p>Ce que le TP t'apprend : analyser des trames réelles, comprendre la différence entre adressage local et distant, et le rôle d'ARP.</p>
+                        </div>
+                    </div>
+
+                    <div class="activity">
+                        <div class="activity-title">Activité 1 — Local vs Distant</div>
+                        <h3>Ping local vs ping distant — trouve la différence</h3>
+                        <p style="font-size:0.85em; color:var(--text-dim); margin-bottom:16px;">Dans chaque cas, quelle est l'adresse MAC de destination dans la trame Ethernet ?</p>
+
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+                            <div class="content-box" style="text-align:center;">
+                                <div style="font-size:1.5em; margin-bottom:8px;">🖥️ ↔ 🖥️</div>
+                                <strong>Ping local (même réseau)</strong>
+                                <div style="margin-top:12px;">
+                                    <button class="reveal-btn" onclick="toggleReveal(this)" style="text-align:center; justify-content:center;">
+                                        MAC destination ?
+                                        <span class="reveal-arrow">▶</span>
+                                    </button>
+                                    <div class="reveal-answer">
+                                        <strong>MAC du PC cible</strong> directement.<br>
+                                        ARP est utilisé pour trouver cette MAC à partir de l'IP.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="content-box" style="text-align:center;">
+                                <div style="font-size:1.5em; margin-bottom:8px;">🖥️ ↔ 🌍</div>
+                                <strong>Ping distant (autre réseau)</strong>
+                                <div style="margin-top:12px;">
+                                    <button class="reveal-btn" onclick="toggleReveal(this)" style="text-align:center; justify-content:center;">
+                                        MAC destination ?
+                                        <span class="reveal-arrow">▶</span>
+                                    </button>
+                                    <div class="reveal-answer">
+                                        <strong>MAC du routeur/passerelle</strong> — pas celle du serveur distant !<br>
+                                        L'IP destination est celle du serveur, mais la MAC est celle de la passerelle.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity">
+                        <div class="activity-title">Activité 2 — QCM</div>
+                        <h3>Comprends ce que Wireshark te montre</h3>
+                        <div id="quiz-tp2"></div>
+                    </div>
+
+                    <div class="activity">
+                        <div class="activity-title">Activité 3 — Schéma ARP</div>
+                        <h3>Comment fonctionne ARP ?</h3>
+                        <div class="network-diagram">
+                            <div class="diagram-row">
+                                <div class="diag-node diag-pc">PC-A<br><small>192.168.1.10</small></div>
+                                <div class="diag-line">───────</div>
+                                <div class="diag-node diag-sw">Switch</div>
+                                <div class="diag-line">───────</div>
+                                <div class="diag-node diag-pc">PC-B<br><small>192.168.1.20</small></div>
+                            </div>
+                        </div>
+                        <div class="reveal-item" style="margin-top:12px;">
+                            <button class="reveal-btn" onclick="toggleReveal(this)">
+                                PC-A veut pinger PC-B mais ne connaît pas sa MAC. Que se passe-t-il ?
+                                <span class="reveal-arrow">▶</span>
+                            </button>
+                            <div class="reveal-answer">
+                                1. PC-A envoie un <strong>ARP Request</strong> en broadcast : <em>"Qui est 192.168.1.20 ?"</em><br>
+                                2. PC-B répond avec un <strong>ARP Reply</strong> unicast : <em>"C'est moi, ma MAC est XX:XX:XX..."</em><br>
+                                3. PC-A met à jour sa <strong>table ARP</strong> (cache)<br>
+                                4. PC-A peut maintenant envoyer la trame Ethernet avec la bonne MAC<br><br>
+                                Commande pour voir la table ARP : <code>arp -a</code>
+                            </div>
+                        </div>
+                        <div class="reveal-item">
+                            <button class="reveal-btn" onclick="toggleReveal(this)">
+                                Pourquoi les 3 sites distants ont la même adresse MAC ?
+                                <span class="reveal-arrow">▶</span>
+                            </button>
+                            <div class="reveal-answer">
+                                Parce que c'est l'adresse MAC du <strong>routeur local (passerelle)</strong>, pas des serveurs.<br>
+                                La MAC ne change jamais entre réseaux — seule l'IP voyage de bout en bout.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TP3 -->
+                <div id="tp3" class="tp-content">
+                    <div class="tp-header">
+                        <div class="tp-num">03</div>
+                        <div>
+                            <h2>Commutation & VLANs</h2>
+                            <p>Ce que le TP t'apprend : créer des VLANs, configurer des trunks, comprendre comment les trames sont taguées et comment inter-VLAN fonctionne avec un routeur.</p>
+                        </div>
+                    </div>
+
+                    <div class="activity">
+                        <div class="activity-title">Activité 1 — Topologie du TP3</div>
+                        <h3>Comprends le schéma du réseau</h3>
+                        <div class="network-diagram">
+                            <div class="diagram-row">
+                                <div class="diag-node diag-pc">PC1<br><small>.20.1/24</small></div>
+                                <div class="diag-node diag-pc">PC2<br><small>.20.2/24</small></div>
+                                <div class="diag-node diag-pc">PC3<br><small>.20.3/24</small></div>
+                            </div>
+                            <div class="diagram-row">
+                                <div class="diag-vlan diag-v2">VLAN 2</div>
+                                <div class="diag-line">fa0/1-3</div>
+                            </div>
+                            <div class="diagram-row">
+                                <div class="diag-node diag-sw">Switch0<br><small>2950-24</small></div>
+                                <div class="diag-line">── trunk 802.1Q ──</div>
+                                <div class="diag-node diag-sw">Switch1</div>
+                            </div>
+                            <div class="diagram-row">
+                                <div class="diag-line">fa0/10-12</div>
+                                <div class="diag-vlan diag-v3">VLAN 3</div>
+                            </div>
+                            <div class="diagram-row">
+                                <div class="diag-node diag-pc">PC31<br><small>.30.1/24</small></div>
+                                <div class="diag-node diag-pc">PC32<br><small>.30.2/24</small></div>
+                                <div class="diag-node diag-pc">PC33<br><small>.30.3/24</small></div>
+                            </div>
+                            <div class="diagram-row">
+                                <div class="diag-node diag-rt">Routeur<br><small>inter-VLAN</small></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity">
+                        <div class="activity-title">Activité 2 — Complète la config VLAN</div>
+                        <h3>Remplis les blancs avec le bon mot</h3>
+                        <div id="vlan-fill" class="fill-code"></div>
+                        <div id="vlan-choices" class="fill-choices"></div>
+                        <div style="display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;">
+                            <button class="btn" onclick="checkVLANFill()">Vérifier</button>
+                            <button class="btn btn-ghost" onclick="resetVLANFill()">Réinitialiser</button>
+                        </div>
+                        <div id="vlan-feedback" class="quiz-feedback" style="margin-top:12px;"></div>
+                    </div>
+
+                    <div class="activity">
+                        <div class="activity-title">Activité 3 — Questions du TP</div>
+                        <h3>Les mécanismes à comprendre</h3>
+
+                        <div class="reveal-item">
+                            <button class="reveal-btn" onclick="toggleReveal(this)">
+                                PC1 (VLAN2) peut-il pinger PC31 (VLAN3) sans routeur ?
+                                <span class="reveal-arrow">▶</span>
+                            </button>
+                            <div class="reveal-answer">
+                                <strong>Non.</strong> Deux VLANs sont des domaines de broadcast séparés. Sans routeur, les trames restent confinées dans leur VLAN. Il faut un routeur (ou un switch L3) pour inter-VLAN routing.
+                            </div>
+                        </div>
+
+                        <div class="reveal-item">
+                            <button class="reveal-btn" onclick="toggleReveal(this)">
+                                Que se passe-t-il dans la trame en passant d'un port access à un port trunk ?
+                                <span class="reveal-arrow">▶</span>
+                            </button>
+                            <div class="reveal-answer">
+                                Le switch <strong>ajoute un tag 802.1Q</strong> à la trame — un champ de 4 octets contenant l'ID du VLAN (TPID + TCI).<br>
+                                À la réception sur un port access, le tag est <strong>retiré</strong> avant de livrer la trame au PC.
+                            </div>
+                        </div>
+
+                        <div class="reveal-item">
+                            <button class="reveal-btn" onclick="toggleReveal(this)">
+                                Comment configurer le routeur pour inter-VLAN avec une seule interface physique ?
+                                <span class="reveal-arrow">▶</span>
+                            </button>
+                            <div class="reveal-answer">
+                                On crée des <strong>sous-interfaces virtuelles</strong> (router-on-a-stick) :<br><br>
+                                <code>interface fa0/0.2</code><br>
+                                <code>encapsulation dot1q 2</code><br>
+                                <code>ip address 192.168.20.254 255.255.255.0</code><br><br>
+                                Chaque sous-interface gère un VLAN grâce au tag dot1Q.
+                            </div>
+                        </div>
+
+                        <div class="reveal-item">
+                            <button class="reveal-btn" onclick="toggleReveal(this)">
+                                PC40 sur Switch1 (VLAN3) peut-il communiquer avec PC31 sur Switch0 ?
+                                <span class="reveal-arrow">▶</span>
+                            </button>
+                            <div class="reveal-answer">
+                                <strong>Oui</strong>, si le lien trunk entre Switch0 et Switch1 laisse passer le VLAN 3.<br>
+                                Configuration : <code>switchport trunk allowed vlan 2-3</code> sur les deux interfaces reliées.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TP4 -->
+                <div id="tp4" class="tp-content">
+                    <div class="tp-header">
+                        <div class="tp-num">04</div>
+                        <div>
+                            <h2>Analyse de trames WiFi 802.11</h2>
+                            <p>Ce que le TP t'apprend : décoder des trames WiFi réelles, comprendre les trames beacon, le processus d'association, et les 3 adresses MAC d'une trame 802.11.</p>
+                        </div>
+                    </div>
+
+                    <div class="activity">
+                        <div class="activity-title">Activité 1 — Anatomie d'une trame 802.11</div>
+                        <h3>Une trame WiFi a 3 adresses MAC — sais-tu lesquelles ?</h3>
+
+                        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap:12px; margin:16px 0;">
+                            <div class="content-box" style="text-align:center;">
+                                <div style="font-size:1.4em;">📱</div>
+                                <strong style="font-size:0.85em;">Addr 1</strong>
+                                <button class="reveal-btn" onclick="toggleReveal(this)" style="margin-top:8px; justify-content:center;">
+                                    Qui ? <span class="reveal-arrow">▶</span>
+                                </button>
+                                <div class="reveal-answer"><strong>Récepteur</strong> — l'hôte destinataire</div>
+                            </div>
+                            <div class="content-box" style="text-align:center;">
+                                <div style="font-size:1.4em;">📡</div>
+                                <strong style="font-size:0.85em;">Addr 2</strong>
+                                <button class="reveal-btn" onclick="toggleReveal(this)" style="margin-top:8px; justify-content:center;">
+                                    Qui ? <span class="reveal-arrow">▶</span>
+                                </button>
+                                <div class="reveal-answer"><strong>Émetteur</strong> — l'hôte source</div>
+                            </div>
+                            <div class="content-box" style="text-align:center;">
+                                <div style="font-size:1.4em;">🔵</div>
+                                <strong style="font-size:0.85em;">Addr 3</strong>
+                                <button class="reveal-btn" onclick="toggleReveal(this)" style="margin-top:8px; justify-content:center;">
+                                    Qui ? <span class="reveal-arrow">▶</span>
+                                </button>
+                                <div class="reveal-answer"><strong>BSSID</strong> — adresse MAC du point d'accès</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity">
+                        <div class="activity-title">Activité 2 — Processus de connexion WiFi</div>
+                        <h3>Remets les étapes dans le bon ordre</h3>
+                        <div id="wifi-order" class="order-items"></div>
+                        <div style="display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;">
+                            <button class="btn" onclick="checkWiFiOrder()">Vérifier</button>
+                            <button class="btn btn-ghost" onclick="resetWiFiOrder()">Réinitialiser</button>
+                        </div>
+                        <div id="wifi-feedback" class="quiz-feedback" style="margin-top:12px;"></div>
+                    </div>
+
+                    <div class="activity">
+                        <div class="activity-title">Activité 3 — Questions du TP</div>
+                        <h3>Ce que tu dois savoir sur les trames beacon et l'association</h3>
+
+                        <div class="reveal-item">
+                            <button class="reveal-btn" onclick="toggleReveal(this)">
+                                À quoi servent les trames beacon ?
+                                <span class="reveal-arrow">▶</span>
+                            </button>
+                            <div class="reveal-answer">
+                                Les trames beacon sont envoyées périodiquement (~100ms) par le point d'accès pour <strong>annoncer sa présence</strong> (SSID, BSSID, canaux, débits supportés). Elles permettent aux clients de détecter les réseaux disponibles.
+                            </div>
+                        </div>
+
+                        <div class="reveal-item">
+                            <button class="reveal-btn" onclick="toggleReveal(this)">
+                                Quelle est l'adresse MAC de destination d'une trame beacon ?
+                                <span class="reveal-arrow">▶</span>
+                            </button>
+                            <div class="reveal-answer">
+                                <strong>FF:FF:FF:FF:FF:FF</strong> — c'est un broadcast. Tout le monde doit pouvoir détecter le réseau WiFi.
+                            </div>
+                        </div>
+
+                        <div class="reveal-item">
+                            <button class="reveal-btn" onclick="toggleReveal(this)">
+                                Dans la trame TCP SYN vers gaia.cs.umass.edu, l'émetteur de la trame 802.11 correspond-il à l'IP source ?
+                                <span class="reveal-arrow">▶</span>
+                            </button>
+                            <div class="reveal-answer">
+                                <strong>Non !</strong> Dans une trame 802.11 en mode infrastructure, l'émetteur (Addr 2) est le <strong>point d'accès</strong>, mais l'IP source dans le paquet IP est bien celle du terminal mobile. MAC et IP opèrent à des couches différentes.
+                            </div>
+                        </div>
+
+                        <div class="reveal-item">
+                            <button class="reveal-btn" onclick="toggleReveal(this)">
+                                Différence entre authentification ouverte et WPA2 ?
+                                <span class="reveal-arrow">▶</span>
+                            </button>
+                            <div class="reveal-answer">
+                                <strong>Ouverte :</strong> aucune clé, n'importe qui peut s'associer. Pas de chiffrement.<br>
+                                <strong>WPA2 :</strong> chiffrement AES, handshake 4 étapes, clé partagée (PSK) ou serveur RADIUS (entreprise). Les données sont illisibles sans la clé.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TP5 -->
+                <div id="tp5" class="tp-content">
+                    <div class="tp-header">
+                        <div class="tp-num">05</div>
+                        <div>
+                            <h2>Configuration d'un réseau sans fil</h2>
+                            <p>Ce que le TP t'apprend : configurer un routeur WiFi, comprendre DHCP, ajouter un point d'accès pour étendre la couverture, et renouveler une config IP.</p>
+                        </div>
+                    </div>
+
+                    <div class="activity">
+                        <div class="activity-title">Activité 1 — Remets les étapes en ordre</div>
+                        <h3>Configuration complète d'un réseau WiFi dans Packet Tracer</h3>
+                        <div id="wifi5-order" class="order-items"></div>
+                        <div style="display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;">
+                            <button class="btn" onclick="checkWiFi5Order()">Vérifier</button>
+                            <button class="btn btn-ghost" onclick="resetWiFi5Order()">Réinitialiser</button>
+                        </div>
+                        <div id="wifi5-feedback" class="quiz-feedback" style="margin-top:12px;"></div>
+                    </div>
+
+                    <div class="activity">
+                        <div class="activity-title">Activité 2 — Questions DHCP</div>
+                        <h3>Comprends ce qui se passe quand Laptop2 se connecte</h3>
+
+                        <div class="reveal-item">
+                            <button class="reveal-btn" onclick="toggleReveal(this)">
+                                Avant d'avoir une IP, quelles adresses source/destination a le PDU DHCP de Laptop2 ?
+                                <span class="reveal-arrow">▶</span>
+                            </button>
+                            <div class="reveal-answer">
+                                <strong>Source IP :</strong> 0.0.0.0 (pas encore d'IP)<br>
+                                <strong>Destination IP :</strong> 255.255.255.255 (broadcast)<br>
+                                Le message est un <strong>DHCP Discover</strong> — le client crie "y a-t-il un serveur DHCP ?"
+                            </div>
+                        </div>
+
+                        <div class="reveal-item">
+                            <button class="reveal-btn" onclick="toggleReveal(this)">
+                                Pourquoi "Request Timeout" après avoir changé l'IP du routeur en 192.168.50.1 ?
+                                <span class="reveal-arrow">▶</span>
+                            </button>
+                            <div class="reveal-answer">
+                                Le PC Admin avait l'IP <strong>192.168.0.x</strong> (ancien réseau). Après le changement, le routeur est sur <strong>192.168.50.0/24</strong> — le PC ne peut plus l'atteindre car ils sont sur des réseaux différents.<br><br>
+                                Solution : <code>ipconfig /renew</code> pour forcer une nouvelle demande DHCP et obtenir une IP en 192.168.50.x
+                            </div>
+                        </div>
+
+                        <div class="reveal-item">
+                            <button class="reveal-btn" onclick="toggleReveal(this)">
+                                Différence entre routeur WiFi et point d'accès (AP) ?
+                                <span class="reveal-arrow">▶</span>
+                            </button>
+                            <div class="reveal-answer">
+                                <strong>Routeur WiFi :</strong> fait du routage (connecte LAN à Internet), intègre un DHCP, un switch et un AP.<br>
+                                <strong>AP seul :</strong> étend juste la couverture sans fil — relié par câble au routeur. Pas de routage, pas de DHCP propre. Même SSID/MDP que le routeur principal pour une couverture transparente.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity">
+                        <div class="activity-title">Activité 3 — QCM Config WiFi</div>
+                        <div id="quiz-tp5"></div>
+                    </div>
+                </div>
+
+                <!-- TP6 -->
+                <div id="tp6" class="tp-content">
+                    <div class="tp-header">
+                        <div class="tp-num">06</div>
+                        <div>
+                            <h2>Sous-réseaux IPv4 & IPv6</h2>
+                            <p>Ce que le TP t'apprend : découper un réseau /24 en sous-réseaux, remplir une table d'adressage complète, et créer des sous-réseaux IPv6.</p>
+                        </div>
+                    </div>
+
+                    <div class="activity">
+                        <div class="activity-title">Activité 1 — Calculateur de sous-réseaux</div>
+                        <h3>Entre une adresse IP/masque pour analyser le sous-réseau</h3>
+                        <div class="subnet-calc">
+                            <div class="subnet-input">
+                                <label>Adresse IP :</label>
+                                <input type="text" id="subnet-ip" placeholder="192.168.100.0" value="192.168.100.0">
+                                <label>Masque CIDR :</label>
+                                <input type="number" id="subnet-mask" placeholder="24" value="24" min="1" max="30">
+                                <button class="btn" onclick="calcSubnet()">Calculer</button>
+                            </div>
+                            <div id="subnet-result" class="subnet-result">
+                                <div style="font-weight:700; margin-bottom:8px;">Résultats</div>
+                                <div class="subnet-result-grid" id="subnet-grid"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity">
+                        <div class="activity-title">Activité 2 — Exercice TP6 guidé</div>
+                        <h3>Découpe 192.168.100.0/24 pour 4 sous-réseaux de ≥ 25 hôtes</h3>
+
+                        <div class="reveal-item">
+                            <button class="reveal-btn" onclick="toggleReveal(this)">
+                                Combien de bits emprunter ? Quel masque ?
+                                <span class="reveal-arrow">▶</span>
+                            </button>
+                            <div class="reveal-answer">
+                                On a besoin de 4 sous-réseaux → 2^<strong>2</strong> = 4 → <strong>2 bits empruntés</strong><br>
+                                Nouveau masque : /24 + 2 = <strong>/26</strong> (255.255.255.192)<br>
+                                Hôtes par sous-réseau : 2^6 − 2 = <strong>62 hôtes</strong> ✅ (≥ 25)
+                            </div>
+                        </div>
+
+                        <div class="reveal-item">
+                            <button class="reveal-btn" onclick="toggleReveal(this)">
+                                Table des 4 premiers sous-réseaux /26
+                                <span class="reveal-arrow">▶</span>
+                            </button>
+                            <div class="reveal-answer">
+                                <table style="font-size:0.82em; margin-top:8px;">
+                                    <tr><th>N°</th><th>Réseau</th><th>1ère hôte</th><th>Dernière hôte</th><th>Broadcast</th></tr>
+                                    <tr><td>0</td><td>192.168.100.0</td><td>.1</td><td>.62</td><td>.63</td></tr>
+                                    <tr><td>1</td><td>192.168.100.64</td><td>.65</td><td>.126</td><td>.127</td></tr>
+                                    <tr><td>2</td><td>192.168.100.128</td><td>.129</td><td>.190</td><td>.191</td></tr>
+                                    <tr><td>3</td><td>192.168.100.192</td><td>.193</td><td>.254</td><td>.255</td></tr>
+                                </table>
+                                Incrément : 64 (car 2^6 = 64 adresses par bloc)
+                            </div>
+                        </div>
+
+                        <div class="reveal-item">
+                            <button class="reveal-btn" onclick="toggleReveal(this)">
+                                Sous-réseau 4 pour la liaison WAN R1↔R2 — quel masque ?
+                                <span class="reveal-arrow">▶</span>
+                            </button>
+                            <div class="reveal-answer">
+                                La liaison WAN n'a besoin que de <strong>2 adresses hôtes</strong> (une par extrémité).<br>
+                                Masque <strong>/30</strong> (255.255.255.252) → 4 adresses, 2 utilisables.<br>
+                                Exemple : 192.168.100.192/30 → R1 = .193, R2 = .194
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity">
+                        <div class="activity-title">Activité 3 — IPv6 Sous-réseaux</div>
+                        <h3>Complète la table d'adressage IPv6 du TP6</h3>
+
+                        <div class="info-box">
+                            <strong>Principe :</strong> Le sous-réseau de base est <code>2001:db8:acad:00c8::/64</code>. L'ID de sous-réseau (00c8 = 200 en décimal) s'incrémente.
+                        </div>
+
+                        <div class="reveal-item">
+                            <button class="reveal-btn" onclick="toggleReveal(this)">
+                                R1 G0/1 — quel sous-réseau ? (sous-réseau 1)
+                                <span class="reveal-arrow">▶</span>
+                            </button>
+                            <div class="reveal-answer">
+                                <code>2001:db8:acad:00c9::1/64</code><br>
+                                00c8 + 1 = 00c9. L'adresse de l'interface est ::1 (première adresse)
+                            </div>
+                        </div>
+
+                        <div class="reveal-item">
+                            <button class="reveal-btn" onclick="toggleReveal(this)">
+                                Liaison WAN R1↔R2 — quel sous-réseau ? (sous-réseau 2)
+                                <span class="reveal-arrow">▶</span>
+                            </button>
+                            <div class="reveal-answer">
+                                <code>2001:db8:acad:00ca::/64</code><br>
+                                R1 S0/0/0 = <code>::1/64</code>, R2 S0/0/0 = <code>::2/64</code>
+                            </div>
+                        </div>
+
+                        <div class="reveal-item">
+                            <button class="reveal-btn" onclick="toggleReveal(this)">
+                                Commande pour activer l'auto-config IPv6 sur les PCs (SLAAC) ?
+                                <span class="reveal-arrow">▶</span>
+                            </button>
+                            <div class="reveal-answer">
+                                Sur les routeurs : <code>ipv6 unicast-routing</code> (active l'envoi de Router Advertisements)<br>
+                                Sur les PCs Packet Tracer : Desktop → IP Configuration → <strong>Automatic</strong><br><br>
+                                Le PC reçoit un RA du routeur avec le préfixe, puis génère son ID d'interface (EUI-64 ou aléatoire).
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity">
+                        <div class="activity-title">Activité 4 — QCM Sous-réseaux</div>
+                        <div id="quiz-tp6"></div>
+                    </div>
+                </div>
+
+            </div><!-- end tp contents -->
+        </div><!-- end tp-layout -->
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ QUIZ -->
+<div id="quiz" class="section">
+    <div class="container">
+        <h2>Quiz général</h2>
+        <div class="score-bar">
+            <div>Score :</div>
+            <div class="score-num" id="global-score">0 / 0</div>
+            <button class="btn btn-ghost" onclick="resetAllQuiz()" style="margin-left:auto;">Réinitialiser tout</button>
+        </div>
+        <div id="main-quiz" class="quiz-container"></div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ MEMO -->
+<div id="memo" class="section">
+    <div class="container">
+        <h2>Fiche Mémo</h2>
+        <div class="info-box" style="margin-bottom:20px;">
+            <strong>Format :</strong> 1 page A4 autorisée au contrôle — imprime cette section ou recopie à la main.
+            <button class="btn" onclick="window.print()" style="margin-left:12px; padding:6px 14px; font-size:0.8em;">🖨️ Imprimer</button>
+        </div>
+        <div class="memo-grid">
+            <div class="memo-card">
+                <h3>Équipements & Couches</h3>
+                <ul>
+                    <li><strong>Répéteur (L1)</strong> : amplifie signal</li>
+                    <li><strong>Hub (L1)</strong> : broadcast, collisions</li>
+                    <li><strong>Switch (L2)</strong> : table MAC, full duplex</li>
+                    <li><strong>Routeur (L3)</strong> : table routage, inter-réseaux</li>
+                </ul>
+            </div>
+            <div class="memo-card">
+                <h3>Adressage</h3>
+                <ul>
+                    <li><strong>MAC</strong> : 48b · XX:XX:XX:XX:XX:XX</li>
+                    <li><strong>Broadcast MAC</strong> : FF-FF-FF-FF-FF-FF</li>
+                    <li><strong>IPv4</strong> : 32b · Classes A/B/C · CIDR /n</li>
+                    <li><strong>IPv6</strong> : 128b · /64 recommandé</li>
+                    <li><strong>GUA</strong> : publique, 2000::/3</li>
+                    <li><strong>LLA</strong> : fe80::/10, local</li>
+                </ul>
+            </div>
+            <div class="memo-card">
+                <h3>Sous-réseaux IPv4</h3>
+                <ul>
+                    <li>Hôtes = 2^(32-masque) − 2</li>
+                    <li><strong>/24</strong> = 254 · <strong>/25</strong> = 126</li>
+                    <li><strong>/26</strong> = 62 · <strong>/27</strong> = 30</li>
+                    <li><strong>/28</strong> = 14 · <strong>/29</strong> = 6</li>
+                    <li><strong>/30</strong> = 2 (liaison P2P)</li>
+                </ul>
+            </div>
+            <div class="memo-card">
+                <h3>Modèles</h3>
+                <ul>
+                    <li><strong>OSI 7 couches</strong> : Ph·Li·Ré·Tr·Se·Pr·Ap</li>
+                    <li><strong>TCP/IP 4 couches</strong> : Accès·Internet·Transport·App</li>
+                    <li>Encapsulation → Segment → Paquet → Trame → Bits</li>
+                </ul>
+            </div>
+            <div class="memo-card">
+                <h3>Ethernet & WiFi</h3>
+                <ul>
+                    <li><strong>Ethernet 802.3</strong> : CSMA/CD</li>
+                    <li><strong>WiFi 802.11</strong> : CSMA/CA · RTS/CTS/ACK</li>
+                    <li><strong>VLAN 802.1Q</strong> : tag trunk</li>
+                    <li><strong>ARP</strong> : IP → MAC</li>
+                    <li>2.4GHz : canaux 1/6/11, portée++</li>
+                    <li>5GHz : débit++, moins d'interf.</li>
+                    <li>Sécurité : WPA2-AES ✅</li>
+                </ul>
+            </div>
+            <div class="memo-card">
+                <h3>VLAN Config Cisco</h3>
+                <ul>
+                    <li><code>vlan N</code> · <code>name NOM</code></li>
+                    <li><code>switchport mode access</code></li>
+                    <li><code>switchport access vlan N</code></li>
+                    <li><code>switchport mode trunk</code></li>
+                    <li><code>switchport trunk allowed vlan 2-3</code></li>
+                    <li>Inter-VLAN : sous-interfaces dot1q</li>
+                </ul>
+            </div>
+            <div class="memo-card">
+                <h3>WiFi Connexion</h3>
+                <ul>
+                    <li>1. Probe Request/Response</li>
+                    <li>2. Authentication</li>
+                    <li>3. Association Request/Response</li>
+                    <li>Trame beacon → broadcast FF:FF:FF:FF:FF:FF</li>
+                    <li>3 MAC dans trame 802.11 : src·dst·BSSID</li>
+                </ul>
+            </div>
+            <div class="memo-card">
+                <h3>Ports standards</h3>
+                <ul>
+                    <li>20/21 FTP · 22 SSH · 23 Telnet</li>
+                    <li>25 SMTP · 53 DNS · 67/68 DHCP</li>
+                    <li>80 HTTP · 443 HTTPS</li>
+                    <li>110 POP3 · 143 IMAP · 161 SNMP</li>
+                </ul>
+            </div>
+            <div class="memo-card">
+                <h3>Commandes Cisco vérif.</h3>
+                <ul>
+                    <li><code>show ip interface brief</code></li>
+                    <li><code>show vlan</code></li>
+                    <li><code>show mac address-table</code></li>
+                    <li><code>show ipv6 interface</code></li>
+                    <li><code>show running-config</code></li>
+                    <li><code>write memory</code> (sauvegarde)</li>
+                </ul>
+            </div>
+            <div class="memo-card">
+                <h3>IPv6 Config Cisco</h3>
+                <ul>
+                    <li><code>ipv6 unicast-routing</code></li>
+                    <li><code>ipv6 address X::1/64</code></li>
+                    <li><code>ipv6 address fe80::1 link-local</code></li>
+                    <li><code>no shutdown</code></li>
+                    <li>SLAAC : PC en mode Automatic</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ═══════════════════════════ NAVIGATION
+function showSection(id, btn) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if (btn) btn.classList.add('active');
+    window.scrollTo(0,0);
+}
+
+function showTab(id, btn) {
+    const parent = btn.closest('.section') || document.body;
+    parent.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    parent.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+}
+
+function showTP(id, btn) {
+    document.querySelectorAll('.tp-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tp-nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+}
+
+// ═══════════════════════════ REVEAL
+function toggleReveal(btn) {
+    const answer = btn.nextElementSibling;
+    const isOpen = btn.classList.contains('open');
+    btn.classList.toggle('open');
+    answer.style.display = isOpen ? 'none' : 'block';
+}
+
+// ═══════════════════════════ FLASHCARDS TP1
+const tp1Cards = [
+    { q: "Application envoie des données → unité à la couche Transport ?", a: "Segment", hint: "Ports ajoutés (src/dst)" },
+    { q: "Couche Réseau → quelle unité de données ?", a: "Paquet", hint: "IP source/destination ajoutées" },
+    { q: "Couche Liaison → quelle unité de données ?", a: "Trame", hint: "MAC source/destination ajoutées" },
+    { q: "EtherType 0x0800 dans une trame Ethernet → quel protocole ?", a: "IPv4", hint: "0x86DD = IPv6, 0x0806 = ARP" },
+    { q: "Un switch L2 regarde quelle information pour décider où envoyer ?", a: "Adresse MAC destination", hint: "Table MAC = MAC ↔ port" },
+];
+
+let tp1CardIdx = 0;
+let tp1Flipped = false;
+
+function updateTP1Card() {
+    const c = tp1Cards[tp1CardIdx];
+    document.getElementById('tp1-fc-q').textContent = c.q;
+    document.getElementById('tp1-fc-a').textContent = c.a;
+    document.querySelector('#tp1-flashcard .flashcard-back .flashcard-hint').textContent = c.hint;
+    document.getElementById('tp1-fc-counter').textContent = `${tp1CardIdx+1} / ${tp1Cards.length}`;
+    const fc = document.getElementById('tp1-flashcard');
+    fc.classList.remove('flipped');
+    tp1Flipped = false;
+}
+
+function flipCard(id) {
+    const fc = document.getElementById(id + '-flashcard');
+    fc.classList.toggle('flipped');
+}
+
+function nextCard(id) {
+    if (id === 'tp1') { tp1CardIdx = (tp1CardIdx + 1) % tp1Cards.length; updateTP1Card(); }
+}
+
+function prevCard(id) {
+    if (id === 'tp1') { tp1CardIdx = (tp1CardIdx - 1 + tp1Cards.length) % tp1Cards.length; updateTP1Card(); }
+}
+
+// ═══════════════════════════ OSI ORDER DRAG
+const osiCorrect = [
+    "Application (HTTP, DNS)",
+    "Présentation",
+    "Session",
+    "Transport (TCP/UDP, ports)",
+    "Réseau (IP)",
+    "Liaison (Ethernet, MAC)",
+    "Physique (bits)"
+];
+
+let osiItems = [...osiCorrect].sort(() => Math.random() - 0.5);
+
+function renderOSIOrder() {
+    const container = document.getElementById('osi-order');
+    container.innerHTML = '';
+    osiItems.forEach((item, i) => {
+        const el = document.createElement('div');
+        el.className = 'order-item';
+        el.draggable = true;
+        el.dataset.idx = i;
+        el.innerHTML = `<span class="order-handle">⠿</span><span>${item}</span>`;
+        el.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', i); el.classList.add('dragging'); });
+        el.addEventListener('dragend', () => el.classList.remove('dragging'));
+        el.addEventListener('dragover', e => e.preventDefault());
+        el.addEventListener('drop', e => {
+            e.preventDefault();
+            const from = parseInt(e.dataTransfer.getData('text/plain'));
+            const to = parseInt(el.dataset.idx);
+            [osiItems[from], osiItems[to]] = [osiItems[to], osiItems[from]];
+            renderOSIOrder();
+        });
+        container.appendChild(el);
+    });
+}
+
+function checkOSIOrder() {
+    const items = document.querySelectorAll('#osi-order .order-item');
+    const fb = document.getElementById('osi-feedback');
+    let correct = true;
+    items.forEach((el, i) => {
+        const txt = el.querySelector('span:last-child').textContent;
+        if (txt !== osiCorrect[i]) correct = false;
+    });
+    fb.className = 'quiz-feedback show ' + (correct ? 'ok' : 'ko');
+    fb.textContent = correct ? '✓ Parfait ! Les couches sont dans le bon ordre.' : '✗ Pas tout à fait — souviens-toi : Application en haut, Physique en bas.';
+}
+
+function resetOSIOrder() {
+    osiItems = [...osiCorrect].sort(() => Math.random() - 0.5);
+    renderOSIOrder();
+    const fb = document.getElementById('osi-feedback');
+    fb.className = 'quiz-feedback';
+}
+
+// ═══════════════════════════ WIFI ORDER (TP4)
+const wifiCorrectOrder = [
+    "Probe Request (client → broadcast)",
+    "Probe Response (AP → client)",
+    "Authentication Request",
+    "Authentication Response",
+    "Association Request",
+    "Association Response",
+];
+
+let wifiItems = [...wifiCorrectOrder].sort(() => Math.random() - 0.5);
+
+function renderWiFiOrder() {
+    const container = document.getElementById('wifi-order');
+    container.innerHTML = '';
+    wifiItems.forEach((item, i) => {
+        const el = document.createElement('div');
+        el.className = 'order-item';
+        el.draggable = true;
+        el.dataset.idx = i;
+        el.innerHTML = `<span class="order-handle">⠿</span><span>${item}</span>`;
+        el.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', i); el.classList.add('dragging'); });
+        el.addEventListener('dragend', () => el.classList.remove('dragging'));
+        el.addEventListener('dragover', e => e.preventDefault());
+        el.addEventListener('drop', e => {
+            e.preventDefault();
+            const from = parseInt(e.dataTransfer.getData('text/plain'));
+            const to = parseInt(el.dataset.idx);
+            [wifiItems[from], wifiItems[to]] = [wifiItems[to], wifiItems[from]];
+            renderWiFiOrder();
+        });
+        container.appendChild(el);
+    });
+}
+
+function checkWiFiOrder() {
+    const items = document.querySelectorAll('#wifi-order .order-item');
+    const fb = document.getElementById('wifi-feedback');
+    let correct = true;
+    items.forEach((el, i) => {
+        if (el.querySelector('span:last-child').textContent !== wifiCorrectOrder[i]) correct = false;
+    });
+    fb.className = 'quiz-feedback show ' + (correct ? 'ok' : 'ko');
+    fb.textContent = correct ? '✓ Correct ! Probe → Auth → Association.' : '✗ Pas tout à fait. Rappel : Probe d\'abord pour détecter, Auth ensuite, Association en dernier.';
+}
+
+function resetWiFiOrder() {
+    wifiItems = [...wifiCorrectOrder].sort(() => Math.random() - 0.5);
+    renderWiFiOrder();
+    document.getElementById('wifi-feedback').className = 'quiz-feedback';
+}
+
+// ═══════════════════════════ WIFI5 ORDER (TP5)
+const wifi5CorrectOrder = [
+    "Brancher PC Admin au routeur WR par câble Ethernet",
+    "Configurer PC Admin en DHCP — obtenir une IP",
+    "Accéder à l'interface GUI WR (192.168.0.1)",
+    "Configurer l'IP statique sur le port Internet WAN",
+    "Configurer le SSID et le canal WiFi",
+    "Activer la sécurité WPA2 et définir un mot de passe",
+    "Connecter Laptop1 au réseau WiFi configuré",
+    "Relier le point d'accès AP au routeur par câble",
+    "Configurer le SSID de l'AP et connecter Laptop3",
+];
+
+let wifi5Items = [...wifi5CorrectOrder].sort(() => Math.random() - 0.5);
+
+function renderWiFi5Order() {
+    const container = document.getElementById('wifi5-order');
+    container.innerHTML = '';
+    wifi5Items.forEach((item, i) => {
+        const el = document.createElement('div');
+        el.className = 'order-item';
+        el.draggable = true;
+        el.dataset.idx = i;
+        el.innerHTML = `<span class="order-handle">⠿</span><span>${item}</span>`;
+        el.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', i); el.classList.add('dragging'); });
+        el.addEventListener('dragend', () => el.classList.remove('dragging'));
+        el.addEventListener('dragover', e => e.preventDefault());
+        el.addEventListener('drop', e => {
+            e.preventDefault();
+            const from = parseInt(e.dataTransfer.getData('text/plain'));
+            const to = parseInt(el.dataset.idx);
+            [wifi5Items[from], wifi5Items[to]] = [wifi5Items[to], wifi5Items[from]];
+            renderWiFi5Order();
+        });
+        container.appendChild(el);
+    });
+}
+
+function checkWiFi5Order() {
+    const items = document.querySelectorAll('#wifi5-order .order-item');
+    const fb = document.getElementById('wifi5-feedback');
+    let correct = true;
+    items.forEach((el, i) => {
+        if (el.querySelector('span:last-child').textContent !== wifi5CorrectOrder[i]) correct = false;
+    });
+    fb.className = 'quiz-feedback show ' + (correct ? 'ok' : 'ko');
+    fb.textContent = correct ? '✓ Parfait ! Tu maîtrises la procédure de config.' : '✗ Quelques étapes sont mal placées — pense à la logique : accès admin d\'abord, WAN ensuite, WiFi en dernier.';
+}
+
+function resetWiFi5Order() {
+    wifi5Items = [...wifi5CorrectOrder].sort(() => Math.random() - 0.5);
+    renderWiFi5Order();
+    document.getElementById('wifi5-feedback').className = 'quiz-feedback';
+}
+
+// ═══════════════════════════ VLAN FILL
+const vlanCode = [
+    { text: 'Switch(config)# ', blank: false },
+    { text: 'vlan', blank: true, answer: 'vlan', id: 'v1' },
+    { text: ' 2\n', blank: false },
+    { text: 'Switch(config-vlan)# name VLAN0002\nSwitch(config-vlan)# exit\n\nSwitch(config)# interface fastEthernet 0/1\nSwitch(config-if)# switchport mode ', blank: false },
+    { text: 'access', blank: true, answer: 'access', id: 'v2' },
+    { text: '\nSwitch(config-if)# switchport ', blank: false },
+    { text: 'access', blank: true, answer: 'access', id: 'v3' },
+    { text: ' vlan 2\n\n# Pour le trunk :\nSwitch(config-if)# switchport mode ', blank: false },
+    { text: 'trunk', blank: true, answer: 'trunk', id: 'v4' },
+    { text: '\nSwitch(config-if)# switchport trunk ', blank: false },
+    { text: 'allowed', blank: true, answer: 'allowed', id: 'v5' },
+    { text: ' vlan 2-3', blank: false },
+];
+
+const vlanChoices = ['vlan', 'access', 'trunk', 'allowed', 'native', 'encapsulation'];
+let vlanSelected = {};
+let vlanActiveBlank = null;
+
+function renderVLANFill() {
+    const container = document.getElementById('vlan-fill');
+    container.innerHTML = '';
+    let html = '';
+    vlanCode.forEach(part => {
+        if (!part.blank) {
+            html += part.text.replace(/\n/g, '<br>').replace(/ /g, '&nbsp;');
+        } else {
+            const val = vlanSelected[part.id] || '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+            html += `<span class="fill-blank" id="blank-${part.id}" data-id="${part.id}" onclick="selectBlank('${part.id}')">${val}</span>`;
+        }
+    });
+    container.innerHTML = html;
+
+    const choiceContainer = document.getElementById('vlan-choices');
+    choiceContainer.innerHTML = '';
+    vlanChoices.forEach(ch => {
+        const used = Object.values(vlanSelected).includes(ch);
+        const btn = document.createElement('button');
+        btn.className = 'fill-choice' + (used ? ' used' : '');
+        btn.textContent = ch;
+        btn.onclick = () => fillBlank(ch);
+        choiceContainer.appendChild(btn);
+    });
+}
+
+function selectBlank(id) {
+    vlanActiveBlank = id;
+    document.querySelectorAll('.fill-blank').forEach(b => b.style.outline = 'none');
+    const el = document.getElementById('blank-' + id);
+    if (el) el.style.outline = '2px solid var(--accent)';
+}
+
+function fillBlank(choice) {
+    if (!vlanActiveBlank) return;
+    // If this choice already placed somewhere else, clear it
+    Object.keys(vlanSelected).forEach(k => {
+        if (vlanSelected[k] === choice && k !== vlanActiveBlank) delete vlanSelected[k];
+    });
+    vlanSelected[vlanActiveBlank] = choice;
+    vlanActiveBlank = null;
+    renderVLANFill();
+}
+
+function checkVLANFill() {
+    const fb = document.getElementById('vlan-feedback');
+    let correct = true;
+    vlanCode.forEach(part => {
+        if (part.blank) {
+            const el = document.getElementById('blank-' + part.id);
+            if (vlanSelected[part.id] === part.answer) {
+                if (el) el.className = 'fill-blank correct';
+            } else {
+                if (el) el.className = 'fill-blank wrong';
+                correct = false;
+            }
+        }
+    });
+    fb.className = 'quiz-feedback show ' + (correct ? 'ok' : 'ko');
+    fb.textContent = correct ? '✓ Config VLAN parfaite !' : '✗ Quelques erreurs — vérifie les mots clés Cisco en rouge.';
+}
+
+function resetVLANFill() {
+    vlanSelected = {};
+    vlanActiveBlank = null;
+    renderVLANFill();
+    document.getElementById('vlan-feedback').className = 'quiz-feedback';
+}
+
+// ═══════════════════════════ SUBNET CALC
+function calcSubnet() {
+    const ip = document.getElementById('subnet-ip').value.trim();
+    const mask = parseInt(document.getElementById('subnet-mask').value);
+    const result = document.getElementById('subnet-result');
+    const grid = document.getElementById('subnet-grid');
+
+    if (!ip || isNaN(mask) || mask < 1 || mask > 30) {
+        result.classList.remove('show');
+        return;
+    }
+
+    const parts = ip.split('.').map(Number);
+    if (parts.length !== 4 || parts.some(p => isNaN(p) || p < 0 || p > 255)) {
+        result.classList.remove('show');
+        return;
+    }
+
+    const totalAddresses = Math.pow(2, 32 - mask);
+    const usable = totalAddresses - 2;
+    const maskDecimal = cidrToDecimal(mask);
+
+    // Calculate network address via AND
+    const maskBits = (0xFFFFFFFF << (32 - mask)) >>> 0;
+    const ipInt = ((parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8) | parts[3]) >>> 0;
+    const netInt = (ipInt & maskBits) >>> 0;
+    const bcInt = (netInt | (~maskBits >>> 0)) >>> 0;
+    const firstInt = netInt + 1;
+    const lastInt = bcInt - 1;
+
+    const netAddr = intToIP(netInt);
+    const bcAddr = intToIP(bcInt);
+    const firstAddr = intToIP(firstInt);
+    const lastAddr = intToIP(lastInt);
+
+    grid.innerHTML = `
+        <div class="subnet-field"><div class="subnet-field-label">Adresse réseau</div><div class="subnet-field-value">${netAddr}/${mask}</div></div>
+        <div class="subnet-field"><div class="subnet-field-label">Masque décimal</div><div class="subnet-field-value">${maskDecimal}</div></div>
+        <div class="subnet-field"><div class="subnet-field-label">Broadcast</div><div class="subnet-field-value">${bcAddr}</div></div>
+        <div class="subnet-field"><div class="subnet-field-label">1ère adresse hôte</div><div class="subnet-field-value">${firstAddr}</div></div>
+        <div class="subnet-field"><div class="subnet-field-label">Dernière adresse hôte</div><div class="subnet-field-value">${lastAddr}</div></div>
+        <div class="subnet-field"><div class="subnet-field-label">Hôtes utilisables</div><div class="subnet-field-value">${usable}</div></div>
+        <div class="subnet-field"><div class="subnet-field-label">Total adresses</div><div class="subnet-field-value">${totalAddresses}</div></div>
+    `;
+    result.classList.add('show');
+}
+
+function cidrToDecimal(mask) {
+    const bits = ('1'.repeat(mask) + '0'.repeat(32 - mask)).match(/.{8}/g);
+    return bits.map(b => parseInt(b, 2)).join('.');
+}
+
+function intToIP(int) {
+    return [(int >>> 24) & 255, (int >>> 16) & 255, (int >>> 8) & 255, int & 255].join('.');
+}
+
+// ═══════════════════════════ QUIZ DATA
+const allQuizData = [
+    // General
+    { q: "À quelle couche OSI opère un switch de niveau 2 ?", opts: ["Couche 1 - Physique", "Couche 2 - Liaison", "Couche 3 - Réseau", "Couche 4 - Transport"], correct: 1, exp: "Un switch L2 lit les adresses MAC (couche Liaison) pour décider où envoyer les trames." },
+    { q: "Taille d'une adresse MAC ?", opts: ["32 bits", "48 bits", "64 bits", "128 bits"], correct: 1, exp: "48 bits = 6 octets = 12 chiffres hexadécimaux (ex: AA:BB:CC:DD:EE:FF)" },
+    { q: "Combien d'hôtes utilisables dans un /26 ?", opts: ["30 hôtes", "64 hôtes", "62 hôtes", "126 hôtes"], correct: 2, exp: "2^(32-26) - 2 = 2^6 - 2 = 64 - 2 = 62 hôtes" },
+    { q: "Quel protocole de sécurité WiFi est recommandé ?", opts: ["WEP", "WPA", "WPA2-AES", "Filtrage MAC"], correct: 2, exp: "WEP est cassable en minutes. WPA2-AES est le standard recommandé (WPA3 est encore mieux)." },
+    { q: "Quelle norme est utilisée pour le tagging VLAN ?", opts: ["802.3", "802.1Q", "802.11", "802.15"], correct: 1, exp: "802.1Q (dot1q) ajoute un champ de 4 octets à la trame Ethernet pour identifier le VLAN." },
+    { q: "Combien d'hôtes utilisables dans un /27 ?", opts: ["14 hôtes", "32 hôtes", "30 hôtes", "62 hôtes"], correct: 2, exp: "2^(32-27) - 2 = 2^5 - 2 = 32 - 2 = 30 hôtes" },
+    { q: "5 GHz vs 2.4 GHz WiFi — quelle affirmation est correcte ?", opts: ["2.4GHz est plus rapide", "5GHz a moins d'interférences", "2.4GHz est plus sécurisé", "Aucune différence"], correct: 1, exp: "5GHz a plus de canaux non chevauchants et moins de saturation. 2.4GHz a une meilleure portée." },
+    { q: "Quel équipement bloque les broadcasts entre réseaux ?", opts: ["Hub", "Switch L2", "Routeur", "Répéteur"], correct: 2, exp: "Le routeur ne propage pas les broadcasts — il délimite les domaines de broadcast." },
+    // TP specific
+    { q: "Dans une requête HTTP, quel protocole résout d'abord le nom de domaine ?", opts: ["ARP", "TCP", "DNS", "ICMP"], correct: 2, exp: "DNS (port 53) traduit www.example.com en adresse IP avant que la connexion TCP/HTTP puisse s'établir." },
+    { q: "Lors d'un ping vers un serveur distant, quelle MAC est dans la trame ?", opts: ["MAC du serveur distant", "MAC du routeur local", "FF:FF:FF:FF:FF:FF", "MAC du DNS"], correct: 1, exp: "La MAC change à chaque hop. Hors réseau local, la MAC destination est celle de la passerelle (routeur)." },
+    { q: "Dans une trame 802.11 (WiFi), combien d'adresses MAC y a-t-il ?", opts: ["1", "2", "3", "4"], correct: 2, exp: "3 adresses MAC : récepteur, émetteur, et BSSID (adresse du point d'accès)." },
+    { q: "Commande pour renouveler l'IP DHCP sous Windows ?", opts: ["ipconfig /release", "ipconfig /renew", "arp -a", "ipconfig /all"], correct: 1, exp: "ipconfig /renew force une nouvelle requête DHCP Discover. Utile après un changement de réseau." },
+];
+
+// TP-specific mini quizzes
+const tp2QuizData = [
+    { q: "Commande pour afficher la table ARP sous Windows/Linux ?", opts: ["ipconfig /all", "arp -a", "ping localhost", "netstat -r"], correct: 1, exp: "arp -a affiche les paires IP ↔ MAC dans le cache ARP local." },
+    { q: "ARP Request est envoyé en…", opts: ["Unicast vers l'IP cible", "Unicast vers la MAC cible", "Broadcast (FF:FF:FF:FF:FF:FF)", "Multicast"], correct: 2, exp: "L'ARP Request est forcément en broadcast car on ne connaît pas encore la MAC de la cible !" },
+];
+
+const tp5QuizData = [
+    { q: "Avant d'avoir une IP, quelle est l'IP source d'un DHCP Discover ?", opts: ["192.168.0.1", "0.0.0.0", "255.255.255.255", "127.0.0.1"], correct: 1, exp: "Le client n'a pas encore d'IP → source = 0.0.0.0. La destination est le broadcast 255.255.255.255." },
+    { q: "Le SSID IutInfo_Ext sur l'AP doit utiliser quel type de chiffrement ?", opts: ["WEP", "WPA TKIP", "AES (WPA2)", "Aucun"], correct: 2, exp: "Même règle partout : WPA2-AES est le standard. Le mot de passe doit être identique au routeur principal." },
+];
+
+const tp6QuizData = [
+    { q: "Pour avoir 4 sous-réseaux minimum à partir d'un /24, combien de bits emprunter ?", opts: ["1 bit", "2 bits", "3 bits", "4 bits"], correct: 1, exp: "2^2 = 4 sous-réseaux. On emprunte 2 bits → /26." },
+    { q: "Masque /30 — combien d'hôtes utilisables ?", opts: ["2 hôtes", "4 hôtes", "6 hôtes", "30 hôtes"], correct: 0, exp: "2^(32-30) - 2 = 4 - 2 = 2 hôtes. Parfait pour les liaisons point-à-point WAN." },
+    { q: "Préfixe IPv6 recommandé pour les sous-réseaux ?", opts: ["/48", "/56", "/64", "/128"], correct: 2, exp: "/64 : 64 bits réseau + 64 bits ID interface. Standard pour les sous-réseaux IPv6." },
+];
+
+// ═══════════════════════════ RENDER QUIZ
+let scores = { correct: 0, total: 0 };
+
+function renderQuizData(data, containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML = '';
+    data.forEach((qd, i) => {
+        const card = document.createElement('div');
+        card.className = 'quiz-card';
+        const optHTML = qd.opts.map((opt, j) =>
+            `<button class="quiz-opt" onclick="answerQuiz(this, ${j === qd.correct}, '${containerId}-${i}')">${opt}</button>`
+        ).join('');
+        card.innerHTML = `
+            <div class="quiz-label">Question ${i+1}</div>
+            <div class="quiz-q">${qd.q}</div>
+            <div class="quiz-opts">${optHTML}</div>
+            <div class="quiz-feedback" id="${containerId}-${i}-fb"></div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+function answerQuiz(btn, isCorrect, fbId) {
+    const opts = btn.parentElement.querySelectorAll('.quiz-opt');
+    opts.forEach(o => o.disabled = true);
+    const card = btn.closest('.quiz-card');
+    const fb = document.getElementById(fbId + '-fb');
+    scores.total++;
+
+    if (isCorrect) {
+        btn.classList.add('correct');
+        card.classList.add('answered-ok');
+        scores.correct++;
+        fb.className = 'quiz-feedback show ok';
+        fb.textContent = '✓ Correct !';
+    } else {
+        btn.classList.add('wrong');
+        card.classList.add('answered-ko');
+        fb.className = 'quiz-feedback show ko';
+        // find and highlight correct
+        opts.forEach(o => {
+            if (o.onclick && o.onclick.toString().includes('true')) o.classList.add('correct');
+        });
+        // Get explanation from quiz data
+        const allData = [...allQuizData, ...tp2QuizData, ...tp5QuizData, ...tp6QuizData];
+        const match = allData.find(d => d.q === btn.closest('.quiz-card').querySelector('.quiz-q').textContent);
+        fb.textContent = '✗ ' + (match ? match.exp : 'Incorrect');
+    }
+    updateScore();
+}
+
+function updateScore() {
+    const el = document.getElementById('global-score');
+    if (el) el.textContent = `${scores.correct} / ${scores.total}`;
+}
+
+function resetAllQuiz() {
+    scores = { correct: 0, total: 0 };
+    renderQuizData(allQuizData, 'main-quiz');
+    renderQuizData(tp2QuizData, 'quiz-tp2');
+    renderQuizData(tp5QuizData, 'quiz-tp5');
+    renderQuizData(tp6QuizData, 'quiz-tp6');
+    updateScore();
+}
+
+// ═══════════════════════════ INIT
+window.addEventListener('DOMContentLoaded', () => {
+    renderOSIOrder();
+    renderWiFiOrder();
+    renderWiFi5Order();
+    renderVLANFill();
+    renderQuizData(allQuizData, 'main-quiz');
+    renderQuizData(tp2QuizData, 'quiz-tp2');
+    renderQuizData(tp5QuizData, 'quiz-tp5');
+    renderQuizData(tp6QuizData, 'quiz-tp6');
+    updateTP1Card();
+});
+</script>
+</body>
+</html>
