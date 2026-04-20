@@ -977,6 +977,197 @@
   }
 
   .reset-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ─── EXAM WARNING ─── */
+  .exam-warning {
+    display: flex;
+    gap: 1.25rem;
+    background: rgba(239,68,68,.08);
+    border: 2px solid rgba(239,68,68,.5);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2rem;
+    align-items: flex-start;
+  }
+
+  .exam-warning-icon {
+    font-size: 1.75rem;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+
+  .exam-warning-title {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #f87171;
+    margin-bottom: .4rem;
+    letter-spacing: -.01em;
+  }
+
+  .exam-warning-body {
+    font-size: .875rem;
+    color: var(--text2);
+    line-height: 1.7;
+  }
+
+  /* ─── MEMO GRID ─── */
+  .memo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .memo-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .memo-block-title {
+    font-size: .9rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    letter-spacing: .02em;
+  }
+
+  /* ─── DORA ─── */
+  .memo-dora {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .memo-dora-step {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: .6rem .875rem;
+    font-size: .82rem;
+    color: var(--text2);
+  }
+
+  .memo-dora-step strong { color: var(--text); font-size: .875rem; }
+  .memo-dora-step span { font-size: .78rem; }
+
+  .dora-letter {
+    font-family: var(--font-mono);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--accent);
+    width: 28px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .memo-dora-arrow {
+    text-align: center;
+    color: var(--border);
+    font-size: .9rem;
+    padding: .15rem 0;
+    margin-left: 14px;
+  }
+
+  /* ─── PRINT ─── */
+  @media print {
+    /* Masquer tout sauf la section mémo */
+    nav, .hero, #chapitres, #flashcards, #quiz, footer,
+    .content-page, .exam-warning, button, .btn-primary, .btn-secondary {
+      display: none !important;
+    }
+
+    body {
+      background: #fff !important;
+      color: #000 !important;
+      font-family: Arial, sans-serif;
+    }
+
+    #recap {
+      padding: 0 !important;
+      max-width: 100% !important;
+    }
+
+    .section-tag { display: none; }
+
+    .section-title {
+      font-size: 1.4rem !important;
+      color: #000 !important;
+    }
+
+    .section-title span {
+      background: none !important;
+      -webkit-text-fill-color: #000 !important;
+      color: #000 !important;
+    }
+
+    .memo-grid {
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: .6rem !important;
+    }
+
+    .memo-block {
+      background: #fff !important;
+      border: 1px solid #999 !important;
+      border-radius: 4px !important;
+      padding: .75rem !important;
+      break-inside: avoid;
+    }
+
+    .memo-block-title {
+      color: #000 !important;
+      font-size: .8rem !important;
+      margin-bottom: .5rem !important;
+    }
+
+    .data-table th {
+      background: #eee !important;
+      color: #000 !important;
+      font-size: .65rem !important;
+      padding: .3rem .5rem !important;
+    }
+
+    .data-table td {
+      color: #222 !important;
+      font-size: .65rem !important;
+      padding: .25rem .5rem !important;
+      font-family: monospace !important;
+    }
+
+    .data-table tr:hover td { background: none !important; }
+
+    .hl-blue, .hl-green, .hl-amber, .hl-purple { color: #000 !important; }
+
+    .memo-dora-step {
+      background: #f5f5f5 !important;
+      border: 1px solid #ccc !important;
+      border-radius: 3px !important;
+      padding: .3rem .5rem !important;
+      font-size: .7rem !important;
+    }
+
+    .dora-letter { color: #000 !important; font-size: 1rem !important; }
+    .memo-dora-step strong { color: #000 !important; }
+    .memo-dora-arrow { color: #666 !important; }
+
+    /* Watermark impression */
+    #recap::before {
+      content: '⚠ DOCUMENT DE RÉVISION — SEULE LA FEUILLE MANUSCRITE ORIGINALE EST AUTORISÉE À L\'EXAMEN';
+      display: block;
+      text-align: center;
+      background: #fff3cd;
+      border: 2px solid #f59e0b;
+      color: #7c4c00;
+      font-size: .7rem;
+      font-weight: bold;
+      padding: .5rem;
+      margin-bottom: .75rem;
+      border-radius: 4px;
+    }
+  }
 </style>
 </head>
 <body>
@@ -988,7 +1179,7 @@
     <li><a href="#chapitres">Cours</a></li>
     <li><a href="#flashcards">Flashcards</a></li>
     <li><a href="#quiz">Quiz</a></li>
-    <li><a href="#recap">Récap</a></li>
+    <li><a href="#recap">Mémo exam</a></li>
   </ul>
 </nav>
 
@@ -1109,106 +1300,208 @@
   <div id="q-tp" class="tab-content"></div>
 </section>
 
-<!-- RECAP -->
+<!-- RECAP / AIDE-MÉMOIRE -->
 <section id="recap">
   <div class="section-header">
-    <div class="section-tag">// 04 — Mémo rapide</div>
-    <h2 class="section-title">Ports & <span>protocoles</span></h2>
+    <div class="section-tag">// 04 — Aide-mémoire</div>
+    <h2 class="section-title">Mémo <span>Examen</span></h2>
   </div>
 
-  <div style="overflow-x:auto">
-  <table class="data-table">
-    <thead>
-      <tr>
-        <th>Protocole</th>
-        <th>Port(s)</th>
-        <th>Transport</th>
-        <th>Rôle</th>
-        <th>Sécurité</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td>FTP</td><td>21 (ctrl) / 20 (data)</td><td>TCP</td><td>Transfert de fichiers</td><td>❌ Clair</td></tr>
-      <tr><td>SFTP / FTP over SSH</td><td>22</td><td>TCP</td><td>FTP chiffré</td><td>✅ Chiffré</td></tr>
-      <tr><td>SSH</td><td>22</td><td>TCP</td><td>Shell distant sécurisé</td><td>✅ Chiffré</td></tr>
-      <tr><td>Telnet</td><td>23</td><td>TCP</td><td>Shell distant (historique)</td><td>❌ Clair</td></tr>
-      <tr><td>SMTP</td><td>25</td><td>TCP</td><td>Envoi de mails</td><td>⚠️ Variable</td></tr>
-      <tr><td>DNS</td><td>53</td><td>UDP/TCP</td><td>Résolution de noms</td><td>—</td></tr>
-      <tr><td>HTTP</td><td>80</td><td>TCP</td><td>Web</td><td>❌ Clair</td></tr>
-      <tr><td>POP3</td><td>110</td><td>TCP</td><td>Téléchargement mails</td><td>⚠️ Variable</td></tr>
-      <tr><td>IMAP</td><td>143</td><td>TCP</td><td>Accès mails distants</td><td>⚠️ Variable</td></tr>
-      <tr><td>LDAP</td><td>389</td><td>TCP/UDP</td><td>Annuaire</td><td>⚠️ Variable</td></tr>
-      <tr><td>HTTPS</td><td>443</td><td>TCP</td><td>Web sécurisé</td><td>✅ Chiffré</td></tr>
-      <tr><td>SMB</td><td>445</td><td>TCP</td><td>Partage fichiers Windows</td><td>⚠️ Variable</td></tr>
-      <tr><td>DHCP</td><td>67/68</td><td>UDP</td><td>Attribution IP dynamique</td><td>—</td></tr>
-      <tr><td>NFS</td><td>2049</td><td>TCP/UDP</td><td>Partage fichiers Unix</td><td>⚠️ Variable</td></tr>
-    </tbody>
-  </table>
+  <!-- BANNIÈRE AVERTISSEMENT -->
+  <div class="exam-warning">
+    <div class="exam-warning-icon">✋</div>
+    <div class="exam-warning-content">
+      <div class="exam-warning-title">Aide-mémoire manuscrit UNIQUEMENT autorisé</div>
+      <div class="exam-warning-body">
+        Pour l'épreuve <strong>MR205 du 30 avril 2026 à 16h</strong>, seule une <strong>feuille A4 manuscrite originale (1 face)</strong> est autorisée. Cette page peut t'aider à préparer ce que tu recopies, mais <strong>l'impression de cette page n'est pas autorisée à l'examen.</strong>
+      </div>
+    </div>
   </div>
 
-  <div class="section-header" style="margin-top:3rem">
-    <div class="section-tag">// Enregistrements DNS</div>
-    <h2 class="section-title">Types de <span>records</span></h2>
+  <!-- BOUTON IMPRIMER (usage révision uniquement) -->
+  <div style="display:flex;align-items:center;gap:1rem;margin-bottom:2.5rem;flex-wrap:wrap">
+    <button class="btn-primary" onclick="window.print()">🖨 Imprimer pour révisions</button>
+    <span style="font-size:.8rem;color:var(--text3);font-family:var(--font-mono)">// pour préparer ta feuille manuscrite — non autorisé à l'examen</span>
   </div>
 
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem">
-    <div class="accordion open">
-      <div class="accordion-header" onclick="toggleAccordion(this)">
-        <span><span class="hl-blue">A</span> — Address</span>
-        <span class="accordion-arrow">▼</span>
+  <!-- CONTENU MÉMO -->
+  <div class="memo-grid">
+
+    <!-- BLOC 1 : PORTS -->
+    <div class="memo-block">
+      <div class="memo-block-title">📡 Ports & Protocoles</div>
+      <div style="overflow-x:auto">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Protocole</th>
+            <th>Port(s)</th>
+            <th>Transport</th>
+            <th>Rôle</th>
+            <th>Sécu</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>DHCP</td><td>67/68</td><td>UDP</td><td>Attribution IP dynamique</td><td>—</td></tr>
+          <tr><td>DNS</td><td>53</td><td>UDP/TCP</td><td>Résolution de noms</td><td>—</td></tr>
+          <tr><td>FTP</td><td>21/20</td><td>TCP</td><td>Transfert fichiers</td><td>❌</td></tr>
+          <tr><td>SFTP</td><td>22</td><td>TCP</td><td>FTP chiffré (SSH)</td><td>✅</td></tr>
+          <tr><td>SSH</td><td>22</td><td>TCP</td><td>Shell distant sécurisé</td><td>✅</td></tr>
+          <tr><td>Telnet</td><td>23</td><td>TCP</td><td>Shell distant (obsolète)</td><td>❌</td></tr>
+          <tr><td>SMTP</td><td>25</td><td>TCP</td><td>Envoi de mails</td><td>⚠️</td></tr>
+          <tr><td>POP3</td><td>110</td><td>TCP</td><td>Téléchargement mails</td><td>⚠️</td></tr>
+          <tr><td>IMAP</td><td>143</td><td>TCP</td><td>Accès mails distants</td><td>⚠️</td></tr>
+          <tr><td>LDAP</td><td>389</td><td>TCP/UDP</td><td>Annuaire</td><td>⚠️</td></tr>
+          <tr><td>SMB</td><td>445</td><td>TCP</td><td>Partage fichiers Windows</td><td>⚠️</td></tr>
+          <tr><td>NFS</td><td>2049</td><td>TCP/UDP</td><td>Partage fichiers Unix</td><td>⚠️</td></tr>
+        </tbody>
+      </table>
       </div>
-      <div class="accordion-body">Associe un <strong>FQDN</strong> à une adresse <strong>IPv4</strong>.<br><br><code style="font-family:var(--font-mono);color:var(--accent3)">ns1 IN A 192.168.1.2</code></div>
     </div>
-    <div class="accordion">
-      <div class="accordion-header" onclick="toggleAccordion(this)">
-        <span><span class="hl-blue">AAAA</span> — Address IPv6</span>
-        <span class="accordion-arrow">▼</span>
+
+    <!-- BLOC 2 : DHCP -->
+    <div class="memo-block">
+      <div class="memo-block-title">🔄 DHCP — Séquence DORA</div>
+      <div class="memo-dora">
+        <div class="memo-dora-step"><span class="dora-letter">D</span><div><strong>DISCOVER</strong><br><span>Broadcast client → cherche un serveur</span></div></div>
+        <div class="memo-dora-arrow">↓</div>
+        <div class="memo-dora-step"><span class="dora-letter">O</span><div><strong>OFFER</strong><br><span>Serveur propose une adresse IP</span></div></div>
+        <div class="memo-dora-arrow">↓</div>
+        <div class="memo-dora-step"><span class="dora-letter">R</span><div><strong>REQUEST</strong><br><span>Client accepte et demande l'IP</span></div></div>
+        <div class="memo-dora-arrow">↓</div>
+        <div class="memo-dora-step"><span class="dora-letter">A</span><div><strong>ACKNOWLEDGE</strong><br><span>Serveur confirme l'attribution</span></div></div>
       </div>
-      <div class="accordion-body">Comme A, mais pour les adresses <strong>IPv6</strong>.</div>
-    </div>
-    <div class="accordion">
-      <div class="accordion-header" onclick="toggleAccordion(this)">
-        <span><span class="hl-green">CNAME</span> — Alias</span>
-        <span class="accordion-arrow">▼</span>
+      <div style="margin-top:1rem;font-size:.8rem;color:var(--text2)">
+        <strong style="color:var(--text)">3 types d'allocation :</strong><br>
+        • Statique : toujours même IP (MAC→IP)<br>
+        • Dynamique temporaire : bail limité (lease)<br>
+        • Dynamique permanente : bail quasi-infini
       </div>
-      <div class="accordion-body">Définit un <strong>alias</strong> vers un autre nom canonique.<br><br><code style="font-family:var(--font-mono);color:var(--accent3)">www IN CNAME ns1</code></div>
-    </div>
-    <div class="accordion">
-      <div class="accordion-header" onclick="toggleAccordion(this)">
-        <span><span class="hl-amber">MX</span> — Mail eXchanger</span>
-        <span class="accordion-arrow">▼</span>
+      <div style="margin-top:.75rem;font-size:.8rem;color:var(--text2)">
+        ⚠️ Relais DHCP nécessaire si client et serveur sont sur des LAN différents (les routeurs ne propagent pas les broadcasts).
       </div>
-      <div class="accordion-body">Désigne le(s) serveur(s) de <strong>messagerie</strong> d'une zone. La <strong>priorité</strong> (valeur basse = préféré) est obligatoire.</div>
     </div>
-    <div class="accordion">
-      <div class="accordion-header" onclick="toggleAccordion(this)">
-        <span><span class="hl-purple">NS</span> — Name Server</span>
-        <span class="accordion-arrow">▼</span>
+
+    <!-- BLOC 3 : DNS records -->
+    <div class="memo-block">
+      <div class="memo-block-title">🌐 Enregistrements DNS</div>
+      <table class="data-table">
+        <thead><tr><th>Type</th><th>Rôle</th></tr></thead>
+        <tbody>
+          <tr><td><span class="hl-blue">A</span></td><td>FQDN → IPv4</td></tr>
+          <tr><td><span class="hl-blue">AAAA</span></td><td>FQDN → IPv6</td></tr>
+          <tr><td><span class="hl-green">CNAME</span></td><td>Alias vers un autre nom</td></tr>
+          <tr><td><span class="hl-amber">MX</span></td><td>Serveur mail de la zone (+ priorité)</td></tr>
+          <tr><td><span class="hl-purple">NS</span></td><td>Serveurs DNS autoritaires</td></tr>
+          <tr><td><span class="hl-blue">PTR</span></td><td>Reverse : IP → nom (in-addr.arpa)</td></tr>
+          <tr><td><span class="hl-amber">SOA</span></td><td>Start Of Authority : paramètres de zone</td></tr>
+          <tr><td><span class="hl-green">TXT</span></td><td>Texte libre (SPF, DKIM…)</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:.75rem;font-size:.8rem;color:var(--text2)">
+        <strong style="color:var(--text)">Hiérarchie :</strong> . (racine) → TLD (.fr, .com…) → domaine → sous-domaine → hôte<br>
+        <strong style="color:var(--text)">13 serveurs racine</strong> (A → M), gérés par l'ICANN.<br>
+        <strong style="color:var(--text)">Reverse :</strong> 192.168.1.5 → 5.1.168.192.in-addr.arpa
       </div>
-      <div class="accordion-body">Indique les serveurs <strong>DNS autoritaires</strong> pour la zone.</div>
     </div>
-    <div class="accordion">
-      <div class="accordion-header" onclick="toggleAccordion(this)">
-        <span><span class="hl-blue">PTR</span> — Pointer (reverse)</span>
-        <span class="accordion-arrow">▼</span>
+
+    <!-- BLOC 4 : FTP / SSH -->
+    <div class="memo-block">
+      <div class="memo-block-title">🔐 FTP vs SSH vs Telnet</div>
+      <table class="data-table">
+        <thead><tr><th></th><th>Telnet</th><th>FTP</th><th>SSH</th></tr></thead>
+        <tbody>
+          <tr><td>Port</td><td>23</td><td>21/20</td><td>22</td></tr>
+          <tr><td>Chiffrement</td><td>❌</td><td>❌</td><td>✅</td></tr>
+          <tr><td>Mot de passe</td><td>En clair</td><td>En clair</td><td>Chiffré (RSA)</td></tr>
+          <tr><td>Usage</td><td>Shell distant</td><td>Fichiers</td><td>Shell + tunnel</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:.75rem;font-size:.8rem;color:var(--text2)">
+        <strong style="color:var(--text)">FTP : 2 connexions</strong> — Port 21 (contrôle, permanent) + Port 20 (données, temporaire, fermé sur EOF)<br>
+        <strong style="color:var(--text)">SSH tunnel :</strong> <code style="font-family:var(--font-mono);font-size:.75rem">ssh user@srv -L PORT_LOCAL:DEST_IP:PORT_DEST</code><br>
+        <strong style="color:var(--text)">Cisco SSH :</strong> crypto key generate rsa → ip ssh version 2
       </div>
-      <div class="accordion-body">Résolution <strong>inverse</strong> : adresse IP → nom de domaine. Utilisé dans la zone <code>in-addr.arpa</code>.</div>
     </div>
-    <div class="accordion">
-      <div class="accordion-header" onclick="toggleAccordion(this)">
-        <span><span class="hl-amber">SOA</span> — Start Of Authority</span>
-        <span class="accordion-arrow">▼</span>
+
+    <!-- BLOC 5 : Messagerie -->
+    <div class="memo-block">
+      <div class="memo-block-title">📧 Messagerie</div>
+      <table class="data-table">
+        <thead><tr><th>Proto</th><th>Port</th><th>Rôle</th><th>Stockage</th></tr></thead>
+        <tbody>
+          <tr><td>SMTP</td><td>25</td><td>Envoi (MTA→MTA)</td><td>—</td></tr>
+          <tr><td>POP3</td><td>110</td><td>Récupération</td><td>Local (supprimé)</td></tr>
+          <tr><td>IMAP</td><td>143</td><td>Accès distant</td><td>Serveur (sync)</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:.75rem;font-size:.8rem;color:var(--text2)">
+        <strong style="color:var(--text)">MUA</strong> = client mail (Thunderbird, Outlook…)<br>
+        <strong style="color:var(--text)">MTA</strong> = serveur de transfert (Postfix, Sendmail…)<br>
+        <strong style="color:var(--text)">IMAP</strong> → usage nomade / multi-appareils<br>
+        <strong style="color:var(--text)">Webmail</strong> → HTTP(S), aucune install locale
       </div>
-      <div class="accordion-body">Premier enregistrement obligatoire. Définit le serveur <strong>primaire</strong>, l'email du responsable et les paramètres de synchronisation (serial, refresh, retry, expire, TTL).</div>
     </div>
-    <div class="accordion">
-      <div class="accordion-header" onclick="toggleAccordion(this)">
-        <span><span class="hl-green">TXT</span> — Text</span>
-        <span class="accordion-arrow">▼</span>
+
+    <!-- BLOC 6 : LDAP + NFS/SMB -->
+    <div class="memo-block">
+      <div class="memo-block-title">📂 Fichiers distants & LDAP</div>
+      <div style="font-size:.82rem;color:var(--text2);line-height:1.8">
+        <strong style="color:var(--text)">NFS</strong> (port 2049) — Unix/Linux. Montage transparent, accès comme local. NFS v4 = Kerberos 5.<br>
+        <strong style="color:var(--text)">SMB/Samba</strong> (port 445) — Windows. Chemin : <code style="font-family:var(--font-mono);font-size:.75rem">\\serveur\partage</code>. Samba = impl. Linux.<br>
+        <strong style="color:var(--text)">FTP</strong> = copie intégrale. NFS/SMB = accès transparent.
       </div>
-      <div class="accordion-body">Données texte libres, utilisées notamment pour la <strong>vérification SPF, DKIM</strong> (anti-spam).</div>
+      <div style="margin-top:.75rem;font-size:.82rem;color:var(--text2);line-height:1.8">
+        <strong style="color:var(--text)">LDAP</strong> (port 389) — Annuaire hiérarchique (DIT).<br>
+        Structure : <code style="font-family:var(--font-mono);font-size:.75rem">cn=Nom,ou=Dept,dc=example,dc=com</code><br>
+        <strong style="color:var(--text)">DN</strong> = identifiant unique · <strong style="color:var(--text)">RDN</strong> = partie relative<br>
+        Optimisé lecture | schéma standardisé | pas de relations
+      </div>
     </div>
-  </div>
+
+    <!-- BLOC 7 : Outils diagnostic -->
+    <div class="memo-block" style="grid-column: 1 / -1">
+      <div class="memo-block-title">🔧 Commandes de diagnostic</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem">
+        <div>
+          <div style="font-family:var(--font-mono);font-size:.7rem;color:var(--accent);margin-bottom:.4rem">host</div>
+          <div style="font-size:.8rem;color:var(--text2);line-height:1.7;font-family:var(--font-mono)">
+            host www.free.fr<br>
+            host -t NS google.com<br>
+            host -t MX google.com<br>
+            host 194.57.105.10 <span style="color:var(--text3)"># reverse</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:var(--font-mono);font-size:.7rem;color:var(--accent);margin-bottom:.4rem">nslookup</div>
+          <div style="font-size:.8rem;color:var(--text2);line-height:1.7;font-family:var(--font-mono)">
+            nslookup<br>
+            > server 8.8.8.8 <span style="color:var(--text3)"># changer DNS</span><br>
+            > set type=NS<br>
+            > univ-reims.fr
+          </div>
+        </div>
+        <div>
+          <div style="font-family:var(--font-mono);font-size:.7rem;color:var(--accent);margin-bottom:.4rem">dig</div>
+          <div style="font-size:.8rem;color:var(--text2);line-height:1.7;font-family:var(--font-mono)">
+            dig @srv univ-reims.fr MX<br>
+            dig +trace www.example.fr<br>
+            <span style="color:var(--text3)"># trace depuis racine .</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:var(--font-mono);font-size:.7rem;color:var(--accent);margin-bottom:.4rem">vsftpd (conf)</div>
+          <div style="font-size:.8rem;color:var(--text2);line-height:1.7;font-family:var(--font-mono)">
+            listen=YES / listen_ipv6=NO<br>
+            anonymous_enable=YES/NO<br>
+            chroot_local_user=YES<br>
+            <span style="color:var(--text3)"># fix: chmod a-w ~/</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /memo-grid -->
 </section>
 
 <!-- ═══════════════ CONTENT PAGES ═══════════════ -->
