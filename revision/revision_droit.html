@@ -1,0 +1,1791 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Révisions Droit — R2.11</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e11;
+    --bg2: #16161c;
+    --bg3: #1e1e28;
+    --card: #1a1a24;
+    --border: #2e2e3e;
+    --accent: #e8b84b;
+    --accent2: #7c6aff;
+    --accent3: #3dd6a3;
+    --red: #f25c54;
+    --text: #e8e6f0;
+    --muted: #7a788a;
+    --success: #3dd6a3;
+    --fail: #f25c54;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: 64px;
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--text); font-weight: 700; font-size: 1rem; }
+
+  nav { display: flex; gap: 0.3rem; }
+  nav button {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+  nav button:hover, nav button.active {
+    background: var(--bg3);
+    color: var(--accent);
+  }
+
+  /* LAYOUT */
+  .main { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+  /* SCORE BAR */
+  .score-bar {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    align-items: center;
+  }
+  .score-item { text-align: center; flex: 1; }
+  .score-val { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+  .score-lbl { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; font-family: 'DM Mono', monospace; }
+  .score-divider { width: 1px; height: 40px; background: var(--border); }
+  .progress-bar { flex: 3; }
+  .prog-track { height: 6px; background: var(--bg3); border-radius: 99px; overflow: hidden; margin-top: 8px; }
+  .prog-fill { height: 100%; background: linear-gradient(90deg, var(--accent2), var(--accent)); border-radius: 99px; transition: width 0.5s ease; }
+
+  /* SECTION TITLES */
+  .section-header {
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 900;
+  }
+  .section-sub { color: var(--muted); font-size: 0.85rem; font-family: 'DM Mono', monospace; }
+
+  /* PAGE */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* FICHES */
+  .fiche-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media(max-width: 680px) { .fiche-grid { grid-template-columns: 1fr; } }
+
+  .fiche-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.4rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .fiche-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--accent);
+    transform: scaleY(0);
+    transition: transform 0.2s;
+  }
+  .fiche-card:hover { border-color: var(--accent2); transform: translateY(-2px); }
+  .fiche-card:hover::before { transform: scaleY(1); }
+  .fiche-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+  }
+  .fiche-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .fiche-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+
+  /* FICHE DETAIL */
+  .fiche-detail { display: none; }
+  .fiche-detail.open { display: block; }
+  .back-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 0.4rem 0.9rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    margin-bottom: 1.5rem;
+    transition: all 0.2s;
+  }
+  .back-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .content-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .content-block h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .content-block h4 { color: var(--accent2); margin: 0.8rem 0 0.4rem; font-size: 0.9rem; }
+  .content-block p, .content-block li {
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: var(--text);
+  }
+  .content-block ul, .content-block ol {
+    padding-left: 1.2rem;
+    margin: 0.4rem 0;
+  }
+  .content-block li { margin-bottom: 0.2rem; }
+  .tag-pill {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    font-size: 0.72rem;
+    color: var(--accent3);
+    font-family: 'DM Mono', monospace;
+    margin: 0.15rem;
+  }
+  .emphasis { color: var(--accent); font-weight: 700; }
+  .note-box {
+    background: rgba(124, 106, 255, 0.08);
+    border-left: 3px solid var(--accent2);
+    padding: 0.8rem 1rem;
+    border-radius: 0 8px 8px 0;
+    margin: 0.8rem 0;
+    font-size: 0.84rem;
+    line-height: 1.6;
+  }
+  .warn-box {
+    background: rgba(232, 184, 75, 0.08);
+    border-left: 3px solid var(--accent);
+    padding: 0.8rem 1rem;
+    border-radius: 0 8px 8px 0;
+    margin: 0.8rem 0;
+    font-size: 0.84rem;
+    line-height: 1.6;
+  }
+
+  /* SCHEMA / TABLE */
+  .schema-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin: 0.8rem 0; }
+  .schema-table th {
+    background: var(--bg3);
+    color: var(--accent);
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    font-size: 0.72rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+  }
+  .schema-table td {
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.5;
+    vertical-align: top;
+  }
+  .schema-table tr:last-child td { border-bottom: none; }
+  .schema-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* EXERCICES */
+  .exo-header {
+    display: flex;
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .mode-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .mode-btn:hover, .mode-btn.active {
+    border-color: var(--accent2);
+    color: var(--accent2);
+    background: rgba(124,106,255,0.1);
+  }
+
+  .exo-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.8rem;
+    margin-bottom: 1.2rem;
+    animation: fadeUp 0.3s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity:0; transform: translateY(12px); }
+    to { opacity:1; transform: translateY(0); }
+  }
+
+  .exo-meta {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    align-items: center;
+  }
+  .exo-chapter {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    background: rgba(124,106,255,0.15);
+    color: var(--accent2);
+    padding: 0.2rem 0.6rem;
+    border-radius: 99px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .exo-type {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    background: rgba(232,184,75,0.12);
+    color: var(--accent);
+    padding: 0.2rem 0.6rem;
+    border-radius: 99px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .exo-question {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.6;
+    margin-bottom: 1.2rem;
+    color: var(--text);
+  }
+  .exo-situation {
+    background: var(--bg3);
+    border-left: 3px solid var(--accent3);
+    padding: 0.9rem 1rem;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: var(--text);
+    font-style: italic;
+  }
+
+  /* QCM */
+  .choices { display: grid; gap: 0.6rem; }
+  .choice-btn {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.8rem 1.1rem;
+    border-radius: 10px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 0.88rem;
+    transition: all 0.2s;
+    line-height: 1.4;
+  }
+  .choice-btn:hover:not(:disabled) { border-color: var(--accent2); background: rgba(124,106,255,0.08); }
+  .choice-btn.correct { border-color: var(--success); background: rgba(61,214,163,0.1); color: var(--success); }
+  .choice-btn.wrong { border-color: var(--fail); background: rgba(242,92,84,0.1); color: var(--fail); }
+  .choice-btn.reveal { border-color: var(--success); background: rgba(61,214,163,0.06); }
+  .choice-btn:disabled { cursor: default; }
+
+  /* INPUT */
+  .exo-input {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    padding: 0.9rem 1rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    resize: vertical;
+    min-height: 80px;
+    transition: border 0.2s;
+    margin-bottom: 0.8rem;
+  }
+  .exo-input:focus { outline: none; border-color: var(--accent2); }
+
+  /* TABLEAU */
+  .tableau-container { overflow-x: auto; }
+  .fill-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  .fill-table th {
+    background: var(--bg3);
+    color: var(--accent);
+    padding: 0.6rem 0.8rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid var(--border);
+  }
+  .fill-table td {
+    border: 1px solid var(--border);
+    padding: 0.5rem 0.7rem;
+    vertical-align: middle;
+  }
+  .fill-table td.situation-col { font-style: italic; color: var(--muted); max-width: 200px; }
+  .fill-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed var(--border);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    padding: 0.2rem 0.3rem;
+    transition: border 0.2s;
+  }
+  .fill-input:focus { outline: none; border-bottom-color: var(--accent2); }
+  .fill-input.correct-field { border-bottom-color: var(--success); color: var(--success); }
+  .fill-input.wrong-field { border-bottom-color: var(--fail); color: var(--fail); }
+  .fill-input.revealed { border-bottom-color: var(--accent); color: var(--accent); }
+
+  /* ANALYSE */
+  .analyse-section { margin-bottom: 0.8rem; }
+  .analyse-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--accent2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.4rem;
+  }
+
+  /* BUTTONS */
+  .btn-row { display: flex; gap: 0.6rem; margin-top: 1rem; flex-wrap: wrap; }
+  .btn {
+    padding: 0.55rem 1.2rem;
+    border-radius: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+  }
+  .btn-primary { background: var(--accent2); color: white; }
+  .btn-primary:hover { background: #9580ff; }
+  .btn-success { background: var(--accent3); color: var(--bg); }
+  .btn-success:hover { filter: brightness(1.1); }
+  .btn-outline { background: none; border: 1px solid var(--border); color: var(--muted); }
+  .btn-outline:hover { border-color: var(--accent2); color: var(--accent2); }
+  .btn-danger { background: none; border: 1px solid var(--fail); color: var(--fail); }
+  .btn-danger:hover { background: rgba(242,92,84,0.1); }
+  .btn-next { background: var(--accent); color: var(--bg); font-weight: 700; }
+  .btn-next:hover { filter: brightness(1.1); }
+
+  /* FEEDBACK */
+  .feedback-box {
+    margin-top: 1rem;
+    padding: 0.9rem 1.1rem;
+    border-radius: 10px;
+    font-size: 0.86rem;
+    line-height: 1.6;
+    display: none;
+  }
+  .feedback-box.show { display: block; animation: fadeUp 0.2s ease; }
+  .feedback-box.good { background: rgba(61,214,163,0.1); border: 1px solid rgba(61,214,163,0.3); color: var(--success); }
+  .feedback-box.bad { background: rgba(242,92,84,0.1); border: 1px solid rgba(242,92,84,0.3); color: var(--fail); }
+  .feedback-box.info { background: rgba(232,184,75,0.08); border: 1px solid rgba(232,184,75,0.3); color: var(--accent); }
+
+  /* VOCABULAIRE */
+  .vocab-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+  @media(max-width: 580px) { .vocab-grid { grid-template-columns: 1fr; } }
+  .vocab-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .vocab-card:hover { border-color: var(--accent2); }
+  .vocab-term {
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 0.3rem;
+    font-size: 0.95rem;
+  }
+  .vocab-def { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+  .vocab-card.flipped .vocab-def { color: var(--text); }
+
+  /* PYRAMIDE KELSEN */
+  .pyramide { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; margin: 1rem 0; }
+  .pyramide-level {
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    text-align: center;
+    font-size: 0.82rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    cursor: default;
+  }
+  .pyramide-level:hover { filter: brightness(1.2); }
+  .pyr-0 { background: #4a2c6e; color: #d4b6ff; width: 140px; }
+  .pyr-1 { background: #1a4a3a; color: #7fffd4; width: 200px; }
+  .pyr-2 { background: #4a3a00; color: #ffd700; width: 260px; }
+  .pyr-3 { background: #1a2a4a; color: #87ceeb; width: 320px; }
+  .pyr-4 { background: #3a1a1a; color: #ff9999; width: 380px; }
+  .pyr-num { font-family: 'DM Mono', monospace; font-size: 0.65rem; opacity: 0.7; display: block; }
+
+  /* RESULTS */
+  .result-popup {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--card);
+    border: 1px solid var(--accent3);
+    border-radius: 12px;
+    padding: 1rem 1.4rem;
+    font-size: 0.85rem;
+    color: var(--success);
+    animation: slideIn 0.3s ease;
+    z-index: 200;
+    font-family: 'DM Mono', monospace;
+  }
+  @keyframes slideIn {
+    from { transform: translateX(100px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  /* ANALYSE GRILLE */
+  .grille-analyse {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+    margin-top: 1rem;
+  }
+  .grille-row {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 0.8rem;
+    align-items: start;
+  }
+  @media(max-width: 580px) {
+    .grille-row { grid-template-columns: 1fr; }
+  }
+  .grille-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding-top: 0.7rem;
+  }
+
+  /* ACCORDION */
+  .accord-item { margin-bottom: 0.4rem; }
+  .accord-trigger {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.8rem 1rem;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s;
+  }
+  .accord-trigger:hover { border-color: var(--accent2); }
+  .accord-trigger.open { border-color: var(--accent2); color: var(--accent2); border-radius: 8px 8px 0 0; }
+  .accord-trigger .chevron { transition: transform 0.2s; }
+  .accord-trigger.open .chevron { transform: rotate(180deg); }
+  .accord-content {
+    display: none;
+    background: rgba(124,106,255,0.05);
+    border: 1px solid var(--accent2);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    padding: 1rem;
+    font-size: 0.85rem;
+    line-height: 1.7;
+  }
+  .accord-content.open { display: block; animation: fadeUp 0.2s ease; }
+  .accord-content ul { padding-left: 1.2rem; }
+  .accord-content li { margin-bottom: 0.3rem; }
+
+  /* COUNTER */
+  #questionCounter {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-left: auto;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Lex <span>| R2.11 Droit</span></div>
+  <nav>
+    <button class="active" onclick="showPage('fiches')">📚 Fiches</button>
+    <button onclick="showPage('exercices')">⚡ Exercices</button>
+    <button onclick="showPage('tableaux')">📋 Tableaux</button>
+    <button onclick="showPage('analyse')">⚖️ Analyse</button>
+    <button onclick="showPage('vocab')">🗝 Vocab</button>
+  </nav>
+</header>
+
+<div class="main">
+
+  <!-- SCORE BAR -->
+  <div class="score-bar">
+    <div class="score-item">
+      <div class="score-val" id="scoreTotal">0</div>
+      <div class="score-lbl">points</div>
+    </div>
+    <div class="score-divider"></div>
+    <div class="score-item">
+      <div class="score-val" id="scoreStreak">0</div>
+      <div class="score-lbl">streak 🔥</div>
+    </div>
+    <div class="score-divider"></div>
+    <div class="progress-bar">
+      <div class="score-lbl">Progression session</div>
+      <div class="prog-track"><div class="prog-fill" id="progressFill" style="width:0%"></div></div>
+    </div>
+    <div class="score-divider"></div>
+    <div class="score-item">
+      <div class="score-val" id="scoreAnswered">0</div>
+      <div class="score-lbl">réponses</div>
+    </div>
+  </div>
+
+  <!-- PAGE FICHES -->
+  <div class="page active" id="page-fiches">
+    <div id="fiche-list">
+      <div class="section-header">
+        <div class="section-title">Fiches de cours</div>
+        <div class="section-sub">Clique pour ouvrir</div>
+      </div>
+      <div class="fiche-grid">
+        <div class="fiche-card" onclick="openFiche('concepts')">
+          <div class="fiche-tag">Chapitre I</div>
+          <div class="fiche-title">Les Principaux Concepts du Droit</div>
+          <div class="fiche-desc">Droit objectif vs subjectif, branches du droit, hiérarchie des normes, moyens de preuve</div>
+        </div>
+        <div class="fiche-card" onclick="openFiche('judiciaire')">
+          <div class="fiche-tag">Chapitre II</div>
+          <div class="fiche-title">L'Organisation Judiciaire</div>
+          <div class="fiche-desc">Juridictions civiles, pénales, administratives, Cour de cassation, analyse de décisions</div>
+        </div>
+        <div class="fiche-card" onclick="openFiche('responsabilite')">
+          <div class="fiche-tag">Chapitre III</div>
+          <div class="fiche-title">Les Régimes de Responsabilité</div>
+          <div class="fiche-desc">Responsabilité civile et pénale, parents/artisans/employeurs, éléments constitutifs</div>
+        </div>
+        <div class="fiche-card" onclick="openFiche('kelsen')">
+          <div class="fiche-tag">Focus</div>
+          <div class="fiche-title">La Pyramide de Kelsen</div>
+          <div class="fiche-desc">Hiérarchie des normes, validité des textes, blocs constitutionnel / conventionnel / légal</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FICHE CONCEPTS -->
+    <div class="fiche-detail" id="fiche-concepts">
+      <button class="back-btn" onclick="closeFiche()">← Retour</button>
+      <div class="section-header">
+        <div class="section-title">Principaux Concepts du Droit</div>
+      </div>
+
+      <div class="content-block">
+        <h3>Droit Objectif vs Droit Subjectif</h3>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+          <div>
+            <h4>Droit objectif</h4>
+            <p>Ensemble des <span class="emphasis">règles de conduite</span> socialement édictées et sanctionnées, s'imposant aux membres de la société.</p>
+          </div>
+          <div>
+            <h4>Droits subjectifs</h4>
+            <p><span class="emphasis">Prérogatives</span> que le droit objectif consacre et sauvegarde au profit des sujets de droit (personnes physiques et morales).</p>
+          </div>
+        </div>
+        <div class="note-box">💡 Les droits subjectifs se divisent en <strong>droits extrapatrimoniaux</strong> (famille, personnalité) et <strong>droits patrimoniaux</strong> (personnels, réels, intellectuels).</div>
+      </div>
+
+      <div class="content-block">
+        <h3>Les Droits Patrimoniaux</h3>
+        <p>Caractères : <span class="tag-pill">Cessibles</span> <span class="tag-pill">Transmissibles</span> <span class="tag-pill">Saisissables</span> <span class="tag-pill">Prescriptibles</span></p>
+        <table class="schema-table" style="margin-top:1rem">
+          <tr><th>Droits personnels</th><th>Droits réels</th><th>Droits intellectuels</th></tr>
+          <tr><td>Droit de créance (obligation entre personnes)</td><td>Principaux : propriété<br>Accessoires : gage, hypothèque</td><td>Brevets, œuvres</td></tr>
+        </table>
+      </div>
+
+      <div class="content-block">
+        <h3>Les Branches du Droit</h3>
+        <table class="schema-table">
+          <tr><th>Branche</th><th>Domaine</th><th>Exemples</th><th>Juridiction</th></tr>
+          <tr><td>Droit civil</td><td>Rapports entre particuliers</td><td>Famille, successions, contrats</td><td>Tribunal judiciaire</td></tr>
+          <tr><td>Droit commercial</td><td>Actes de commerce entre commerçants</td><td>Fonds de commerce, sociétés</td><td>Tribunal de commerce</td></tr>
+          <tr><td>Droit du travail</td><td>Relations employeurs/salariés</td><td>Contrat de travail, licenciement</td><td>Conseil de prud'hommes</td></tr>
+          <tr><td>Droit pénal</td><td>Infractions à la loi</td><td>Vol, meurtre, escroquerie</td><td>Police/Correctionnel/Assises</td></tr>
+          <tr><td>Droit administratif</td><td>Rapports avec l'administration</td><td>Permis de construire, fonctionnaire</td><td>Tribunal administratif</td></tr>
+          <tr><td>Droit constitutionnel</td><td>Fonctionnement pouvoirs publics</td><td>Elections, lois organiques</td><td>Haute cour de justice</td></tr>
+          <tr><td>Droit social</td><td>Sécurité sociale</td><td>Cotisations, allocations</td><td>Tribunal judiciaire (depuis 2020)</td></tr>
+          <tr><td>Droit fiscal</td><td>Impôts et taxes</td><td>Impôt sur le revenu, TVA</td><td>Tribunal administratif</td></tr>
+        </table>
+      </div>
+
+      <div class="content-block">
+        <h3>Les Moyens de Preuve</h3>
+        <table class="schema-table">
+          <tr><th>Moyen</th><th>Forme</th><th>Définition</th><th>Force probante</th></tr>
+          <tr><td rowspan="3">L'Écrit</td><td>Acte authentique</td><td>Rédigé par un officier public (notaire, huissier)</td><td>Fait foi jusqu'à inscription de faux</td></tr>
+          <tr><td>Acte sous seing privé</td><td>Rédigé par des particuliers</td><td>Écriture et signature contestables</td></tr>
+          <tr><td>Autres écrits</td><td>Photocopies, lettres, mails</td><td>Force probante variable</td></tr>
+          <tr><td>Témoignage</td><td>—</td><td>Déclarations de tiers</td><td>Librement appréciée par le juge</td></tr>
+          <tr><td rowspan="2">Présomptions</td><td>Légales</td><td>Conséquences tirées par la loi d'un fait connu</td><td>Irréfragable ou simple</td></tr>
+          <tr><td>Du fait de l'homme</td><td>Indices, constatations, déclarations</td><td>Établie par le juge</td></tr>
+          <tr><td>L'Aveu</td><td>Judiciaire / Extrajudiciaire</td><td>Reconnaissance d'un fait</td><td>Pleine foi (judiciaire) / Ne lie pas le juge (extrajudiciaire)</td></tr>
+          <tr><td>Serment</td><td>Décisoire / Supplétoire</td><td>Affirmation sous serment</td><td>Variable selon nature</td></tr>
+          <tr><td rowspan="3">Procédés modernes</td><td>Empreinte génétique</td><td>ADN</td><td>Preuve parfaite</td></tr>
+          <tr><td>Écrit sur support électronique</td><td>Fax, Internet</td><td>Même force que l'écrit</td></tr>
+          <tr><td>Enregistrements A/V</td><td>Téléphone, vidéo</td><td>Interdits si obtenus déloyalement</td></tr>
+        </table>
+      </div>
+
+      <div class="content-block">
+        <h3>Acte Authentique vs Acte Sous Seing Privé</h3>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+          <div>
+            <h4>Acte authentique</h4>
+            <ul>
+              <li>Rédigé par un <span class="emphasis">officier public compétent</span></li>
+              <li>Écrit en français</li>
+              <li>Sans interligne ni blanc</li>
+              <li>Signé par le notaire et les parties</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Acte sous seing privé (SSP)</h4>
+            <ul>
+              <li>Autant d'exemplaires qu'il existe de parties (actes synallagmatiques)</li>
+              <li>Signature des parties exigée</li>
+              <li>Mention du montant en chiffres et lettres si promesse de payer</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FICHE JUDICIAIRE -->
+    <div class="fiche-detail" id="fiche-judiciaire">
+      <button class="back-btn" onclick="closeFiche()">← Retour</button>
+      <div class="section-header">
+        <div class="section-title">L'Organisation Judiciaire</div>
+      </div>
+
+      <div class="content-block">
+        <h3>Les deux ordres de juridiction</h3>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+          <div>
+            <h4>Ordre judiciaire</h4>
+            <ul>
+              <li>Juridictions civiles : Tribunal judiciaire, Conseil prud'hommes, Tribunal de commerce…</li>
+              <li>Juridictions pénales : Tribunal de police, Correctionnel, Cour d'assises</li>
+              <li>Sommet : <span class="emphasis">Cour de cassation</span></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Ordre administratif</h4>
+            <ul>
+              <li>1er degré : Tribunal administratif</li>
+              <li>Appel : Cour administrative d'appel</li>
+              <li>Sommet : <span class="emphasis">Conseil d'État</span></li>
+            </ul>
+          </div>
+        </div>
+        <div class="warn-box">⚠️ En cas de conflit de compétence entre les deux ordres → <strong>Tribunal des conflits</strong></div>
+      </div>
+
+      <div class="content-block">
+        <h3>Les Juridictions Pénales</h3>
+        <table class="schema-table">
+          <tr><th>Tribunal</th><th>Infractions</th><th>Peines max</th><th>Composition</th></tr>
+          <tr><td><strong>Tribunal de police</strong></td><td>Contraventions (1ère à 5ème classe)</td><td>1 500€ (3 000€ récidive)</td><td>Juge unique + greffier</td></tr>
+          <tr><td><strong>Tribunal correctionnel</strong></td><td>Délits (vol, escroquerie, coups et blessures graves…)</td><td>10 ans (20 ans récidive)</td><td>3 magistrats professionnels</td></tr>
+          <tr><td><strong>Cour d'assises</strong></td><td>Crimes (meurtres, viols, vols à main armée…)</td><td>Réclusion à perpétuité</td><td>3 juges pro + 6 jurés citoyens (9 en appel)</td></tr>
+        </table>
+      </div>
+
+      <div class="content-block">
+        <h3>Vocabulaire clé — Décisions de justice</h3>
+        <div class="accord-item">
+          <button class="accord-trigger" onclick="toggleAccord(this)">Jugement vs Arrêt <span class="chevron">▾</span></button>
+          <div class="accord-content"><p><strong>Jugement</strong> : décision d'une juridiction du 1er degré.<br><strong>Arrêt</strong> : décision rendue par une Cour (Cour d'Appel, Cour de cassation).</p></div>
+        </div>
+        <div class="accord-item">
+          <button class="accord-trigger" onclick="toggleAccord(this)">Arrêt confirmatif vs infirmatif <span class="chevron">▾</span></button>
+          <div class="accord-content">
+            <p><strong>Confirmatif</strong> : la Cour d'Appel confirme le jugement de 1er degré.<br><strong>Infirmatif</strong> : la Cour d'Appel rend une décision contraire.</p>
+          </div>
+        </div>
+        <div class="accord-item">
+          <button class="accord-trigger" onclick="toggleAccord(this)">Arrêt de rejet vs cassation <span class="chevron">▾</span></button>
+          <div class="accord-content">
+            <p><strong>Rejet</strong> : la Cour de cassation rejette le pourvoi et confirme la décision.<br><strong>Cassation</strong> : accepte le pourvoi, annule la décision, renvoie devant une juridiction de même nature.</p>
+          </div>
+        </div>
+        <div class="accord-item">
+          <button class="accord-trigger" onclick="toggleAccord(this)">Demandeur / Défendeur / Appelant / Intimé <span class="chevron">▾</span></button>
+          <div class="accord-content">
+            <ul>
+              <li><strong>Demandeur</strong> : prend l'initiative du procès</li>
+              <li><strong>Défendeur</strong> : celui contre qui le procès est engagé</li>
+              <li>Devant la Cour d'Appel : <strong>appelant</strong> (demandeur) et <strong>intimé</strong> (défendeur)</li>
+              <li><strong>Débouter</strong> : rejeter les prétentions du demandeur</li>
+              <li><strong>Dépens</strong> : frais de justice</li>
+            </ul>
+          </div>
+        </div>
+        <div class="accord-item">
+          <button class="accord-trigger" onclick="toggleAccord(this)">La Cour de Cassation — rôle <span class="chevron">▾</span></button>
+          <div class="accord-content">
+            <p>Elle <strong>ne constitue pas un 3ème degré</strong> de juridiction. Elle vérifie uniquement si les règles de droit ont été correctement appliquées. Elle ne rejuge pas les faits.</p>
+            <p style="margin-top:0.5rem">Structure d'un arrêt : <strong>Visa</strong> → <strong>Motifs</strong> (faits, décisions antérieures, critique) → <strong>Dispositif</strong></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-block">
+        <h3>Grille d'analyse d'une décision de justice</h3>
+        <table class="schema-table">
+          <tr><th>Étape</th><th>Contenu</th><th>Indicateurs textuels</th></tr>
+          <tr><td>Résumé des faits</td><td>Ce qui s'est passé, ordre chronologique, objectif</td><td>"Attendu que…"</td></tr>
+          <tr><td>Procédure</td><td>Juridictions saisies, demandeurs, défendeurs, solutions adoptées</td><td>Inférer à partir du sens de l'arrêt</td></tr>
+          <tr><td>Problème juridique</td><td>Question sous forme interrogative</td><td>—</td></tr>
+          <tr><td>Moyens des parties</td><td>Arguments avancés</td><td>"Attendu que pour…"</td></tr>
+          <tr><td>Dispositif</td><td>Décision et conséquences</td><td>"Par ces motifs, casse et renvoie…"</td></tr>
+          <tr><td>Motifs</td><td>Raisons justifiant la décision</td><td>"Mais attendu que…"</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- FICHE RESPONSABILITE -->
+    <div class="fiche-detail" id="fiche-responsabilite">
+      <button class="back-btn" onclick="closeFiche()">← Retour</button>
+      <div class="section-header">
+        <div class="section-title">Régimes de Responsabilité</div>
+      </div>
+
+      <div class="content-block">
+        <h3>Les 3 éléments de la Responsabilité Civile</h3>
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:1rem; margin:0.8rem 0;">
+          <div style="background:var(--bg3); border-radius:10px; padding:1rem; text-align:center;">
+            <div style="font-size:1.5rem; margin-bottom:0.5rem;">💥</div>
+            <div style="font-weight:700; color:var(--accent); margin-bottom:0.4rem;">Dommage</div>
+            <div style="font-size:0.78rem; color:var(--muted);">Patrimonial (matériel, financier) ou extrapatrimonial (corporel, moral, écologique)</div>
+          </div>
+          <div style="background:var(--bg3); border-radius:10px; padding:1rem; text-align:center;">
+            <div style="font-size:1.5rem; margin-bottom:0.5rem;">🔗</div>
+            <div style="font-weight:700; color:var(--accent); margin-bottom:0.4rem;">Lien de causalité</div>
+            <div style="font-size:0.78rem; color:var(--muted);">Lien entre le fait générateur et le dommage</div>
+          </div>
+          <div style="background:var(--bg3); border-radius:10px; padding:1rem; text-align:center;">
+            <div style="font-size:1.5rem; margin-bottom:0.5rem;">⚡</div>
+            <div style="font-weight:700; color:var(--accent); margin-bottom:0.4rem;">Fait générateur</div>
+            <div style="font-size:0.78rem; color:var(--muted);">Faute ou absence de faute (risque)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-block">
+        <h3>Responsabilité Civile vs Pénale</h3>
+        <table class="schema-table">
+          <tr><th>Critères</th><th>Civile</th><th>Pénale</th></tr>
+          <tr><td>But</td><td>Réparation du dommage</td><td>Répression. Protection de la société</td></tr>
+          <tr><td>Fondement</td><td>Faute, présomption, sans faute</td><td>Faute pénale prévue par un texte</td></tr>
+          <tr><td>Maîtrise de l'action</td><td>La victime</td><td>Le ministère public</td></tr>
+          <tr><td>Sanction</td><td>Dommages-intérêts (parfois exécution en nature)</td><td>Peines privatives de liberté, amendes</td></tr>
+          <tr><td>Juridiction</td><td>Tribunaux civils</td><td>Police / Correctionnel / Assises</td></tr>
+        </table>
+      </div>
+
+      <div class="content-block">
+        <h3>Responsabilité du fait d'autrui</h3>
+        <table class="schema-table">
+          <tr><th></th><th>Parents (fait des enfants)</th><th>Artisans (fait des apprentis)</th><th>Employeurs (fait des salariés)</th></tr>
+          <tr><td>Fondement</td><td>Devoir de garde et d'éducation</td><td>Devoir de surveillance de l'artisan</td><td>Risque lié à l'activité du préposé</td></tr>
+          <tr><td>Conditions</td><td>Mineur non émancipé, habitant chez ses parents, ayant causé le dommage</td><td>Apprenti a causé le dommage sous la surveillance de l'artisan</td><td>Préposé lié par subordination, dommage dans l'exercice de ses fonctions</td></tr>
+          <tr><td>Exonération</td><td>Force majeure ou faute de la victime (pas de faute des parents)</td><td>Force majeure ou faute de la victime</td><td>Dommage hors fonctions, force majeure, dommage non autorisé</td></tr>
+        </table>
+        <div class="note-box">💡 Pour les employeurs : présomption <strong>irréfragable</strong> — la victime n'a pas à prouver la faute. L'employeur ne peut s'exonérer qu'en prouvant l'absence de lien de subordination.</div>
+      </div>
+    </div>
+
+    <!-- FICHE KELSEN -->
+    <div class="fiche-detail" id="fiche-kelsen">
+      <button class="back-btn" onclick="closeFiche()">← Retour</button>
+      <div class="section-header">
+        <div class="section-title">La Pyramide de Kelsen</div>
+      </div>
+
+      <div class="content-block">
+        <h3>Hiérarchie des Normes</h3>
+        <p style="margin-bottom:1rem; font-size:0.86rem;">Hans Kelsen (1881-1973) : chaque norme tire sa validité de sa conformité à la norme supérieure.</p>
+        <div class="pyramide">
+          <div class="pyramide-level pyr-0">
+            <span class="pyr-num">BLOC CONSTITUTIONNEL</span>
+            Constitution 1958, DDHC 1789, Préambule 1946, Charte env.
+          </div>
+          <div class="pyramide-level pyr-1">
+            <span class="pyr-num">BLOC DE CONVENTIONNALITÉ</span>
+            Traités internationaux, Droit UE
+          </div>
+          <div class="pyramide-level pyr-2">
+            <span class="pyr-num">BLOC DE LÉGALITÉ</span>
+            Lois organiques, Lois ordinaires, Lois référendaires
+          </div>
+          <div class="pyramide-level pyr-3">
+            <span class="pyr-num">RÈGLEMENTS AUTONOMES</span>
+            Ordonnances de l'art. 38
+          </div>
+          <div class="pyramide-level pyr-4">
+            <span class="pyr-num">BLOC RÉGLEMENTAIRE</span>
+            Décrets, Règlements d'application, Arrêtés
+          </div>
+        </div>
+        <div class="warn-box" style="margin-top:1rem">⚠️ Toute norme inférieure doit être conforme à la norme supérieure. Une loi inconstitutionnelle peut être invalidée par le Conseil Constitutionnel.</div>
+      </div>
+
+      <div class="content-block">
+        <h3>Le Fonctionnement de l'État</h3>
+        <table class="schema-table">
+          <tr><th></th><th>Président</th><th>Premier Ministre</th><th>Assemblée Nationale</th><th>Sénat</th></tr>
+          <tr><td>Désignation</td><td>Suffrage universel, 5 ans</td><td>Nommé par le Président</td><td>Suffrage universel direct, 5 ans, 2 tours</td><td>Suffrage indirect, 9 ans (renouvellement par tiers)</td></tr>
+          <tr><td>Statut</td><td>Incompatible avec toute autre fonction</td><td>Incompatible avec toute fonction privée</td><td>Âge min : 18 ans</td><td>Âge min : 35 ans</td></tr>
+        </table>
+      </div>
+
+      <div class="content-block">
+        <h3>Les Collectivités Locales</h3>
+        <table class="schema-table">
+          <tr><th></th><th>Commune</th><th>Département</th><th>Région</th></tr>
+          <tr><td>Organes</td><td>Conseil municipal + Maire</td><td>Conseil général + Président</td><td>Conseil régional + Président</td></tr>
+          <tr><td>Désignation</td><td>Suffrage universel direct, 6 ans</td><td>Suffrage universel direct, 6 ans</td><td>Suffrage universel direct, 6 ans</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE EXERCICES -->
+  <div class="page" id="page-exercices">
+    <div class="section-header">
+      <div class="section-title">Exercices Interactifs</div>
+      <div id="questionCounter"></div>
+    </div>
+    <div class="exo-header">
+      <button class="mode-btn active" onclick="setMode('all', this)">Tout</button>
+      <button class="mode-btn" onclick="setMode('branches', this)">Branches du droit</button>
+      <button class="mode-btn" onclick="setMode('juridictions', this)">Juridictions</button>
+      <button class="mode-btn" onclick="setMode('concepts', this)">Concepts</button>
+      <button class="mode-btn" onclick="setMode('responsabilite', this)">Responsabilité</button>
+      <button class="btn btn-next" onclick="loadNewQuestion()" style="margin-left:auto">Nouvelle question →</button>
+    </div>
+    <div id="exo-container"></div>
+  </div>
+
+  <!-- PAGE TABLEAUX -->
+  <div class="page" id="page-tableaux">
+    <div class="section-header">
+      <div class="section-title">Entraînement Tableaux</div>
+      <div class="section-sub">Complète les cases vides</div>
+    </div>
+    <div class="exo-header">
+      <button class="mode-btn active" onclick="loadTableau('juridictions', this)">Juridictions pénales</button>
+      <button class="mode-btn" onclick="loadTableau('branches2', this)">Branches du droit</button>
+      <button class="mode-btn" onclick="loadTableau('responsabilite2', this)">Responsabilités</button>
+      <button class="mode-btn" onclick="loadTableau('preuve', this)">Moyens de preuve</button>
+    </div>
+    <div id="tableau-container"></div>
+  </div>
+
+  <!-- PAGE ANALYSE -->
+  <div class="page" id="page-analyse">
+    <div class="section-header">
+      <div class="section-title">Analyse de Situation</div>
+      <div class="section-sub">Méthodo d'examen</div>
+    </div>
+    <div class="exo-header">
+      <button class="mode-btn active" onclick="loadAnalyse(0, this)">Situation 1</button>
+      <button class="mode-btn" onclick="loadAnalyse(1, this)">Situation 2</button>
+      <button class="mode-btn" onclick="loadAnalyse(2, this)">Situation 3</button>
+      <button class="mode-btn" onclick="loadAnalyseRandom(this)">🎲 Aléatoire</button>
+    </div>
+    <div id="analyse-container"></div>
+  </div>
+
+  <!-- PAGE VOCABULAIRE -->
+  <div class="page" id="page-vocab">
+    <div class="section-header">
+      <div class="section-title">Vocabulaire Juridique</div>
+      <div class="section-sub">Clique pour révéler la définition</div>
+    </div>
+    <div class="exo-header">
+      <button class="btn btn-primary" onclick="shuffleVocab()">🔀 Mélanger</button>
+      <button class="btn btn-outline" onclick="testVocab()">⚡ Mode test</button>
+    </div>
+    <div class="vocab-grid" id="vocab-grid"></div>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+let score = 0, streak = 0, answered = 0;
+let currentMode = 'all';
+let currentTableau = 'juridictions';
+
+function addScore(pts) {
+  score += pts;
+  streak += pts > 0 ? 1 : 0;
+  if (pts <= 0) streak = 0;
+  answered++;
+  document.getElementById('scoreTotal').textContent = score;
+  document.getElementById('scoreStreak').textContent = streak;
+  document.getElementById('scoreAnswered').textContent = answered;
+  const prog = Math.min(100, answered * 10);
+  document.getElementById('progressFill').style.width = prog + '%';
+  if (pts > 0) showToast('+' + pts + ' pts 🎯');
+}
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.className = 'result-popup';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2000);
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  if (id === 'exercices' && !document.getElementById('exo-container').innerHTML) loadNewQuestion();
+  if (id === 'tableaux') loadTableau('juridictions', document.querySelector('#page-tableaux .mode-btn'));
+  if (id === 'analyse') loadAnalyse(0, document.querySelector('#page-analyse .mode-btn'));
+  if (id === 'vocab') renderVocab();
+}
+
+function openFiche(id) {
+  document.getElementById('fiche-list').style.display = 'none';
+  document.querySelectorAll('.fiche-detail').forEach(f => f.classList.remove('open'));
+  document.getElementById('fiche-' + id).classList.add('open');
+}
+function closeFiche() {
+  document.getElementById('fiche-list').style.display = '';
+  document.querySelectorAll('.fiche-detail').forEach(f => f.classList.remove('open'));
+}
+
+function toggleAccord(btn) {
+  btn.classList.toggle('open');
+  btn.nextElementSibling.classList.toggle('open');
+}
+
+function setMode(mode, btn) {
+  currentMode = mode;
+  document.querySelectorAll('#page-exercices .mode-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  loadNewQuestion();
+}
+
+// ============================================================
+// QUESTIONS DATA
+// ============================================================
+const questions = [
+  // BRANCHES DU DROIT
+  {
+    type: 'qcm', chapter: 'branches', tag: 'Branches du droit',
+    q: 'Un licenciement abusif relève de quelle branche du droit ?',
+    choices: ['Droit civil', 'Droit du travail', 'Droit pénal', 'Droit commercial'],
+    correct: 1,
+    expl: 'Les conflits entre employeurs et salariés relèvent du droit du travail. La juridiction compétente est le Conseil de Prud\'hommes.'
+  },
+  {
+    type: 'qcm', chapter: 'branches', tag: 'Branches du droit',
+    q: 'Le vol d\'une carte bancaire relève de quel droit ?',
+    choices: ['Droit civil', 'Droit commercial', 'Droit pénal', 'Droit administratif'],
+    correct: 2,
+    expl: 'Le vol est un délit pénal. Il sera jugé par le Tribunal correctionnel.'
+  },
+  {
+    type: 'qcm', chapter: 'branches', tag: 'Branches du droit',
+    q: 'L\'immatriculation d\'un commerçant au RCS relève de :',
+    choices: ['Droit civil', 'Droit commercial', 'Droit du travail', 'Droit administratif'],
+    correct: 1,
+    expl: 'L\'immatriculation au Registre du Commerce et des Sociétés relève du droit commercial.'
+  },
+  {
+    type: 'situation', chapter: 'branches', tag: 'Branches du droit',
+    situation: 'Monsieur Martin conteste le refus de permis de construire opposé par le Maire de sa commune.',
+    q: 'Quelle branche du droit s\'applique ? Quelle juridiction est compétente ?',
+    answer: 'Droit administratif — Tribunal administratif. Il s\'agit d\'un litige entre un particulier et l\'administration (la mairie).',
+    keywords: ['administratif', 'tribunal administratif']
+  },
+  {
+    type: 'situation', chapter: 'branches', tag: 'Branches du droit',
+    situation: 'La SARL Dupont et la SAS Leclerc ont un différend à propos d\'un contrat commercial de 50 000€.',
+    q: 'Quelle branche du droit et quelle juridiction ?',
+    answer: 'Droit commercial — Tribunal de commerce. Il s\'agit d\'un litige entre deux commerçants.',
+    keywords: ['commercial', 'tribunal de commerce']
+  },
+  {
+    type: 'situation', chapter: 'branches', tag: 'Branches du droit',
+    situation: 'Un conflit éclate entre deux particuliers au sujet d\'un héritage.',
+    q: 'Quelle branche du droit s\'applique ?',
+    answer: 'Droit civil (successions). La juridiction compétente est le Tribunal judiciaire.',
+    keywords: ['civil', 'judiciaire']
+  },
+  {
+    type: 'qcm', chapter: 'branches', tag: 'Droit objectif/subjectif',
+    q: 'Laquelle de ces affirmations relève du droit objectif ?',
+    choices: [
+      '"La salariée a droit à 16 semaines de congé maternité"',
+      '"La France est une République indivisible, laïque, démocratique et sociale"',
+      '"La victime d\'un dol pourra demander la nullité du contrat"',
+      '"Les associés peuvent agir en justice contre le gérant"'
+    ],
+    correct: 1,
+    expl: 'Le droit objectif énonce des règles générales s\'imposant à tous. La Constitution définit les principes de la République = règle de droit objective. Les autres exemples accordent un droit à une personne spécifique = droits subjectifs.'
+  },
+  {
+    type: 'qcm', chapter: 'concepts', tag: 'Droit objectif/subjectif',
+    q: '"Un consommateur a le droit d\'agir en nullité face à une clause abusive." C\'est :',
+    choices: ['Droit objectif', 'Droit subjectif'],
+    correct: 1,
+    expl: 'C\'est un droit subjectif : une prérogative accordée à une personne particulière (le consommateur) pour défendre ses intérêts.'
+  },
+
+  // JURIDICTIONS
+  {
+    type: 'qcm', chapter: 'juridictions', tag: 'Juridictions',
+    q: 'Quelle juridiction est compétente pour juger un meurtre ?',
+    choices: ['Tribunal de police', 'Tribunal correctionnel', 'Cour d\'assises', 'Cour d\'appel'],
+    correct: 2,
+    expl: 'Le meurtre est un crime. Les crimes sont jugés par la Cour d\'assises (3 juges pro + 6 jurés citoyens).'
+  },
+  {
+    type: 'qcm', chapter: 'juridictions', tag: 'Juridictions',
+    q: 'La Cour de cassation :',
+    choices: [
+      'Constitue un 3ème degré de juridiction',
+      'Rejuge les faits de l\'affaire',
+      'Vérifie si les règles de droit ont été correctement appliquées',
+      'Est compétente pour les litiges administratifs'
+    ],
+    correct: 2,
+    expl: 'La Cour de cassation ne juge pas les faits, elle vérifie uniquement que la loi a été correctement appliquée par les juridictions du fond.'
+  },
+  {
+    type: 'qcm', chapter: 'juridictions', tag: 'Juridictions',
+    q: 'Monsieur Dupont conteste le licenciement pour faute grave dont il a fait l\'objet et réclame 6 000€. Quelle juridiction est compétente ?',
+    choices: ['Tribunal judiciaire', 'Tribunal de commerce', 'Conseil de prud\'hommes', 'Tribunal administratif'],
+    correct: 2,
+    expl: 'Les litiges entre employeurs et salariés relèvent du Conseil de prud\'hommes, quelle que soit la somme.'
+  },
+  {
+    type: 'qcm', chapter: 'juridictions', tag: 'Juridictions',
+    q: 'Un fonctionnaire conteste la notation de son inspection par son administration. Quelle juridiction ?',
+    choices: ['Conseil de prud\'hommes', 'Tribunal judiciaire', 'Tribunal administratif', 'Tribunal correctionnel'],
+    correct: 2,
+    expl: 'Les litiges entre fonctionnaires et leur administration relèvent de l\'ordre administratif → Tribunal administratif.'
+  },
+  {
+    type: 'qcm', chapter: 'juridictions', tag: 'Vocabulaire',
+    q: 'Un arrêt de la Cour d\'appel qui rend une décision contraire au jugement de première instance est appelé :',
+    choices: ['Arrêt de rejet', 'Arrêt confirmatif', 'Arrêt infirmatif', 'Arrêt de cassation'],
+    correct: 2,
+    expl: 'Arrêt infirmatif = la Cour d\'appel infirme (renverse) la décision de 1ère instance.'
+  },
+  {
+    type: 'qcm', chapter: 'juridictions', tag: 'Vocabulaire',
+    q: 'Devant la Cour d\'appel, comment appelle-t-on celui qui fait appel de la décision ?',
+    choices: ['Demandeur', 'Défendeur', 'Appelant', 'Intimé'],
+    correct: 2,
+    expl: 'Appelant = celui qui interjette appel (anciennement demandeur). Intimé = l\'autre partie (anciennement défendeur).'
+  },
+  {
+    type: 'situation', chapter: 'juridictions', tag: 'Juridictions',
+    situation: 'Lors du braquage d\'une banque, les malfaiteurs ont tué un directeur d\'agence. Ils ont été arrêtés.',
+    q: 'Quelle juridiction est compétente ? L\'appel est-il possible ?',
+    answer: 'La Cour d\'assises, car il s\'agit d\'un crime (meurtre). Depuis 2001, les décisions de Cour d\'assises peuvent être contestées devant une autre Cour d\'assises (appel criminel).',
+    keywords: ['assises', 'crime']
+  },
+  {
+    type: 'situation', chapter: 'juridictions', tag: 'Juridictions',
+    situation: 'Mme Holdo conteste le refus de permis de construire du Maire de sa commune.',
+    q: 'Quel ordre de juridiction et quelle juridiction de 1er degré ?',
+    answer: 'Ordre administratif. Tribunal administratif. C\'est un litige entre une personne et l\'administration locale.',
+    keywords: ['administratif', 'tribunal administratif']
+  },
+
+  // CONCEPTS / PREUVE
+  {
+    type: 'qcm', chapter: 'concepts', tag: 'Preuve',
+    q: 'L\'acte authentique est rédigé par :',
+    choices: ['Des particuliers', 'Un officier public compétent (notaire, huissier)', 'Un avocat', 'Un juge'],
+    correct: 1,
+    expl: 'L\'acte authentique est obligatoirement rédigé par un officier public (notaire, huissier) et a la force probante la plus élevée : foi jusqu\'à inscription de faux.'
+  },
+  {
+    type: 'qcm', chapter: 'concepts', tag: 'Preuve',
+    q: 'Quelle est la force probante d\'un acte sous seing privé ?',
+    choices: [
+      'Foi jusqu\'à inscription de faux',
+      'L\'écriture et la signature peuvent être contestées',
+      'Elle est librement appréciée par le juge',
+      'Elle est irréfragable'
+    ],
+    correct: 1,
+    expl: 'Pour un acte sous seing privé, l\'écriture et la signature peuvent être contestées. Sa force probante est inférieure à l\'acte authentique.'
+  },
+  {
+    type: 'qcm', chapter: 'concepts', tag: 'Hiérarchie des normes',
+    q: 'Dans la pyramide de Kelsen, quelle norme se situe au sommet ?',
+    choices: ['Les lois organiques', 'Les traités internationaux', 'La Constitution', 'Les décrets'],
+    correct: 2,
+    expl: 'La Constitution est au sommet (bloc constitutionnel) : Constitution 1958, DDHC 1789, Préambule 1946, Charte de l\'environnement. Toutes les autres normes doivent lui être conformes.'
+  },
+  {
+    type: 'qcm', chapter: 'concepts', tag: 'Hiérarchie des normes',
+    q: 'Quel organe vérifie la conformité des lois à la Constitution ?',
+    choices: ['Le Conseil d\'État', 'La Cour de cassation', 'Le Conseil Constitutionnel', 'Le Tribunal des conflits'],
+    correct: 2,
+    expl: 'Le Conseil Constitutionnel vérifie la constitutionnalité des lois, a priori (avant promulgation) ou a posteriori via la QPC (Question Prioritaire de Constitutionnalité).'
+  },
+
+  // RESPONSABILITE
+  {
+    type: 'qcm', chapter: 'responsabilite', tag: 'Responsabilité',
+    q: 'Quels sont les 3 éléments constitutifs de la responsabilité civile ?',
+    choices: [
+      'Faute, intention, résultat',
+      'Dommage, lien de causalité, fait générateur',
+      'Dommage, faute, victime',
+      'Infraction, sanction, réparation'
+    ],
+    correct: 1,
+    expl: 'Les 3 éléments : Dommage + Lien de causalité + Fait générateur (faute ou risque). Les 3 doivent être réunis pour engager la responsabilité civile.'
+  },
+  {
+    type: 'qcm', chapter: 'responsabilite', tag: 'Responsabilité',
+    q: 'Quel est le but de la responsabilité civile ?',
+    choices: ['Punir le fautif', 'Réparer le dommage subi par la victime', 'Protéger la société', 'Prévenir les infractions'],
+    correct: 1,
+    expl: 'La responsabilité civile a pour but la réparation du dommage. C\'est la victime qui maîtrise l\'action. La responsabilité pénale, elle, a pour but la répression.'
+  },
+  {
+    type: 'situation', chapter: 'responsabilite', tag: 'Responsabilité',
+    situation: 'Un enfant de 8 ans, vivant chez ses parents, blesse accidentellement un camarade dans la rue.',
+    q: 'Sur quel fondement peut-on engager la responsabilité des parents ?',
+    answer: 'Responsabilité civile des parents du fait de leurs enfants mineurs (art. 1242 C. civ.). L\'enfant est mineur non émancipé, il habite chez ses parents, il a causé le dommage. Les parents ne peuvent s\'exonérer qu\'en prouvant la force majeure ou la faute de la victime.',
+    keywords: ['parents', 'mineur', 'responsabilité', 'fait des enfants']
+  },
+  {
+    type: 'qcm', chapter: 'responsabilite', tag: 'Responsabilité',
+    q: 'La responsabilité de l\'employeur pour le fait de ses salariés est :',
+    choices: [
+      'Conditionnée à la preuve d\'une faute de l\'employeur',
+      'Une présomption simple (renversable)',
+      'Une présomption irréfragable',
+      'Inexistante si l\'employeur a bien formé son salarié'
+    ],
+    correct: 2,
+    expl: 'La présomption de responsabilité de l\'employeur est irréfragable : la victime n\'a pas à prouver la faute. L\'employeur ne peut s\'exonérer qu\'en prouvant l\'absence de lien de subordination, que le dommage est hors fonctions, ou qu\'il n\'était pas autorisé à agir.'
+  },
+  {
+    type: 'qcm', chapter: 'concepts', tag: 'Droits patrimoniaux',
+    q: 'Lesquels de ces caractères s\'appliquent aux droits patrimoniaux ?',
+    choices: [
+      'Cessibles, transmissibles, saisissables, prescriptibles',
+      'Incessibles, intransmissibles, non-saisissables',
+      'Personnels, exclusifs, perpétuels',
+      'Politiques, fondamentaux, collectifs'
+    ],
+    correct: 0,
+    expl: 'Les droits patrimoniaux peuvent être transmis, vendus, saisis et se perdent par l\'écoulement du temps (prescription). À l\'opposé, les droits extrapatrimoniaux (famille, personnalité) sont incessibles et intransmissibles.'
+  },
+];
+
+// ============================================================
+// EXERCICES ENGINE
+// ============================================================
+let usedQuestions = [];
+let currentQ = null;
+
+function getQuestionsForMode() {
+  if (currentMode === 'all') return questions;
+  return questions.filter(q => q.chapter === currentMode);
+}
+
+function loadNewQuestion() {
+  const pool = getQuestionsForMode();
+  let available = pool.filter((_, i) => !usedQuestions.includes(i + '_' + currentMode));
+  if (available.length === 0) {
+    usedQuestions = [];
+    available = pool;
+  }
+  const q = available[Math.floor(Math.random() * available.length)];
+  const realIdx = pool.indexOf(q);
+  usedQuestions.push(realIdx + '_' + currentMode);
+  currentQ = q;
+
+  const counter = document.getElementById('questionCounter');
+  counter.textContent = `${usedQuestions.length} / ${pool.length} questions`;
+
+  if (q.type === 'qcm') renderQCM(q);
+  else renderSituation(q);
+}
+
+function renderQCM(q) {
+  const container = document.getElementById('exo-container');
+  const shuffled = [...q.choices.map((c, i) => ({text: c, orig: i}))].sort(() => Math.random() - 0.5);
+  const correctShuffled = shuffled.findIndex(c => c.orig === q.correct);
+
+  container.innerHTML = `
+    <div class="exo-card">
+      <div class="exo-meta">
+        <span class="exo-chapter">${q.tag}</span>
+        <span class="exo-type">QCM</span>
+      </div>
+      <div class="exo-question">${q.q}</div>
+      <div class="choices">
+        ${shuffled.map((c, i) => `<button class="choice-btn" onclick="answerQCM(this, ${i}, ${correctShuffled})">${c.text}</button>`).join('')}
+      </div>
+      <div class="feedback-box" id="qcm-feedback"></div>
+      <div class="btn-row">
+        <button class="btn btn-next" onclick="loadNewQuestion()">Suivant →</button>
+      </div>
+    </div>`;
+}
+
+function answerQCM(btn, chosen, correct) {
+  const btns = btn.closest('.choices').querySelectorAll('.choice-btn');
+  btns.forEach(b => b.disabled = true);
+  const fb = document.getElementById('qcm-feedback');
+  if (chosen === correct) {
+    btn.classList.add('correct');
+    fb.className = 'feedback-box show good';
+    fb.textContent = '✓ Correct ! ' + currentQ.expl;
+    addScore(10);
+  } else {
+    btn.classList.add('wrong');
+    btns[correct].classList.add('reveal');
+    fb.className = 'feedback-box show bad';
+    fb.textContent = '✗ Incorrect. ' + currentQ.expl;
+    addScore(-2);
+  }
+}
+
+function renderSituation(q) {
+  const container = document.getElementById('exo-container');
+  container.innerHTML = `
+    <div class="exo-card">
+      <div class="exo-meta">
+        <span class="exo-chapter">${q.tag}</span>
+        <span class="exo-type">Analyse de situation</span>
+      </div>
+      <div class="exo-situation">${q.situation}</div>
+      <div class="exo-question">${q.q}</div>
+      <textarea class="exo-input" id="sit-answer" placeholder="Rédigez votre réponse..."></textarea>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="checkSituation()">Vérifier ma réponse</button>
+        <button class="btn btn-outline" onclick="revealSituation()">Voir la correction</button>
+        <button class="btn btn-next" onclick="loadNewQuestion()">Suivant →</button>
+      </div>
+      <div class="feedback-box" id="sit-feedback"></div>
+    </div>`;
+}
+
+function checkSituation() {
+  const ans = document.getElementById('sit-answer').value.toLowerCase();
+  const fb = document.getElementById('sit-feedback');
+  const keywords = currentQ.keywords || [];
+  const found = keywords.filter(k => ans.includes(k.toLowerCase()));
+  const score_ratio = found.length / keywords.length;
+  if (score_ratio >= 0.6) {
+    fb.className = 'feedback-box show good';
+    fb.innerHTML = `✓ Bonne réponse ! Mots-clés détectés : ${found.map(k => '<strong>' + k + '</strong>').join(', ')}<br><br><strong>Correction complète :</strong> ${currentQ.answer}`;
+    addScore(15);
+  } else {
+    fb.className = 'feedback-box show bad';
+    fb.innerHTML = `⚠️ Incomplet. Mots-clés attendus : <strong>${keywords.join(', ')}</strong><br><br><strong>Correction :</strong> ${currentQ.answer}`;
+    addScore(0);
+  }
+}
+
+function revealSituation() {
+  const fb = document.getElementById('sit-feedback');
+  fb.className = 'feedback-box show info';
+  fb.innerHTML = `<strong>Correction :</strong> ${currentQ.answer}`;
+}
+
+// ============================================================
+// TABLEAUX
+// ============================================================
+const tableaux = {
+  juridictions: {
+    title: 'Juridictions Pénales',
+    headers: ['Tribunal', 'Type d\'infractions', 'Peines maximales', 'Composition'],
+    rows: [
+      { situation: 'Tribunal de police', cells: [
+        { q: 'Type d\'infractions', a: 'Contraventions (1ère à 5ème classe)' },
+        { q: 'Peines max', a: '1 500€ (3 000€ en récidive)' },
+        { q: 'Composition', a: 'Juge unique + greffier' },
+      ]},
+      { situation: 'Tribunal correctionnel', cells: [
+        { q: 'Type d\'infractions', a: 'Délits (vol, escroquerie, coups et blessures graves...)' },
+        { q: 'Peines max', a: '10 ans d\'emprisonnement (20 ans en récidive)' },
+        { q: 'Composition', a: '3 magistrats professionnels' },
+      ]},
+      { situation: 'Cour d\'assises', cells: [
+        { q: 'Type d\'infractions', a: 'Crimes (meurtres, viols, vols à main armée...)' },
+        { q: 'Peines max', a: 'Réclusion criminelle à perpétuité' },
+        { q: 'Composition', a: '3 juges + 6 jurés citoyens tirés au sort' },
+      ]},
+    ]
+  },
+  branches2: {
+    title: 'Branches du Droit',
+    headers: ['Branche', 'Domaine', 'Source principale', 'Juridiction 1er degré'],
+    rows: [
+      { situation: 'Droit civil', cells: [
+        { q: 'Domaine', a: 'Rapports entre particuliers (famille, successions, contrats)' },
+        { q: 'Source', a: 'Code civil' },
+        { q: 'Juridiction', a: 'Tribunal judiciaire' },
+      ]},
+      { situation: 'Droit commercial', cells: [
+        { q: 'Domaine', a: 'Actes de commerce entre commerçants' },
+        { q: 'Source', a: 'Code de commerce' },
+        { q: 'Juridiction', a: 'Tribunal de commerce' },
+      ]},
+      { situation: 'Droit du travail', cells: [
+        { q: 'Domaine', a: 'Relations employeurs/salariés' },
+        { q: 'Source', a: 'Code du travail' },
+        { q: 'Juridiction', a: 'Conseil de prud\'hommes' },
+      ]},
+      { situation: 'Droit pénal', cells: [
+        { q: 'Domaine', a: 'Infractions à la loi pénale' },
+        { q: 'Source', a: 'Code pénal' },
+        { q: 'Juridiction', a: 'Tribunal de police / Correctionnel / Assises' },
+      ]},
+      { situation: 'Droit administratif', cells: [
+        { q: 'Domaine', a: 'Rapports avec l\'administration' },
+        { q: 'Source', a: 'Jurisprudence (pas de code)' },
+        { q: 'Juridiction', a: 'Tribunal administratif' },
+      ]},
+    ]
+  },
+  responsabilite2: {
+    title: 'Responsabilité du fait d\'autrui',
+    headers: ['Type', 'Fondement', 'Conditions', 'Exonération possible'],
+    rows: [
+      { situation: 'Parents / fait enfants', cells: [
+        { q: 'Fondement', a: 'Devoir de garde et d\'éducation' },
+        { q: 'Conditions', a: 'Mineur non émancipé, habitant chez ses parents, ayant lui-même causé le dommage' },
+        { q: 'Exonération', a: 'Force majeure ou faute de la victime' },
+      ]},
+      { situation: 'Artisans / apprentis', cells: [
+        { q: 'Fondement', a: 'Devoir de surveillance envers les apprentis' },
+        { q: 'Conditions', a: 'Apprenti a causé le dommage sous surveillance de l\'artisan' },
+        { q: 'Exonération', a: 'Force majeure ou faute de la victime' },
+      ]},
+      { situation: 'Employeurs / salariés', cells: [
+        { q: 'Fondement', a: 'Risque lié à l\'activité du préposé' },
+        { q: 'Conditions', a: 'Lien de subordination, dommage dans l\'exercice des fonctions' },
+        { q: 'Exonération', a: 'Dommage hors fonctions, non autorisé, ou force majeure' },
+      ]},
+    ]
+  },
+  preuve: {
+    title: 'Moyens de Preuve',
+    headers: ['Moyen', 'Forme', 'Force probante'],
+    rows: [
+      { situation: 'L\'Écrit', cells: [
+        { q: 'Forme principale', a: 'Acte authentique (officier public) ou acte sous seing privé (particuliers)' },
+        { q: 'Force probante', a: 'Acte authentique : foi jusqu\'à inscription de faux. SSP : écriture et signature contestables' },
+      ]},
+      { situation: 'Témoignage', cells: [
+        { q: 'Forme', a: 'Déclaration émanant d\'un tiers ayant personnellement connaissance des faits' },
+        { q: 'Force probante', a: 'Librement appréciée par le juge (un témoin peut se tromper ou être acheté)' },
+      ]},
+      { situation: 'Présomptions légales', cells: [
+        { q: 'Forme', a: 'Conséquences que la loi tire d\'un fait connu' },
+        { q: 'Force probante', a: 'Irréfragable (n\'admet pas la preuve contraire) ou simple (admet la preuve contraire)' },
+      ]},
+      { situation: 'L\'Aveu judiciaire', cells: [
+        { q: 'Forme', a: 'Déclaration par laquelle une partie reconnaît l\'exactitude d\'un fait' },
+        { q: 'Force probante', a: 'Fait pleine foi contre celui qui l\'a fait' },
+      ]},
+    ]
+  }
+};
+
+function loadTableau(id, btn) {
+  currentTableau = id;
+  document.querySelectorAll('#page-tableaux .mode-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const t = tableaux[id];
+  const container = document.getElementById('tableau-container');
+
+  const rows = [...t.rows].sort(() => Math.random() - 0.5);
+  // Randomly hide some cells
+  const hideMap = rows.map(row => row.cells.map(() => Math.random() > 0.45));
+
+  let html = `
+    <div class="exo-card">
+      <div style="font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--accent); margin-bottom:1rem;">${t.title}</div>
+      <div class="tableau-container">
+        <table class="fill-table">
+          <thead><tr>
+            <th>${t.headers[0]}</th>
+            ${t.headers.slice(1).map(h => `<th>${h}</th>`).join('')}
+          </tr></thead>
+          <tbody>`;
+
+  rows.forEach((row, ri) => {
+    html += `<tr><td class="situation-col">${row.situation}</td>`;
+    row.cells.forEach((cell, ci) => {
+      if (hideMap[ri][ci]) {
+        html += `<td><input class="fill-input" type="text" placeholder="?" data-answer="${cell.a.replace(/"/g,'&quot;')}" data-key="${ri}-${ci}"></td>`;
+      } else {
+        html += `<td style="font-size:0.82rem; line-height:1.5;">${cell.a}</td>`;
+      }
+    });
+    html += `</tr>`;
+  });
+
+  html += `</tbody></table></div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="checkTableau()">Vérifier</button>
+        <button class="btn btn-outline" onclick="revealTableau()">Afficher les réponses</button>
+        <button class="btn btn-next" onclick="loadTableau('${id}')">Nouveau tableau →</button>
+      </div>
+      <div class="feedback-box" id="tab-feedback"></div>
+    </div>`;
+
+  container.innerHTML = html;
+}
+
+function checkTableau() {
+  const inputs = document.querySelectorAll('.fill-input');
+  let correct = 0, total = inputs.length;
+  inputs.forEach(inp => {
+    const ans = inp.value.trim().toLowerCase();
+    const ref = inp.dataset.answer.toLowerCase();
+    // Partial match on key words
+    const refWords = ref.split(/\s+/).filter(w => w.length > 4);
+    const matchCount = refWords.filter(w => ans.includes(w)).length;
+    if (matchCount / Math.max(refWords.length, 1) >= 0.5) {
+      inp.classList.add('correct-field');
+      inp.classList.remove('wrong-field');
+      correct++;
+    } else {
+      inp.classList.add('wrong-field');
+      inp.classList.remove('correct-field');
+    }
+  });
+  const fb = document.getElementById('tab-feedback');
+  const ratio = total === 0 ? 1 : correct / total;
+  if (ratio >= 0.7) {
+    fb.className = 'feedback-box show good';
+    fb.textContent = `✓ ${correct}/${total} cases correctes. Excellent !`;
+    addScore(correct * 5);
+  } else {
+    fb.className = 'feedback-box show bad';
+    fb.textContent = `${correct}/${total} cases correctes. Révisez et réessayez !`;
+    addScore(correct * 2);
+  }
+}
+
+function revealTableau() {
+  document.querySelectorAll('.fill-input').forEach(inp => {
+    inp.value = inp.dataset.answer;
+    inp.classList.add('revealed');
+    inp.classList.remove('correct-field', 'wrong-field');
+  });
+}
+
+// ============================================================
+// ANALYSE
+// ============================================================
+const situations = [
+  {
+    title: 'L\'Affaire du Tournage (Taxi 2)',
+    tag: 'Responsabilité civile / pénale',
+    texte: `Le réalisateur Gérard Krawczyk a été mis en examen pour "homicide et blessure involontaire" à la suite de l'accident survenu lors du tournage de Taxi 2. Un cameraman, Alain Dutartre, a été fauché par une Peugeot 406 lors d'une cascade. Luc Besson (producteur) et Rémy Julienne (coordinateur cascade) ont également été mis en examen.`,
+    correction: {
+      juridiction: 'Juridiction pénale : Tribunal correctionnel (homicide involontaire = délit)',
+      domaine: 'Droit pénal + Droit du travail',
+      faits: 'Lors du tournage de Taxi 2, un cameraman a été fauché mortellement par une voiture lors d\'une cascade. Son assistant a été grièvement blessé.',
+      procedure: 'Mise en examen du réalisateur, du producteur et du coordinateur de cascades pour homicide et blessures involontaires.',
+      probleme: 'Sur quel fondement juridique peut-on engager la responsabilité pénale du réalisateur et des autres personnes mises en examen ?',
+      moyens: 'Faute pénale involontaire (mise en danger de la vie d\'autrui, manquement aux règles de sécurité sur le tournage)',
+      dispositif: 'Mise en examen = début de l\'instruction. La responsabilité pénale de chaque intervenant sera examinée.',
+      motifs: 'L\'homicide involontaire est un délit pénal. Le fait d\'avoir organisé ou supervisé une cascade sans mesures de sécurité suffisantes constitue la faute pénale.',
+    }
+  },
+  {
+    title: 'Le Harnais Défectueux',
+    tag: 'Responsabilité du fait des produits défectueux',
+    texte: `Pierre achète du matériel d'élagage professionnel. Il s'équipe correctement (casque, lunettes, harnais) et monte à l'arbre. Le harnais lâche suite à un défaut de coutures. Pierre chute et se fracture le bassin et l'épaule. Il sera immobilisé 3 mois et devra se rééduquer 1 an. Il ne pourra pas ouvrir son parc "Les Jardins de Pierre" dans les délais prévus.`,
+    correction: {
+      juridiction: 'Tribunal judiciaire (droit civil, responsabilité civile)',
+      domaine: 'Droit civil — Responsabilité du fait des produits défectueux (art. 1386-1 C. civ.)',
+      faits: 'Pierre utilise un harnais neuf qui lâche à cause d\'un défaut de coutures. Il chute, fracture bassin et épaule, immobilisation 3 mois, rééducation 1 an, perte de revenus.',
+      procedure: 'Pierre peut assigner le fabricant et/ou le vendeur du harnais en réparation.',
+      probleme: 'Le fabricant/vendeur du harnais défectueux peut-il être déclaré responsable des préjudices subis par Pierre ?',
+      moyens: 'Pierre invoque : défaut du produit (coutures défaillantes), responsabilité du producteur sans faute prouvée (art. 1386-1), garantie des vices cachés (art. 1641)',
+      dispositif: 'Le fabricant est responsable. Pierre peut obtenir réparation de tous ses préjudices (corporel, moral, économique).',
+      motifs: 'Le harnais est défectueux car il n\'offre pas la sécurité légitimement attendue (art. 1386-4). La responsabilité du producteur est engagée même sans faute prouvée.',
+    }
+  },
+  {
+    title: 'Le Bermuda au Travail',
+    tag: 'Droit du travail — Liberté vestimentaire',
+    texte: `M. X., embauché comme agent technique des méthodes chez Sagem, vient travailler en bermuda. Ses supérieurs lui demandent oralement puis par écrit de porter un pantalon sous la blouse prescrite par le règlement intérieur. Il refuse. Il est licencié. Il saisit le conseil de prud'hommes demandant l'annulation de son licenciement sur le fondement de la liberté de se vêtir (art. L.120-2 C. trav.).`,
+    correction: {
+      juridiction: 'Conseil de prud\'hommes (1er degré) → Cour d\'appel de Rouen → Cour de cassation (chambre sociale)',
+      domaine: 'Droit du travail',
+      faits: 'M. X. refuse de porter un pantalon sous sa blouse malgré les demandes de son employeur. Il est licencié le 22 juin 2001.',
+      procedure: 'M. X. (demandeur/appelant) vs Société Sagem (défenderesse/intimée). Conseil prud\'hommes → Cour d\'appel (arrêt confirmatif) → Pourvoi en cassation → Rejet du pourvoi.',
+      probleme: 'La liberté de se vêtir constitue-t-elle une liberté fondamentale qui interdirait à l\'employeur d\'imposer des contraintes vestimentaires ?',
+      moyens: 'M. X. argue que la liberté de se vêtir est une liberté individuelle fondamentale protégée par art. L.120-2. Sagem répond que le règlement intérieur est justifié par la nature du poste.',
+      dispositif: 'La Cour de cassation rejette le pourvoi. Le licenciement est confirmé.',
+      motifs: 'La liberté de se vêtir au temps et au lieu du travail n\'est PAS une liberté fondamentale. L\'employeur peut imposer des contraintes vestimentaires justifiées par la nature des tâches.',
+    }
+  }
+];
+
+let currentAnalyse = 0;
+
+function loadAnalyse(idx, btn) {
+  currentAnalyse = idx;
+  if (btn) {
+    document.querySelectorAll('#page-analyse .mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  renderAnalyse(situations[idx]);
+}
+
+function loadAnalyseRandom(btn) {
+  const idx = Math.floor(Math.random() * situations.length);
+  loadAnalyse(idx, btn);
+}
+
+function renderAnalyse(sit) {
+  const container = document.getElementById('analyse-container');
+  const fields = [
+    { key: 'juridiction', label: 'Juridiction saisie' },
+    { key: 'domaine', label: 'Domaine du droit' },
+    { key: 'faits', label: 'Résumé des faits' },
+    { key: 'procedure', label: 'Déroulement de la procédure' },
+    { key: 'probleme', label: 'Problème juridique (question)' },
+    { key: 'moyens', label: 'Moyens des parties' },
+    { key: 'dispositif', label: 'Dispositif (décision)' },
+    { key: 'motifs', label: 'Motifs de la décision' },
+  ];
+
+  html = `
+    <div class="exo-card">
+      <div class="exo-meta">
+        <span class="exo-chapter">${sit.tag}</span>
+        <span class="exo-type">Grille d'analyse</span>
+      </div>
+      <div style="font-family:'Playfair Display',serif; font-size:1.15rem; margin-bottom:1rem; color:var(--text);">${sit.title}</div>
+      <div class="exo-situation">${sit.texte}</div>
+      <div class="grille-analyse">`;
+
+  fields.forEach(f => {
+    html += `
+      <div class="grille-row">
+        <div class="grille-label">${f.label}</div>
+        <textarea class="exo-input" data-key="${f.key}" placeholder="Votre réponse..." style="min-height:60px;"></textarea>
+      </div>`;
+  });
+
+  html += `</div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="checkAnalyse()">Comparer avec la correction</button>
+        <button class="btn btn-outline" onclick="revealAnalyse()">Afficher toute la correction</button>
+      </div>
+      <div id="analyse-feedback"></div>
+    </div>`;
+
+  container.innerHTML = html;
+  container.querySelector('textarea').focus();
+}
+
+function checkAnalyse() {
+  const sit = situations[currentAnalyse];
+  const inputs = document.querySelectorAll('#analyse-container textarea');
+  const fb = document.getElementById('analyse-feedback');
+  let html = '<div style="margin-top:1rem;">';
+  let filled = 0;
+  inputs.forEach(inp => {
+    const key = inp.dataset.key;
+    const correction = sit.correction[key] || '';
+    const val = inp.value.trim();
+    if (val.length > 5) filled++;
+    html += `
+      <div style="margin-bottom:0.8rem; background:var(--bg3); border-radius:8px; padding:0.8rem;">
+        <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--accent2); text-transform:uppercase; margin-bottom:0.4rem;">${inp.previousElementSibling.textContent}</div>
+        ${val ? `<div style="font-size:0.82rem; color:var(--muted); margin-bottom:0.4rem;">Votre réponse : <em>${val}</em></div>` : ''}
+        <div style="font-size:0.82rem; color:var(--accent3);">✓ Correction : ${correction}</div>
+      </div>`;
+  });
+  html += '</div>';
+  fb.innerHTML = html;
+  if (filled >= 4) addScore(20);
+}
+
+function revealAnalyse() {
+  const sit = situations[currentAnalyse];
+  const inputs = document.querySelectorAll('#analyse-container textarea');
+  inputs.forEach(inp => {
+    const key = inp.dataset.key;
+    const correction = sit.correction[key] || '';
+    inp.value = correction;
+    inp.style.borderColor = 'var(--accent3)';
+  });
+}
+
+// ============================================================
+// VOCABULAIRE
+// ============================================================
+const vocab = [
+  { term: 'Jugement', def: 'Décision rendue par une juridiction du 1er degré (Tribunal).' },
+  { term: 'Arrêt', def: 'Décision rendue par une Cour (Cour d\'Appel ou Cour de cassation).' },
+  { term: 'Arrêt confirmatif', def: 'Arrêt d\'une Cour d\'Appel qui confirme le jugement de 1ère instance.' },
+  { term: 'Arrêt infirmatif', def: 'Arrêt d\'une Cour d\'Appel qui rend une décision contraire à celle de 1ère instance.' },
+  { term: 'Arrêt de cassation', def: 'La Cour de cassation accepte le pourvoi, annule la décision et renvoie devant une nouvelle juridiction.' },
+  { term: 'Arrêt de rejet', def: 'La Cour de cassation rejette le pourvoi et confirme la décision attaquée.' },
+  { term: 'Demandeur', def: 'Personne qui prend l\'initiative du procès.' },
+  { term: 'Défendeur', def: 'Personne contre qui le procès est engagé.' },
+  { term: 'Appelant', def: 'Devant la Cour d\'Appel, celui qui fait appel (= demandeur).' },
+  { term: 'Intimé', def: 'Devant la Cour d\'Appel, la partie adverse (= défendeur).' },
+  { term: 'Débouter', def: 'Décider que la demande est mal fondée et rejeter les prétentions du demandeur.' },
+  { term: 'Dépens', def: 'Frais de justice (à la charge de la partie qui perd).' },
+  { term: 'Jurisprudence', def: 'Ensemble des décisions de justice qui font autorité. Source indirecte du droit.' },
+  { term: 'Moyen', def: 'Argument de droit par lequel l\'auteur d\'un pourvoi critique la décision contestée.' },
+  { term: 'En l\'espèce', def: 'Dans ce cas précis (formule utilisée dans les arrêts).' },
+  { term: 'Faire grief', def: 'Reprocher quelque chose (ex : il fait grief à l\'arrêt d\'avoir...).' },
+  { term: 'Assemblée plénière', def: 'Formation de la Cour de cassation intervenant obligatoirement lors d\'un 2ème pourvoi sur les mêmes moyens.' },
+  { term: 'Droit objectif', def: 'Ensemble des règles de droit s\'imposant à tous les membres de la société.' },
+  { term: 'Droit subjectif', def: 'Prérogative accordée par le droit objectif à un sujet de droit particulier.' },
+  { term: 'Présomption irréfragable', def: 'Présomption légale qui n\'admet pas la preuve contraire.' },
+  { term: 'Présomption simple', def: 'Présomption légale qui peut être renversée par la preuve contraire.' },
+  { term: 'Acte authentique', def: 'Acte rédigé par un officier public compétent (notaire, huissier). Force probante maximale.' },
+  { term: 'Acte sous seing privé', def: 'Acte rédigé par des particuliers sans officier public. L\'écriture et la signature peuvent être contestées.' },
+  { term: 'Pyramide de Kelsen', def: 'Théorie de la hiérarchie des normes : chaque règle doit être conforme à la norme supérieure.' },
+  { term: 'Fait générateur', def: 'Événement à l\'origine du dommage : faute (responsabilité subjective) ou risque (responsabilité objective).' },
+  { term: 'Lien de causalité', def: 'Relation de cause à effet entre le fait générateur et le dommage. Élément indispensable de la responsabilité civile.' },
+  { term: 'Tribunal des conflits', def: 'Juridiction qui règle les conflits de compétence entre l\'ordre judiciaire et l\'ordre administratif.' },
+  { term: 'Ordre judiciaire', def: 'Ensemble des juridictions civiles et pénales. Sommet : Cour de cassation.' },
+  { term: 'Ordre administratif', def: 'Ensemble des juridictions administratives. Sommet : Conseil d\'État.' },
+];
+
+let vocabOrder = [...Array(vocab.length).keys()];
+
+function shuffleVocab() {
+  vocabOrder = vocabOrder.sort(() => Math.random() - 0.5);
+  renderVocab();
+}
+
+function testVocab() {
+  shuffleVocab();
+  showToast('Mode test — mémorise les définitions !');
+}
+
+function renderVocab() {
+  const grid = document.getElementById('vocab-grid');
+  grid.innerHTML = vocabOrder.map(i => `
+    <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+      <div class="vocab-term">${vocab[i].term}</div>
+      <div class="vocab-def">${vocab[i].def}</div>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  loadNewQuestion();
+});
+</script>
+</body>
+</html>

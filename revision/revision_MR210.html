@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestion S2 — Révisions IUT Informatique</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf9f7;
+    --surface: #ffffff;
+    --surface2: #f3f1ee;
+    --border: #e8e4df;
+    --text: #1a1714;
+    --text-muted: #7a7268;
+    --accent: #c85a2a;
+    --accent-light: #f5e8e1;
+    --accent2: #2a6bc8;
+    --accent2-light: #e1ecf5;
+    --accent3: #2a8c5a;
+    --accent3-light: #e1f5ec;
+    --gold: #b8860b;
+    --gold-light: #fdf5dc;
+    --shadow: 0 2px 12px rgba(26,23,20,0.08);
+    --shadow-lg: 0 8px 32px rgba(26,23,20,0.12);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 8px rgba(26,23,20,0.06);
+  }
+  .header-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    height: 60px;
+  }
+  .logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.25rem;
+    color: var(--accent);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .logo span { color: var(--text-muted); font-size: 0.8rem; font-family: 'DM Sans', sans-serif; font-weight: 400; }
+  nav { display: flex; gap: 4px; overflow-x: auto; }
+  .nav-btn {
+    background: none; border: none; cursor: pointer;
+    padding: 6px 14px; border-radius: 20px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500;
+    color: var(--text-muted); transition: all 0.2s; white-space: nowrap;
+  }
+  .nav-btn:hover { background: var(--surface2); color: var(--text); }
+  .nav-btn.active { background: var(--accent); color: white; }
+
+  /* ── LAYOUT ── */
+  main { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── HERO (accueil) ── */
+  .hero {
+    text-align: center; padding: 3rem 1rem 2rem;
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    line-height: 1.15;
+    margin-bottom: 0.75rem;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); }
+  .hero p { color: var(--text-muted); font-size: 1.05rem; max-width: 520px; margin: 0 auto 2.5rem; }
+
+  .chapter-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem; margin-top: 1rem;
+  }
+  .chapter-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+  }
+  .chapter-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); border-color: transparent; }
+  .chapter-card .ch-num {
+    font-family: 'DM Serif Display', serif; font-size: 2.5rem;
+    line-height: 1; margin-bottom: 0.5rem;
+  }
+  .ch1 .ch-num { color: var(--accent); }
+  .ch2 .ch-num { color: var(--accent2); }
+  .ch3 .ch-num { color: var(--accent3); }
+  .chapter-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.4rem; }
+  .chapter-card p { font-size: 0.82rem; color: var(--text-muted); }
+  .ch-badge {
+    display: inline-block; margin-top: 1rem;
+    padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;
+  }
+  .ch1 .ch-badge { background: var(--accent-light); color: var(--accent); }
+  .ch2 .ch-badge { background: var(--accent2-light); color: var(--accent2); }
+  .ch3 .ch-badge { background: var(--accent3-light); color: var(--accent3); }
+
+  /* ── SECTION HEADING ── */
+  .section-head {
+    display: flex; align-items: center; gap: 1rem;
+    margin-bottom: 1.75rem;
+  }
+  .section-head h2 {
+    font-family: 'DM Serif Display', serif; font-size: 1.8rem;
+  }
+  .section-head .pill {
+    padding: 4px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 600;
+    background: var(--accent-light); color: var(--accent);
+  }
+
+  /* ── TABS ── */
+  .tabs { display: flex; gap: 4px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .tab-btn {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 20px; padding: 6px 16px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500;
+    cursor: pointer; transition: all 0.2s; color: var(--text-muted);
+  }
+  .tab-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .tab-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ── FLASHCARD ── */
+  .flashcard-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+  .flashcard {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.5rem;
+    cursor: pointer; perspective: 600px; min-height: 140px;
+    position: relative; transition: box-shadow 0.2s;
+  }
+  .flashcard:hover { box-shadow: var(--shadow); }
+  .flashcard-inner { transition: transform 0.45s; transform-style: preserve-3d; position: relative; min-height: 96px; }
+  .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back {
+    backface-visibility: hidden; position: absolute; top: 0; left: 0; right: 0;
+  }
+  .flashcard-back { transform: rotateY(180deg); }
+  .flashcard-front .label {
+    font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em;
+    color: var(--text-muted); margin-bottom: 0.5rem;
+  }
+  .flashcard-front h4 { font-size: 1rem; font-weight: 600; line-height: 1.4; }
+  .flashcard-back p { font-size: 0.88rem; line-height: 1.6; color: var(--text); }
+  .flashcard .flip-hint {
+    position: absolute; bottom: 10px; right: 14px;
+    font-size: 0.7rem; color: var(--text-muted);
+  }
+
+  /* ── FORMULA CARD ── */
+  .formula-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+  .formula-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.25rem 1.5rem;
+  }
+  .formula-card .fname { font-size: 0.78rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 0.4rem; }
+  .formula-card .fexpr {
+    font-family: 'DM Mono', monospace; font-size: 0.92rem;
+    background: var(--surface2); padding: 8px 12px; border-radius: var(--radius-sm);
+    border-left: 3px solid var(--accent); margin: 0.4rem 0;
+  }
+  .formula-card .fnote { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.4rem; }
+
+  /* ── QUIZ ── */
+  .quiz-container { max-width: 680px; }
+  .quiz-progress {
+    display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;
+  }
+  .quiz-bar {
+    flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden;
+  }
+  .quiz-bar-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.4s; }
+  .quiz-counter { font-size: 0.82rem; color: var(--text-muted); font-weight: 500; white-space: nowrap; }
+  .quiz-score-badge {
+    padding: 4px 12px; border-radius: 20px; font-size: 0.82rem; font-weight: 600;
+    background: var(--gold-light); color: var(--gold);
+  }
+
+  .quiz-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 2rem;
+    box-shadow: var(--shadow);
+  }
+  .quiz-chapter-tag {
+    display: inline-block; padding: 3px 10px; border-radius: 20px;
+    font-size: 0.72rem; font-weight: 600; margin-bottom: 1rem;
+  }
+  .quiz-card h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 1.5rem; line-height: 1.5; }
+  .quiz-options { display: flex; flex-direction: column; gap: 0.6rem; }
+  .quiz-option {
+    background: var(--surface2); border: 2px solid var(--border);
+    border-radius: var(--radius-sm); padding: 0.75rem 1rem;
+    cursor: pointer; transition: all 0.2s; text-align: left;
+    font-family: 'DM Sans', sans-serif; font-size: 0.9rem; color: var(--text);
+  }
+  .quiz-option:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-light); }
+  .quiz-option.correct { background: #e8f5ee; border-color: var(--accent3); color: #1a5c38; }
+  .quiz-option.wrong { background: #fdecea; border-color: #e53935; color: #7a1a17; }
+  .quiz-option:disabled { cursor: not-allowed; }
+
+  .quiz-feedback {
+    margin-top: 1rem; padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm); font-size: 0.88rem; display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background: #e8f5ee; color: #1a5c38; border-left: 3px solid var(--accent3); }
+  .quiz-feedback.ko { background: #fdecea; color: #7a1a17; border-left: 3px solid #e53935; }
+
+  .quiz-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; }
+  .btn {
+    padding: 10px 22px; border-radius: 8px; border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 600;
+    transition: all 0.2s;
+  }
+  .btn-primary { background: var(--accent); color: white; }
+  .btn-primary:hover { background: #a84820; }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .quiz-result {
+    text-align: center; padding: 2.5rem 2rem;
+    background: var(--surface); border-radius: var(--radius);
+    border: 1px solid var(--border); box-shadow: var(--shadow);
+  }
+  .quiz-result .big-score {
+    font-family: 'DM Serif Display', serif; font-size: 4rem; color: var(--accent);
+  }
+  .quiz-result p { color: var(--text-muted); margin: 0.5rem 0 1.5rem; }
+
+  /* ── CALCULATOR ── */
+  .calc-container { max-width: 760px; }
+  .calc-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.75rem;
+    box-shadow: var(--shadow); margin-bottom: 1.25rem;
+  }
+  .calc-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; }
+  .calc-card h3 .icon { font-size: 1.2rem; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem; }
+  .form-group { display: flex; flex-direction: column; gap: 4px; }
+  .form-group label { font-size: 0.78rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .04em; }
+  .form-group input, .form-group select {
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    padding: 8px 12px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+    background: var(--bg); color: var(--text); transition: border-color 0.2s;
+  }
+  .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--accent); }
+
+  .result-row {
+    display: flex; align-items: baseline; justify-content: space-between;
+    padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem;
+  }
+  .result-row:last-child { border-bottom: none; }
+  .result-row .rlabel { color: var(--text-muted); }
+  .result-row .rval { font-family: 'DM Mono', monospace; font-weight: 500; font-size: 0.95rem; }
+  .result-row.total .rlabel { font-weight: 700; color: var(--text); }
+  .result-row.total .rval { font-size: 1.1rem; color: var(--accent); font-weight: 700; }
+  .result-box {
+    background: var(--surface2); border-radius: var(--radius-sm);
+    padding: 1rem 1.25rem; margin-top: 1rem;
+  }
+
+  /* ── BILAN INTERACTIF ── */
+  .bilan-container { max-width: 860px; }
+  .bilan-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+  }
+  .bilan-side {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+  }
+  .bilan-side-header {
+    padding: 10px 16px; font-weight: 700; font-size: 0.85rem;
+    text-transform: uppercase; letter-spacing: .05em;
+  }
+  .actif-header { background: var(--accent2-light); color: var(--accent2); }
+  .passif-header { background: var(--accent-light); color: var(--accent); }
+
+  .bilan-section { padding: 8px 12px; }
+  .bilan-section-title {
+    font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
+    color: var(--text-muted); padding: 8px 4px 4px; border-bottom: 1px solid var(--border);
+    margin-bottom: 4px;
+  }
+  .bilan-row {
+    display: flex; align-items: center; gap: 8px; padding: 5px 4px;
+  }
+  .bilan-row label { font-size: 0.82rem; flex: 1; }
+  .bilan-row input {
+    width: 110px; border: 1px solid var(--border); border-radius: 6px;
+    padding: 5px 8px; font-family: 'DM Mono', monospace; font-size: 0.82rem;
+    text-align: right; background: var(--bg);
+  }
+  .bilan-row input:focus { outline: none; border-color: var(--accent); }
+  .bilan-total {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 16px; font-weight: 700; font-size: 0.9rem;
+    border-top: 2px solid var(--border); background: var(--surface2);
+  }
+  .bilan-check {
+    text-align: center; padding: 1rem;
+    border-radius: var(--radius); margin-top: 1rem;
+    font-weight: 600; font-size: 0.95rem; transition: all 0.3s;
+  }
+  .bilan-check.ok { background: #e8f5ee; color: #1a5c38; border: 1px solid #b2dfcf; }
+  .bilan-check.ko { background: #fdecea; color: #7a1a17; border: 1px solid #f5c6c4; }
+  .bilan-check.neutral { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
+
+  /* ── PCG TABLE ── */
+  .pcg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; }
+  .pcg-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 1rem;
+  }
+  .pcg-num { font-family: 'DM Serif Display', serif; font-size: 1.8rem; color: var(--accent); }
+  .pcg-name { font-weight: 600; font-size: 0.85rem; margin: 2px 0 4px; }
+  .pcg-examples { font-size: 0.75rem; color: var(--text-muted); }
+
+  /* ── AMORT CALC ── */
+  .amort-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 1rem; }
+  .amort-table th {
+    background: var(--surface2); padding: 8px 12px; text-align: right;
+    font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .03em;
+    color: var(--text-muted); border-bottom: 2px solid var(--border);
+  }
+  .amort-table th:first-child { text-align: left; }
+  .amort-table td {
+    padding: 8px 12px; border-bottom: 1px solid var(--border);
+    font-family: 'DM Mono', monospace; text-align: right; font-size: 0.82rem;
+  }
+  .amort-table td:first-child { font-family: 'DM Sans', sans-serif; text-align: left; font-weight: 500; }
+  .amort-table tr:last-child td { font-weight: 700; background: var(--surface2); }
+
+  /* ── TVA CALC ── */
+  .tva-tag {
+    display: inline-block; padding: 3px 10px; border-radius: 20px;
+    font-size: 0.78rem; font-weight: 600; background: var(--accent-light); color: var(--accent);
+    margin-bottom: 1rem;
+  }
+  .tva-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1rem; }
+  @media (min-width: 600px) { .tva-grid { grid-template-columns: repeat(4,1fr); } }
+  .tva-box {
+    background: var(--surface); border: 2px solid var(--border);
+    border-radius: var(--radius-sm); padding: 1rem; text-align: center; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tva-box:hover, .tva-box.sel { border-color: var(--accent); background: var(--accent-light); }
+  .tva-box .rate { font-family: 'DM Serif Display', serif; font-size: 1.8rem; color: var(--accent); }
+  .tva-box .ex { font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; }
+
+  /* SCROLL REVEAL */
+  .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.45s, transform 0.45s; }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* TOOLTIP */
+  .tooltip-wrap { position: relative; display: inline-block; }
+  .tooltip-wrap .tt {
+    position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+    background: var(--text); color: white; padding: 5px 10px; border-radius: 6px;
+    font-size: 0.75rem; white-space: nowrap; opacity: 0; pointer-events: none;
+    transition: opacity 0.2s; z-index: 20;
+  }
+  .tooltip-wrap:hover .tt { opacity: 1; }
+
+  /* RESPONSIVE */
+  @media (max-width: 640px) {
+    .form-row { grid-template-columns: 1fr; }
+    .bilan-grid { grid-template-columns: 1fr; }
+    .header-inner { gap: 1rem; }
+    .logo span { display: none; }
+  }
+
+  /* MISC */
+  .info-box {
+    background: var(--accent2-light); border-left: 3px solid var(--accent2);
+    border-radius: var(--radius-sm); padding: 0.75rem 1rem;
+    font-size: 0.85rem; margin-bottom: 1rem; color: #1a3a5c;
+  }
+  .warning-box {
+    background: var(--gold-light); border-left: 3px solid var(--gold);
+    border-radius: var(--radius-sm); padding: 0.75rem 1rem;
+    font-size: 0.85rem; margin-bottom: 1rem; color: #5c3d00;
+  }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+  .tag {
+    display: inline-block; padding: 2px 8px; border-radius: 4px;
+    font-size: 0.72rem; font-weight: 600; margin-right: 4px;
+  }
+  .tag-ch1 { background: var(--accent-light); color: var(--accent); }
+  .tag-ch2 { background: var(--accent2-light); color: var(--accent2); }
+  .tag-ch3 { background: var(--accent3-light); color: var(--accent3); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">Gestion S2 <span>— R2.10 IUT Reims</span></div>
+    <nav>
+      <button class="nav-btn active" onclick="showPage('accueil')">🏠 Accueil</button>
+      <button class="nav-btn" onclick="showPage('ch1')">Ch.1 Compta</button>
+      <button class="nav-btn" onclick="showPage('ch2')">Ch.2 Factures</button>
+      <button class="nav-btn" onclick="showPage('ch3')">Ch.3 Bilan</button>
+      <button class="nav-btn" onclick="showPage('quiz')">🎯 Quiz</button>
+      <button class="nav-btn" onclick="showPage('calcul')">🧮 Calculatrices</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ═══════════════════════════════════════════
+     PAGE : ACCUEIL
+════════════════════════════════════════════ -->
+<div class="page active" id="page-accueil">
+  <div class="hero">
+    <h1>Révisions <em>Gestion</em><br>des Systèmes d'Information</h1>
+    <p>Flashcards, quiz, calculatrices et bilans interactifs — tout ce qu'il faut pour l'exam.</p>
+  </div>
+  <div class="chapter-grid">
+    <div class="chapter-card ch1 reveal" onclick="showPage('ch1')">
+      <div class="ch-num">I</div>
+      <h3>Principes de Base de Comptabilité</h3>
+      <p>Cycle d'exploitation, comptes en T, partie double, PCG, dettes & créances.</p>
+      <span class="ch-badge">15 flashcards · Quiz inclus</span>
+    </div>
+    <div class="chapter-card ch2 reveal" onclick="showPage('ch2')">
+      <div class="ch-num">II</div>
+      <h3>Facturation & Calculs Commerciaux</h3>
+      <p>Factures, RRR, escompte, TVA (4 taux), marge, marque, coeff. multiplicateur.</p>
+      <span class="ch-badge">Calculatrice facture · Quiz TVA</span>
+    </div>
+    <div class="chapter-card ch3 reveal" onclick="showPage('ch3')">
+      <div class="ch-num">III</div>
+      <h3>Bilan & Compte de Résultat</h3>
+      <p>Actif / Passif, charges, produits, amortissements linéaire & dégressif.</p>
+      <span class="ch-badge">Bilan interactif · Amortissement</span>
+    </div>
+  </div>
+
+  <hr class="divider" style="margin-top:2.5rem;">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:1.5rem;">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;text-align:center;cursor:pointer;" onclick="showPage('quiz')">
+      <div style="font-size:2rem;margin-bottom:.4rem;">🎯</div>
+      <div style="font-weight:600;font-size:.95rem;">Quiz 3 chapitres</div>
+      <div style="font-size:.8rem;color:var(--text-muted);">30 questions QCM mélangées</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;text-align:center;cursor:pointer;" onclick="showPage('calcul')">
+      <div style="font-size:2rem;margin-bottom:.4rem;">🧮</div>
+      <div style="font-weight:600;font-size:.95rem;">Calculatrices</div>
+      <div style="font-size:.8rem;color:var(--text-muted);">Facture · TVA · Amortissement</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     PAGE : CHAPITRE 1
+════════════════════════════════════════════ -->
+<div class="page" id="page-ch1">
+  <div class="section-head">
+    <h2>Chapitre I</h2>
+    <span class="pill" style="background:var(--accent-light);color:var(--accent);">Principes de Base de Comptabilité</span>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('ch1','cours')">📖 Cours</button>
+    <button class="tab-btn" onclick="switchTab('ch1','flashcards')">🃏 Flashcards</button>
+    <button class="tab-btn" onclick="switchTab('ch1','pcg')">📋 Plan Comptable</button>
+  </div>
+
+  <!-- COURS -->
+  <div class="tab-content active" id="ch1-cours">
+    <div class="info-box">💡 Ce chapitre introduit les fondements de la comptabilité : comment les entreprises enregistrent leurs opérations.</div>
+
+    <div class="calc-card reveal">
+      <h3><span class="icon">🔄</span> Le Cycle d'Exploitation</h3>
+      <p style="font-size:.9rem;color:var(--text-muted);margin-bottom:1rem;">Ensemble des opérations depuis l'achat des matières premières jusqu'à la vente des produits finis.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;justify-content:center;padding:1rem;background:var(--surface2);border-radius:var(--radius-sm);font-size:.85rem;font-weight:600;">
+        <span style="padding:8px 14px;background:var(--accent-light);color:var(--accent);border-radius:8px;">Achats</span>
+        <span style="color:var(--text-muted);">→</span>
+        <span style="padding:8px 14px;background:var(--gold-light);color:var(--gold);border-radius:8px;">Stocks</span>
+        <span style="color:var(--text-muted);">→</span>
+        <span style="padding:8px 14px;background:var(--accent2-light);color:var(--accent2);border-radius:8px;">Production</span>
+        <span style="color:var(--text-muted);">→</span>
+        <span style="padding:8px 14px;background:var(--accent3-light);color:var(--accent3);border-radius:8px;">Ventes</span>
+        <span style="color:var(--text-muted);">→</span>
+        <span style="padding:8px 14px;background:var(--accent2-light);color:var(--accent2);border-radius:8px;">Trésorerie</span>
+      </div>
+      <p style="font-size:.82rem;color:var(--text-muted);margin-top:.75rem;">
+        <strong>Flux physiques :</strong> Achats (charges si non durables, immobilisations si durables) et ventes (produits).<br>
+        <strong>Flux monétaires :</strong> Encaissements (entrées) et décaissements (sorties) qui modifient la banque/caisse.
+      </p>
+    </div>
+
+    <div class="calc-card reveal" style="margin-top:1.25rem;">
+      <h3><span class="icon">⚖️</span> Le Compte en T & la Partie Double</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+        <div>
+          <div style="text-align:center;border:2px solid var(--border);border-radius:8px;overflow:hidden;">
+            <div style="background:var(--surface2);padding:6px;font-weight:700;font-size:.85rem;">Compte Banque</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--border);">
+              <div style="padding:10px;border-right:1px solid var(--border);">
+                <div style="font-size:.72rem;font-weight:700;color:var(--accent2);margin-bottom:4px;">DÉBIT</div>
+                <div style="font-size:.82rem;">+500 € (vente)</div>
+              </div>
+              <div style="padding:10px;">
+                <div style="font-size:.72rem;font-weight:700;color:var(--accent);margin-bottom:4px;">CRÉDIT</div>
+                <div style="font-size:.82rem;">-300 € (achat)</div>
+              </div>
+            </div>
+            <div style="padding:6px;background:var(--accent2-light);font-size:.8rem;font-weight:600;color:var(--accent2);">Solde débiteur : 200 €</div>
+          </div>
+        </div>
+        <div style="font-size:.85rem;">
+          <div style="margin-bottom:.75rem;"><strong>Principe de la Partie Double :</strong></div>
+          <p style="color:var(--text-muted);margin-bottom:.5rem;">Toute écriture débitée sur un compte doit être créditée du même montant sur un autre compte.</p>
+          <div style="background:var(--surface2);padding:10px;border-radius:8px;font-family:'DM Mono',monospace;font-size:.82rem;">
+            Total Débit = Total Crédit
+          </div>
+          <p style="margin-top:.5rem;font-size:.8rem;color:var(--text-muted);">
+            Solde <strong>débiteur</strong> → Débits &gt; Crédits<br>
+            Solde <strong>créditeur</strong> → Crédits &gt; Débits
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="calc-card reveal" style="margin-top:1.25rem;">
+      <h3><span class="icon">📊</span> Règles Débit / Crédit selon le type de compte</h3>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:.85rem;">
+          <thead>
+            <tr style="background:var(--surface2);">
+              <th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--border);">Classe</th>
+              <th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--border);">Type de compte</th>
+              <th style="padding:8px 12px;text-align:center;border-bottom:2px solid var(--border);">Augmentation</th>
+              <th style="padding:8px 12px;text-align:center;border-bottom:2px solid var(--border);">Diminution</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="padding:7px 12px;border-bottom:1px solid var(--border);">1 – Capitaux</td><td style="padding:7px 12px;border-bottom:1px solid var(--border);">Capital, emprunts</td><td style="padding:7px 12px;text-align:center;color:var(--accent);font-weight:600;border-bottom:1px solid var(--border);">Crédit</td><td style="padding:7px 12px;text-align:center;color:var(--accent2);font-weight:600;border-bottom:1px solid var(--border);">Débit</td></tr>
+            <tr style="background:var(--surface2);"><td style="padding:7px 12px;border-bottom:1px solid var(--border);">2 – Immobilisations</td><td style="padding:7px 12px;border-bottom:1px solid var(--border);">Terrain, matériel, bâtiment</td><td style="padding:7px 12px;text-align:center;color:var(--accent2);font-weight:600;border-bottom:1px solid var(--border);">Débit</td><td style="padding:7px 12px;text-align:center;color:var(--accent);font-weight:600;border-bottom:1px solid var(--border);">Crédit</td></tr>
+            <tr><td style="padding:7px 12px;border-bottom:1px solid var(--border);">3 – Stocks</td><td style="padding:7px 12px;border-bottom:1px solid var(--border);">Marchandises, matières premières</td><td style="padding:7px 12px;text-align:center;color:var(--accent2);font-weight:600;border-bottom:1px solid var(--border);">Débit</td><td style="padding:7px 12px;text-align:center;color:var(--accent);font-weight:600;border-bottom:1px solid var(--border);">Crédit</td></tr>
+            <tr style="background:var(--surface2);"><td style="padding:7px 12px;border-bottom:1px solid var(--border);">4 – Tiers</td><td style="padding:7px 12px;border-bottom:1px solid var(--border);">Clients (411), Fournisseurs (401)</td><td style="padding:7px 12px;text-align:center;color:var(--accent2);font-weight:600;border-bottom:1px solid var(--border);">Débit (client)</td><td style="padding:7px 12px;text-align:center;color:var(--accent);font-weight:600;border-bottom:1px solid var(--border);">Crédit (client)</td></tr>
+            <tr><td style="padding:7px 12px;border-bottom:1px solid var(--border);">5 – Financiers</td><td style="padding:7px 12px;border-bottom:1px solid var(--border);">Banque (512), Caisse (53)</td><td style="padding:7px 12px;text-align:center;color:var(--accent2);font-weight:600;border-bottom:1px solid var(--border);">Débit</td><td style="padding:7px 12px;text-align:center;color:var(--accent);font-weight:600;border-bottom:1px solid var(--border);">Crédit</td></tr>
+            <tr style="background:var(--surface2);"><td style="padding:7px 12px;border-bottom:1px solid var(--border);">6 – Charges</td><td style="padding:7px 12px;border-bottom:1px solid var(--border);">Achats, salaires, loyer</td><td style="padding:7px 12px;text-align:center;color:var(--accent2);font-weight:600;border-bottom:1px solid var(--border);">Débit</td><td style="padding:7px 12px;text-align:center;color:var(--accent);font-weight:600;border-bottom:1px solid var(--border);">Crédit</td></tr>
+            <tr><td style="padding:7px 12px;">7 – Produits</td><td style="padding:7px 12px;">Ventes, intérêts perçus</td><td style="padding:7px 12px;text-align:center;color:var(--accent);font-weight:600;">Crédit</td><td style="padding:7px 12px;text-align:center;color:var(--accent2);font-weight:600;">Débit</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="calc-card reveal" style="margin-top:1.25rem;">
+      <h3><span class="icon">💡</span> Valeur Ajoutée</h3>
+      <div style="background:var(--surface2);padding:1rem;border-radius:var(--radius-sm);margin-bottom:.75rem;">
+        <div style="font-family:'DM Mono',monospace;font-size:.9rem;text-align:center;">
+          VA = Chiffre d'Affaires HT − Valeur des consommations externes
+        </div>
+      </div>
+      <p style="font-size:.85rem;color:var(--text-muted);">La VA est redistribuée aux salariés (salaires), à l'État (impôts), aux actionnaires (dividendes), aux banques (intérêts). La somme des VA de toutes les entreprises ≈ <strong>PIB</strong>.</p>
+    </div>
+  </div>
+
+  <!-- FLASHCARDS -->
+  <div class="tab-content" id="ch1-flashcards">
+    <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:1rem;">Cliquez sur une carte pour révéler la réponse.</p>
+    <div class="flashcard-grid" id="ch1-fc-grid"></div>
+  </div>
+
+  <!-- PCG -->
+  <div class="tab-content" id="ch1-pcg">
+    <div class="info-box">Le PCG (Plan Comptable Général) est une liste normalisée des comptes. Le premier chiffre = la classe.</div>
+    <div class="pcg-grid">
+      <div class="pcg-card"><div class="pcg-num">1</div><div class="pcg-name">Comptes de Capitaux</div><div class="pcg-examples">101 Capital · 106 Réserves · 164 Emprunts</div></div>
+      <div class="pcg-card"><div class="pcg-num">2</div><div class="pcg-name">Immobilisations</div><div class="pcg-examples">211 Terrains · 213 Constructions · 215 Matériel ind. · 207 Fonds commercial</div></div>
+      <div class="pcg-card"><div class="pcg-num">3</div><div class="pcg-name">Stocks & En-cours</div><div class="pcg-examples">31 Mat. premières · 37 Marchandises · 355 Produits finis</div></div>
+      <div class="pcg-card"><div class="pcg-num">4</div><div class="pcg-name">Comptes de Tiers</div><div class="pcg-examples">401 Fournisseurs · 411 Clients · 42/43/44 Dettes fiscales/sociales</div></div>
+      <div class="pcg-card"><div class="pcg-num">5</div><div class="pcg-name">Comptes Financiers</div><div class="pcg-examples">512 Banque · 53 Caisse · 519 Découvert bancaire</div></div>
+      <div class="pcg-card" style="border-color:var(--accent)"><div class="pcg-num" style="color:var(--accent3)">6</div><div class="pcg-name">Charges (Compte de Résultat)</div><div class="pcg-examples">601/607 Achats · 64 Salaires · 61-62 Ext. · 66 Financières · 67 Exception.</div></div>
+      <div class="pcg-card" style="border-color:var(--accent)"><div class="pcg-num" style="color:var(--accent3)">7</div><div class="pcg-name">Produits (Compte de Résultat)</div><div class="pcg-examples">701/707 Ventes · 71 Prod. stockée · 76 Financiers · 77 Exception.</div></div>
+    </div>
+    <div class="warning-box" style="margin-top:1rem;">⚠️ Classes 1–5 → <strong>Bilan</strong> &nbsp;|&nbsp; Classes 6–7 → <strong>Compte de Résultat</strong></div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     PAGE : CHAPITRE 2
+════════════════════════════════════════════ -->
+<div class="page" id="page-ch2">
+  <div class="section-head">
+    <h2>Chapitre II</h2>
+    <span class="pill" style="background:var(--accent2-light);color:var(--accent2);">Facturation & Calculs Commerciaux</span>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('ch2','cours')">📖 Cours</button>
+    <button class="tab-btn" onclick="switchTab('ch2','formules')">📐 Formules</button>
+    <button class="tab-btn" onclick="switchTab('ch2','flashcards')">🃏 Flashcards</button>
+    <button class="tab-btn" onclick="switchTab('ch2','tva')">💶 TVA</button>
+  </div>
+
+  <!-- COURS -->
+  <div class="tab-content active" id="ch2-cours">
+    <div class="calc-card reveal">
+      <h3><span class="icon">🧾</span> Structure d'une Facture</h3>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem;font-size:.85rem;">
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);"><span>Montant Brut HT</span><span style="font-family:'DM Mono',monospace;">Prix catalogue × quantités</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);color:var(--accent);">
+          <span>− Remise (%) &nbsp;<span style="font-size:.72rem;background:var(--accent-light);padding:2px 6px;border-radius:4px;">RRR commerciale</span></span>
+          <span style="font-family:'DM Mono',monospace;">Brut × taux</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-weight:600;"><span>= Sous-total</span><span></span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);color:var(--accent);">
+          <span>− Rabais / 2ème remise</span><span></span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-weight:600;"><span>= Net Commercial</span><span></span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);color:var(--accent);">
+          <span>− Escompte (%) &nbsp;<span style="font-size:.72rem;background:var(--accent-light);padding:2px 6px;border-radius:4px;">Réduction financière</span></span>
+          <span></span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-weight:600;"><span>= Net Financier</span><span></span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);color:var(--accent2);">
+          <span>+ Frais de transport</span><span></span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-weight:700;"><span>= Total HT</span><span></span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);color:var(--accent2);">
+          <span>+ TVA (20%, 10%, 5,5% ou 2,1%)</span><span></span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-weight:700;color:var(--accent2);"><span>= Total TTC</span><span></span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;color:var(--accent);">
+          <span>− Acompte versé</span><span></span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0 0;font-weight:700;font-size:1rem;color:var(--accent);">
+          <span>= Net à Payer</span><span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="calc-card reveal" style="margin-top:1.25rem;">
+      <h3><span class="icon">🔢</span> Les Réductions : RRR</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.75rem;">
+        <div style="padding:1rem;background:var(--accent-light);border-radius:var(--radius-sm);">
+          <div style="font-weight:700;color:var(--accent);margin-bottom:.3rem;">Remise</div>
+          <div style="font-size:.82rem;">Accordée selon le volume de la commande ou la qualité du client. <strong>Appliquée en cascade.</strong></div>
+        </div>
+        <div style="padding:1rem;background:var(--gold-light);border-radius:var(--radius-sm);">
+          <div style="font-weight:700;color:var(--gold);margin-bottom:.3rem;">Rabais</div>
+          <div style="font-size:.82rem;">Réduction exceptionnelle pour une marchandise non conforme ou un défaut.</div>
+        </div>
+        <div style="padding:1rem;background:var(--accent3-light);border-radius:var(--radius-sm);">
+          <div style="font-weight:700;color:var(--accent3);margin-bottom:.3rem;">Ristourne</div>
+          <div style="font-size:.82rem;">Prime de fidélité accordée périodiquement sur l'ensemble des achats de la période.</div>
+        </div>
+        <div style="padding:1rem;background:var(--accent2-light);border-radius:var(--radius-sm);">
+          <div style="font-weight:700;color:var(--accent2);margin-bottom:.3rem;">Escompte</div>
+          <div style="font-size:.82rem;"><strong>Réduction financière</strong> pour paiement anticipé. Calculé <em>après</em> les RRR.</div>
+        </div>
+      </div>
+      <div class="info-box" style="margin-top:1rem;">
+        ⚙️ <strong>Calcul en cascade :</strong> Ex. 1000 € − 10% = 900 € − 5% = 855 € (et non 1000 − 15% = 850 €)
+      </div>
+    </div>
+
+    <div class="calc-card reveal" style="margin-top:1.25rem;">
+      <h3><span class="icon">💶</span> La TVA — Mécanisme</h3>
+      <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:1rem;">Impôt indirect payé par le consommateur final. Les entreprises jouent un rôle d'intermédiaire collecteur.</p>
+      <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:1rem;margin-bottom:1rem;">
+        <div style="font-family:'DM Mono',monospace;font-size:.88rem;text-align:center;line-height:2;">
+          TVA à reverser = TVA collectée (ventes) − TVA déductible (achats)
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.6rem;font-size:.82rem;">
+        <div style="padding:.75rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;text-align:center;">
+          <div style="font-weight:700;font-size:1.2rem;color:var(--accent);">20%</div>
+          <div style="color:var(--text-muted);">Taux normal<br>Électroménager, vêtements…</div>
+        </div>
+        <div style="padding:.75rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;text-align:center;">
+          <div style="font-weight:700;font-size:1.2rem;color:var(--accent2);">10%</div>
+          <div style="color:var(--text-muted);">Intermédiaire<br>Restauration, transport…</div>
+        </div>
+        <div style="padding:.75rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;text-align:center;">
+          <div style="font-weight:700;font-size:1.2rem;color:var(--accent3);">5,5%</div>
+          <div style="color:var(--text-muted);">Réduit<br>Alimentation, livres…</div>
+        </div>
+        <div style="padding:.75rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;text-align:center;">
+          <div style="font-weight:700;font-size:1.2rem;color:var(--gold);">2,1%</div>
+          <div style="color:var(--text-muted);">Super-réduit<br>Médicaments ordonnance, presse…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORMULES -->
+  <div class="tab-content" id="ch2-formules">
+    <div class="formula-grid">
+      <div class="formula-card">
+        <div class="fname">Prix TTC → HT</div>
+        <div class="fexpr">PVHT = PVTTC / (1 + taux TVA)</div>
+        <div class="fnote">Ex : 120 € TTC ÷ 1,20 = 100 € HT</div>
+      </div>
+      <div class="formula-card">
+        <div class="fname">Prix HT → TTC</div>
+        <div class="fexpr">PVTTC = PVHT × (1 + taux TVA)</div>
+        <div class="fnote">Ex : 100 € HT × 1,20 = 120 € TTC</div>
+      </div>
+      <div class="formula-card">
+        <div class="fname">Montant TVA</div>
+        <div class="fexpr">TVA = PVHT × taux TVA</div>
+        <div class="fnote">Ou : TVA = PVTTC − PVHT</div>
+      </div>
+      <div class="formula-card">
+        <div class="fname">Coût d'Achat HT</div>
+        <div class="fexpr">Coût d'achat = Prix achat HT + Frais transport</div>
+        <div class="fnote">Base pour calculer la marge</div>
+      </div>
+      <div class="formula-card">
+        <div class="fname">Marge</div>
+        <div class="fexpr">Marge = PVHT − Coût d'achat HT</div>
+        <div class="fnote">Bénéfice brut sur la vente</div>
+      </div>
+      <div class="formula-card">
+        <div class="fname">Taux de Marque</div>
+        <div class="fexpr">Tx Marque = (Marge / PVHT) × 100</div>
+        <div class="fnote">Rapport sur le PRIX DE VENTE</div>
+      </div>
+      <div class="formula-card">
+        <div class="fname">Taux de Marge</div>
+        <div class="fexpr">Tx Marge = (Marge / Coût achat) × 100</div>
+        <div class="fnote">Rapport sur le COÛT D'ACHAT</div>
+      </div>
+      <div class="formula-card">
+        <div class="fname">Coefficient Multiplicateur</div>
+        <div class="fexpr">CM = PVTTC / Coût d'achat HT</div>
+        <div class="fnote">Pour passer du coût d'achat au prix TTC</div>
+      </div>
+      <div class="formula-card">
+        <div class="fname">PVHT depuis Taux de Marque</div>
+        <div class="fexpr">PVHT = Coût achat / (1 − Tx Marque)</div>
+        <div class="fnote">Ex : 80 € / (1 − 0,20) = 100 € HT</div>
+      </div>
+      <div class="formula-card">
+        <div class="fname">TVA à reverser à l'État</div>
+        <div class="fexpr">TVA due = TVA collectée − TVA déductible</div>
+        <div class="fnote">Si négatif → crédit de TVA reporté</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLASHCARDS CH2 -->
+  <div class="tab-content" id="ch2-flashcards">
+    <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:1rem;">Cliquez sur une carte pour révéler la réponse.</p>
+    <div class="flashcard-grid" id="ch2-fc-grid"></div>
+  </div>
+
+  <!-- TVA INTERACTIVE -->
+  <div class="tab-content" id="ch2-tva">
+    <div class="calc-card">
+      <h3><span class="icon">💶</span> Convertisseur TVA instantané</h3>
+      <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:1rem;">Entrez un montant et sélectionnez un taux pour voir toutes les conversions.</p>
+      <div class="tva-grid">
+        <div class="tva-box sel" onclick="setTvaRate(20,this)"><div class="rate">20%</div><div class="ex">Taux normal</div></div>
+        <div class="tva-box" onclick="setTvaRate(10,this)"><div class="rate">10%</div><div class="ex">Intermédiaire</div></div>
+        <div class="tva-box" onclick="setTvaRate(5.5,this)"><div class="rate">5,5%</div><div class="ex">Réduit</div></div>
+        <div class="tva-box" onclick="setTvaRate(2.1,this)"><div class="rate">2,1%</div><div class="ex">Super-réduit</div></div>
+      </div>
+      <div style="margin-top:1rem;display:flex;gap:1rem;align-items:center;">
+        <div class="form-group" style="flex:1;">
+          <label>Montant HT (€)</label>
+          <input type="number" id="tva-ht" placeholder="100.00" oninput="calcTva()" style="width:100%;">
+        </div>
+        <div style="align-self:flex-end;color:var(--text-muted);font-size:1.5rem;padding-bottom:8px;">ou</div>
+        <div class="form-group" style="flex:1;">
+          <label>Montant TTC (€)</label>
+          <input type="number" id="tva-ttc" placeholder="120.00" oninput="calcTvaFromTTC()" style="width:100%;">
+        </div>
+      </div>
+      <div class="result-box" id="tva-result" style="display:none;margin-top:1rem;">
+        <div class="result-row"><span class="rlabel">Prix HT</span><span class="rval" id="r-ht">—</span></div>
+        <div class="result-row"><span class="rlabel">Montant TVA</span><span class="rval" id="r-tva">—</span></div>
+        <div class="result-row total"><span class="rlabel">Prix TTC</span><span class="rval" id="r-ttc">—</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     PAGE : CHAPITRE 3
+════════════════════════════════════════════ -->
+<div class="page" id="page-ch3">
+  <div class="section-head">
+    <h2>Chapitre III</h2>
+    <span class="pill" style="background:var(--accent3-light);color:var(--accent3);">Bilan & Compte de Résultat</span>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('ch3','cours')">📖 Cours</button>
+    <button class="tab-btn" onclick="switchTab('ch3','bilan')">📊 Bilan interactif</button>
+    <button class="tab-btn" onclick="switchTab('ch3','amort')">📉 Amortissement</button>
+    <button class="tab-btn" onclick="switchTab('ch3','flashcards')">🃏 Flashcards</button>
+  </div>
+
+  <!-- COURS -->
+  <div class="tab-content active" id="ch3-cours">
+    <div class="calc-card reveal">
+      <h3><span class="icon">📊</span> Structure du Bilan</h3>
+      <div style="background:var(--accent2-light);color:var(--accent2);font-size:.78rem;font-weight:700;text-align:center;padding:8px;border-radius:8px;margin-bottom:1rem;">ACTIF = PASSIF &nbsp;|&nbsp; Actif = Capitaux Propres + Dettes</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;font-size:.84rem;">
+        <div>
+          <div style="font-weight:700;color:var(--accent2);margin-bottom:.5rem;padding:6px;background:var(--accent2-light);border-radius:6px;text-align:center;">ACTIF (Emplois)</div>
+          <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+            <div style="padding:8px 12px;border-bottom:1px solid var(--border);background:var(--surface2);">
+              <strong>Actif Immobilisé (&gt;1 an)</strong>
+              <div style="color:var(--text-muted);margin-top:2px;">Incorporel : brevets, fonds de commerce<br>Corporel : terrain, bâtiment, matériel<br>Financier : titres de participation</div>
+            </div>
+            <div style="padding:8px 12px;">
+              <strong>Actif Circulant (&lt;1 an)</strong>
+              <div style="color:var(--text-muted);margin-top:2px;">Stocks · Créances clients (411) · Disponibilités (banque, caisse)</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="font-weight:700;color:var(--accent);margin-bottom:.5rem;padding:6px;background:var(--accent-light);border-radius:6px;text-align:center;">PASSIF (Ressources)</div>
+          <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+            <div style="padding:8px 12px;border-bottom:1px solid var(--border);background:var(--surface2);">
+              <strong>Capitaux Propres</strong>
+              <div style="color:var(--text-muted);margin-top:2px;">Capital · Réserves · Résultat de l'exercice</div>
+            </div>
+            <div style="padding:8px 12px;">
+              <strong>Dettes</strong>
+              <div style="color:var(--text-muted);margin-top:2px;">LT (&gt;1 an) : Emprunts bancaires<br>CT (&lt;1 an) : Fournisseurs, dettes fiscales/sociales, découverts</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="warning-box" style="margin-top:1rem;">⚠️ Si Produits &gt; Charges → <strong>Bénéfice</strong> (apparaît au passif) · Si Charges &gt; Produits → <strong>Perte</strong> (apparaît à l'actif)</div>
+    </div>
+
+    <div class="calc-card reveal" style="margin-top:1.25rem;">
+      <h3><span class="icon">📈</span> Compte de Résultat</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;font-size:.84rem;">
+        <div>
+          <div style="font-weight:700;color:var(--accent);margin-bottom:.5rem;text-align:center;padding:6px;background:var(--accent-light);border-radius:6px;">CHARGES (classe 6)</div>
+          <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+            <div style="padding:8px 12px;border-bottom:1px solid var(--border);"><strong style="color:var(--accent);">Exploitation</strong><br><span style="color:var(--text-muted);">60 Achats ± variation stocks · 61-62 Services ext. · 63 Impôts · 64 Salaires · 65 Autres · 68 Amortissements</span></div>
+            <div style="padding:8px 12px;border-bottom:1px solid var(--border);"><strong style="color:var(--accent2);">Financières</strong><br><span style="color:var(--text-muted);">66 Intérêts d'emprunt · Agios</span></div>
+            <div style="padding:8px 12px;"><strong style="color:var(--gold);">Exceptionnelles</strong><br><span style="color:var(--text-muted);">67 Amendes · Cessions d'actif</span></div>
+          </div>
+        </div>
+        <div>
+          <div style="font-weight:700;color:var(--accent3);margin-bottom:.5rem;text-align:center;padding:6px;background:var(--accent3-light);border-radius:6px;">PRODUITS (classe 7)</div>
+          <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+            <div style="padding:8px 12px;border-bottom:1px solid var(--border);"><strong style="color:var(--accent3);">Exploitation</strong><br><span style="color:var(--text-muted);">70 Ventes · 71 Production stockée · 72 Prod. immobilisée · 74 Subventions · 75 Autres</span></div>
+            <div style="padding:8px 12px;border-bottom:1px solid var(--border);"><strong style="color:var(--accent2);">Financiers</strong><br><span style="color:var(--text-muted);">76 Dividendes · Intérêts perçus</span></div>
+            <div style="padding:8px 12px;"><strong style="color:var(--gold);">Exceptionnels</strong><br><span style="color:var(--text-muted);">77 Plus-values cession · Indemnités</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="calc-card reveal" style="margin-top:1.25rem;">
+      <h3><span class="icon">📉</span> Les Amortissements — Rappel</h3>
+      <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:1rem;">Constatation comptable de la <strong>dépréciation</strong> d'une immobilisation. Obligatoire même en l'absence de bénéfice.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.75rem;font-size:.83rem;">
+        <div style="padding:1rem;background:var(--accent-light);border-radius:8px;">
+          <strong style="color:var(--accent);">Linéaire</strong>
+          <div style="margin-top:4px;color:var(--text-muted);">Annuité constante = Base × Taux (100/n)<br><strong>Prorata temporis en jours (base 360j)</strong><br>Départ : date de <em>mise en service</em></div>
+        </div>
+        <div style="padding:1rem;background:var(--accent3-light);border-radius:8px;">
+          <strong style="color:var(--accent3);">Avantages économiques</strong>
+          <div style="margin-top:4px;color:var(--text-muted);">Basé sur l'utilisation réelle (nb de pièces)<br>Annuité = Base × (pièces N / total pièces)</div>
+        </div>
+        <div style="padding:1rem;background:var(--gold-light);border-radius:8px;">
+          <strong style="color:var(--gold);">Dégressif</strong>
+          <div style="margin-top:4px;color:var(--text-muted);">Taux dégressif = 100/n × coeff<br>1,25 (3-4 ans) · 1,75 (5-6 ans) · 2,25 (&gt;6 ans)<br>Base = VNC. Switch linéaire si taux lin. &gt;</div>
+        </div>
+      </div>
+      <div class="warning-box" style="margin-top:1rem;">⚠️ Non amortissables : terrains · œuvres d'art · éléments incorporels du fonds de commerce · titres · petits matériels (&lt;500€ HT)</div>
+    </div>
+  </div>
+
+  <!-- BILAN INTERACTIF -->
+  <div class="tab-content" id="ch3-bilan">
+    <div class="bilan-container">
+      <div class="info-box">Saisissez les montants dans les cases. Le site vérifie automatiquement que <strong>Total Actif = Total Passif</strong>.</div>
+      <div class="bilan-grid">
+        <!-- ACTIF -->
+        <div class="bilan-side">
+          <div class="bilan-side-header actif-header">ACTIF</div>
+          <div class="bilan-section">
+            <div class="bilan-section-title">Actif Immobilisé</div>
+            <div class="bilan-row"><label>Immo. incorporelles</label><input type="number" class="actif-input" placeholder="0" oninput="updateBilan()"></div>
+            <div class="bilan-row"><label>Immo. corporelles</label><input type="number" class="actif-input" placeholder="0" oninput="updateBilan()"></div>
+            <div class="bilan-row"><label>Immo. financières</label><input type="number" class="actif-input" placeholder="0" oninput="updateBilan()"></div>
+          </div>
+          <div class="bilan-section">
+            <div class="bilan-section-title">Actif Circulant</div>
+            <div class="bilan-row"><label>Stocks</label><input type="number" class="actif-input" placeholder="0" oninput="updateBilan()"></div>
+            <div class="bilan-row"><label>Créances clients</label><input type="number" class="actif-input" placeholder="0" oninput="updateBilan()"></div>
+            <div class="bilan-row"><label>Disponibilités</label><input type="number" class="actif-input" placeholder="0" oninput="updateBilan()"></div>
+          </div>
+          <div class="bilan-total">
+            <span>Total Actif</span>
+            <span id="total-actif">0 €</span>
+          </div>
+        </div>
+        <!-- PASSIF -->
+        <div class="bilan-side">
+          <div class="bilan-side-header passif-header">PASSIF</div>
+          <div class="bilan-section">
+            <div class="bilan-section-title">Capitaux Propres</div>
+            <div class="bilan-row"><label>Capital social</label><input type="number" class="passif-input" placeholder="0" oninput="updateBilan()"></div>
+            <div class="bilan-row"><label>Réserves</label><input type="number" class="passif-input" placeholder="0" oninput="updateBilan()"></div>
+            <div class="bilan-row"><label>Résultat (+ si bénéfice)</label><input type="number" class="passif-input" placeholder="0" oninput="updateBilan()"></div>
+          </div>
+          <div class="bilan-section">
+            <div class="bilan-section-title">Dettes</div>
+            <div class="bilan-row"><label>Emprunts LT</label><input type="number" class="passif-input" placeholder="0" oninput="updateBilan()"></div>
+            <div class="bilan-row"><label>Dettes fournisseurs</label><input type="number" class="passif-input" placeholder="0" oninput="updateBilan()"></div>
+            <div class="bilan-row"><label>Dettes fiscales/sociales</label><input type="number" class="passif-input" placeholder="0" oninput="updateBilan()"></div>
+          </div>
+          <div class="bilan-total">
+            <span>Total Passif</span>
+            <span id="total-passif">0 €</span>
+          </div>
+        </div>
+      </div>
+      <div class="bilan-check neutral" id="bilan-check">Saisissez des montants pour vérifier l'équilibre du bilan.</div>
+      <div style="margin-top:1rem;">
+        <button class="btn btn-secondary" onclick="resetBilan()">↺ Réinitialiser</button>
+        <button class="btn btn-primary" style="margin-left:.5rem;" onclick="loadBilanExemple()">📋 Charger l'exemple Moseisley</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AMORTISSEMENT -->
+  <div class="tab-content" id="ch3-amort">
+    <div class="calc-container">
+      <div class="calc-card">
+        <h3><span class="icon">📉</span> Calculateur d'Amortissement</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Prix d'achat TTC (€)</label>
+            <input type="number" id="a-ttc" placeholder="18000" oninput="calcAmort()">
+          </div>
+          <div class="form-group">
+            <label>Taux TVA (%)</label>
+            <select id="a-tva" onchange="calcAmort()">
+              <option value="20">20%</option>
+              <option value="10">10%</option>
+              <option value="5.5">5,5%</option>
+              <option value="0">0% (déjà HT)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Durée de vie (années)</label>
+            <input type="number" id="a-duree" value="5" min="1" max="50" oninput="calcAmort()">
+          </div>
+          <div class="form-group">
+            <label>Mode d'amortissement</label>
+            <select id="a-mode" onchange="calcAmort()">
+              <option value="lineaire">Linéaire</option>
+              <option value="degressif">Dégressif</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Date de mise en service</label>
+            <input type="date" id="a-date" oninput="calcAmort()">
+          </div>
+          <div class="form-group">
+            <label>Valeur résiduelle (€)</label>
+            <input type="number" id="a-residuel" value="0" placeholder="0" oninput="calcAmort()">
+          </div>
+        </div>
+        <div id="amort-result"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLASHCARDS CH3 -->
+  <div class="tab-content" id="ch3-flashcards">
+    <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:1rem;">Cliquez sur une carte pour révéler la réponse.</p>
+    <div class="flashcard-grid" id="ch3-fc-grid"></div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     PAGE : QUIZ
+════════════════════════════════════════════ -->
+<div class="page" id="page-quiz">
+  <div class="section-head">
+    <h2>Quiz</h2>
+    <span class="pill">30 questions · 3 chapitres</span>
+  </div>
+
+  <div style="margin-bottom:1.5rem;display:flex;gap:.5rem;flex-wrap:wrap;" id="quiz-filter">
+    <button class="tab-btn active" onclick="filterQuiz('all',this)">Tous les chapitres</button>
+    <button class="tab-btn" onclick="filterQuiz('ch1',this)">Chapitre 1</button>
+    <button class="tab-btn" onclick="filterQuiz('ch2',this)">Chapitre 2</button>
+    <button class="tab-btn" onclick="filterQuiz('ch3',this)">Chapitre 3</button>
+  </div>
+
+  <div class="quiz-container" id="quiz-area"></div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     PAGE : CALCULATRICES
+════════════════════════════════════════════ -->
+<div class="page" id="page-calcul">
+  <div class="section-head">
+    <h2>Calculatrices</h2>
+    <span class="pill">Facture · Marge · Amortissement</span>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('calc','facture')">🧾 Facture complète</button>
+    <button class="tab-btn" onclick="switchTab('calc','marge')">📊 Calculs commerciaux</button>
+  </div>
+
+  <!-- FACTURE -->
+  <div class="tab-content active" id="calc-facture">
+    <div class="calc-container">
+      <div class="calc-card">
+        <h3><span class="icon">🧾</span> Simulateur de Facture</h3>
+        <div class="form-row">
+          <div class="form-group"><label>Montant Brut HT (€)</label><input type="number" id="f-brut" placeholder="1000" oninput="calcFacture()"></div>
+          <div class="form-group"><label>1ère Remise (%)</label><input type="number" id="f-r1" placeholder="0" min="0" max="100" oninput="calcFacture()"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>2ème Remise (%)</label><input type="number" id="f-r2" placeholder="0" min="0" max="100" oninput="calcFacture()"></div>
+          <div class="form-group"><label>Escompte (%)</label><input type="number" id="f-escompte" placeholder="0" min="0" max="100" oninput="calcFacture()"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Frais de transport (€ ou %HT)</label><input type="number" id="f-transport" placeholder="0" oninput="calcFacture()"></div>
+          <div class="form-group">
+            <label>Transport en</label>
+            <select id="f-transport-type" onchange="calcFacture()">
+              <option value="montant">Montant fixe (€)</option>
+              <option value="pct">Pourcentage du NC (%)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Taux TVA</label>
+            <select id="f-tva-taux" onchange="calcFacture()">
+              <option value="20">20%</option>
+              <option value="10">10%</option>
+              <option value="5.5">5,5%</option>
+              <option value="2.1">2,1%</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Acompte versé (€)</label><input type="number" id="f-acompte" placeholder="0" oninput="calcFacture()"></div>
+        </div>
+      </div>
+
+      <div class="calc-card" id="facture-result" style="display:none;">
+        <h3><span class="icon">📄</span> Détail de la Facture</h3>
+        <div id="facture-rows"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MARGE -->
+  <div class="tab-content" id="calc-marge">
+    <div class="calc-container">
+      <div class="calc-card">
+        <h3><span class="icon">📊</span> Calculs Commerciaux</h3>
+        <div class="info-box">Remplissez 2 champs au moins pour calculer les autres automatiquement.</div>
+        <div class="form-row">
+          <div class="form-group"><label>Coût d'achat HT (€)</label><input type="number" id="m-cout" placeholder="" oninput="calcMarge()"></div>
+          <div class="form-group"><label>Prix de vente HT (€)</label><input type="number" id="m-pvht" placeholder="" oninput="calcMarge()"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Taux TVA</label>
+            <select id="m-tva" onchange="calcMarge()">
+              <option value="20">20%</option><option value="10">10%</option><option value="5.5">5,5%</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Taux de Marque (%)</label><input type="number" id="m-marque" placeholder="" oninput="calcMarque()"></div>
+        </div>
+        <div class="result-box" id="marge-result" style="display:none;">
+          <div class="result-row"><span class="rlabel">Marge</span><span class="rval" id="rm-marge">—</span></div>
+          <div class="result-row"><span class="rlabel">Taux de Marque</span><span class="rval" id="rm-txmarque">—</span></div>
+          <div class="result-row"><span class="rlabel">Taux de Marge</span><span class="rval" id="rm-txmarge">—</span></div>
+          <div class="result-row"><span class="rlabel">Prix TTC</span><span class="rval" id="rm-ttc">—</span></div>
+          <div class="result-row total"><span class="rlabel">Coefficient Multiplicateur</span><span class="rval" id="rm-cm">—</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ══════════════════════════════════════════════════
+//  DATA
+// ══════════════════════════════════════════════════
+const FLASHCARDS = {
+  ch1: [
+    { q: "Qu'est-ce que le cycle d'exploitation ?", a: "Ensemble des opérations depuis l'achat des matières premières jusqu'à la vente des produits, incluant les flux physiques et monétaires." },
+    { q: "Définissez la Valeur Ajoutée.", a: "VA = CA HT − consommations en provenance d'autres entreprises. C'est la richesse créée par l'activité de l'entreprise." },
+    { q: "Qu'est-ce qu'un compte en T ?", a: "Représentation d'un compte avec deux colonnes : le Débit (gauche) et le Crédit (droite). Le solde = Débits totaux − Crédits totaux." },
+    { q: "Énoncer le principe de la Partie Double.", a: "Toute écriture au débit d'un compte est accompagnée d'une écriture de même montant au crédit d'un ou plusieurs autres comptes. Total Débit = Total Crédit." },
+    { q: "Un compte est dit créditeur quand…", a: "La somme de ses crédits est supérieure à la somme de ses débits (Crédits > Débits)." },
+    { q: "Qu'est-ce qu'une créance ?", a: "Droit de recevoir un paiement d'un tiers (ex : client qui n'a pas encore payé). Enregistrée au compte 411 Clients." },
+    { q: "Qu'est-ce qu'une dette ?", a: "Obligation de payer un tiers (ex : fournisseur non réglé). Enregistrée au compte 401 Fournisseurs." },
+    { q: "Quelles classes du PCG servent à établir le Bilan ?", a: "Classes 1 à 5 (Capitaux, Immobilisations, Stocks, Tiers, Financiers)." },
+    { q: "Quelles classes du PCG servent au Compte de Résultat ?", a: "Classes 6 (Charges) et 7 (Produits)." },
+    { q: "Donner le numéro de compte : Capital Social", a: "101 — Capital social (classe 1 : Capitaux)" },
+    { q: "Donner le numéro de compte : Banque", a: "512 — Banque (classe 5 : Financiers)" },
+    { q: "Donner le numéro de compte : Fournisseurs", a: "401 — Fournisseurs (classe 4 : Tiers)" },
+    { q: "Donner le numéro de compte : Clients", a: "411 — Clients et comptes rattachés (classe 4 : Tiers)" },
+    { q: "Donner le numéro de compte : Ventes de marchandises", a: "707 — Ventes de marchandises (classe 7 : Produits)" },
+    { q: "Quels types de flux modifient le Compte de Résultat ?", a: "Les flux physiques : achats de biens/services (charges) et ventes (produits). Les flux monétaires modifient le Bilan (banque/caisse)." },
+  ],
+  ch2: [
+    { q: "Quelle est la différence entre Remise et Escompte ?", a: "La remise est une réduction COMMERCIALE (volume de commande). L'escompte est une réduction FINANCIÈRE pour paiement anticipé, calculée après les remises." },
+    { q: "Qu'est-ce que le calcul 'en cascade' ?", a: "Quand plusieurs remises sont accordées, on les applique successivement sur le résultat précédent (pas additionnées). Ex : 1000 − 10% = 900 − 5% = 855 €." },
+    { q: "Formule du Taux de Marque", a: "Taux de Marque = (Marge / Prix de Vente HT) × 100 — rapport sur le PRIX DE VENTE." },
+    { q: "Formule du Taux de Marge", a: "Taux de Marge = (Marge / Coût d'Achat HT) × 100 — rapport sur le COÛT D'ACHAT." },
+    { q: "Formule du Coefficient Multiplicateur", a: "CM = Prix de Vente TTC / Coût d'Achat HT — permet de passer directement du coût d'achat au prix TTC final." },
+    { q: "Comment calculer PVHT depuis PVTTC ?", a: "PVHT = PVTTC / (1 + taux TVA). Ex : 120 € TTC ÷ 1,20 = 100 € HT." },
+    { q: "Quels sont les 4 taux de TVA en France ?", a: "20% (normal), 10% (intermédiaire : restauration, transport), 5,5% (réduit : alimentation, livres), 2,1% (super-réduit : médicaments remboursés, presse)." },
+    { q: "Formule de la TVA à reverser à l'État", a: "TVA à reverser = TVA collectée (sur ventes) − TVA déductible (sur achats). Si négatif : crédit de TVA." },
+    { q: "Qu'est-ce que la Ristourne ?", a: "Réduction accordée sur l'ensemble des achats d'une période (prime de fidélité). Différent de la remise (accordée sur une commande)." },
+    { q: "Comment passer du Coût d'Achat HT au PVHT avec un Taux de Marque ?", a: "PVHT = Coût d'Achat / (1 − Taux de Marque). Ex : 80 € / (1 − 0,20) = 100 € HT." },
+    { q: "Qu'est-ce que le Net Commercial ?", a: "Montant après déduction de toutes les réductions COMMERCIALES (remises, rabais, ristournes), avant escompte et frais de port." },
+    { q: "Les frais de transport sont-ils soumis à TVA ?", a: "Oui. Les frais de transport s'ajoutent au Net Financier pour former le Total HT, puis la TVA est calculée sur ce Total HT." },
+  ],
+  ch3: [
+    { q: "Définir le Bilan comptable.", a: "Document qui décrit la situation patrimoniale de l'entreprise à un instant T. Il représente les Emplois (Actif) et les Ressources (Passif). Actif = Passif obligatoirement." },
+    { q: "Que contient l'Actif Immobilisé ?", a: "Biens destinés à rester >1 an dans l'entreprise : incorporels (brevets, fonds commerce), corporels (terrain, bâtiment, matériel), financiers (titres de participation)." },
+    { q: "Que contient l'Actif Circulant ?", a: "Éléments se renouvelant rapidement : Stocks, Créances clients (411), Disponibilités (banque 512, caisse 53)." },
+    { q: "Définir les Capitaux Propres.", a: "Ressources appartenant aux propriétaires : Capital (apports), Réserves (bénéfices accumulés), Résultat de l'exercice en cours." },
+    { q: "Quelle est la relation fondamentale du Bilan ?", a: "Actif = Passif, ou encore : Actif = Capitaux Propres + Dettes." },
+    { q: "Définir une Charge d'exploitation.", a: "Consommation de biens ou services liée à l'activité courante : achats, salaires, loyers, amortissements... Classe 6 du PCG." },
+    { q: "Définir un Produit d'exploitation.", a: "Valeur des biens/services vendus par l'entreprise dans le cadre de son activité courante : ventes (707), production stockée (71)... Classe 7 du PCG." },
+    { q: "Qu'est-ce qu'un amortissement ?", a: "Constatation comptable de la dépréciation d'un actif immobilisé. Diminue la valeur nette du bien au bilan et constitue une charge (68) au compte de résultat." },
+    { q: "Quels biens ne sont PAS amortissables ?", a: "Terrains, œuvres d'art, éléments incorporels du fonds de commerce, titres (actions), petits matériels (<500€ HT)." },
+    { q: "Formule de l'Amortissement Linéaire annuel.", a: "Annuité = Base amortissable × (100/n) × prorata temporis. Base = Prix d'achat HT + frais. La 1ère annuité est calculée au prorata des jours (base 360j)." },
+    { q: "Comment fonctionne l'amortissement dégressif ?", a: "Taux dégressif = (100/n) × coefficient (1,25, 1,75 ou 2,25). Appliqué sur la VNC restante. On bascule en linéaire quand le taux linéaire résiduel devient supérieur." },
+    { q: "Variation de stock de marchandises dans le Compte de Résultat.", a: "Variation de stocks = Stock initial − Stock final. Si positif (déstockage) → charge supplémentaire. Si négatif (restockage) → réduction de charge." },
+    { q: "Qu'est-ce que la VNC ?", a: "Valeur Nette Comptable = Valeur Brute − Amortissements Cumulés. Représente la valeur comptable du bien à un instant donné." },
+    { q: "Coefficient dégressif pour une durée de 5 ans.", a: "1,75 (pour des biens dont la durée de vie est de 5 à 6 ans). Taux dégressif = 100/5 × 1,75 = 35%." },
+  ]
+};
+
+const QUIZ_QUESTIONS = [
+  // CH1
+  {ch:'ch1', q:"Qu'est-ce que le principe de la Partie Double ?", opts:["Total Débits = Total Crédits sur tous les comptes","On note toujours deux fois chaque opération dans le même sens","Une opération n'est comptabilisée que dans un seul compte","Le bilan doit être établi deux fois par an"], ans:0, expl:"Toute écriture débitée sur un compte est créditée du même montant sur un autre compte. Total Débit = Total Crédit."},
+  {ch:'ch1', q:"Dans le Plan Comptable Général, quelle classe regroupe les Immobilisations ?", opts:["Classe 1","Classe 2","Classe 3","Classe 4"], ans:1, expl:"Classe 2 : Comptes d'immobilisation (211 Terrains, 213 Constructions, 215 Matériel industriel, etc.)"},
+  {ch:'ch1', q:"Le compte 512 correspond à…", opts:["Caisse","Banque","Capital","Fournisseurs"], ans:1, expl:"512 = Banque (classe 5 : Comptes financiers). La caisse = compte 53."},
+  {ch:'ch1', q:"La Valeur Ajoutée représente…", opts:["Le bénéfice net de l'entreprise","Le chiffre d'affaires HT","La richesse créée par l'entreprise = CA − consommations externes","Le total des salaires versés"], ans:2, expl:"VA = CA HT − valeur des consommations en provenance d'autres entreprises."},
+  {ch:'ch1', q:"Un solde est dit débiteur quand…", opts:["Crédits > Débits","Débits > Crédits","Débits = Crédits","Le compte est au passif du bilan"], ans:1, expl:"Solde débiteur : somme des Débits > somme des Crédits."},
+  {ch:'ch1', q:"Les classes 6 et 7 du PCG servent à établir…", opts:["Le Bilan","Le Grand-Livre","Le Compte de Résultat","La Balance des comptes"], ans:2, expl:"Classes 6 (Charges) et 7 (Produits) → Compte de Résultat. Classes 1 à 5 → Bilan."},
+  {ch:'ch1', q:"Le compte 401 correspond à…", opts:["Clients","Fournisseurs","Emprunts","Stocks"], ans:1, expl:"401 = Fournisseurs et comptes rattachés (classe 4 : Tiers)."},
+  {ch:'ch1', q:"Quand une entreprise achète un ordinateur à crédit, elle enregistre…", opts:["Débit Banque / Crédit Matériel","Débit Matériel (21) / Crédit Fournisseurs (401)","Débit Charges (6) / Crédit Banque","Débit Stocks / Crédit Capital"], ans:1, expl:"Un ordinateur est un bien durable → Immobilisation (classe 2). La dette envers le fournisseur → compte 401."},
+  // CH2
+  {ch:'ch2', q:"Quel est le taux de TVA normal en France ?", opts:["5,5%","10%","20%","25%"], ans:2, expl:"Le taux normal de TVA en France est de 20%. Il s'applique à la majorité des biens et services."},
+  {ch:'ch2', q:"Le Taux de Marque se calcule par rapport à…", opts:["Le coût d'achat","Le prix de vente HT","Le prix de vente TTC","La TVA"], ans:1, expl:"Taux de Marque = (Marge / Prix de Vente HT) × 100. Le taux de MARGE se calcule par rapport au coût d'achat."},
+  {ch:'ch2', q:"L'escompte de règlement est une réduction…", opts:["Commerciale accordée sur le volume","Financière pour paiement anticipé","Accordée sur un produit défectueux","Calculée avant les remises"], ans:1, expl:"L'escompte est une RÉDUCTION FINANCIÈRE accordée pour inciter à un paiement anticipé. Il se calcule APRÈS les réductions commerciales."},
+  {ch:'ch2', q:"1000 € − remise 10% − remise 5% (en cascade) donne…", opts:["850 €","855 €","862,50 €","860 €"], ans:1, expl:"1000 − 10% = 900 € ; puis 900 − 5% = 855 € (calcul en cascade, pas 15% direct)."},
+  {ch:'ch2', q:"TVA 20% : un article vendu 180 € TTC. Quel est son prix HT ?", opts:["144 €","150 €","160 €","162 €"], ans:1, expl:"PVHT = 180 / 1,20 = 150 €. La TVA = 180 − 150 = 30 €."},
+  {ch:'ch2', q:"Le taux de TVA de 2,1% s'applique notamment à…", opts:["La restauration","Les médicaments remboursés sur ordonnance","Les livres","Les billets de spectacle courants"], ans:1, expl:"Le taux super-réduit de 2,1% s'applique aux médicaments remboursés sur ordonnance, certains spectacles (140 premières représentations) et la presse."},
+  {ch:'ch2', q:"Coût d'achat HT = 80 €, Taux de marque = 20%. PVHT = ?", opts:["96 €","100 €","104 €","160 €"], ans:1, expl:"PVHT = Coût achat / (1 − Taux marque) = 80 / 0,80 = 100 €."},
+  {ch:'ch2', q:"La ristourne est accordée…", opts:["Sur une commande importante","Pour une livraison en retard","Sur l'ensemble des achats d'une période","Pour paiement comptant"], ans:2, expl:"La ristourne est une prime de fidélité accordée périodiquement sur le CA total réalisé avec un client sur une période donnée."},
+  {ch:'ch2', q:"Coût achat 80€, PVHT 100€. Coefficient Multiplicateur TVA 20% = ?", opts:["1,20","1,25","1,50","1,44"], ans:2, expl:"CM = PVTTC / Coût achat = (100 × 1,20) / 80 = 120 / 80 = 1,5."},
+  // CH3
+  {ch:'ch3', q:"La relation fondamentale du Bilan est…", opts:["Actif = Dettes","Actif = Capitaux Propres + Dettes","Capitaux Propres = Actif + Dettes","Actif = Capitaux Propres − Dettes"], ans:1, expl:"Actif = Passif et Actif = Capitaux Propres + Dettes. L'actif représente les emplois, le passif les ressources."},
+  {ch:'ch3', q:"L'Actif Immobilisé contient…", opts:["Les stocks de marchandises","Les créances clients","Les biens destinés à rester >1 an dans l'entreprise","Les disponibilités bancaires"], ans:2, expl:"L'actif immobilisé = biens durables (>1 an) : incorporels (brevets), corporels (matériel), financiers (titres de participation)."},
+  {ch:'ch3', q:"Le compte 37 correspond à…", opts:["Stocks de matières premières","Stocks de marchandises","Créances clients","Stocks de produits finis"], ans:1, expl:"37 = Stocks de marchandises (classe 3 : Stocks). 31 = Matières premières, 355 = Produits finis."},
+  {ch:'ch3', q:"L'amortissement linéaire : le prorata temporis est calculé sur…", opts:["Des mois de 30 jours, base 360j/an","Des mois calendaires, base 365j","Des semestres","Des trimestres"], ans:0, expl:"Le prorata temporis en linéaire est calculé en jours, à raison de 12 mois de 30 jours = 360 jours/an."},
+  {ch:'ch3', q:"Le coefficient dégressif pour une immobilisation de 5 ans est…", opts:["1,25","1,75","2,25","2,00"], ans:1, expl:"Coefficients : 1,25 pour 3-4 ans, 1,75 pour 5-6 ans, 2,25 pour >6 ans."},
+  {ch:'ch3', q:"Le résultat bénéficiaire apparaît dans le Bilan…", opts:["À l'Actif dans l'Actif Circulant","Au Passif dans les Capitaux Propres","À l'Actif dans l'Actif Immobilisé","Au Passif dans les Dettes"], ans:1, expl:"Le bénéfice (Produits > Charges) est inscrit au Passif dans les Capitaux Propres → Résultat de l'exercice."},
+  {ch:'ch3', q:"Quel bien N'EST PAS amortissable ?", opts:["Un véhicule de livraison","Un logiciel comptable","Un terrain","Une machine industrielle"], ans:2, expl:"Les terrains ne se déprécient pas avec le temps → non amortissables. Aussi exclus : œuvres d'art, fonds de commerce, titres, petits matériels <500€ HT."},
+  {ch:'ch3', q:"VNC = ?", opts:["Valeur d'achat TTC","Valeur Brute − Amortissements Cumulés","Valeur Brute + Amortissements","Prix de revente"], ans:1, expl:"VNC (Valeur Nette Comptable) = Valeur Brute − Amortissements Cumulés. C'est la valeur comptable résiduelle du bien."},
+  {ch:'ch3', q:"Les charges exceptionnelles comprennent…", opts:["Les achats de marchandises","Les salaires du personnel","Les amendes et pénalités","Les intérêts d'emprunt"], ans:2, expl:"Les charges exceptionnelles (compte 67) ne sont pas liées à l'activité courante : amendes, pénalités, cessions d'actif avec moins-value..."},
+  {ch:'ch3', q:"Production stockée = ?", opts:["Stock initial − Stock final","Stock final − Stock initial","Achats − Ventes","Ventes + Stocks"], ans:1, expl:"Production stockée = Stock final − Stock initial. Variation positive = la prod. a alimenté les stocks. À l'inverse des marchandises (SI − SF)."},
+  {ch:'ch3', q:"Le compte 68 'Dotations aux amortissements' est une charge…", opts:["Décaissée chaque année","Fictive (non décaissée)","Exceptionnelle","Financière"], ans:1, expl:"La DAP (Dotation aux Amortissements et Provisions) est une charge calculée non décaissée : elle réduit le résultat sans sortie d'argent."},
+];
+
+// ══════════════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════════════
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  const btns = document.querySelectorAll('.nav-btn');
+  btns.forEach(b => { if(b.getAttribute('onclick')?.includes("'"+id+"'")) b.classList.add('active'); });
+  triggerReveal();
+  if(id === 'quiz') initQuiz('all');
+}
+
+function switchTab(section, tab) {
+  document.querySelectorAll(`#${section}-${tab},#page-${section} .tab-content`).forEach(el => {
+    if(el.id.startsWith(section)) el.classList.remove('active');
+  });
+  const tabContents = document.querySelectorAll(`[id^="${section}-"]`);
+  tabContents.forEach(t => t.classList.remove('active'));
+  const tabBtns = document.querySelectorAll(`#page-${section} .tab-btn, #page-${section} .tabs .tab-btn`);
+  // generic approach:
+  const allContent = document.querySelectorAll(`#page-${section} .tab-content, #calc-facture, #calc-marge`);
+  allContent.forEach(c => c.classList.remove('active'));
+  const allBtns = document.querySelectorAll(`#page-${section} .tab-btn`);
+  allBtns.forEach(b => b.classList.remove('active'));
+  const targetContent = document.getElementById(`${section}-${tab}`);
+  if(targetContent) targetContent.classList.add('active');
+  const clickedBtn = event?.target;
+  if(clickedBtn) clickedBtn.classList.add('active');
+}
+
+// ══════════════════════════════════════════════════
+//  FLASHCARDS
+// ══════════════════════════════════════════════════
+function renderFlashcards(chapId) {
+  const grid = document.getElementById(`${chapId}-fc-grid`);
+  if(!grid) return;
+  grid.innerHTML = '';
+  FLASHCARDS[chapId].forEach(card => {
+    const el = document.createElement('div');
+    el.className = 'flashcard';
+    el.innerHTML = `<div class="flashcard-inner">
+      <div class="flashcard-front">
+        <div class="label">Question</div>
+        <h4>${card.q}</h4>
+      </div>
+      <div class="flashcard-back">
+        <p>${card.a}</p>
+      </div>
+    </div>
+    <span class="flip-hint">Cliquez pour retourner</span>`;
+    el.addEventListener('click', () => el.classList.toggle('flipped'));
+    grid.appendChild(el);
+  });
+}
+renderFlashcards('ch1');
+renderFlashcards('ch2');
+renderFlashcards('ch3');
+
+// ══════════════════════════════════════════════════
+//  QUIZ
+// ══════════════════════════════════════════════════
+let quizState = { questions:[], current:0, score:0, answered:false };
+let activeFilter = 'all';
+
+function filterQuiz(filter, btn) {
+  activeFilter = filter;
+  document.querySelectorAll('#quiz-filter .tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  initQuiz(filter);
+}
+
+function initQuiz(filter) {
+  let pool = filter === 'all' ? [...QUIZ_QUESTIONS] : QUIZ_QUESTIONS.filter(q => q.ch === filter);
+  // shuffle
+  for(let i = pool.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [pool[i],pool[j]] = [pool[j],pool[i]];
+  }
+  quizState = { questions: pool, current: 0, score: 0, answered: false };
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion() {
+  const area = document.getElementById('quiz-area');
+  const { questions, current, score } = quizState;
+  if(current >= questions.length) {
+    const pct = Math.round(score/questions.length*100);
+    const emoji = pct >= 80 ? '🎉' : pct >= 60 ? '👍' : '📚';
+    area.innerHTML = `<div class="quiz-result">
+      <div style="font-size:3rem;margin-bottom:.5rem;">${emoji}</div>
+      <div class="big-score">${score}/${questions.length}</div>
+      <p>Score : ${pct}% — ${pct>=80?'Excellent ! Tu maîtrises bien le cours.':pct>=60?'Bien ! Quelques points à revoir.':'Continue à réviser les flashcards !'}</p>
+      <button class="btn btn-primary" onclick="initQuiz('${activeFilter}')">🔄 Recommencer</button>
+      <button class="btn btn-secondary" style="margin-left:.5rem;" onclick="showPage('ch1')">📖 Revoir le cours</button>
+    </div>`;
+    return;
+  }
+  const q = questions[current];
+  const tagClass = `tag-${q.ch}`;
+  const tagLabel = q.ch === 'ch1' ? 'Chapitre 1' : q.ch === 'ch2' ? 'Chapitre 2' : 'Chapitre 3';
+  const pct = (current/questions.length*100).toFixed(0);
+
+  area.innerHTML = `
+    <div class="quiz-progress">
+      <div class="quiz-bar"><div class="quiz-bar-fill" style="width:${pct}%"></div></div>
+      <span class="quiz-counter">Q${current+1}/${questions.length}</span>
+      <span class="quiz-score-badge">⭐ ${score}</span>
+    </div>
+    <div class="quiz-card">
+      <span class="quiz-chapter-tag tag ${tagClass}">${tagLabel}</span>
+      <h3>${q.q}</h3>
+      <div class="quiz-options">
+        ${q.opts.map((opt,i) => `<button class="quiz-option" onclick="answerQuiz(${i})">${opt}</button>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="qfeedback"></div>
+      <div class="quiz-nav">
+        <span></span>
+        <button class="btn btn-primary" id="qnext" onclick="nextQuiz()" disabled>Question suivante →</button>
+      </div>
+    </div>`;
+}
+
+function answerQuiz(idx) {
+  if(quizState.answered) return;
+  quizState.answered = true;
+  const q = quizState.questions[quizState.current];
+  const btns = document.querySelectorAll('.quiz-option');
+  btns.forEach(b => b.disabled = true);
+  const fb = document.getElementById('qfeedback');
+  const nextBtn = document.getElementById('qnext');
+  if(idx === q.ans) {
+    quizState.score++;
+    btns[idx].classList.add('correct');
+    fb.className = 'quiz-feedback show ok';
+    fb.textContent = '✅ Correct ! ' + q.expl;
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.ans].classList.add('correct');
+    fb.className = 'quiz-feedback show ko';
+    fb.textContent = '❌ Incorrect. ' + q.expl;
+  }
+  nextBtn.disabled = false;
+}
+
+function nextQuiz() {
+  quizState.current++;
+  quizState.answered = false;
+  renderQuizQuestion();
+}
+
+// ══════════════════════════════════════════════════
+//  TVA
+// ══════════════════════════════════════════════════
+let tvaRate = 20;
+function setTvaRate(rate, el) {
+  tvaRate = rate;
+  document.querySelectorAll('.tva-box').forEach(b => b.classList.remove('sel'));
+  el.classList.add('sel');
+  calcTva();
+}
+function calcTva() {
+  const ht = parseFloat(document.getElementById('tva-ht').value);
+  if(isNaN(ht)) { document.getElementById('tva-result').style.display='none'; return; }
+  const tva = ht * tvaRate/100;
+  const ttc = ht + tva;
+  document.getElementById('tva-result').style.display='block';
+  document.getElementById('r-ht').textContent = fmt(ht);
+  document.getElementById('r-tva').textContent = fmt(tva) + ` (${tvaRate}%)`;
+  document.getElementById('r-ttc').textContent = fmt(ttc);
+  document.getElementById('tva-ttc').value = '';
+}
+function calcTvaFromTTC() {
+  const ttc = parseFloat(document.getElementById('tva-ttc').value);
+  if(isNaN(ttc)) { document.getElementById('tva-result').style.display='none'; return; }
+  const ht = ttc / (1 + tvaRate/100);
+  const tva = ttc - ht;
+  document.getElementById('tva-result').style.display='block';
+  document.getElementById('r-ht').textContent = fmt(ht);
+  document.getElementById('r-tva').textContent = fmt(tva) + ` (${tvaRate}%)`;
+  document.getElementById('r-ttc').textContent = fmt(ttc);
+  document.getElementById('tva-ht').value = '';
+}
+
+// ══════════════════════════════════════════════════
+//  FACTURE
+// ══════════════════════════════════════════════════
+function calcFacture() {
+  const brut = parseFloat(document.getElementById('f-brut').value)||0;
+  const r1 = parseFloat(document.getElementById('f-r1').value)||0;
+  const r2 = parseFloat(document.getElementById('f-r2').value)||0;
+  const escompte = parseFloat(document.getElementById('f-escompte').value)||0;
+  const transportVal = parseFloat(document.getElementById('f-transport').value)||0;
+  const transportType = document.getElementById('f-transport-type').value;
+  const tvaTaux = parseFloat(document.getElementById('f-tva-taux').value)||20;
+  const acompte = parseFloat(document.getElementById('f-acompte').value)||0;
+
+  if(!brut) { document.getElementById('facture-result').style.display='none'; return; }
+
+  let apr1 = brut * (1 - r1/100);
+  let nc = apr1 * (1 - r2/100);
+  let nf = nc * (1 - escompte/100);
+  let transport = transportType === 'pct' ? nc * transportVal/100 : transportVal;
+  let totalHT = nf + transport;
+  let tva = totalHT * tvaTaux/100;
+  let ttc = totalHT + tva;
+  let net = ttc - acompte;
+
+  const rows = [
+    ['Montant Brut HT', fmt(brut)],
+    r1 ? [`− Remise ${r1}%`, `− ${fmt(brut*r1/100)}`] : null,
+    r1 ? ['Sous-total', fmt(apr1)] : null,
+    r2 ? [`− Remise ${r2}%`, `− ${fmt(apr1*r2/100)}`] : null,
+    ['Net Commercial', fmt(nc), true],
+    escompte ? [`− Escompte ${escompte}%`, `− ${fmt(nc*escompte/100)}`] : null,
+    ['Net Financier', fmt(nf)],
+    transportVal ? [`+ Frais de transport`, `+ ${fmt(transport)}`] : null,
+    ['Total HT', fmt(totalHT), true],
+    [`+ TVA ${tvaTaux}%`, fmt(tva)],
+    ['Total TTC', fmt(ttc), true],
+    acompte ? [`− Acompte versé`, `− ${fmt(acompte)}`] : null,
+    ['Net à Payer', fmt(net), true, true],
+  ].filter(Boolean);
+
+  const resultDiv = document.getElementById('facture-result');
+  resultDiv.style.display = 'block';
+  document.getElementById('facture-rows').innerHTML = rows.map(([label, val, bold, accent]) => `
+    <div class="result-row ${bold?'total':''}">
+      <span class="rlabel" style="${accent?'color:var(--accent);font-weight:700;':''}">${label}</span>
+      <span class="rval" style="${accent?'color:var(--accent);font-size:1.15rem;':''}">${val}</span>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════════
+//  MARGE
+// ══════════════════════════════════════════════════
+function calcMarge() {
+  const cout = parseFloat(document.getElementById('m-cout').value);
+  const pvht = parseFloat(document.getElementById('m-pvht').value);
+  const tva = parseFloat(document.getElementById('m-tva').value)||20;
+  if(isNaN(cout)||isNaN(pvht)||cout<=0||pvht<=0) { document.getElementById('marge-result').style.display='none'; return; }
+  const marge = pvht - cout;
+  const txMarque = marge/pvht*100;
+  const txMarge = marge/cout*100;
+  const pvttc = pvht*(1+tva/100);
+  const cm = pvttc/cout;
+  document.getElementById('marge-result').style.display='block';
+  document.getElementById('rm-marge').textContent = fmt(marge);
+  document.getElementById('rm-txmarque').textContent = txMarque.toFixed(2)+'%';
+  document.getElementById('rm-txmarge').textContent = txMarge.toFixed(2)+'%';
+  document.getElementById('rm-ttc').textContent = fmt(pvttc);
+  document.getElementById('rm-cm').textContent = cm.toFixed(4);
+}
+function calcMarque() {
+  const cout = parseFloat(document.getElementById('m-cout').value);
+  const marque = parseFloat(document.getElementById('m-marque').value);
+  if(isNaN(cout)||isNaN(marque)||cout<=0||marque>=100||marque<0) return;
+  const pvht = cout/(1-marque/100);
+  document.getElementById('m-pvht').value = pvht.toFixed(2);
+  calcMarge();
+}
+
+// ══════════════════════════════════════════════════
+//  BILAN INTERACTIF
+// ══════════════════════════════════════════════════
+function updateBilan() {
+  const actifs = [...document.querySelectorAll('.actif-input')].reduce((s,i)=>s+(parseFloat(i.value)||0),0);
+  const passifs = [...document.querySelectorAll('.passif-input')].reduce((s,i)=>s+(parseFloat(i.value)||0),0);
+  document.getElementById('total-actif').textContent = fmt(actifs);
+  document.getElementById('total-passif').textContent = fmt(passifs);
+  const chk = document.getElementById('bilan-check');
+  const diff = Math.abs(actifs-passifs);
+  if(actifs === 0 && passifs === 0) {
+    chk.className='bilan-check neutral'; chk.textContent='Saisissez des montants pour vérifier l\'équilibre du bilan.';
+  } else if(diff < 0.01) {
+    chk.className='bilan-check ok'; chk.textContent='✅ Bilan équilibré ! Actif = Passif = '+fmt(actifs);
+  } else {
+    chk.className='bilan-check ko'; chk.textContent=`❌ Bilan déséquilibré. Écart : ${fmt(diff)} (Actif: ${fmt(actifs)} / Passif: ${fmt(passifs)})`;
+  }
+}
+function resetBilan() {
+  document.querySelectorAll('.actif-input,.passif-input').forEach(i=>i.value='');
+  updateBilan();
+}
+function loadBilanExemple() {
+  // Entreprise Moseisley : Actif Immo Incorp=150000, Corp=40000, Financier=30000; Circulant Stock=35000, Créances=55000, Dispo=32500
+  // Passif Cap Propres: Capital=200000, Réserves=0, Résultat=?; Dettes: Emprunt=80000, Four=30000, DFiscales=15000
+  const actifInputs = document.querySelectorAll('.actif-input');
+  const passifInputs = document.querySelectorAll('.passif-input');
+  [150000, 40000, 30000, 35000, 55000, 32500].forEach((v,i) => { actifInputs[i].value = v; });
+  // Résultat Moseisley : calculer = Ventes(891000) + Intérêts(2500) − Achats(565200) − Loyer(120000) − Intérêts emprunt(7800) − Impôts(21000) − Salaires(108000) − Charges sociales(38000) − Télécom(14000) − Amendes(2000) = 17500
+  [200000, 0, 17500, 80000, 30000, 15000].forEach((v,i) => { passifInputs[i].value = v; });
+  updateBilan();
+}
+
+// ══════════════════════════════════════════════════
+//  AMORTISSEMENT
+// ══════════════════════════════════════════════════
+// Set default date
+document.addEventListener('DOMContentLoaded', ()=>{
+  const today = new Date();
+  document.getElementById('a-date').value = today.toISOString().split('T')[0];
+});
+
+function calcAmort() {
+  const ttc = parseFloat(document.getElementById('a-ttc').value)||0;
+  const tva = parseFloat(document.getElementById('a-tva').value)||20;
+  const duree = parseInt(document.getElementById('a-duree').value)||5;
+  const mode = document.getElementById('a-mode').value;
+  const dateStr = document.getElementById('a-date').value;
+  const residuel = parseFloat(document.getElementById('a-residuel').value)||0;
+
+  if(!ttc||!dateStr) { document.getElementById('amort-result').innerHTML=''; return; }
+
+  const baseHT = tva > 0 ? ttc / (1 + tva/100) : ttc;
+  const base = baseHT - residuel;
+
+  const dateMS = new Date(dateStr);
+  const yearStart = new Date(dateMS.getFullYear(),0,1);
+
+  // Prorata 1ere année (base 360j)
+  const moisDebut = dateMS.getMonth(); // 0-based
+  const jourDebut = dateMS.getDate();
+  const joursRestants = (12 - moisDebut - 1)*30 + (30 - jourDebut + 1);
+  const prorata1 = joursRestants / 360;
+
+  let rows = [];
+  let cumulAmort = 0;
+
+  if(mode === 'lineaire') {
+    const tauxLin = 100/duree/100;
+    const annuiteNormale = base * tauxLin;
+    for(let i = 0; i <= duree; i++) {
+      const year = dateMS.getFullYear() + i;
+      let annuity;
+      if(i === 0) annuity = annuiteNormale * prorata1;
+      else if(i === duree) annuity = base - cumulAmort;
+      else annuity = annuiteNormale;
+      if(annuity <= 0 && i === duree) break;
+      cumulAmort += annuity;
+      const vnc = Math.max(0, base - cumulAmort + residuel);
+      rows.push([year, base+residuel, annuity, cumulAmort, vnc]);
+      if(cumulAmort >= base) break;
+    }
+    const taux = (100/duree).toFixed(2);
+    document.getElementById('amort-result').innerHTML = `
+      <div class="info-box" style="margin-top:1rem;">Base HT : <strong>${fmt(baseHT)}</strong> — Taux : <strong>${taux}%</strong> — Prorata 1ère annuité : <strong>${joursRestants}/360 = ${(prorata1*100).toFixed(2)}%</strong></div>
+      ${renderAmortTable(rows)}`;
+  } else {
+    // Dégressif
+    const coeff = duree <= 4 ? 1.25 : duree <= 6 ? 1.75 : 2.25;
+    const tauxDeg = (100/duree * coeff)/100;
+    let vnc = base;
+    // 1ere annuité : prorata du mois (début de mois de l'acquisition)
+    const moisProrata = (12 - moisDebut) / 12;
+    for(let i = 0; i < duree; i++) {
+      const year = dateMS.getFullYear() + i;
+      const yearsLeft = duree - i;
+      const tauxLin = 1/yearsLeft;
+      const taux = Math.max(tauxDeg, tauxLin);
+      let annuity = vnc * taux;
+      if(i === 0) annuity *= moisProrata; // prorata mois en dégressif
+      if(i === duree-1) annuity = vnc; // dernière annuité
+      cumulAmort += annuity;
+      vnc = Math.max(0, base - cumulAmort);
+      rows.push([year, base+residuel, annuity, cumulAmort + residuel*(1), vnc + residuel]);
+      if(vnc <= 0.01) break;
+    }
+    const tauxAffiche = (tauxDeg*100).toFixed(2);
+    document.getElementById('amort-result').innerHTML = `
+      <div class="info-box" style="margin-top:1rem;">Base HT : <strong>${fmt(baseHT)}</strong> — Taux dégressif : <strong>${tauxAffiche}%</strong> (${100/duree}% × ${coeff}) — Prorata 1ère année : <strong>${(moisProrata*100).toFixed(0)}%</strong></div>
+      ${renderAmortTable(rows)}`;
+  }
+}
+
+function renderAmortTable(rows) {
+  return `<table class="amort-table">
+    <thead><tr><th>Exercice</th><th>Base amortissable</th><th>Dotation</th><th>Amort. cumulés</th><th>VNC</th></tr></thead>
+    <tbody>${rows.map((r,i) => `<tr><td>${r[0]}</td><td>${fmt(r[1])}</td><td>${fmt(r[2])}</td><td>${fmt(r[3])}</td><td>${fmt(r[4])}</td></tr>`).join('')}
+    </tbody></table>`;
+}
+
+// ══════════════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════════════
+function fmt(n) {
+  return Number(n).toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
+}
+
+function triggerReveal() {
+  setTimeout(()=>{
+    document.querySelectorAll('.reveal:not(.visible)').forEach(el => {
+      el.classList.add('visible');
+    });
+  }, 80);
+}
+
+// ── INIT
+triggerReveal();
+initQuiz('all');
+
+// reveal on scroll
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, {threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ── Recalc amort on page load
+window.addEventListener('DOMContentLoaded', () => { calcAmort(); });
+</script>
+</body>
+</html>
