@@ -1,4 +1,4 @@
-  const toggle = document.getElementById('themeToggle');
+const toggle = document.getElementById('themeToggle');
   const logo_jupyter = document.getElementById('logo_jupyter');
   const logo_open_neb = document.getElementById('logo_open_neb');
   const menuToggle = document.getElementById('menuToggle');
@@ -7,6 +7,35 @@
   const revisionToggle = document.getElementById('revisionToggle');
   const revisionMenu = document.getElementById('revisionMenu');
 
+  // === Switch localisation ===
+  const locationToggle = document.getElementById('locationToggle');
+  const labelHome = document.getElementById('label-home');
+  const labelIut = document.getElementById('label-iut');
+  const linkEdt = document.getElementById('link-edt');
+
+  function applyLocation(isIut) {
+    labelIut.classList.toggle('active', isIut);
+    labelHome.classList.toggle('active', !isIut);
+
+    if (linkEdt) {
+      linkEdt.classList.toggle('hidden', !isIut);
+      linkEdt.classList.toggle('visible', isIut);
+    }
+
+    localStorage.setItem('location', isIut ? 'iut' : 'home');
+  }
+
+  // Initialisation localisation — défaut : chez soi
+  const savedLocation = localStorage.getItem('location');
+  const isIut = savedLocation === 'iut';
+  locationToggle.checked = isIut;
+  applyLocation(isIut);
+
+  locationToggle.addEventListener('change', () => {
+    applyLocation(locationToggle.checked);
+  });
+
+  // === Menus ===
   revisionToggle.addEventListener('click', () => {
   revisionMenu.classList.toggle('hidden');
   revisionToggle.classList.add('rotating');
@@ -15,17 +44,13 @@
 
   menuToggle.addEventListener('click', () => {
   sideMenu.classList.toggle('hidden');
-
-  // Ajouter la classe qui lance l'animation
   menuToggle.classList.add('rotating');
-
-  // Retirer la classe après 1 seconde pour arrêter l'animation
   setTimeout(() => {
     menuToggle.classList.remove('rotating');
   }, 750);
 });
 
-
+  // === Thème ===
   function updateLogo(theme) {
     if (theme === 'light') {
       logo_jupyter.src = 'styles/Jupyter_logo_clair.png';
@@ -36,7 +61,6 @@
     }
   }
 
-  // Appliquer le thème sombre par défaut
   if (!localStorage.getItem('theme')) {
     document.body.classList.remove('light-mode');
     localStorage.setItem('theme', 'dark');
@@ -55,7 +79,6 @@
     }
   }
 
-  // Gérer le changement de thème via le switch
   toggle.addEventListener('change', () => {
     if (toggle.checked) {
       document.body.classList.remove('light-mode');
@@ -68,20 +91,26 @@
     }
   });
 
+  // === Ouvrir lien matière ===
   function ouvrirLien() {
     const matiere = document.getElementById('matiere').value;
+    const isIut = locationToggle.checked;
     const base = "https://iut-info.univ-reims.fr/users/";
-  
+
     let lienFinal;
-    if (matiere === "coutant" || matiere === "blanchard") {
-      lienFinal = base + matiere + "/";
-    } 
-    else if (matiere === "prevost") {
-      lienFinal = "http://prevost/Menu.php";
-    }
-    
-    else {
-      lienFinal = base + matiere + "/restricted/";
+
+    if (isIut) {
+      if (matiere === "prevost") {
+        lienFinal = "http://prevost/Menu.php";
+      } else {
+        lienFinal = "https://iut-info.univ-reims.fr/users/prevost/restricted/Menu.php";
+      }
+    } else {
+      if (matiere === "coutant" || matiere === "blanchard") {
+        lienFinal = base + matiere + "/";
+      } else {
+        lienFinal = base + matiere + "/restricted/";
+      }
     }
 
     window.open(lienFinal);
