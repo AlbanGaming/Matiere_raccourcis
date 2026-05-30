@@ -9,19 +9,13 @@ const toggle = document.getElementById('themeToggle');
 
   // === Switch localisation ===
   const locationToggle = document.getElementById('locationToggle');
-  const labelHome = document.getElementById('label-home');
-  const labelIut = document.getElementById('label-iut');
   const linkEdt = document.getElementById('link-edt');
 
   function applyLocation(isIut) {
-    labelIut.classList.toggle('active', isIut);
-    labelHome.classList.toggle('active', !isIut);
-
     if (linkEdt) {
       linkEdt.classList.toggle('hidden', !isIut);
       linkEdt.classList.toggle('visible', isIut);
     }
-
     localStorage.setItem('location', isIut ? 'iut' : 'home');
   }
 
@@ -103,7 +97,7 @@ const toggle = document.getElementById('themeToggle');
       if (matiere === "prevost") {
         lienFinal = "http://prevost/Menu.php";
       } else {
-        lienFinal = "https://iut-info.univ-reims.fr/users/prevost/restricted/Menu.php";
+        lienFinal = "http://" + matiere + "/";
       }
     } else {
       if (matiere === "coutant" || matiere === "blanchard") {

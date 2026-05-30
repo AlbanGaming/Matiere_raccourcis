@@ -333,8 +333,8 @@ elles seront désormais dans le menu latéral */
 
 .menu-toggle {
   position: fixed;
-  top: 10px;
-  right: 150px;
+  top: 5px;
+  right: 140px;
   font-size: 40px;
   background-color: transparent !important;
   border: none !important;
@@ -422,7 +422,7 @@ body.light-mode .pulse-logo {
 /* === Bouton révision gauche === */
 .revision-toggle {
   position: fixed;
-  top: 10px;
+  top: 5px;
   left: 125px; /* à côté du switch thème */
   font-size: 28px;
   background: transparent !important;
@@ -512,31 +512,41 @@ body.light-mode .revision-menu {
 .location-switch-container {
   position: fixed;
   top: 20px;
-  right: 10px;
+  right: 40px;
   z-index: 1002;
+}
+
+.switch-location {
+  width: 90px;
+  height: 42px;
+}
+
+.switch-location .slider-location {
+  background-color: #e67e22;
+  border-radius: 51px;
+}
+
+.switch-location .slider-location::before {
+  content: "🏠";
   display: flex;
   align-items: center;
-  gap: 6px;
-}
-
-.location-label {
+  justify-content: center;
+  width: 31.5px;
+  height: 31.5px;
+  left: 5.5px;
+  bottom: 5.5px;
+  background-color: transparent;
   font-size: 18px;
-  user-select: none;
-  opacity: 0.35;
-  transition: opacity 0.3s ease;
   line-height: 1;
-}
-
-.location-label.active {
-  opacity: 1;
-}
-
-.slider-location {
-  background-color: #e67e22 !important;
 }
 
 input:checked + .slider-location {
   background-color: #2196F3 !important;
+}
+
+input:checked + .slider-location::before {
+  content: "🏫";
+  transform: translateX(45px);
 }
 
 /* Éléments masqués en mode "chez soi" */
