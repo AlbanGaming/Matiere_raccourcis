@@ -434,6 +434,7 @@
       <button class="nav-btn" onclick="showPage('ch3')">Ch.3 Bilan</button>
       <button class="nav-btn" onclick="showPage('quiz')">🎯 Quiz</button>
       <button class="nav-btn" onclick="showPage('calcul')">🧮 Calculatrices</button>
+      <button class="nav-btn" style="background:#fef2f2;color:#c0392b;border:1.5px solid #f5c6c4;font-weight:700;" onclick="showPage('controle')">🚨 Contrôle du 4 juin</button>
     </nav>
   </div>
 </header>
@@ -1129,6 +1130,205 @@
       </div>
     </div>
   </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     PAGE : CONTRÔLE DU 4 JUIN
+════════════════════════════════════════════ -->
+<div class="page" id="page-controle">
+
+  <!-- BANDEAU ALERTE -->
+  <div style="background:linear-gradient(135deg,#c0392b 0%,#e74c3c 100%);color:white;border-radius:var(--radius);padding:1.5rem 2rem;margin-bottom:1.75rem;display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap;">
+    <div style="font-size:2.5rem;line-height:1;">🚨</div>
+    <div style="flex:1;">
+      <div style="font-family:'DM Serif Display',serif;font-size:1.5rem;margin-bottom:2px;">Contrôle — Jeudi 4 juin 2026</div>
+      <div style="font-size:.9rem;opacity:.9;">TP Gestion des SI · Vérification des acquis TP N°2 et TP N°3</div>
+    </div>
+    <div id="countdown-box" style="background:rgba(0,0,0,.25);border-radius:10px;padding:10px 18px;text-align:center;min-width:120px;">
+      <div id="countdown-val" style="font-family:'DM Serif Display',serif;font-size:1.8rem;line-height:1;">—</div>
+      <div style="font-size:.72rem;opacity:.8;margin-top:2px;">avant le contrôle</div>
+    </div>
+  </div>
+
+  <!-- CALCULATRICE WARNING -->
+  <div style="background:#fff8e1;border:2px solid #f59e0b;border-radius:var(--radius);padding:1.25rem 1.5rem;margin-bottom:1.75rem;display:flex;align-items:center;gap:1rem;">
+    <div style="font-size:2.2rem;">🧮</div>
+    <div>
+      <div style="font-weight:700;font-size:1rem;color:#92400e;">RAPPEL IMPORTANT : APPORTER UNE CALCULATRICE</div>
+      <div style="font-size:.85rem;color:#78350f;margin-top:2px;">Sans calculatrice physique, les exercices de calcul (TVA, marge, amortissement) sont impossibles à terminer dans le temps imparti.</div>
+    </div>
+  </div>
+
+  <!-- CE QUI TOMBE -->
+  <div style="margin-bottom:1.75rem;">
+    <h2 style="font-family:'DM Serif Display',serif;font-size:1.5rem;margin-bottom:1rem;">Ce qui tombe au contrôle</h2>
+
+    <!-- TP2 -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:1rem;">
+      <div style="background:var(--accent2-light);color:var(--accent2);font-weight:700;padding:10px 18px;font-size:.92rem;display:flex;align-items:center;gap:.5rem;">
+        <span style="background:var(--accent2);color:white;border-radius:6px;padding:2px 9px;font-size:.8rem;">TP N°2</span>
+        Facturation & Calculs Commerciaux
+      </div>
+      <div style="padding:1.25rem;display:grid;gap:.75rem;">
+
+        <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:1rem;">
+          <div style="font-weight:700;margin-bottom:.4rem;">Exercice 5 — <span style="color:var(--accent2);">Calcul de VA &amp; Taux de TVA</span></div>
+          <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:.6rem;">Savoir calculer la <strong>Valeur Ajoutée</strong>, convertir HT → TTC et TTC → HT avec les 4 taux.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:.4rem;font-size:.78rem;">
+            <span style="background:var(--accent2-light);color:var(--accent2);padding:3px 9px;border-radius:4px;font-weight:600;">VA = CA HT − Consommations ext.</span>
+            <span style="background:var(--accent-light);color:var(--accent);padding:3px 9px;border-radius:4px;font-weight:600;">TTC = HT × (1 + taux)</span>
+            <span style="background:var(--accent-light);color:var(--accent);padding:3px 9px;border-radius:4px;font-weight:600;">HT = TTC ÷ (1 + taux)</span>
+          </div>
+        </div>
+
+        <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:1rem;">
+          <div style="font-weight:700;margin-bottom:.4rem;">Exercice 8 — <span style="color:var(--accent2);">Tableau de calculs commerciaux complet</span></div>
+          <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:.6rem;">Compléter un tableau : Coût d'achat, Marge, PVHT, TVA, TTC, Taux de Marque, Taux de Marge, Coefficient Multiplicateur. Partir de n'importe quelle donnée.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:.4rem;font-size:.78rem;">
+            <span style="background:var(--accent3-light);color:var(--accent3);padding:3px 9px;border-radius:4px;font-weight:600;">Marge = PVHT − Coût achat</span>
+            <span style="background:var(--gold-light);color:var(--gold);padding:3px 9px;border-radius:4px;font-weight:600;">Tx Marque = Marge/PVHT × 100</span>
+            <span style="background:var(--accent-light);color:var(--accent);padding:3px 9px;border-radius:4px;font-weight:600;">Tx Marge = Marge/Coût × 100</span>
+            <span style="background:var(--accent2-light);color:var(--accent2);padding:3px 9px;border-radius:4px;font-weight:600;">CM = PVTTC/Coût achat</span>
+            <span style="background:var(--surface);color:var(--text-muted);border:1px solid var(--border);padding:3px 9px;border-radius:4px;font-weight:600;">PVHT = Coût ÷ (1 − Tx Marque)</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TP3 -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+      <div style="background:var(--accent3-light);color:var(--accent3);font-weight:700;padding:10px 18px;font-size:.92rem;display:flex;align-items:center;gap:.5rem;">
+        <span style="background:var(--accent3);color:white;border-radius:6px;padding:2px 9px;font-size:.8rem;">TP N°3</span>
+        Bilan, Compte de Résultat &amp; Amortissements
+      </div>
+      <div style="padding:1.25rem;display:grid;gap:.75rem;">
+
+        <!-- Bilan + CR -->
+        <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:1rem;">
+          <div style="font-weight:700;margin-bottom:.4rem;">Bilan &amp; Compte de Résultat — <span style="color:var(--accent3);">type Naboo (ex.2) ou Dagobah (ex.3)</span></div>
+          <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:.75rem;">À partir d'une liste de comptes numérotés, construire le Bilan et le Compte de Résultat. <strong>Dagobah : attention aux variations de stock !</strong></p>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;font-size:.83rem;">
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.75rem;">
+              <div style="font-weight:700;color:var(--accent3);margin-bottom:.4rem;">✅ Méthode Bilan</div>
+              <ol style="padding-left:1.2rem;color:var(--text-muted);line-height:1.8;">
+                <li>Repérer les comptes <strong>1 à 5</strong> → Bilan</li>
+                <li>Classe 2 → Actif Immobilisé</li>
+                <li>Classe 3 → Stocks (Actif Circulant)</li>
+                <li>411 Clients → Actif Circulant / Créances</li>
+                <li>512/53 → Disponibilités</li>
+                <li>101 Capital, 106 Réserves → Capitaux Propres</li>
+                <li>164 Emprunts → Dettes LT</li>
+                <li>401 Fournisseurs, 42/43/44 → Dettes CT</li>
+                <li>Calculer Résultat = Produits − Charges</li>
+              </ol>
+            </div>
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.75rem;">
+              <div style="font-weight:700;color:var(--accent);margin-bottom:.4rem;">✅ Méthode Compte de Résultat</div>
+              <ol style="padding-left:1.2rem;color:var(--text-muted);line-height:1.8;">
+                <li>Repérer les comptes <strong>6 et 7</strong> → CR</li>
+                <li>60/61/62/63/64/65/68 → Charges exploit.</li>
+                <li>66 → Charges financières</li>
+                <li>67 → Charges exceptionnelles</li>
+                <li>70/71/72/74/75 → Produits exploit.</li>
+                <li>76 → Produits financiers</li>
+                <li>77 → Produits exceptionnels</li>
+                <li>Résultat = Total Produits − Total Charges</li>
+              </ol>
+            </div>
+          </div>
+
+          <!-- VARIATION DE STOCK WARNING -->
+          <div style="margin-top:.75rem;background:#fff8e1;border:1.5px solid #f59e0b;border-radius:8px;padding:.75rem 1rem;">
+            <div style="font-weight:700;color:#92400e;margin-bottom:.3rem;">⚠️ Variation de stock (Dagobah) — Point critique</div>
+            <div style="font-size:.83rem;color:#78350f;display:grid;grid-template-columns:1fr 1fr;gap:.5rem;">
+              <div>
+                <strong>Marchandises / Matières 1ères (Charges 6031/6037) :</strong><br>
+                Variation = Stock Initial − Stock Final<br>
+                <span style="font-family:'DM Mono',monospace;">SI &gt; SF → déstockage → charge +</span><br>
+                <span style="font-family:'DM Mono',monospace;">SI &lt; SF → restockage → charge −</span>
+              </div>
+              <div>
+                <strong>Production stockée (Produits 71) :</strong><br>
+                Production stockée = Stock Final − Stock Initial<br>
+                <span style="font-family:'DM Mono',monospace;">SF &gt; SI → production + → produit +</span><br>
+                <span style="font-family:'DM Mono',monospace;">SF &lt; SI → déstockage → produit −</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AMORT -->
+        <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:1rem;">
+          <div style="font-weight:700;margin-bottom:.4rem;">Tableau d'Amortissement — <span style="color:var(--gold);">Application N°3 (Linéaire) &amp; N°4 (Avantages économiques)</span></div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;font-size:.83rem;margin-bottom:.75rem;">
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.75rem;">
+              <div style="font-weight:700;color:var(--accent);margin-bottom:.4rem;">📐 Linéaire (App. N°3)</div>
+              <ol style="padding-left:1.2rem;color:var(--text-muted);line-height:1.9;">
+                <li><strong style="color:#c0392b;">Si prix TTC → diviser par (1 + taux TVA) pour obtenir la base HT !</strong></li>
+                <li>Taux = 100 ÷ durée</li>
+                <li>1ère annuité : prorata temporis en jours (base 360j/an)</li>
+                <li>Jours = du jour de mise en service au 31/12</li>
+                <li>Annuités suivantes : Base × Taux</li>
+                <li>Dernière annuité = Base − Amort. cumulés</li>
+              </ol>
+            </div>
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.75rem;">
+              <div style="font-weight:700;color:var(--accent3);margin-bottom:.4rem;">⚙️ Avantages économiques (App. N°4)</div>
+              <ol style="padding-left:1.2rem;color:var(--text-muted);line-height:1.9;">
+                <li><strong style="color:#c0392b;">Si prix TTC → passer en HT d'abord !</strong></li>
+                <li>Calculer le total de production prévu sur toute la durée</li>
+                <li>Annuité N = Base × (pièces N ÷ total pièces)</li>
+                <li>La somme des annuités = Base amortissable</li>
+              </ol>
+              <div style="background:var(--accent3-light);border-radius:6px;padding:6px 10px;margin-top:.5rem;font-family:'DM Mono',monospace;font-size:.8rem;color:var(--accent3);">
+                Annuité = Base × (Qté N / Qté totale)
+              </div>
+            </div>
+          </div>
+
+          <div style="background:#fdecea;border:1.5px solid #e57373;border-radius:8px;padding:.75rem 1rem;font-size:.83rem;">
+            <strong style="color:#c0392b;">🔴 Piège classique :</strong> <span style="color:#7a1a17;">Le prix donné est souvent TTC. Il faut <strong>toujours amortir sur la base HT</strong>. Formule : Base HT = Prix TTC ÷ 1,20 (si TVA 20%).</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- CHECKLIST -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.5rem;">
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1.15rem;margin-bottom:1rem;">✅ Checklist de révision</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.5rem;" id="checklist-grid"></div>
+  </div>
+
+  <!-- RACCOURCIS -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;cursor:pointer;text-align:center;" onclick="showPage('calcul')">
+      <div style="font-size:1.8rem;margin-bottom:.4rem;">🧾</div>
+      <div style="font-weight:600;font-size:.9rem;">Calculatrice Facture</div>
+      <div style="font-size:.75rem;color:var(--text-muted);">Simule les exercices ex.5 &amp; ex.8</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;cursor:pointer;text-align:center;" onclick="showPage('ch3');switchTab('ch3','bilan')">
+      <div style="font-size:1.8rem;margin-bottom:.4rem;">📊</div>
+      <div style="font-weight:600;font-size:.9rem;">Bilan interactif</div>
+      <div style="font-size:.75rem;color:var(--text-muted);">Vérifier Actif = Passif</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;cursor:pointer;text-align:center;" onclick="showPage('ch3');switchTab('ch3','amort')">
+      <div style="font-size:1.8rem;margin-bottom:.4rem;">📉</div>
+      <div style="font-weight:600;font-size:.9rem;">Calculateur Amortissement</div>
+      <div style="font-size:.75rem;color:var(--text-muted);">Linéaire, dégressif, prorata</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;cursor:pointer;text-align:center;" onclick="showPage('quiz');filterQuiz('ch2',document.querySelector('#quiz-filter .tab-btn:nth-child(3)'))">
+      <div style="font-size:1.8rem;margin-bottom:.4rem;">🎯</div>
+      <div style="font-weight:600;font-size:.9rem;">Quiz Chapitre 2</div>
+      <div style="font-size:.75rem;color:var(--text-muted);">TVA, marge, marque…</div>
+    </div>
+  </div>
+
 </div>
 
 </main>
