@@ -19,6 +19,10 @@
   --accent4: #ffb443;
   --accent5: #ff7043;
   --accent6: #4fc3f7;
+  --accent7: #ff4f4f;
+  --accent8: #ff8c42;
+  --accent9: #c084fc;
+  --accent10: #34d399;
   --tab-colors: #7c6bff,#ff6b9d,#43e8c8,#ffb443,#ff7043,#4fc3f7,#a8e063;
 }
 
@@ -240,6 +244,10 @@ main {
 .card.c4::before { background: var(--accent4); }
 .card.c5::before { background: var(--accent5); }
 .card.c6::before { background: var(--accent6); }
+.card.c7::before { background: var(--accent7); }
+.card.c8::before { background: var(--accent8); }
+.card.c9::before { background: var(--accent9); }
+.card.c10::before { background: var(--accent10); }
 
 .card h3 {
   font-family: 'Syne', sans-serif;
@@ -342,7 +350,33 @@ table.info td:last-child { color: var(--text); font-family: 'DM Mono', monospace
   margin-bottom: .35rem;
 }
 
-/* SCROLLBAR */
+.pill-exam { background: rgba(255,107,107,0.18); color: #ff6b6b; border: 1px solid rgba(255,107,107,0.35); }
+
+/* EXAM BANNER */
+.exam-banner {
+  position: relative;
+  z-index: 200;
+  background: linear-gradient(90deg, rgba(255,100,60,0.18) 0%, rgba(255,180,67,0.13) 100%);
+  border-bottom: 1px solid rgba(255,130,60,0.3);
+  padding: .65rem 2rem;
+}
+.exam-banner-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.exam-icon { font-size: 1.3rem; flex-shrink: 0; }
+.exam-text { flex: 1; font-size: .82rem; line-height: 1.5; }
+.exam-text strong { color: #ffb443; font-weight: 600; display: block; margin-bottom: .1rem; }
+.exam-text span { color: #b09060; }
+.exam-close {
+  background: none; border: none; color: #b09060;
+  cursor: pointer; font-size: 1rem; padding: 2px 6px;
+  flex-shrink: 0;
+}
+.exam-close:hover { color: #ffb443; }
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 3px; }
@@ -350,16 +384,28 @@ table.info td:last-child { color: var(--text); font-family: 'DM Mono', monospace
 </head>
 <body>
 
+<div class="exam-banner" id="examBanner">
+  <div class="exam-banner-inner">
+    <div class="exam-icon">⏰</div>
+    <div class="exam-text">
+      <strong>Examen jeudi 04 juin à 14h — 1h30</strong>
+      <span>Focus sur les onglets marqués 🔴 : DDL, DML, Vues &amp; Séquences, Droits. Le mémo SQL sera fourni dans le sujet.</span>
+    </div>
+    <button class="exam-close" onclick="document.getElementById('examBanner').style.display='none'">✕</button>
+  </div>
+</div>
+
 <header>
   <div class="header-inner">
     <div class="header-badge">🗄️</div>
     <div class="header-text">
       <h1>SQL Oracle — Fiche de Révision</h1>
-      <p>Toutes les notions des TP01 à TP05 — IUT Reims BUT S2</p>
+      <p>TP01 à TP08 — IUT Reims BUT S2</p>
       <div class="header-meta">
         <span class="pill pill-purple">Oracle SQL</span>
-        <span class="pill pill-teal">50 requêtes</span>
-        <span class="pill pill-yellow">R1 → R50</span>
+        <span class="pill pill-teal">TP01–08</span>
+        <span class="pill pill-yellow">DDL · DML · Vues · Droits</span>
+        <span class="pill pill-exam">🔴 Examen jeudi</span>
       </div>
     </div>
   </div>
@@ -381,6 +427,10 @@ const TABS = [
   { id: 'exists',    label: 'EXISTS', dot: '#ff7043', emoji: '✓' },
   { id: 'arbo',      label: 'Arborescences', dot: '#4fc3f7', emoji: '🌲' },
   { id: 'pieges',    label: 'Pièges', dot: '#a8e063', emoji: '⚠️' },
+  { id: 'ddl',       label: '🔴 DDL — Créer/Modifier', dot: '#ff4f4f', emoji: '🏗️' },
+  { id: 'dml',       label: '🔴 DML — Insert/Update/Delete', dot: '#ff8c42', emoji: '✏️' },
+  { id: 'vues',      label: '🔴 Vues & Séquences', dot: '#c084fc', emoji: '👁️' },
+  { id: 'droits',    label: '🔴 Droits & Transactions', dot: '#34d399', emoji: '🔑' },
 ];
 
 const CONTENT = {
@@ -849,6 +899,480 @@ arbo: `
 <span class="kw">CONNECT BY NOCYCLE PRIOR</span>   <span class="cm">-- évite les boucles infinies</span>
 <span class="kw">ORDER SIBLINGS BY</span> nom       <span class="cm">-- tri au sein du même niveau</span></pre>
     <span class="badge badge-r">R50</span>
+  </div>
+
+</div>
+`,
+
+ddl: `
+<div class="section-title"><span>🏗️</span> DDL — Créer, Modifier, Supprimer des tables <span style="font-size:.75rem;padding:2px 9px;background:rgba(255,79,79,.18);color:#ff4f4f;border-radius:6px;font-family:var(--font-mono,monospace);margin-left:.5rem">🔴 Examen jeudi</span></div>
+<div class="cards">
+
+  <div class="card c7">
+    <h3>CREATE TABLE — syntaxe complète</h3>
+    <pre><span class="kw">CREATE TABLE</span> competition (
+  cdCompet    <span class="fn">CHAR</span>(5)         <span class="kw">CONSTRAINT</span> pk_compet  <span class="kw">PRIMARY KEY</span>,
+  libCompet   <span class="fn">VARCHAR2</span>(50)    <span class="kw">NOT NULL</span>,
+  dateCompet  <span class="fn">DATE</span>            <span class="kw">DEFAULT</span> SYSDATE,
+  parcours    <span class="fn">NUMBER</span>          <span class="kw">CONSTRAINT</span> ck_parc
+                               <span class="kw">CHECK</span> (parcours <span class="kw">IN</span> (1,2)),
+  indMax      <span class="fn">NUMBER</span>          <span class="kw">CONSTRAINT</span> ck_indmax
+                               <span class="kw">CHECK</span> (indMax <span class="kw">BETWEEN</span> 0 <span class="kw">AND</span> 36),
+  droitsInsc  <span class="fn">NUMBER</span>(8,2)
+);</pre>
+    <div class="rule ok"><p>DEFAULT SYSDATE : si la colonne est omise à l'INSERT, la date du jour est automatiquement affectée. Si on insère NULL explicitement, NULL l'emporte sur DEFAULT.</p></div>
+  </div>
+
+  <div class="card c7">
+    <h3>CREATE TABLE — clé primaire composée + FK</h3>
+    <pre><span class="kw">CREATE TABLE</span> participation (
+  cdCompet    <span class="fn">CHAR</span>(5),
+  cdMemb      <span class="fn">CHAR</span>(5),
+  dateRegl    <span class="fn">DATE</span>,
+  resultatObt <span class="fn">NUMBER</span>,
+  <span class="kw">CONSTRAINT</span> pk_part
+    <span class="kw">PRIMARY KEY</span> (cdCompet, cdMemb),
+  <span class="kw">CONSTRAINT</span> fk_part_compet
+    <span class="kw">FOREIGN KEY</span> (cdCompet) <span class="kw">REFERENCES</span> competition(cdCompet),
+  <span class="kw">CONSTRAINT</span> fk_part_memb
+    <span class="kw">FOREIGN KEY</span> (cdMemb) <span class="kw">REFERENCES</span> membre(cdMemb),
+  <span class="kw">CONSTRAINT</span> ck_resultat
+    <span class="kw">CHECK</span> (resultatObt <span class="kw">BETWEEN</span> 0 <span class="kw">AND</span> 36)
+);</pre>
+    <div class="rule warn"><p>Quand la PK est composée, elle doit être déclarée comme contrainte de table (après les colonnes), pas en contrainte de colonne.</p></div>
+  </div>
+
+  <div class="card c7">
+    <h3>CREATE TABLE AS — copier depuis une autre table</h3>
+    <pre><span class="cm">-- Copie structure + données (sans contraintes !) </span>
+<span class="kw">CREATE TABLE</span> participation <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> cdCompet,
+         cdPers <span class="kw">AS</span> cdMemb,  <span class="cm">-- renommer une colonne</span>
+         dateRegl,
+         mntRegle
+  <span class="kw">FROM</span> minigolf.participer
+);</pre>
+    <div class="rule danger"><p>CREATE TABLE AS ne copie PAS les contraintes (PK, FK, CHECK). Il faut les rajouter manuellement avec ALTER TABLE après création.</p></div>
+  </div>
+
+  <div class="card c7">
+    <h3>ALTER TABLE — ajouter des contraintes</h3>
+    <pre><span class="kw">ALTER TABLE</span> participation <span class="kw">ADD</span> (
+  <span class="kw">CONSTRAINT</span> pk_part
+    <span class="kw">PRIMARY KEY</span> (cdCompet, cdMemb),
+  <span class="kw">CONSTRAINT</span> fk_part_compet
+    <span class="kw">FOREIGN KEY</span> (cdCompet)
+    <span class="kw">REFERENCES</span> competition(cdCompet),
+  <span class="kw">CONSTRAINT</span> fk_part_memb
+    <span class="kw">FOREIGN KEY</span> (cdMemb)
+    <span class="kw">REFERENCES</span> membre(cdMemb)
+);</pre>
+  </div>
+
+  <div class="card c7">
+    <h3>ALTER TABLE — ajouter une colonne + contrainte</h3>
+    <pre><span class="cm">-- Ajouter une colonne</span>
+<span class="kw">ALTER TABLE</span> participation
+  <span class="kw">ADD</span> resultatObt <span class="fn">NUMBER</span>;
+
+<span class="cm">-- Ajouter une contrainte CHECK séparément</span>
+<span class="kw">ALTER TABLE</span> participation
+  <span class="kw">ADD CONSTRAINT</span> ck_resultat
+  <span class="kw">CHECK</span> (resultatObt <span class="kw">BETWEEN</span> 0 <span class="kw">AND</span> 36);
+
+<span class="cm">-- Modifier type / NULL d'une colonne existante</span>
+<span class="kw">ALTER TABLE</span> stage
+  <span class="kw">MODIFY</span> cdMono <span class="fn">CHAR</span>(5) <span class="kw">NULL</span>;
+
+<span class="cm">-- Supprimer une contrainte (par son nom)</span>
+<span class="kw">ALTER TABLE</span> stage
+  <span class="kw">DROP CONSTRAINT</span> fk_stage_mono;</pre>
+  </div>
+
+  <div class="card c7">
+    <h3>FK avec ON DELETE — intégrité référentielle</h3>
+    <pre><span class="cm">-- Par défaut : suppression bloquée si enfants existent</span>
+<span class="kw">CONSTRAINT</span> fk_stage_mono
+  <span class="kw">FOREIGN KEY</span> (cdMono)
+  <span class="kw">REFERENCES</span> moniteur(cdMono)
+
+<span class="cm">-- ON DELETE SET NULL : met NULL dans les enfants</span>
+<span class="kw">CONSTRAINT</span> fk_stage_mono
+  <span class="kw">FOREIGN KEY</span> (cdMono)
+  <span class="kw">REFERENCES</span> moniteur(cdMono)
+  <span class="kw">ON DELETE SET NULL</span>
+
+<span class="cm">-- ON DELETE CASCADE : supprime les enfants aussi</span>
+  <span class="kw">ON DELETE CASCADE</span></pre>
+    <div class="rule ok"><p>Pour que SET NULL fonctionne, la colonne doit accepter NULL (MODIFY cdMono NULL avant de recréer la FK).</p></div>
+    <span class="badge badge-r">TP08 Ex2</span>
+  </div>
+
+  <div class="card c7">
+    <h3>DROP TABLE</h3>
+    <pre><span class="cm">-- Suppression simple</span>
+<span class="kw">DROP TABLE</span> participation;
+
+<span class="cm">-- Forcer même si d'autres tables référencent celle-ci</span>
+<span class="kw">DROP TABLE</span> participation <span class="kw">CASCADE CONSTRAINTS</span>;</pre>
+    <div class="rule warn"><p>Ordre à respecter : supprimer d'abord les tables enfants (celles qui ont les FK) avant les tables parents.</p></div>
+  </div>
+
+  <div class="card c7">
+    <h3>Ordre de création des tables</h3>
+    <p style="margin-bottom:.5rem">Toujours créer les tables parentes avant les enfants :</p>
+    <pre><span class="cm">-- 1. Tables sans FK (parents)</span>
+TYPESTAGE → MONITEUR → MEMBRE → COMPETITION
+
+<span class="cm">-- 2. Tables avec FK (enfants)</span>
+STAGE (FK → TYPESTAGE, MONITEUR)
+INSCRIPTION (FK → STAGE, MEMBRE)
+PARTICIPATION (FK → COMPETITION, MEMBRE)
+REGLT_COTISATION (FK → MEMBRE)</pre>
+    <div class="rule danger"><p>Si on insère dans STAGE avant de créer MONITEUR, Oracle lève une erreur d'intégrité référentielle. L'ordre d'insertion suit le même principe.</p></div>
+    <span class="badge badge-r">TP07 Ex3a</span>
+  </div>
+
+</div>
+`,
+
+dml: `
+<div class="section-title"><span>✏️</span> DML — INSERT / UPDATE / DELETE <span style="font-size:.75rem;padding:2px 9px;background:rgba(255,140,66,.18);color:#ff8c42;border-radius:6px;font-family:var(--font-mono,monospace);margin-left:.5rem">🔴 Examen jeudi</span></div>
+<div class="cards">
+
+  <div class="card c8">
+    <h3>INSERT — syntaxes</h3>
+    <pre><span class="cm">-- Valeurs explicites (avec TO_DATE pour les dates)</span>
+<span class="kw">INSERT INTO</span> competition (cdCompet, libCompet, dateCompet, parcours, indMax, droitsInsc)
+<span class="kw">VALUES</span> (<span class="str">'TE01'</span>, <span class="str">'Compet 1'</span>, <span class="fn">TO_DATE</span>(<span class="str">'03/04/2019'</span>,<span class="str">'DD/MM/YYYY'</span>), 1, 13, 17);
+
+<span class="cm">-- Sans date → valeur DEFAULT (SYSDATE) utilisée</span>
+<span class="kw">INSERT INTO</span> competition (cdCompet, libCompet, parcours, indMax, droitsInsc)
+<span class="kw">VALUES</span> (<span class="str">'TE05'</span>, <span class="str">'Compet 5'</span>, 1, 13, 17);
+
+<span class="cm">-- Insertion depuis une autre table (sous-requête)</span>
+<span class="kw">INSERT INTO</span> competition
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> minigolf.competition;
+
+<span class="cm">-- Insertion partielle avec filtre</span>
+<span class="kw">INSERT INTO</span> stage
+<span class="kw">SELECT</span> cdStage, cdTpStage, cdMono, dateDeb
+<span class="kw">FROM</span> golf.stage g
+<span class="kw">WHERE EXISTS</span> (
+  <span class="kw">SELECT NULL FROM</span> moniteur m
+  <span class="kw">WHERE</span> m.cdMono = g.cdMono
+);</pre>
+    <div class="rule warn"><p>INSERT depuis une autre table : si certaines FK ne sont pas satisfaites, filtrer avec une sous-requête (EXISTS ou IN) pour n'insérer que les lignes valides.</p></div>
+  </div>
+
+  <div class="card c8">
+    <h3>INSERT avec SÉQUENCE</h3>
+    <pre><span class="cm">-- Créer la séquence</span>
+<span class="kw">CREATE SEQUENCE</span> ma_seq
+  <span class="kw">INCREMENT BY</span> 1
+  <span class="kw">START WITH</span> 4
+  <span class="kw">MAXVALUE</span> 9
+  <span class="kw">NOCYCLE</span>;
+
+<span class="cm">-- Utiliser dans un INSERT</span>
+<span class="kw">INSERT INTO</span> typestage <span class="kw">VALUES</span> (ma_seq.NEXTVAL, <span class="str">'Stage Initiation Parcours'</span>);
+<span class="kw">INSERT INTO</span> typestage <span class="kw">VALUES</span> (ma_seq.NEXTVAL, <span class="str">'Stage Amelioration Index'</span>);
+<span class="cm">-- → codes 4 et 5 générés automatiquement</span>
+
+<span class="cm">-- Voir la valeur courante (APRÈS un NEXTVAL)</span>
+<span class="kw">SELECT</span> ma_seq.CURRVAL <span class="kw">FROM</span> DUAL;
+<span class="cm">-- CURRVAL avant le 1er NEXTVAL → erreur !</span></pre>
+    <span class="badge badge-r">TP07 Ex2</span>
+  </div>
+
+  <div class="card c8">
+    <h3>UPDATE</h3>
+    <pre><span class="cm">-- Mise à jour simple</span>
+<span class="kw">UPDATE</span> competition
+<span class="kw">SET</span> droitsInsc = droitsInsc * 1.10
+<span class="kw">WHERE</span> parcours = 2;
+
+<span class="cm">-- Plusieurs colonnes</span>
+<span class="kw">UPDATE</span> participation
+<span class="kw">SET</span> resultatObt = 30
+<span class="kw">WHERE</span> cdMemb = <span class="str">'M005'</span>
+  <span class="kw">AND</span> cdCompet <span class="kw">IN</span> (<span class="str">'C001'</span>, <span class="str">'C002'</span>);
+
+<span class="cm">-- UPDATE avec sous-requête</span>
+<span class="kw">UPDATE</span> stage
+<span class="kw">SET</span> tarif = tarif * 1.5
+<span class="kw">WHERE</span> cdTpStage <span class="kw">IN</span> (
+  <span class="kw">SELECT</span> cdTpStage <span class="kw">FROM</span> typestage
+  <span class="kw">WHERE</span> <span class="fn">UPPER</span>(libTpStage) <span class="kw">LIKE</span> <span class="str">'BAPT%'</span>
+);
+
+<span class="cm">-- Passer tous les noms en majuscules</span>
+<span class="kw">UPDATE</span> membre <span class="kw">SET</span> nom = <span class="fn">UPPER</span>(nom);</pre>
+  </div>
+
+  <div class="card c8">
+    <h3>DELETE</h3>
+    <pre><span class="cm">-- Supprimer avec condition simple</span>
+<span class="kw">DELETE FROM</span> competition
+<span class="kw">WHERE</span> cdCompet <span class="kw">LIKE</span> <span class="str">'TE%'</span>;
+
+<span class="cm">-- Supprimer si date de règlement nulle</span>
+<span class="kw">DELETE FROM</span> participation
+<span class="kw">WHERE</span> dateRegl <span class="kw">IS NULL</span>;
+
+<span class="cm">-- Supprimer avec sous-requête JOIN</span>
+<span class="kw">DELETE FROM</span> participation
+<span class="kw">WHERE</span> cdMemb <span class="kw">IN</span> (
+  <span class="kw">SELECT</span> cdMemb <span class="kw">FROM</span> membre
+  <span class="kw">WHERE</span> <span class="fn">UPPER</span>(nom||prnm) = <span class="fn">UPPER</span>(<span class="str">'MOERS'</span>||<span class="str">'Robert'</span>)
+);
+
+<span class="cm">-- Supprimer les participations non réglementaires</span>
+<span class="kw">DELETE FROM</span> participation p
+<span class="kw">WHERE</span> p.cdMemb <span class="kw">IN</span> (
+  <span class="kw">SELECT</span> m.cdMemb <span class="kw">FROM</span> membre m, competition c
+  <span class="kw">WHERE</span> p.cdCompet = c.cdCompet
+  <span class="kw">AND</span> m.ind >= c.indMax
+);</pre>
+    <div class="rule warn"><p>DELETE sans WHERE vide toute la table (identique à TRUNCATE mais ROLLBACK possible). Toujours vérifier avec SELECT avant.</p></div>
+  </div>
+
+  <div class="card c8">
+    <h3>TRUNC(SYSDATE) — dates dans UPDATE/DELETE</h3>
+    <pre><span class="cm">-- SYSDATE inclut heures/minutes/secondes
+-- TRUNC tronque au jour (00:00:00)</span>
+
+<span class="cm">-- Mettre à jour les règlements d'aujourd'hui</span>
+<span class="kw">UPDATE</span> reglt_cotisation
+<span class="kw">SET</span> mntRegle = mntRegle + 10
+<span class="kw">WHERE</span> <span class="fn">TRUNC</span>(dateRegltCot) = <span class="fn">TRUNC</span>(SYSDATE);
+
+<span class="cm">-- Insérer "aujourd'hui" et "hier"</span>
+<span class="kw">INSERT INTO</span> reglt_cotisation <span class="kw">VALUES</span>
+  (<span class="str">'M012'</span>, <span class="fn">TRUNC</span>(SYSDATE), 50);
+
+<span class="kw">INSERT INTO</span> reglt_cotisation <span class="kw">VALUES</span>
+  (<span class="str">'M011'</span>, <span class="fn">TRUNC</span>(SYSDATE) - 1, 50);  <span class="cm">-- hier</span>
+
+<span class="kw">INSERT INTO</span> reglt_cotisation <span class="kw">VALUES</span>
+  (<span class="str">'M020'</span>, <span class="fn">TRUNC</span>(SYSDATE) - 7, 20);  <span class="cm">-- il y a 7 jours</span></pre>
+    <span class="badge badge-r">TP07 Ex4</span>
+  </div>
+
+</div>
+`,
+
+vues: `
+<div class="section-title"><span>👁️</span> Vues & Séquences <span style="font-size:.75rem;padding:2px 9px;background:rgba(192,132,252,.18);color:#c084fc;border-radius:6px;font-family:var(--font-mono,monospace);margin-left:.5rem">🔴 Examen jeudi</span></div>
+<div class="cards">
+
+  <div class="card c9">
+    <h3>Créer une vue — syntaxe</h3>
+    <pre><span class="cm">-- Création simple</span>
+<span class="kw">CREATE VIEW</span> stage_juin <span class="kw">AS</span>
+  <span class="kw">SELECT</span> *
+  <span class="kw">FROM</span> stage
+  <span class="kw">WHERE</span> <span class="fn">TO_CHAR</span>(dateDeb, <span class="str">'MM-YYYY'</span>) = <span class="str">'06-2012'</span>;
+
+<span class="cm">-- Recréer (remplacer) une vue existante</span>
+<span class="kw">CREATE OR REPLACE VIEW</span> stage_juin <span class="kw">AS</span>
+  <span class="kw">SELECT</span> *
+  <span class="kw">FROM</span> stage
+  <span class="kw">WHERE</span> <span class="fn">TO_CHAR</span>(dateDeb, <span class="str">'MM-YYYY'</span>) = <span class="str">'06-2012'</span>
+  <span class="kw">WITH CHECK OPTION</span>;  <span class="cm">← interdit modif hors filtre</span></pre>
+    <div class="rule ok"><p>WITH CHECK OPTION empêche d'insérer ou modifier des lignes qui ne satisferaient pas la condition WHERE de la vue. Sans cette option, l'insertion est possible même hors filtre.</p></div>
+    <span class="badge badge-r">TP08 Ex3</span>
+  </div>
+
+  <div class="card c9">
+    <h3>Vue modifiable — conditions</h3>
+    <pre><span class="cm">-- ✓ Vue modifiable : 1 seule table, pas de GROUP BY,</span>
+<span class="cm">-- pas de DISTINCT, pas de fonctions d'agrégat</span>
+<span class="kw">CREATE VIEW</span> moniteurs_confirmes <span class="kw">AS</span>
+  <span class="kw">SELECT</span> cdMono, nom, prnm, statut, ind
+  <span class="kw">FROM</span> moniteur
+  <span class="kw">WHERE</span> responsable <span class="kw">IS NULL</span>
+  <span class="kw">AND</span> cdMono <span class="kw">IN</span> (
+    <span class="kw">SELECT</span> cdMono <span class="kw">FROM</span> stage
+    <span class="kw">WHERE</span> cdTpStage <span class="kw">IN</span> (
+      <span class="kw">SELECT</span> cdTpStage <span class="kw">FROM</span> typestage
+      <span class="kw">WHERE</span> <span class="fn">UPPER</span>(libTpStage) <span class="kw">LIKE</span> <span class="str">'%BAPT%'</span>
+    )
+  );
+<span class="cm">-- SANS JOINTURE → vue modifiable</span></pre>
+    <div class="rule danger"><p>Pour une vue modifiable : pas de jointure, pas de GROUP BY, pas de DISTINCT. Utiliser des sous-requêtes (IN, EXISTS) à la place des jointures.</p></div>
+    <span class="badge badge-r">TP08 Ex3.2</span>
+  </div>
+
+  <div class="card c9">
+    <h3>Interroger une vue</h3>
+    <pre><span class="cm">-- Une vue s'utilise comme une table normale</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> stage_juin;
+
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> moniteurs_confirmes
+<span class="kw">WHERE</span> <span class="fn">UPPER</span>(prnm) = <span class="str">'ARNAUD'</span>;
+
+<span class="cm">-- Jointure vue + table</span>
+<span class="kw">SELECT</span> cdStage, dateDeb
+<span class="kw">FROM</span> stage_juin sj
+<span class="kw">WHERE</span> sj.cdMono <span class="kw">IN</span> (
+  <span class="kw">SELECT</span> cdMono <span class="kw">FROM</span> moniteurs_confirmes
+);</pre>
+  </div>
+
+  <div class="card c9">
+    <h3>INSERT / UPDATE / DELETE à travers une vue</h3>
+    <pre><span class="cm">-- INSERT via vue (sans WITH CHECK OPTION)</span>
+<span class="kw">INSERT INTO</span> stage_juin <span class="kw">VALUES</span>
+  (<span class="str">'ST20'</span>, 1, <span class="str">'M1'</span>, <span class="fn">TO_DATE</span>(<span class="str">'25/06/2012'</span>,<span class="str">'DD/MM/YYYY'</span>));
+<span class="cm">-- Inséré dans la table STAGE, même hors filtre</span>
+
+<span class="kw">INSERT INTO</span> stage_juin <span class="kw">VALUES</span>
+  (<span class="str">'ST21'</span>, 2, <span class="str">'M2'</span>, <span class="fn">TO_DATE</span>(<span class="str">'10/07/2012'</span>,<span class="str">'DD/MM/YYYY'</span>));
+<span class="cm">-- Inséré dans STAGE mais N'APPARAÎT PAS dans la vue</span>
+<span class="cm">-- (juillet ≠ juin → hors filtre de la vue)</span>
+
+<span class="cm">-- UPDATE via vue</span>
+<span class="kw">UPDATE</span> stage_juin
+<span class="kw">SET</span> dateDeb = <span class="fn">TO_DATE</span>(<span class="str">'27/07/2012'</span>,<span class="str">'DD/MM/YYYY'</span>)
+<span class="kw">WHERE</span> cdStage = <span class="str">'ST20'</span>;
+<span class="cm">-- ST20 disparaît de la vue après (date → juillet)</span>
+
+<span class="cm">-- DELETE via vue (supprime dans la table)</span>
+<span class="kw">DELETE FROM</span> stage_juin
+<span class="kw">WHERE</span> cdStage = <span class="str">'ST22'</span>;</pre>
+    <div class="rule warn"><p>Une vue sans WITH CHECK OPTION : toute ligne peut être insérée dans la table de base, même si elle ne satisfait pas la condition de la vue — elle n'apparaîtra juste pas dans la vue.</p></div>
+    <span class="badge badge-r">TP08 Ex3.4–6</span>
+  </div>
+
+  <div class="card c9">
+    <h3>SÉQUENCES — création et usage</h3>
+    <pre><span class="cm">-- Créer</span>
+<span class="kw">CREATE SEQUENCE</span> ma_seq
+  <span class="kw">INCREMENT BY</span> 1       <span class="cm">-- pas d'incrément</span>
+  <span class="kw">START WITH</span> 4         <span class="cm">-- valeur de départ</span>
+  <span class="kw">MAXVALUE</span> 9           <span class="cm">-- valeur max</span>
+  <span class="kw">NOCYCLE</span>;             <span class="cm">-- pas de cycle</span>
+
+<span class="cm">-- Obtenir la prochaine valeur</span>
+<span class="kw">SELECT</span> ma_seq.NEXTVAL <span class="kw">FROM</span> DUAL;  <span class="cm">-- 4, puis 5, ...</span>
+
+<span class="cm">-- Obtenir la valeur courante (après 1 NEXTVAL)</span>
+<span class="kw">SELECT</span> ma_seq.CURRVAL <span class="kw">FROM</span> DUAL;
+
+<span class="cm">-- Utiliser dans un INSERT</span>
+<span class="kw">INSERT INTO</span> typestage
+<span class="kw">VALUES</span> (ma_seq.NEXTVAL, <span class="str">'Stage Initiation Parcours'</span>);
+
+<span class="cm">-- Réinitialiser = DROP + recréer</span>
+<span class="kw">DROP SEQUENCE</span> ma_seq;
+<span class="cm">-- puis CREATE SEQUENCE à nouveau</span></pre>
+    <div class="rule danger"><p>CURRVAL avant le premier NEXTVAL → erreur Oracle. Toujours appeler NEXTVAL au moins une fois avant CURRVAL.</p></div>
+    <span class="badge badge-r">TP07 Ex2</span>
+  </div>
+
+</div>
+`,
+
+droits: `
+<div class="section-title"><span>🔑</span> Transactions & Droits <span style="font-size:.75rem;padding:2px 9px;background:rgba(52,211,153,.18);color:#34d399;border-radius:6px;font-family:var(--font-mono,monospace);margin-left:.5rem">🔴 Examen jeudi</span></div>
+<div class="cards">
+
+  <div class="card c10">
+    <h3>Gestion de transaction — COMMIT / ROLLBACK</h3>
+    <pre><span class="cm">-- Valider définitivement toutes les modifications</span>
+<span class="kw">COMMIT</span>;
+
+<span class="cm">-- Annuler TOUTES les modifications non validées</span>
+<span class="kw">ROLLBACK</span>;
+
+<span class="cm">-- Poser un point de reprise</span>
+<span class="kw">SAVEPOINT</span> r1;
+
+<span class="cm">-- Revenir à un point (annule depuis ce point)</span>
+<span class="kw">ROLLBACK TO</span> r1;
+
+<span class="cm">-- Enchaînement typique</span>
+<span class="kw">SAVEPOINT</span> r1;
+<span class="kw">DELETE FROM</span> membre <span class="kw">WHERE</span> nom <span class="kw">LIKE</span> <span class="str">'GAU%'</span>;
+<span class="kw">SAVEPOINT</span> r2;
+<span class="kw">UPDATE</span> stage <span class="kw">SET</span> tarif = tarif * 1.5 <span class="kw">WHERE</span> ...;
+<span class="kw">ROLLBACK TO</span> r1;  <span class="cm">-- annule DELETE + UPDATE</span>
+<span class="cm">-- ROLLBACK TO r2 après ROLLBACK TO r1 → erreur !</span></pre>
+    <div class="rule danger"><p>Un COMMIT ou DDL (CREATE/ALTER/DROP) détruit les SAVEPOINTS. Après un COMMIT, impossible de ROLLBACK. Après un ROLLBACK TO Rx, les SAVEPOINTS postérieurs à Rx sont détruits.</p></div>
+    <span class="badge badge-r">TP08 Ex1</span>
+  </div>
+
+  <div class="card c10">
+    <h3>DDL = COMMIT automatique</h3>
+    <pre><span class="cm">-- Un ordre DDL valide TOUT ce qui précède !</span>
+<span class="kw">DELETE FROM</span> membre ...;   <span class="cm">-- pas encore validé</span>
+<span class="kw">CREATE TABLE</span> test (...);   <span class="cm">← COMMIT implicite !</span>
+<span class="kw">ROLLBACK</span>;                  <span class="cm">-- ne peut PAS annuler le DELETE</span>
+
+<span class="cm">-- Même chose avec ALTER TABLE, DROP TABLE</span></pre>
+    <div class="rule danger"><p>Ne jamais placer un SAVEPOINT juste avant ou après un ordre DDL : ces ordres valident automatiquement la transaction en cours.</p></div>
+    <span class="badge badge-w">TP08 Ex1.3</span>
+  </div>
+
+  <div class="card c10">
+    <h3>GRANT — attribuer des droits</h3>
+    <pre><span class="cm">-- Donner lecture à tout le monde</span>
+<span class="kw">GRANT SELECT ON</span> membre <span class="kw">TO PUBLIC</span>;
+<span class="kw">COMMIT</span>;  <span class="cm">← valider les droits</span>
+
+<span class="cm">-- Donner lecture à un utilisateur précis</span>
+<span class="kw">GRANT SELECT ON</span> moniteur <span class="kw">TO</span> dieu0013;
+
+<span class="cm">-- Donner INSERT + UPDATE + DELETE sur une vue</span>
+<span class="kw">GRANT INSERT</span>, <span class="kw">UPDATE</span>, <span class="kw">DELETE ON</span> stage_juin <span class="kw">TO</span> dieu0013;
+
+<span class="cm">-- Donner UPDATE sur une seule colonne</span>
+<span class="kw">GRANT UPDATE</span> (droitsInsc) <span class="kw">ON</span> competition <span class="kw">TO</span> dieu0013;
+
+<span class="cm">-- Accéder à la table d'un autre utilisateur</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> dieu0012.membre;</pre>
+    <div class="rule warn"><p>Pour UPDATE ou DELETE sur une table/vue, le destinataire a aussi besoin de SELECT. UPDATE et DELETE seuls ne suffisent pas !</p></div>
+    <span class="badge badge-r">TP08 Ex4</span>
+  </div>
+
+  <div class="card c10">
+    <h3>REVOKE — retirer des droits</h3>
+    <pre><span class="cm">-- Retirer un droit</span>
+<span class="kw">REVOKE SELECT ON</span> membre <span class="kw">FROM PUBLIC</span>;
+<span class="kw">REVOKE INSERT</span>, <span class="kw">UPDATE ON</span> stage_juin <span class="kw">FROM</span> dieu0013;</pre>
+  </div>
+
+  <div class="card c10">
+    <h3>Droits sur une vue — comportement</h3>
+    <pre><span class="cm">-- La vue filtre les lignes → sécurité naturelle</span>
+<span class="cm">-- DELETE via vue : supprime UNIQUEMENT les lignes</span>
+<span class="cm">-- visibles dans la vue (filtre WHERE actif)</span>
+
+<span class="cm">-- Tenter de supprimer hors filtre → 0 ligne affectée</span>
+<span class="kw">DELETE FROM</span> dieu0012.stage_juin
+<span class="kw">WHERE</span> cdStage = <span class="str">'ST21'</span>;  <span class="cm">-- ST21 hors juin → 0 ligne</span>
+
+<span class="cm">-- INSERT sans WITH CHECK OPTION via une vue partagée</span>
+<span class="cm">-- : pas obligé d'être en juin</span>
+<span class="kw">INSERT INTO</span> dieu0012.stage_juin <span class="kw">VALUES</span>
+  (<span class="str">'ST23'</span>, 2, <span class="str">'M1'</span>, <span class="fn">TO_DATE</span>(<span class="str">'25/07/2012'</span>,<span class="str">'DD/MM/YYYY'</span>));</pre>
+    <span class="badge badge-r">TP08 Ex4.3</span>
+  </div>
+
+  <div class="card c10">
+    <h3>Récap mémo — ce qui sera dans le sujet</h3>
+    <table class="info">
+      <tr><td>SELECT</td><td>Requêtes de consultation</td></tr>
+      <tr><td>INSERT / UPDATE / DELETE</td><td>Manipulation de données</td></tr>
+      <tr><td>CREATE / ALTER / DROP TABLE</td><td>Définition des tables</td></tr>
+      <tr><td>CREATE VIEW / OR REPLACE</td><td>Création de vues</td></tr>
+      <tr><td>WITH CHECK OPTION</td><td>Contraindre insertions via vue</td></tr>
+      <tr><td>CREATE SEQUENCE / NEXTVAL</td><td>Clés auto-incrémentées</td></tr>
+      <tr><td>COMMIT / ROLLBACK / SAVEPOINT</td><td>Gestion des transactions</td></tr>
+      <tr><td>GRANT / REVOKE</td><td>Droits et privilèges</td></tr>
+      <tr><td>ON DELETE SET NULL / CASCADE</td><td>Intégrité référentielle</td></tr>
+    </table>
   </div>
 
 </div>
