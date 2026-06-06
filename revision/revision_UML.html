@@ -1,0 +1,2118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iCOO — Révision UML & Conception Objet</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ===== VARIABLES & RESET ===== */
+:root {
+  --bg: #0d0f14;
+  --bg2: #13161e;
+  --bg3: #1a1e2a;
+  --border: #252a38;
+  --accent: #4f9eff;
+  --accent2: #a259ff;
+  --accent3: #00e5a0;
+  --accent4: #ff6b6b;
+  --accent5: #ffa94d;
+  --text: #e8eaf0;
+  --text2: #8892a4;
+  --text3: #5c6478;
+  --success: #00e5a0;
+  --error: #ff6b6b;
+  --card: #161b27;
+  --card2: #1c2133;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Sora',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  line-height:1.6;
+}
+code,pre,.mono{font-family:'JetBrains Mono',monospace}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* ===== SIDEBAR NAV ===== */
+#sidebar{
+  position:fixed;top:0;left:0;width:260px;height:100vh;
+  background:var(--bg2);border-right:1px solid var(--border);
+  overflow-y:auto;z-index:100;
+  transition:transform .3s;
+  display:flex;flex-direction:column;
+}
+#sidebar-header{
+  padding:24px 20px 16px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+#sidebar-header h1{
+  font-size:15px;font-weight:800;letter-spacing:.05em;
+  color:var(--accent);line-height:1.2;
+}
+#sidebar-header p{font-size:11px;color:var(--text3);margin-top:4px}
+#nav-links{padding:12px 0;flex:1}
+.nav-section{padding:8px 20px 4px;font-size:10px;font-weight:700;
+  color:var(--text3);letter-spacing:.12em;text-transform:uppercase;margin-top:4px}
+.nav-link{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 20px;font-size:12.5px;color:var(--text2);
+  text-decoration:none;transition:all .15s;cursor:pointer;
+  border-left:3px solid transparent;
+}
+.nav-link:hover{color:var(--text);background:var(--bg3);border-left-color:var(--border)}
+.nav-link.active{color:var(--accent);background:rgba(79,158,255,.08);border-left-color:var(--accent)}
+.nav-link .dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--text3);flex-shrink:0;transition:background .15s;
+}
+.nav-link.active .dot,.nav-link:hover .dot{background:var(--accent)}
+
+/* ===== MAIN CONTENT ===== */
+#main{margin-left:260px;min-height:100vh}
+#topbar{
+  position:sticky;top:0;z-index:50;
+  background:rgba(13,15,20,.85);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:0 32px;height:56px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+#topbar h2{font-size:14px;font-weight:600;color:var(--text)}
+.topbar-tabs{display:flex;gap:4px}
+.tab-btn{
+  padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;
+  border:none;cursor:pointer;background:transparent;color:var(--text2);
+  font-family:'Sora',sans-serif;transition:all .15s;
+}
+.tab-btn:hover{background:var(--bg3);color:var(--text)}
+.tab-btn.active{background:var(--accent);color:#fff}
+
+/* ===== SECTIONS ===== */
+.page-section{display:none;padding:40px 32px;max-width:1100px}
+.page-section.active{display:block}
+.section-title{
+  font-size:28px;font-weight:800;margin-bottom:8px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.section-sub{font-size:14px;color:var(--text2);margin-bottom:32px}
+
+/* ===== CARDS ===== */
+.card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:12px;padding:24px;margin-bottom:20px;
+  transition:border-color .2s;
+}
+.card:hover{border-color:var(--border)}
+.card h3{font-size:16px;font-weight:700;margin-bottom:12px;color:var(--text)}
+.card p,.card li{font-size:13.5px;color:var(--text2);line-height:1.75}
+.card ul,.card ol{padding-left:20px;margin-top:8px}
+.card li{margin-bottom:4px}
+.card-accent{border-left:3px solid var(--accent)}
+.card-green{border-left:3px solid var(--accent3)}
+.card-purple{border-left:3px solid var(--accent2)}
+.card-red{border-left:3px solid var(--accent4)}
+.card-orange{border-left:3px solid var(--accent5)}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px}
+
+/* ===== TAGS / BADGES ===== */
+.tag{
+  display:inline-block;padding:2px 10px;border-radius:20px;
+  font-size:11px;font-weight:700;letter-spacing:.04em;
+  font-family:'JetBrains Mono',monospace;
+}
+.tag-blue{background:rgba(79,158,255,.15);color:var(--accent)}
+.tag-green{background:rgba(0,229,160,.12);color:var(--accent3)}
+.tag-purple{background:rgba(162,89,255,.15);color:var(--accent2)}
+.tag-red{background:rgba(255,107,107,.12);color:var(--accent4)}
+.tag-orange{background:rgba(255,169,77,.12);color:var(--accent5)}
+
+/* ===== UML DIAGRAMS (CSS-drawn) ===== */
+.uml-box{
+  background:var(--bg3);border:2px solid var(--border);
+  border-radius:8px;overflow:hidden;font-family:'JetBrains Mono',monospace;
+  font-size:12px;display:inline-block;min-width:160px;margin:8px;
+  vertical-align:top;
+}
+.uml-class-name{
+  background:var(--border);padding:8px 16px;text-align:center;
+  font-weight:700;font-size:13px;color:var(--text);
+  border-bottom:2px solid var(--border);
+}
+.uml-class-name.abstract{font-style:italic}
+.uml-class-name .stereotype{
+  display:block;font-size:10px;font-weight:400;color:var(--accent2);
+}
+.uml-section{
+  padding:8px 14px;border-bottom:1px solid var(--border);min-height:32px;
+}
+.uml-section:last-child{border-bottom:none}
+.uml-attr{color:var(--text2);padding:2px 0}
+.uml-attr .vis{color:var(--accent3);margin-right:4px}
+.uml-attr .vis.priv{color:var(--accent4)}
+.uml-attr .vis.prot{color:var(--accent5)}
+
+.diagram-container{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:12px;padding:24px;margin:16px 0;
+  position:relative;overflow-x:auto;
+}
+.diagram-container h4{
+  font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.1em;
+  text-transform:uppercase;margin-bottom:20px;
+}
+
+/* Relations CSS */
+.rel-container{display:flex;align-items:center;gap:8px;margin:8px 0;font-family:'JetBrains Mono',monospace;font-size:12px}
+.rel-line{flex:1;height:1px;background:var(--text3);position:relative}
+.rel-line::after{content:'';position:absolute;right:-1px;top:50%;transform:translateY(-50%)}
+.rel-arrow{color:var(--text3)}
+.rel-label{font-size:11px;color:var(--text3);text-align:center}
+.rel-mult{font-size:10px;color:var(--accent5);font-family:'JetBrains Mono',monospace}
+
+/* Sequence diagram */
+.seq-container{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:12px;padding:24px;margin:16px 0;overflow-x:auto;
+}
+.seq-diagram{position:relative;min-height:300px}
+.seq-actors{display:flex;gap:80px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.seq-actor{
+  text-align:center;font-size:12px;font-family:'JetBrains Mono',monospace;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  width:120px;
+}
+.seq-actor-box{
+  background:var(--card2);border:2px solid var(--accent);
+  padding:6px 12px;border-radius:6px;font-weight:700;color:var(--accent);
+  font-size:11px;width:100%;text-align:center;
+}
+.seq-lifeline{
+  width:2px;height:200px;background:repeating-linear-gradient(
+    to bottom,var(--text3) 0,var(--text3) 6px,transparent 6px,transparent 12px
+  );margin:0 auto;
+}
+.seq-messages{padding:16px 0}
+.seq-msg{
+  display:flex;align-items:center;gap:8px;margin:8px 0;
+  font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--text2);
+}
+.seq-msg-line{flex:1;height:1px;position:relative}
+.seq-msg-line.solid{background:var(--accent)}
+.seq-msg-line.dashed{background:repeating-linear-gradient(to right,var(--accent2) 0,var(--accent2) 6px,transparent 6px,transparent 12px)}
+.seq-msg-label{position:absolute;top:-16px;left:50%;transform:translateX(-50%);
+  white-space:nowrap;font-size:11px;color:var(--text)}
+.seq-arrow-right::after{content:'▶';color:var(--accent);font-size:10px;position:absolute;right:-8px;top:50%;transform:translateY(-50%)}
+.seq-arrow-left::before{content:'◀';color:var(--accent2);font-size:10px;position:absolute;left:-8px;top:50%;transform:translateY(-50%)}
+
+/* ===== ACCORDION ===== */
+.accordion{margin-bottom:12px;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.accordion-btn{
+  width:100%;padding:16px 20px;background:var(--card);
+  display:flex;justify-content:space-between;align-items:center;
+  cursor:pointer;border:none;color:var(--text);font-family:'Sora',sans-serif;
+  font-size:14px;font-weight:600;text-align:left;transition:background .15s;
+}
+.accordion-btn:hover{background:var(--card2)}
+.accordion-btn .acc-icon{
+  font-size:18px;color:var(--text3);transition:transform .3s;flex-shrink:0;
+}
+.accordion-content{
+  max-height:0;overflow:hidden;transition:max-height .4s ease;
+  background:var(--bg3);
+}
+.accordion-content.open{max-height:2000px}
+.accordion-inner{padding:20px}
+.accordion-btn.open .acc-icon{transform:rotate(180deg)}
+
+/* ===== QUIZ ===== */
+#quiz-section{padding:40px 32px;display:none;max-width:900px}
+#quiz-section.active{display:block}
+.quiz-header{margin-bottom:32px}
+.quiz-select-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px}
+.quiz-topic-btn{
+  padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;
+  border:2px solid var(--border);background:var(--card);color:var(--text2);
+  cursor:pointer;font-family:'Sora',sans-serif;transition:all .15s;
+}
+.quiz-topic-btn:hover{border-color:var(--accent);color:var(--accent)}
+.quiz-topic-btn.selected{border-color:var(--accent);background:rgba(79,158,255,.1);color:var(--accent)}
+.quiz-start-btn{
+  padding:12px 32px;border-radius:8px;font-size:14px;font-weight:700;
+  border:none;background:var(--accent);color:#fff;cursor:pointer;
+  font-family:'Sora',sans-serif;transition:opacity .15s;margin-top:8px;
+}
+.quiz-start-btn:hover{opacity:.85}
+
+.question-card{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:28px;margin-bottom:24px;
+}
+.question-card .q-num{
+  font-size:11px;color:var(--text3);font-family:'JetBrains Mono',monospace;
+  margin-bottom:12px;
+}
+.question-card .q-text{font-size:15px;font-weight:600;margin-bottom:20px;line-height:1.6}
+.question-card .q-context{
+  background:var(--bg3);border-left:3px solid var(--accent);
+  padding:12px 16px;border-radius:6px;margin-bottom:20px;
+  font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2);
+  line-height:1.8;
+}
+.options{display:flex;flex-direction:column;gap:10px}
+.option-btn{
+  padding:12px 18px;border-radius:8px;border:2px solid var(--border);
+  background:var(--bg3);color:var(--text2);cursor:pointer;text-align:left;
+  font-family:'Sora',sans-serif;font-size:13.5px;transition:all .15s;
+}
+.option-btn:hover:not(:disabled){border-color:var(--accent);color:var(--text);background:rgba(79,158,255,.06)}
+.option-btn.correct{border-color:var(--success)!important;background:rgba(0,229,160,.1)!important;color:var(--success)!important}
+.option-btn.wrong{border-color:var(--error)!important;background:rgba(255,107,107,.1)!important;color:var(--error)!important}
+.option-btn:disabled{cursor:default}
+.q-explanation{
+  margin-top:16px;padding:14px;border-radius:8px;
+  background:rgba(79,158,255,.07);border:1px solid rgba(79,158,255,.2);
+  font-size:13px;color:var(--text2);display:none;line-height:1.7;
+}
+.q-explanation.show{display:block}
+.quiz-progress{
+  display:flex;align-items:center;gap:16px;margin-bottom:24px;
+}
+.progress-bar{
+  flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;
+}
+.progress-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .3s}
+.progress-text{font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace;white-space:nowrap}
+.score-display{
+  text-align:center;padding:48px;background:var(--card);
+  border:1px solid var(--border);border-radius:16px;
+}
+.score-display .big-score{
+  font-size:72px;font-weight:800;
+  background:linear-gradient(135deg,var(--accent),var(--accent3));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.score-display p{color:var(--text2);margin-top:8px;font-size:15px}
+.retry-btn{
+  margin-top:24px;padding:12px 32px;border-radius:8px;
+  background:var(--card2);border:2px solid var(--border);
+  color:var(--text);cursor:pointer;font-family:'Sora',sans-serif;
+  font-size:14px;font-weight:600;transition:all .15s;
+}
+.retry-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ===== EXERCISES ===== */
+#exercises-section{padding:40px 32px;display:none;max-width:1000px}
+#exercises-section.active{display:block}
+.exercise-card{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  margin-bottom:24px;overflow:hidden;
+}
+.exercise-header{
+  padding:20px 24px;display:flex;justify-content:space-between;align-items:center;
+  background:var(--card2);border-bottom:1px solid var(--border);
+}
+.exercise-header h3{font-size:15px;font-weight:700}
+.exercise-body{padding:24px}
+.exercise-body p{font-size:13.5px;color:var(--text2);margin-bottom:16px;line-height:1.75}
+.exercise-body .situation{
+  background:var(--bg3);border-left:3px solid var(--accent5);
+  padding:14px 18px;border-radius:6px;margin-bottom:20px;
+  font-size:13px;color:var(--text2);line-height:1.8;
+}
+.exercise-body .situation strong{color:var(--accent5)}
+.reveal-btn{
+  padding:10px 20px;border-radius:8px;border:2px solid var(--border);
+  background:transparent;color:var(--text2);cursor:pointer;
+  font-family:'Sora',sans-serif;font-size:13px;font-weight:600;
+  transition:all .15s;
+}
+.reveal-btn:hover{border-color:var(--accent3);color:var(--accent3)}
+.answer-block{
+  margin-top:20px;padding:20px;background:rgba(0,229,160,.05);
+  border:1px solid rgba(0,229,160,.2);border-radius:10px;
+  display:none;
+}
+.answer-block.show{display:block}
+.answer-block h4{color:var(--accent3);font-size:13px;font-weight:700;margin-bottom:12px;text-transform:uppercase;letter-spacing:.05em}
+
+/* ===== CHEATSHEET ===== */
+#cheatsheet-section{padding:40px 32px;display:none;max-width:1100px}
+#cheatsheet-section.active{display:block}
+.cheat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.cheat-card{
+  background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;
+}
+.cheat-card h4{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:12px;text-transform:uppercase;letter-spacing:.05em}
+.cheat-item{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  padding:6px 0;border-bottom:1px solid var(--border);font-size:12.5px;
+}
+.cheat-item:last-child{border-bottom:none}
+.cheat-item .term{color:var(--text);font-weight:600;font-family:'JetBrains Mono',monospace}
+.cheat-item .def{color:var(--text2);text-align:right;font-size:11.5px;max-width:55%}
+
+/* ===== VISIB TABLE ===== */
+.visib-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px}
+.visib-table th{background:var(--bg3);padding:10px 14px;text-align:left;font-size:11px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase}
+.visib-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text2)}
+.visib-table tr:last-child td{border-bottom:none}
+.visib-table .sym{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:16px}
+
+/* ===== MULT TABLE ===== */
+.mult-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px;font-family:'JetBrains Mono',monospace}
+.mult-table th{background:var(--bg3);padding:8px 14px;text-align:left;font-size:11px;color:var(--text3)}
+.mult-table td{padding:8px 14px;border-bottom:1px solid var(--border);color:var(--text2)}
+.mult-table .notation{color:var(--accent5);font-weight:700}
+
+/* ===== HERO BANNER ===== */
+.hero-banner{
+  background:linear-gradient(135deg,rgba(79,158,255,.1) 0%,rgba(162,89,255,.1) 100%);
+  border:1px solid rgba(79,158,255,.2);border-radius:16px;
+  padding:32px;margin-bottom:32px;
+  display:flex;flex-direction:column;gap:12px;
+}
+.hero-banner h2{font-size:24px;font-weight:800}
+.hero-banner p{font-size:13.5px;color:var(--text2);max-width:600px}
+.hero-stats{display:flex;gap:24px;margin-top:8px}
+.hero-stat{text-align:center}
+.hero-stat .num{font-size:24px;font-weight:800;color:var(--accent)}
+.hero-stat .lbl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em}
+
+/* ===== NOTE IMAGES ===== */
+.img-placeholder{
+  background:var(--bg3);border:2px dashed var(--border);border-radius:8px;
+  padding:24px;text-align:center;margin:16px 0;
+  color:var(--text3);font-size:12px;font-family:'JetBrains Mono',monospace;
+}
+.img-placeholder code{
+  display:block;color:var(--accent5);font-size:11px;margin-top:6px;
+}
+
+/* ===== INHERITANCE TREE ===== */
+.tree{font-family:'JetBrains Mono',monospace;font-size:12px;line-height:2;padding:12px 0;color:var(--text2)}
+.tree .node{color:var(--text);font-weight:700}
+.tree .abstract-node{color:var(--accent2);font-style:italic}
+
+/* ===== HIGHLIGHT ===== */
+.hl-blue{color:var(--accent);font-weight:700}
+.hl-green{color:var(--accent3);font-weight:700}
+.hl-purple{color:var(--accent2);font-weight:700}
+.hl-red{color:var(--accent4);font-weight:700}
+.hl-orange{color:var(--accent5);font-weight:700}
+
+/* ===== TOGGLE MOBILE ===== */
+#menu-toggle{
+  display:none;position:fixed;top:12px;left:12px;z-index:200;
+  width:40px;height:40px;border-radius:8px;background:var(--card2);
+  border:1px solid var(--border);cursor:pointer;
+  align-items:center;justify-content:center;font-size:18px;
+}
+
+@media(max-width:900px){
+  #sidebar{transform:translateX(-100%)}
+  #sidebar.open{transform:translateX(0)}
+  #main{margin-left:0}
+  .grid-2,.grid-3{grid-template-columns:1fr}
+  #menu-toggle{display:flex}
+  .page-section{padding:24px 16px}
+  #quiz-section{padding:24px 16px}
+  #exercises-section{padding:24px 16px}
+  #cheatsheet-section{padding:24px 16px}
+}
+
+/* ===== PILL TABS for sub-navigation ===== */
+.pill-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+.pill{
+  padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;
+  border:1px solid var(--border);background:var(--card);
+  color:var(--text2);cursor:pointer;transition:all .15s;
+}
+.pill:hover{border-color:var(--accent);color:var(--accent)}
+.pill.active{background:var(--accent);border-color:var(--accent);color:#fff}
+
+.sub-section{display:none}
+.sub-section.active{display:block}
+
+/* Blinking cursor decoration */
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.cursor{display:inline-block;width:2px;height:1em;background:var(--accent);vertical-align:text-bottom;animation:blink 1s infinite;margin-left:2px}
+
+/* Fragment / OI box for DSeq */
+.frame-box{
+  border:2px solid var(--accent2);border-radius:8px;padding:12px;
+  position:relative;margin:12px 0;
+  font-size:12px;font-family:'JetBrains Mono',monospace;
+}
+.frame-label{
+  position:absolute;top:-1px;left:-1px;
+  background:var(--accent2);color:#fff;
+  font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px 0 8px 0;
+}
+.frame-guard{
+  position:absolute;top:4px;left:60px;
+  color:var(--accent5);font-size:11px;
+}
+.frame-content{padding-top:16px;color:var(--text2)}
+</style>
+</head>
+<body>
+
+<button id="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div id="sidebar-header">
+    <h1>iCOO — UML<span class="cursor"></span></h1>
+    <p>Module MR201 · S2 · URCA</p>
+  </div>
+  <div id="nav-links">
+    <div class="nav-section">Cours</div>
+    <a class="nav-link active" onclick="navigate('home')"><span class="dot"></span>Accueil</a>
+    <a class="nav-link" onclick="navigate('intro')"><span class="dot"></span>Intro COO & UML</a>
+    <a class="nav-link" onclick="navigate('modstatic')"><span class="dot"></span>Modélisation Statique</a>
+    <a class="nav-link" onclick="navigate('classes')"><span class="dot"></span>Diagramme de Classes</a>
+    <a class="nav-link" onclick="navigate('relations')"><span class="dot"></span>Relations & Multiplicités</a>
+    <a class="nav-link" onclick="navigate('heritage')"><span class="dot"></span>Héritage & Abstrait</a>
+    <a class="nav-link" onclick="navigate('interface')"><span class="dot"></span>Interfaces & Enums</a>
+    <a class="nav-link" onclick="navigate('moddyn')"><span class="dot"></span>Modélisation Dynamique</a>
+    <a class="nav-link" onclick="navigate('dseq')"><span class="dot"></span>Diagramme de Séquence</a>
+    <div class="nav-section">Pratique</div>
+    <a class="nav-link" onclick="navigate('quiz')"><span class="dot"></span>Quiz & QCM</a>
+    <a class="nav-link" onclick="navigate('exercises')"><span class="dot"></span>Exercices</a>
+    <a class="nav-link" onclick="navigate('cheatsheet')"><span class="dot"></span>Cheat Sheet</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div id="main">
+  <div id="topbar">
+    <h2 id="topbar-title">Accueil</h2>
+    <div class="topbar-tabs">
+      <button class="tab-btn active" onclick="navigate('home')">🏠</button>
+      <button class="tab-btn" onclick="navigate('quiz')">🎯 Quiz</button>
+      <button class="tab-btn" onclick="navigate('exercises')">✏️ Exercices</button>
+      <button class="tab-btn" onclick="navigate('cheatsheet')">📋 Cheat Sheet</button>
+    </div>
+  </div>
+
+  <!-- ===================== HOME ===================== -->
+  <div id="home" class="page-section active">
+    <div class="hero-banner">
+      <h2>Conception Orientée Objet & UML 🎯</h2>
+      <p>Site de révision complet pour le module MR201 — Diagrammes de classes, d'objets, de séquences, héritage, interfaces et plus.</p>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="num">9</div><div class="lbl">Chapitres</div></div>
+        <div class="hero-stat"><div class="num">50+</div><div class="lbl">Questions QCM</div></div>
+        <div class="hero-stat"><div class="num">8</div><div class="lbl">Exercices</div></div>
+      </div>
+    </div>
+    <div class="grid-3">
+      <div class="card card-accent" style="cursor:pointer" onclick="navigate('classes')">
+        <h3>📐 Diagramme de Classes</h3>
+        <p>Classes, attributs, méthodes, visibilité, encapsulation, classes d'instance et de classe.</p>
+      </div>
+      <div class="card card-purple" style="cursor:pointer" onclick="navigate('relations')">
+        <h3>🔗 Relations</h3>
+        <p>Association, agrégation, composition, dépendance, navigabilité, multiplicités.</p>
+      </div>
+      <div class="card card-green" style="cursor:pointer" onclick="navigate('heritage')">
+        <h3>🧬 Héritage</h3>
+        <p>Généralisation/spécialisation, classes abstraites, polymorphisme, override.</p>
+      </div>
+      <div class="card card-orange" style="cursor:pointer" onclick="navigate('interface')">
+        <h3>🔌 Interfaces & Enums</h3>
+        <p>Interface, réalisation, classe paramétrable, énumération.</p>
+      </div>
+      <div class="card card-red" style="cursor:pointer" onclick="navigate('dseq')">
+        <h3>⏱️ Diagramme de Séquence</h3>
+        <p>Messages, fragments, opérateurs d'interaction loop/alt/opt/par.</p>
+      </div>
+      <div class="card" style="cursor:pointer;border-left:3px solid var(--accent3)" onclick="navigate('quiz')">
+        <h3>🎯 Commencer le Quiz</h3>
+        <p>QCM sur situation UML, reverse engineering, ingénierie directe. Mode examen disponible.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>📌 Ce que l'examen teste</h3>
+      <div class="grid-2" style="margin-top:16px">
+        <div>
+          <div class="tag tag-blue" style="margin-bottom:8px">QCM sur situation</div>
+          <p style="font-size:13px">Lire un DC ou une description textuelle → répondre à des questions précises sur les classes, multiplicités, relations.</p>
+        </div>
+        <div>
+          <div class="tag tag-purple" style="margin-bottom:8px">Concevoir un DC</div>
+          <p style="font-size:13px">À partir d'un texte → identifier classes, attributs, méthodes, relations.</p>
+        </div>
+        <div>
+          <div class="tag tag-green" style="margin-bottom:8px">Reverse engineering</div>
+          <p style="font-size:13px">Du code PHP vers un DC : retrouver les classes, visibilités, attributs implicites.</p>
+        </div>
+        <div>
+          <div class="tag tag-red" style="margin-bottom:8px">Diagramme de séquence</div>
+          <p style="font-size:13px">Modéliser un scénario d'interaction entre objets : messages, fragments, boucles.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== INTRO COO & UML ===================== -->
+  <div id="intro" class="page-section">
+    <div class="section-title">Intro COO & UML</div>
+    <div class="section-sub">Pourquoi la conception objet ? Qu'est-ce qu'UML ?</div>
+
+    <div class="accordion">
+      <button class="accordion-btn" onclick="toggleAcc(this)">Pourquoi une COO ? <span class="acc-icon">▾</span></button>
+      <div class="accordion-content">
+        <div class="accordion-inner">
+          <p>L'approche objet repose sur une idée simple : <span class="hl-blue">le monde réel = ensemble d'objets</span> qui collaborent.</p>
+          <br>
+          <p><strong>Avant (approche fonctionnelle)</strong> : une application = un ensemble de fonctions. Le système était vu comme un flux de traitements.</p>
+          <br>
+          <p><strong>Avec la COO</strong> :</p>
+          <ul style="margin-top:8px;padding-left:20px">
+            <li>Un système = des <span class="hl-green">objets</span> ayant des <em>données</em> (attributs) et des <em>comportements</em> (méthodes)</li>
+            <li>Les objets <span class="hl-green">communiquent</span> entre eux en s'envoyant des messages</li>
+            <li>Mécanismes clés : <strong>Encapsulation, Modularité, Abstraction, Polymorphisme, Héritage</strong></li>
+          </ul>
+          <br>
+          <p>Avantages : <span class="hl-blue">réutilisabilité</span>, <span class="hl-blue">évolutivité</span>, modélisation plus proche du monde réel.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <button class="accordion-btn" onclick="toggleAcc(this)">UML — Qu'est-ce que c'est ? <span class="acc-icon">▾</span></button>
+      <div class="accordion-content">
+        <div class="accordion-inner">
+          <p><strong>Unified Modeling Language</strong> = Langage de Modélisation Objet Unifié</p>
+          <br>
+          <p>UML est un <span class="hl-purple">langage</span> (pas une méthode) :</p>
+          <ul style="margin-top:8px;padding-left:20px">
+            <li>Composé d'un ensemble de <strong>notations graphiques</strong></li>
+            <li>Pour représenter un système informatique et son utilisation prévue</li>
+            <li>Indépendant des langages de programmation</li>
+            <li>Standard OMG (Object Management Group) — fondé par Booch, Jacobson, Rumsbaugh</li>
+          </ul>
+          <br>
+          <p>3 modes d'utilisation :</p>
+          <div class="grid-3" style="margin-top:12px">
+            <div class="card" style="padding:14px">
+              <div class="tag tag-orange" style="margin-bottom:8px">Esquisse</div>
+              <p style="font-size:12px">Diagrammes informels, incomplets, dessinés à la main. Communication entre équipes.</p>
+            </div>
+            <div class="card" style="padding:14px">
+              <div class="tag tag-blue" style="margin-bottom:8px">Plan</div>
+              <p style="font-size:12px">Diagrammes de conception détaillés. Ingénierie et reverse-engineering.</p>
+            </div>
+            <div class="card" style="padding:14px">
+              <div class="tag tag-green" style="margin-bottom:8px">Programmation</div>
+              <p style="font-size:12px">Génération automatique de code depuis UML (Round-trip engineering).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <button class="accordion-btn" onclick="toggleAcc(this)">Les 3 axes de représentation UML <span class="acc-icon">▾</span></button>
+      <div class="accordion-content">
+        <div class="accordion-inner">
+          <div class="grid-3">
+            <div class="card card-accent">
+              <div class="tag tag-blue" style="margin-bottom:8px">Modélisation Fonctionnelle</div>
+              <p style="font-size:12.5px">Analyse les <strong>besoins</strong> du système. Quels sont les cas d'utilisation ?</p>
+              <p style="font-size:12px;color:var(--text3);margin-top:8px">→ D. Uses Cases, D. des systèmes</p>
+            </div>
+            <div class="card card-purple">
+              <div class="tag tag-purple" style="margin-bottom:8px">Modélisation Statique</div>
+              <p style="font-size:12.5px">Analyse la <strong>structure</strong> du système (quelle structure pour le logiciel ?)</p>
+              <p style="font-size:12px;color:var(--text3);margin-top:8px">→ D. Classes, D. Objets</p>
+            </div>
+            <div class="card card-green">
+              <div class="tag tag-green" style="margin-bottom:8px">Modélisation Dynamique</div>
+              <p style="font-size:12.5px">Analyse les <strong>interactions</strong> et comportements. Quel comportement pour le logiciel ?</p>
+              <p style="font-size:12px;color:var(--text3);margin-top:8px">→ D. Séquences, D. Communications</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <button class="accordion-btn" onclick="toggleAcc(this)">Notation commune UML (stéréotype, commentaire, dépendance) <span class="acc-icon">▾</span></button>
+      <div class="accordion-content">
+        <div class="accordion-inner">
+          <div class="grid-3">
+            <div class="card" style="padding:14px">
+              <h3>Stéréotype</h3>
+              <p style="font-size:12.5px">Mécanisme d'extensibilité d'UML. Représentation : <code style="color:var(--accent2)">&lt;&lt;nomStéréotype&gt;&gt;</code><br>Exemples : <code>&lt;&lt;interface&gt;&gt;</code>, <code>&lt;&lt;énumération&gt;&gt;</code>, <code>&lt;&lt;abstract&gt;&gt;</code></p>
+            </div>
+            <div class="card" style="padding:14px">
+              <h3>Commentaire</h3>
+              <p style="font-size:12.5px">Rectangle avec coin replié. Peut être attaché à n'importe quel élément par un trait pointillé.</p>
+              <div style="margin-top:8px;background:var(--bg3);border:1px solid var(--border);padding:8px;font-size:11px;font-family:monospace;border-radius:4px;color:var(--text2)">📝 Ceci est un commentaire</div>
+            </div>
+            <div class="card" style="padding:14px">
+              <h3>Dépendance</h3>
+              <p style="font-size:12.5px">Flèche pointillée <code style="color:var(--accent4)">A - - -▶ B</code><br>L'élément A dépend de l'élément B (A utilise B).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MODELISATION STATIQUE ===================== -->
+  <div id="modstatic" class="page-section">
+    <div class="section-title">Modélisation Statique</div>
+    <div class="section-sub">Du réel à l'abstrait — Diagramme d'objets puis de classes</div>
+
+    <div class="card card-accent">
+      <h3>🔑 Concept clé : du réel à l'abstrait</h3>
+      <p>On part d'une situation concrète pour construire deux représentations complémentaires :</p>
+      <div class="grid-2" style="margin-top:16px">
+        <div style="text-align:center;padding:16px;background:var(--bg3);border-radius:8px;border:1px solid var(--border)">
+          <div class="tag tag-orange" style="margin-bottom:8px">Diagramme d'objets</div>
+          <p style="font-size:13px;color:var(--text2)">= <strong>instance</strong> de la situation réelle<br>Représente <em>des objets précis</em> à un instant donné</p>
+        </div>
+        <div style="text-align:center;padding:16px;background:var(--bg3);border-radius:8px;border:1px solid var(--border)">
+          <div class="tag tag-blue" style="margin-bottom:8px">Diagramme de classes</div>
+          <p style="font-size:13px;color:var(--text2)">= <strong>structure</strong> (version informatique)<br>Abstraction de plusieurs diagrammes d'objets</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <button class="accordion-btn" onclick="toggleAcc(this)">Exemple : Lise Noiro et ses chats <span class="acc-icon">▾</span></button>
+      <div class="accordion-content">
+        <div class="accordion-inner">
+          <p><em>Situation : "Lise Noiro possède deux chats, l'un nommé Pantoufle et l'autre Louplot."</em></p>
+          <br>
+          <p><strong>Diagramme d'objets :</strong></p>
+          <div class="diagram-container">
+            <h4>Diagramme d'objets</h4>
+            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+              <div class="uml-box">
+                <div class="uml-class-name" style="color:var(--accent3)">LiseN : Personne</div>
+                <div class="uml-section">
+                  <div class="uml-attr">nom = "Noiro"</div>
+                  <div class="uml-attr">prénom = "Lise"</div>
+                </div>
+              </div>
+              <div style="text-align:center;font-size:12px;color:var(--text3)">
+                <div>possède</div>
+                <div style="color:var(--accent5)">0..*</div>
+                <div>────────▶</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div class="uml-box">
+                  <div class="uml-class-name" style="color:var(--accent)">Pantoufle : Chat</div>
+                  <div class="uml-section"><div class="uml-attr">nom = "Pantoufle"</div></div>
+                </div>
+                <div class="uml-box">
+                  <div class="uml-class-name" style="color:var(--accent)">Louplot : Chat</div>
+                  <div class="uml-section"><div class="uml-attr">nom = "Louplot"</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p style="margin-top:16px"><strong>Diagramme de classes correspondant :</strong></p>
+          <div class="diagram-container">
+            <h4>Diagramme de classes</h4>
+            <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+              <div class="uml-box">
+                <div class="uml-class-name">Personne</div>
+                <div class="uml-section">
+                  <div class="uml-attr">- nom : String</div>
+                  <div class="uml-attr">- prénom : String</div>
+                </div>
+                <div class="uml-section"></div>
+              </div>
+              <div style="text-align:center;font-size:11px;color:var(--text3)">
+                <div style="color:var(--text2)">possède ▶</div>
+                <div class="rel-mult">1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0..*</div>
+                <div>───────────</div>
+              </div>
+              <div class="uml-box">
+                <div class="uml-class-name">Chat</div>
+                <div class="uml-section">
+                  <div class="uml-attr">- nom : String</div>
+                </div>
+                <div class="uml-section"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <button class="accordion-btn" onclick="toggleAcc(this)">Objet : définition et caractéristiques <span class="acc-icon">▾</span></button>
+      <div class="accordion-content">
+        <div class="accordion-inner">
+          <p>Un objet = <span class="hl-green">instance</span> d'une classe. Il possède :</p>
+          <div class="grid-3" style="margin-top:12px">
+            <div class="card" style="padding:14px;text-align:center">
+              <div style="font-size:24px;margin-bottom:8px">🪪</div>
+              <strong>Identité</strong>
+              <p style="font-size:12px;color:var(--text2);margin-top:4px">Chaque objet est unique (même avec les mêmes valeurs)</p>
+            </div>
+            <div class="card" style="padding:14px;text-align:center">
+              <div style="font-size:24px;margin-bottom:8px">📊</div>
+              <strong>État</strong>
+              <p style="font-size:12px;color:var(--text2);margin-top:4px">Valeurs de ses attributs à un instant donné</p>
+            </div>
+            <div class="card" style="padding:14px;text-align:center">
+              <div style="font-size:24px;margin-bottom:8px">⚡</div>
+              <strong>Comportement</strong>
+              <p style="font-size:12px;color:var(--text2);margin-top:4px">Ce qu'il peut faire (ses méthodes)</p>
+            </div>
+          </div>
+          <p style="margin-top:16px">Un objet peut être <strong>physique</strong> (un chat), <strong>virtuel</strong> (un compte bancaire) ou <strong>conceptuel</strong> (une commande).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== DIAGRAMME DE CLASSES ===================== -->
+  <div id="classes" class="page-section">
+    <div class="section-title">Diagramme de Classes</div>
+    <div class="section-sub">Structure d'une classe, visibilité, attributs et méthodes</div>
+
+    <div class="pill-tabs">
+      <div class="pill active" onclick="showSub('classes','dc-structure')">Structure</div>
+      <div class="pill" onclick="showSub('classes','dc-visib')">Visibilité</div>
+      <div class="pill" onclick="showSub('classes','dc-instance-classe')">Instance vs Classe</div>
+      <div class="pill" onclick="showSub('classes','dc-notation')">Notation UML</div>
+    </div>
+
+    <div id="dc-structure" class="sub-section active">
+      <div class="grid-2">
+        <div>
+          <div class="card card-accent">
+            <h3>Syntaxe d'un attribut</h3>
+            <code style="color:var(--accent3);font-size:13px">[visibilité] nomAtt : Type [= valeurInit] [{propriétés}]</code>
+            <div style="margin-top:12px;font-size:12.5px;color:var(--text2)">
+              <p>Exemple : <code style="color:var(--accent)">- nom : String = "inconnu"</code></p>
+              <p style="margin-top:4px">Exemple : <code style="color:var(--accent)">+ ageMajorité : int = 18 {static}</code></p>
+            </div>
+          </div>
+          <div class="card card-purple">
+            <h3>Syntaxe d'une méthode</h3>
+            <code style="color:var(--accent2);font-size:13px">[visibilité] nomMethod([params]) : [TypeRetour] [{propriétés}]</code>
+            <div style="margin-top:12px;font-size:12.5px;color:var(--text2)">
+              <p>Exemple : <code style="color:var(--accent)">+ getAge() : int</code></p>
+              <p style="margin-top:4px">Exemple : <code style="color:var(--accent)">- manger(n : Nourriture) : void</code></p>
+            </div>
+          </div>
+        </div>
+        <div class="diagram-container">
+          <h4>Structure d'une classe UML</h4>
+          <div style="display:flex;justify-content:center">
+            <div class="uml-box" style="min-width:220px">
+              <div class="uml-class-name">Chat</div>
+              <div class="uml-section">
+                <div class="uml-attr"><span class="vis priv">-</span> nom : String</div>
+                <div class="uml-attr"><span class="vis prot">#</span> dateNais : Date</div>
+                <div class="uml-attr"><span class="vis priv">-</span> age : int</div>
+                <div class="uml-attr"><span class="vis priv">-</span> icône : Image</div>
+              </div>
+              <div class="uml-section">
+                <div class="uml-attr"><span class="vis" style="color:var(--accent3)">+</span> getAge() : int</div>
+                <div class="uml-attr"><span class="vis" style="color:var(--accent3)">+</span> manger(n : Nourriture) : void</div>
+              </div>
+            </div>
+          </div>
+          <p style="font-size:11px;color:var(--text3);text-align:center;margin-top:12px">
+            ⚠️ Contrainte : <code>age = dateActuelle - dateNais</code>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div id="dc-visib" class="sub-section">
+      <div class="card">
+        <h3>Visibilité / Encapsulation</h3>
+        <table class="visib-table">
+          <tr><th>Symbole</th><th>Nom</th><th>Accès</th><th>En PHP</th></tr>
+          <tr><td><span class="sym" style="color:var(--accent3)">+</span></td><td>public</td><td>Tout le monde peut y accéder</td><td><code>public</code></td></tr>
+          <tr><td><span class="sym" style="color:var(--accent4)">-</span></td><td>private</td><td>Moi seul (la classe elle-même via <code>$this</code>)</td><td><code>private</code></td></tr>
+          <tr><td><span class="sym" style="color:var(--accent5)">#</span></td><td>protected</td><td>Moi + mes descendants (héritage)</td><td><code>protected</code></td></tr>
+          <tr><td><span class="sym" style="color:var(--text3)">~</span></td><td>package</td><td>Les objets du même package peuvent accéder</td><td>—</td></tr>
+        </table>
+        <div class="card card-red" style="margin-top:16px;padding:12px">
+          <p style="font-size:13px">💡 <strong>Règle d'or :</strong> Les attributs sont <span class="hl-red">toujours privés</span> (<code>-</code>). On y accède via des getters/setters publics. C'est l'encapsulation.</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="dc-instance-classe" class="sub-section">
+      <div class="grid-2">
+        <div class="card card-accent">
+          <h3>Attribut / Méthode d'<span class="hl-blue">instance</span></h3>
+          <p>Spécifique à chaque objet. Accessible via l'instance : <code>$obj->methode()</code></p>
+          <p style="margin-top:8px;font-size:12.5px">Notation UML : normale</p>
+          <div class="diagram-container" style="margin-top:12px;padding:12px">
+            <div class="uml-box" style="min-width:180px">
+              <div class="uml-class-name">MaClasse</div>
+              <div class="uml-section"><div class="uml-attr">- attInst : int</div></div>
+              <div class="uml-section"><div class="uml-attr">+ methInst() : ...</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="card card-purple">
+          <h3>Attribut / Méthode de <span class="hl-purple">classe</span> (static)</h3>
+          <p>Partagé par toutes les instances. Accessible via la classe : <code>MaClasse::methode()</code></p>
+          <p style="margin-top:8px;font-size:12.5px">Notation UML : <strong>souligné</strong> (<code>static</code> en PHP)</p>
+          <div class="diagram-container" style="margin-top:12px;padding:12px">
+            <div class="uml-box" style="min-width:180px">
+              <div class="uml-class-name">MaClasse</div>
+              <div class="uml-section"><div class="uml-attr" style="text-decoration:underline">+ attClass : Image</div></div>
+              <div class="uml-section"><div class="uml-attr" style="text-decoration:underline">+ methClass() : ...</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card card-orange">
+        <p>⚠️ Un attribut de classe n'existe qu'<strong>une seule fois en mémoire</strong>, partagé par toutes les instances. Ex: <code>ageMajorité = 18</code> dans la classe <code>Personne</code>.</p>
+      </div>
+    </div>
+
+    <div id="dc-notation" class="sub-section">
+      <div class="card">
+        <h3>Niveaux de représentation d'une classe</h3>
+        <p style="margin-bottom:16px;font-size:13.5px;color:var(--text2)">Le DC peut être utilisé à différents niveaux de détail :</p>
+        <div style="display:flex;gap:16px;flex-wrap:wrap">
+          <div class="uml-box">
+            <div class="uml-class-name">Chat</div>
+          </div>
+          <div style="display:flex;align-items:center;color:var(--text3);font-size:20px">→</div>
+          <div class="uml-box">
+            <div class="uml-class-name">Chat</div>
+            <div class="uml-section">
+              <div class="uml-attr">- Nom : String</div>
+              <div class="uml-attr"># dateNais : Date</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;color:var(--text3);font-size:20px">→</div>
+          <div class="uml-box">
+            <div class="uml-class-name">Chat</div>
+            <div class="uml-section">
+              <div class="uml-attr">- Nom : String</div>
+              <div class="uml-attr"># dateNais : Date</div>
+            </div>
+            <div class="uml-section">
+              <div class="uml-attr">+ getAge() : int</div>
+            </div>
+          </div>
+        </div>
+        <p style="margin-top:16px;font-size:12.5px;color:var(--text2)">Nom seul → attributs → attributs + méthodes. Le niveau dépend du contexte (analyse du domaine vs conception technique).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== RELATIONS ===================== -->
+  <div id="relations" class="page-section">
+    <div class="section-title">Relations & Multiplicités</div>
+    <div class="section-sub">Association, Agrégation, Composition, Dépendance, Navigabilité</div>
+
+    <div class="pill-tabs">
+      <div class="pill active" onclick="showSub('relations','rel-types')">Types de relations</div>
+      <div class="pill" onclick="showSub('relations','rel-mult')">Multiplicités</div>
+      <div class="pill" onclick="showSub('relations','rel-navig')">Navigabilité</div>
+      <div class="pill" onclick="showSub('relations','rel-spec')">Relations spéciales</div>
+    </div>
+
+    <div id="rel-types" class="sub-section active">
+      <div class="card card-accent">
+        <h3>Association simple</h3>
+        <p>Connexion <strong>sémantique bidirectionnelle</strong> entre classes. C'est la relation de base.</p>
+        <div class="diagram-container" style="margin-top:12px">
+          <div style="display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:12px;flex-wrap:wrap">
+            <div class="uml-box" style="min-width:120px"><div class="uml-class-name">Personne</div><div class="uml-section"></div></div>
+            <div style="text-align:center">
+              <div style="font-size:11px;color:var(--text3)">1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0..*</div>
+              <div style="width:160px;height:1px;background:var(--text2);position:relative">
+                <span style="position:absolute;right:-6px;top:-6px;font-size:12px">▶</span>
+              </div>
+              <div style="font-size:11px;color:var(--text2)">possède</div>
+            </div>
+            <div class="uml-box" style="min-width:120px"><div class="uml-class-name">Voiture</div><div class="uml-section"></div></div>
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top:16px">
+          <div>
+            <p style="font-size:13px"><strong>Nom de la relation :</strong> verbe ou groupe verbal en forme verbale active (ex: "possède")</p>
+          </div>
+          <div>
+            <p style="font-size:13px"><strong>Rôle :</strong> nom donné au concept dans la relation (ex: "propriétaire", "biens")</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card card-orange">
+          <h3>🔷 Agrégation</h3>
+          <p>Relation de <strong>contenance</strong>. Le composant peut exister sans le conteneur.</p>
+          <p style="margin-top:8px;font-size:12.5px;color:var(--text3)">Symbole : <strong>losange vide</strong> côté conteneur</p>
+          <div class="diagram-container" style="margin-top:12px;padding:12px">
+            <div style="font-family:monospace;font-size:12px;color:var(--text2)">
+              Page ◇────── Mot<br>
+              <span style="font-size:11px;color:var(--text3)">(conteneur) &nbsp;&nbsp; (composant)</span>
+            </div>
+          </div>
+          <p style="font-size:12.5px;margin-top:8px">Si on supprime la Page, les Mots peuvent continuer d'exister.</p>
+        </div>
+        <div class="card card-red">
+          <h3>🔶 Composition</h3>
+          <p>Agrégation <strong>forte</strong>. Lien de vie : si le composite est détruit, les composants aussi.</p>
+          <p style="margin-top:8px;font-size:12.5px;color:var(--text3)">Symbole : <strong>losange plein</strong> côté composite</p>
+          <div class="diagram-container" style="margin-top:12px;padding:12px">
+            <div style="font-family:monospace;font-size:12px;color:var(--text2)">
+              Livre ◆────1..* Page<br>
+              <span style="font-size:11px;color:var(--text3)">(composite) &nbsp;&nbsp; (composant)</span>
+            </div>
+          </div>
+          <p style="font-size:12.5px;margin-top:8px">Si on supprime le Livre, ses Pages sont supprimées. Le composite est responsable du composant.</p>
+        </div>
+      </div>
+
+      <div class="card card-purple">
+        <h3>- - -▶ Dépendance</h3>
+        <p>Lorsque la classe A <strong>utilise</strong> la classe B (appel d'une méthode, utilisation d'un attribut). Relation faible.</p>
+        <p style="margin-top:8px;font-size:12.5px">Stéréotype courant : <code>&lt;&lt;use&gt;&gt;</code></p>
+        <div class="diagram-container" style="margin-top:12px;padding:12px;font-family:monospace;font-size:12px;color:var(--text2)">
+          PageWeb &nbsp;&nbsp; - - -▶ &nbsp;&nbsp; ConnectionBD
+        </div>
+      </div>
+    </div>
+
+    <div id="rel-mult" class="sub-section">
+      <div class="card">
+        <h3>Multiplicités — Format</h3>
+        <p style="margin-bottom:12px;font-size:13.5px;color:var(--text2)">Combien d'instances de B connaît une instance de A ?</p>
+        <table class="mult-table">
+          <tr><th>Notation</th><th>Signification</th><th>Exemple</th></tr>
+          <tr><td class="notation">n</td><td>Exactement n</td><td>Exactement 3</td></tr>
+          <tr><td class="notation">n,m ou n..p</td><td>Exactement n ou m ou p</td><td>1,3 ou 1..3</td></tr>
+          <tr><td class="notation">n..m</td><td>Entre n et m (inclus)</td><td>2..5</td></tr>
+          <tr><td class="notation">n..*</td><td>Au moins n</td><td>1..* (au moins 1)</td></tr>
+          <tr><td class="notation">0..n</td><td>Au plus n</td><td>0..3</td></tr>
+          <tr><td class="notation">*</td><td>Plusieurs (0 ou plus)</td><td>0..*</td></tr>
+          <tr><td class="notation">0..1</td><td>Optionnel (0 ou 1)</td><td>Peut en avoir 1 ou aucun</td></tr>
+        </table>
+        <div class="card card-orange" style="margin-top:16px;padding:12px">
+          <p style="font-size:13px">⚠️ La multiplicité se lit <strong>du côté opposé</strong> : la multiplicité côté B indique combien de B une instance de A connaît.</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="rel-navig" class="sub-section">
+      <div class="card">
+        <h3>Navigabilité</h3>
+        <p style="margin-bottom:16px;font-size:13.5px;color:var(--text2)">Indique dans quel sens on peut "naviguer" (accéder) d'une classe à l'autre.</p>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div style="padding:14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border)">
+            <div class="tag tag-blue" style="margin-bottom:8px">Bidirectionnelle (défaut)</div>
+            <p style="font-size:12.5px">Personne ←────→ Voiture : on peut accéder de chaque côté</p>
+            <p style="font-size:12px;color:var(--text3);margin-top:4px">En PHP : Personne a un attribut <code>mesTutures[]</code> ET Voiture a un attribut <code>propriétaire</code></p>
+          </div>
+          <div style="padding:14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border)">
+            <div class="tag tag-green" style="margin-bottom:8px">Unidirectionnelle</div>
+            <p style="font-size:12.5px">Personne ─────▶ Voiture : Personne connaît Voiture, mais pas l'inverse</p>
+            <p style="font-size:12px;color:var(--text3);margin-top:4px">En PHP : Personne a <code>mesTutures[]</code>, mais Voiture n'a PAS d'attribut propriétaire</p>
+          </div>
+          <div style="padding:14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border)">
+            <div class="tag tag-red" style="margin-bottom:8px">Aucune direction</div>
+            <p style="font-size:12.5px">Personne ──X── Voiture : aucun passage possible (rare)</p>
+          </div>
+        </div>
+      </div>
+      <div class="card card-accent" style="margin-top:16px">
+        <h3>Traduction en code (PHP)</h3>
+        <p style="font-size:13.5px;margin-bottom:12px">Pour <code>Personne 1 ──possède──▶ 0..* Voiture</code> :</p>
+        <div class="grid-2">
+          <div>
+            <p class="tag tag-blue" style="margin-bottom:8px">Attribut explicite (Personne)</p>
+            <code style="font-size:12px;color:var(--accent3)">private array $mesTutures;</code>
+          </div>
+          <div>
+            <p class="tag tag-red" style="margin-bottom:8px">Attribut implicite (Voiture)</p>
+            <code style="font-size:12px;color:var(--accent4)">private string $immat; (propriétaire non stocké)</code>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="rel-spec" class="sub-section">
+      <div class="grid-2">
+        <div class="card">
+          <h3>Association n-aire</h3>
+          <p style="font-size:13px">Lien entre <strong>plus de 2 classes</strong>. Représenté par un losange central.</p>
+          <div class="diagram-container" style="margin-top:12px;padding:12px;font-family:monospace;font-size:11px;text-align:center;color:var(--text2)">
+            Enseignant<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;|<br>
+            ────◇────<br>
+            &nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<br>
+            Cours &nbsp;&nbsp; Salle<br>
+          </div>
+          <p style="font-size:12px;color:var(--text3);margin-top:8px">⚠️ Difficile à lire → à éviter, préférer une <strong>classe d'association</strong></p>
+        </div>
+        <div class="card">
+          <h3>Classe d'association</h3>
+          <p style="font-size:13px">Association qui possède ses propres attributs. S'implémente par une classe intermédiaire.</p>
+          <div class="diagram-container" style="margin-top:12px;padding:12px;font-family:monospace;font-size:11px;text-align:center;color:var(--text2)">
+            Commande ──constituer──* Produit<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[LigneCmde]<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- nLig : int<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- qte : float
+          </div>
+          <p style="font-size:12px;color:var(--text3);margin-top:8px">LigneCmde porte les attributs qui appartiennent à la relation.</p>
+        </div>
+      </div>
+      <div class="card card-accent" style="margin-top:4px">
+        <h3>Association qualifiée</h3>
+        <p style="font-size:13px">Permet de retrouver un composant dans une collection grâce à un qualificateur (clé). Réduit la multiplicité apparente.</p>
+        <div class="diagram-container" style="margin-top:12px;padding:12px;font-family:monospace;font-size:11px;color:var(--text2)">
+          Commande [nLig: int] ──────▶ 0..1 LigneCmde
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== HERITAGE ===================== -->
+  <div id="heritage" class="page-section">
+    <div class="section-title">Héritage & Classes Abstraites</div>
+    <div class="section-sub">Généralisation / Spécialisation — Polymorphisme — Override</div>
+
+    <div class="accordion">
+      <button class="accordion-btn" onclick="toggleAcc(this)">Héritage — Principe <span class="acc-icon">▾</span></button>
+      <div class="accordion-content">
+        <div class="accordion-inner">
+          <p>Relation de <strong>Généralisation / Spécialisation</strong> :</p>
+          <ul style="padding-left:20px;margin-top:8px">
+            <li>Une relation implique qu'un des deux concepts est une <em>factorisation</em> de l'autre</li>
+            <li><span class="hl-purple">Classe mère</span> = super-classe = classe générale</li>
+            <li><span class="hl-green">Classe fille</span> = sous-classe = classe spécialisée</li>
+            <li>La classe fille <strong>est une sorte de</strong> classe mère</li>
+          </ul>
+          <div class="diagram-container" style="margin-top:16px">
+            <h4>Représentation UML — triangle vide côté mère</h4>
+            <div style="font-family:monospace;font-size:12px;color:var(--text2);text-align:center">
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;△<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;────────<br>
+              &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<br>
+              &nbsp;&nbsp;B&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C<br>
+            </div>
+            <p style="font-size:11px;color:var(--text3);text-align:center;margin-top:8px">B et C héritent de A. "B est un A", "C est un A"</p>
+          </div>
+          <div class="grid-2" style="margin-top:16px">
+            <div class="card" style="padding:14px">
+              <strong style="font-size:13px">En PHP :</strong>
+              <code style="display:block;margin-top:8px;font-size:12px;color:var(--accent3)">class B extends A { ... }<br>class C extends A { ... }</code>
+            </div>
+            <div class="card" style="padding:14px">
+              <strong style="font-size:13px">Implémentation TCI :</strong>
+              <p style="font-size:12px;color:var(--text2);margin-top:4px">Tableau Classe/Implém : liste les attributs et méthodes de chaque classe dans la hiérarchie.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <button class="accordion-btn" onclick="toggleAcc(this)">Classes et méthodes abstraites <span class="acc-icon">▾</span></button>
+      <div class="accordion-content">
+        <div class="accordion-inner">
+          <div class="grid-2">
+            <div>
+              <p><strong>Classe abstraite</strong> = classe qu'on <span class="hl-red">ne peut pas instancier</span> directement. Elle sert de modèle.</p>
+              <p style="margin-top:8px;font-size:12.5px;color:var(--text2)">Notation UML : nom en <em>italique</em> ou stéréotype <code>&lt;&lt;abstract&gt;&gt;</code></p>
+              <br>
+              <p><strong>Méthode abstraite</strong> = méthode déclarée mais <span class="hl-red">sans corps</span>. Les classes filles <span class="hl-green">doivent</span> l'implémenter.</p>
+              <p style="margin-top:8px;font-size:12.5px;color:var(--text2)">Notation UML : méthode en <em>italique</em></p>
+              <br>
+              <div class="card card-orange" style="padding:12px">
+                <p style="font-size:12.5px">Étapes de modélisation :<br>1. "Est une sorte de" ?<br>2. Factoriser / spécialiser<br>3. Vérifier l'encapsulation<br>4. Comportements différents par classe → polymorphisme + override</p>
+              </div>
+            </div>
+            <div class="diagram-container">
+              <div style="display:flex;justify-content:center;flex-direction:column;align-items:center;gap:8px;font-family:monospace;font-size:11px">
+                <div class="uml-box">
+                  <div class="uml-class-name abstract"><span class="stereotype">&lt;&lt;abstract&gt;&gt;</span>MoyenTransport</div>
+                  <div class="uml-section">
+                    <div class="uml-attr">- immat : String</div>
+                  </div>
+                  <div class="uml-section">
+                    <div class="uml-attr">+ getImmat() : String</div>
+                    <div class="uml-attr" style="font-style:italic">+ seDeplacer() : String {abstract}</div>
+                  </div>
+                </div>
+                <div style="font-size:14px;color:var(--text3)">△</div>
+                <div style="display:flex;gap:16px">
+                  <div class="uml-box">
+                    <div class="uml-class-name">Bateau</div>
+                    <div class="uml-section"></div>
+                    <div class="uml-section"><div class="uml-attr">+ seDeplacer() : String {override}</div></div>
+                  </div>
+                  <div class="uml-box">
+                    <div class="uml-class-name">Avion</div>
+                    <div class="uml-section"></div>
+                    <div class="uml-section"><div class="uml-attr">+ seDeplacer() : String {override}</div></div>
+                  </div>
+                </div>
+              </div>
+              <p style="text-align:center;font-size:11px;color:var(--text3);margin-top:8px">PHP : <code>abstract class MoyenTransport</code> + <code>abstract public function seDeplacer()</code></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <button class="accordion-btn" onclick="toggleAcc(this)">Polymorphisme & Override <span class="acc-icon">▾</span></button>
+      <div class="accordion-content">
+        <div class="accordion-inner">
+          <p><strong>Polymorphisme</strong> = même appel de méthode → comportement différent selon l'objet réel.</p>
+          <div class="card card-green" style="margin-top:12px;padding:14px">
+            <code style="font-size:12px;color:var(--accent3)">
+              $t = new Avion();<br>
+              echo $t->seDeplacer(); // retourne "air"<br><br>
+              $t = new Bateau();<br>
+              echo $t->seDeplacer(); // retourne "eau"
+            </code>
+          </div>
+          <p style="margin-top:12px;font-size:13px;color:var(--text2)"><strong>Override (redéfinition)</strong> = la classe fille réécrit une méthode héritée. En UML : <code>{override}</code>. En PHP : simplement redéclarer la méthode avec le même nom.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== INTERFACES & ENUMS ===================== -->
+  <div id="interface" class="page-section">
+    <div class="section-title">Interfaces & Énumérations</div>
+    <div class="section-sub">Interface, Réalisation, Classe paramétrable, Enum</div>
+
+    <div class="pill-tabs">
+      <div class="pill active" onclick="showSub('interface','if-interface')">Interface</div>
+      <div class="pill" onclick="showSub('interface','if-enum')">Énumération</div>
+      <div class="pill" onclick="showSub('interface','if-param')">Classe paramétrable</div>
+    </div>
+
+    <div id="if-interface" class="sub-section active">
+      <div class="card card-purple">
+        <h3>&lt;&lt;interface&gt;&gt; — Définition</h3>
+        <ul style="padding-left:20px;margin-top:8px">
+          <li>Classe <strong>sans attributs</strong> où <strong>toutes les méthodes sont abstraites</strong></li>
+          <li>Ne peut <strong>pas être instanciée</strong></li>
+          <li>Doit être <span class="hl-purple">réalisée (implémentée)</span> par une classe non abstraite</li>
+          <li>Relation de <strong>réalisation</strong> : flèche pointillée avec triangle (<code>- - -▷</code>)</li>
+        </ul>
+      </div>
+      <div class="grid-2" style="margin-top:16px">
+        <div class="diagram-container">
+          <h4>Notation UML</h4>
+          <div style="display:flex;align-items:center;gap:16px;font-family:monospace;font-size:11px;justify-content:center;flex-wrap:wrap">
+            <div class="uml-box">
+              <div class="uml-class-name"><span class="stereotype">&lt;&lt;interface&gt;&gt;</span>Volant</div>
+              <div class="uml-section"></div>
+              <div class="uml-section"><div class="uml-attr" style="font-style:italic">+ voler() : void</div></div>
+            </div>
+            <div style="text-align:center;color:var(--text3)">
+              <div>◁ - - -</div>
+              <div style="font-size:10px">réalise</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div class="uml-box"><div class="uml-class-name">CanardColVert</div><div class="uml-section"><div class="uml-attr">+ voler() : void</div></div></div>
+              <div class="uml-box"><div class="uml-class-name">Papillon</div><div class="uml-section"><div class="uml-attr">+ voler() : void</div></div></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="padding:14px;margin-bottom:12px">
+            <strong style="font-size:13px">En PHP :</strong>
+            <code style="display:block;margin-top:8px;font-size:12px;color:var(--accent3)">
+              interface Volant {<br>
+              &nbsp;&nbsp;public function voler();<br>
+              }<br><br>
+              class CanardColVert implements Volant {<br>
+              &nbsp;&nbsp;public function voler() { ... }<br>
+              }
+            </code>
+          </div>
+          <div class="card card-orange" style="padding:12px">
+            <p style="font-size:12.5px">💡 Avantage : une classe peut implémenter <strong>plusieurs interfaces</strong> (contrairement à l'héritage simple). Principe <em>"Utiliser une interface, pas une réalisation"</em>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="if-enum" class="sub-section">
+      <div class="card card-accent">
+        <h3>&lt;&lt;énumération&gt;&gt; — Définition</h3>
+        <p>Type dont les valeurs sont un ensemble fini de constantes nommées. Peut posséder des méthodes.</p>
+      </div>
+      <div class="grid-2" style="margin-top:16px">
+        <div class="diagram-container">
+          <h4>Notation UML</h4>
+          <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;font-family:monospace;font-size:11px">
+            <div class="uml-box">
+              <div class="uml-class-name"><span class="stereotype">&lt;&lt;énumération&gt;&gt;</span>Couleur</div>
+              <div class="uml-section">
+                <div class="uml-attr" style="color:var(--accent3)">+ ROUGE</div>
+                <div class="uml-attr" style="color:var(--accent3)">+ VERT</div>
+                <div class="uml-attr" style="color:var(--accent3)">+ BLEU</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;color:var(--text3)">────────</div>
+            <div class="uml-box">
+              <div class="uml-class-name">Voiture</div>
+              <div class="uml-section"><div class="uml-attr">- teinte : Couleur</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="padding:14px">
+          <strong style="font-size:13px">En Java :</strong>
+          <code style="display:block;margin-top:8px;font-size:12px;color:var(--accent3)">
+            public enum Couleur {<br>
+            &nbsp;&nbsp;ROUGE, VERT, BLEU;<br>
+            }<br><br>
+            class Voiture {<br>
+            &nbsp;&nbsp;private Couleur teinte;<br>
+            &nbsp;&nbsp;public Voiture() {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;this.teinte = Couleur.ROUGE;<br>
+            &nbsp;&nbsp;}<br>
+            }
+          </code>
+        </div>
+      </div>
+    </div>
+
+    <div id="if-param" class="sub-section">
+      <div class="card card-green">
+        <h3>Classe paramétrable (template / générique)</h3>
+        <p>= Patron de classe avec <strong>1 ou plusieurs paramètres substituables</strong>. Factorisation de code.</p>
+        <div style="margin-top:12px;font-size:13px;color:var(--text2)">
+          <p>En C++ : <code>vector&lt;T&gt;</code>, <code>map&lt;K,V&gt;</code></p>
+          <p>En Java : conteneur générique <code>LinkedList&lt;T&gt;</code></p>
+        </div>
+      </div>
+      <div class="diagram-container" style="margin-top:16px">
+        <h4>Notation UML</h4>
+        <div style="font-family:monospace;font-size:12px;color:var(--text2);text-align:center">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;┌─────┐<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;T&nbsp;&nbsp;│<br>
+          &nbsp;&nbsp;Pile &nbsp;&nbsp;&nbsp;└─────┘<br>
+          &nbsp;─────────<br>
+          + empile(T)<br>
+          + depile() : T<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+          &lt;&lt;bind&gt;&gt;(Livre)<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼<br>
+          &nbsp;&nbsp;PileDeLivre
+        </div>
+        <p style="font-size:11px;color:var(--text3);text-align:center;margin-top:8px">PileDeLivre = Pile spécialisée pour les Livres (bind du paramètre T = Livre)</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MOD DYNAMIQUE ===================== -->
+  <div id="moddyn" class="page-section">
+    <div class="section-title">Modélisation Dynamique</div>
+    <div class="section-sub">Comportement du système — Vue externe et interne</div>
+
+    <div class="grid-2">
+      <div class="card card-accent">
+        <h3>🔭 Vue externe (boîte noire)</h3>
+        <p>Qui interagit avec le système et dans quel but ?</p>
+        <ul style="padding-left:20px;margin-top:8px;font-size:13px">
+          <li>Diagramme de cas d'utilisation</li>
+          <li>Comment le système interagit avec son environnement</li>
+        </ul>
+      </div>
+      <div class="card card-purple">
+        <h3>🔬 Vue interne (boîte blanche)</h3>
+        <p>Comment les objets interagissent-ils entre eux ?</p>
+        <ul style="padding-left:20px;margin-top:8px;font-size:13px">
+          <li>Diagrammes de séquence</li>
+          <li>Scénarios détaillés</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:4px">
+      <h3>Diagrammes d'interaction</h3>
+      <div class="grid-2" style="margin-top:12px">
+        <div style="padding:14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border)">
+          <div class="tag tag-blue" style="margin-bottom:8px">Diagramme de séquence</div>
+          <p style="font-size:12.5px">Vue <strong>chronologique</strong>. Axe vertical = temps. Messages échangés dans l'ordre.</p>
+        </div>
+        <div style="padding:14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border)">
+          <div class="tag tag-purple" style="margin-bottom:8px">Diagramme de communication</div>
+          <p style="font-size:12.5px">Vue sous forme de <strong>graphe</strong>. Montre les relations entre objets + numéros de séquence.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== DIAGRAMME DE SEQUENCE ===================== -->
+  <div id="dseq" class="page-section">
+    <div class="section-title">Diagramme de Séquence</div>
+    <div class="section-sub">Structure, messages, fragments, opérateurs d'interaction</div>
+
+    <div class="pill-tabs">
+      <div class="pill active" onclick="showSub('dseq','ds-structure')">Structure</div>
+      <div class="pill" onclick="showSub('dseq','ds-messages')">Messages</div>
+      <div class="pill" onclick="showSub('dseq','ds-fragments')">Fragments (cadres)</div>
+      <div class="pill" onclick="showSub('dseq','ds-oi')">Opérateurs (OI)</div>
+    </div>
+
+    <div id="ds-structure" class="sub-section active">
+      <div class="card card-accent">
+        <h3>Éléments d'un diagramme de séquence</h3>
+        <div class="grid-2" style="margin-top:12px">
+          <div>
+            <p style="font-size:13.5px"><strong>Acteur / Instance</strong> : représenté par un rectangle en haut (ligne de vie). Nom : <code>nom : ClasseA</code> (souligné).</p>
+            <br>
+            <p style="font-size:13.5px"><strong>Ligne de vie</strong> : trait vertical pointillé qui descend sous l'acteur. Représente son existence dans le temps.</p>
+            <br>
+            <p style="font-size:13.5px"><strong>Activation</strong> : rectangle fin sur la ligne de vie = période pendant laquelle l'objet est actif (exécute quelque chose).</p>
+            <br>
+            <p style="font-size:13.5px"><strong>Création</strong> : flèche pointant vers le rectangle de l'instance créée. <strong>Destruction</strong> : croix (X) en bas de la ligne de vie.</p>
+          </div>
+          <div class="seq-container">
+            <div style="font-family:monospace;font-size:11px;color:var(--text2);line-height:2">
+              Paul:Acteur &nbsp;&nbsp; obj1:ClasseA &nbsp;&nbsp; obj2:ClasseB<br>
+              ─────────── &nbsp;&nbsp; ─────────── &nbsp;&nbsp; ───────────<br>
+              &nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+              &nbsp;&nbsp;&nbsp;│──op1(args)──▶│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+              &nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│──op2()──────▶│<br>
+              &nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+              &nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│◀- - -résultat│<br>
+              &nbsp;&nbsp;&nbsp;│◀- - -res1 - -│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+              &nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✕ destroy
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="ds-messages" class="sub-section">
+      <div class="grid-2">
+        <div class="card card-accent">
+          <h3>Message synchrone</h3>
+          <p style="font-size:13px">L'émetteur <strong>attend</strong> la réponse avant de continuer. Flèche pleine (<strong>─────▶</strong>). C'est le type par défaut.</p>
+          <div style="margin-top:12px;font-family:monospace;font-size:12px;color:var(--text2)">A ─────────▶ B</div>
+        </div>
+        <div class="card card-purple">
+          <h3>Message asynchrone</h3>
+          <p style="font-size:13px">L'émetteur <strong>n'attend pas</strong> la réponse. Flèche ouverte (<strong>──────▷</strong>).</p>
+          <div style="margin-top:12px;font-family:monospace;font-size:12px;color:var(--text2)">A ──────────▷ B</div>
+        </div>
+        <div class="card card-green">
+          <h3>Message de retour</h3>
+          <p style="font-size:13px">Réponse à un message. Flèche pointillée (<strong>- - - -▶</strong>). Peut être omis si implicite.</p>
+          <div style="margin-top:12px;font-family:monospace;font-size:12px;color:var(--text2)">B - - - - -▶ A</div>
+        </div>
+        <div class="card card-orange">
+          <h3>Message réflexif</h3>
+          <p style="font-size:13px">Un objet s'envoie un message à lui-même. Boucle sur la même ligne de vie.</p>
+          <div style="margin-top:12px;font-family:monospace;font-size:12px;color:var(--text2)">A ─┐<br>&nbsp;&nbsp;&nbsp;└─▶ A (calcul interne)</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="ds-fragments" class="sub-section">
+      <div class="card">
+        <h3>Fragments combinés (cadres)</h3>
+        <p style="margin-bottom:16px;font-size:13.5px;color:var(--text2)">Un fragment est un rectangle avec un nom en haut à gauche. Il encadre une partie du diagramme.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="frame-box">
+            <div class="frame-label">sd</div>
+            <div class="frame-content">Sequence Diagram — Nom du diagramme entier</div>
+          </div>
+          <div class="frame-box" style="border-color:var(--accent)">
+            <div class="frame-label" style="background:var(--accent)">ref</div>
+            <div class="frame-content">Référence à un autre diagramme de séquence (nommé)</div>
+          </div>
+          <div class="frame-box" style="border-color:var(--accent3)">
+            <div class="frame-label" style="background:var(--accent3)">loop</div>
+            <div class="frame-guard">[Pour chq X de collection]</div>
+            <div class="frame-content" style="padding-top:24px">Répétition. La garde = condition de répétition.</div>
+          </div>
+          <div class="frame-box" style="border-color:var(--accent4)">
+            <div class="frame-label" style="background:var(--accent4)">alt</div>
+            <div class="frame-guard">[garde condition]</div>
+            <div class="frame-content" style="padding-top:24px">Choix alternatif. Sections séparées par <strong>- - -</strong>. Mutuellement exclusives.</div>
+          </div>
+          <div class="frame-box" style="border-color:var(--accent5)">
+            <div class="frame-label" style="background:var(--accent5)">opt</div>
+            <div class="frame-guard">[condition]</div>
+            <div class="frame-content" style="padding-top:24px">Fragment optionnel. Comme un if sans else.</div>
+          </div>
+          <div class="frame-box" style="border-color:var(--text3)">
+            <div class="frame-label" style="background:var(--text3)">par</div>
+            <div class="frame-content">Comportements <strong>parallèles</strong>. Sections exécutées en même temps.</div>
+          </div>
+          <div class="frame-box" style="border-color:var(--accent4)">
+            <div class="frame-label" style="background:var(--accent4)">critical</div>
+            <div class="frame-content">Région <strong>critique</strong>. Pas d'interruption possible.</div>
+          </div>
+          <div class="frame-box" style="border-color:var(--text3)">
+            <div class="frame-label" style="background:var(--text3)">break</div>
+            <div class="frame-content">Interrompt l'exécution du fragment parent si la garde est vraie.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="ds-oi" class="sub-section">
+      <div class="card card-accent">
+        <h3>Opérateur Loop — Exemple complet</h3>
+        <div style="margin-top:16px;background:var(--bg3);border-radius:8px;padding:16px;font-family:monospace;font-size:12px;color:var(--text2);line-height:2">
+          Dupont:Personne &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd:Commande<br>
+          ─────────────── &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ─────────────<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+          ┌──────────────[loop Pour chaque cmd de mesCommandes]──────────┐<br>
+          │&nbsp;&nbsp;&nbsp;&nbsp;│──────────────────────────▶│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+          │&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;som += Total()&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+          │&nbsp;&nbsp;&nbsp;&nbsp;│◀- - - - - - - - - - - - - -│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+          └────────────────────────────────────────────────────────────────┘
+        </div>
+      </div>
+
+      <div class="card card-red" style="margin-top:16px">
+        <h3>Opérateur Alt — Exemple</h3>
+        <div style="margin-top:12px;background:var(--bg3);border-radius:8px;padding:16px;font-family:monospace;font-size:12px;color:var(--text2);line-height:2">
+          ┌──────────────[alt qualif = "Étudiant"]──────────────┐<br>
+          │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;som += forfaitEtudiant()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+          ├──────────────────────────────────────────────────────┤<br>
+          │&nbsp;&nbsp;[else]&nbsp;&nbsp;som += forfaitNormal()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+          └──────────────────────────────────────────────────────┘
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== QUIZ ===================== -->
+  <div id="quiz-section">
+    <div class="quiz-header">
+      <div class="section-title">Quiz & QCM</div>
+      <div class="section-sub">Entraîne-toi sur des situations réelles d'examen</div>
+    </div>
+    <div id="quiz-setup">
+      <p style="font-size:13.5px;color:var(--text2);margin-bottom:16px">Choisis les thèmes à réviser :</p>
+      <div class="quiz-select-row">
+        <button class="quiz-topic-btn selected" data-topic="classes">Diagramme de Classes</button>
+        <button class="quiz-topic-btn selected" data-topic="relations">Relations & Multiplicités</button>
+        <button class="quiz-topic-btn selected" data-topic="heritage">Héritage & Abstrait</button>
+        <button class="quiz-topic-btn selected" data-topic="reverse">Reverse Engineering</button>
+        <button class="quiz-topic-btn selected" data-topic="dseq">Diagramme de Séquence</button>
+      </div>
+      <button class="quiz-start-btn" onclick="startQuiz()">▶ Commencer le quiz</button>
+    </div>
+    <div id="quiz-game" style="display:none">
+      <div class="quiz-progress">
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+        <div class="progress-text" id="progress-text">0/0</div>
+      </div>
+      <div id="question-container"></div>
+      <div id="quiz-nav" style="display:flex;gap:12px;margin-top:16px">
+        <button onclick="nextQuestion()" id="next-btn" style="padding:10px 24px;border-radius:8px;border:none;background:var(--accent);color:#fff;font-family:'Sora',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:none">Question suivante →</button>
+      </div>
+    </div>
+    <div id="quiz-score" style="display:none">
+      <div class="score-display">
+        <div class="big-score" id="score-number">0/0</div>
+        <p id="score-msg">Résultat</p>
+        <button class="retry-btn" onclick="resetQuiz()">↺ Recommencer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== EXERCISES ===================== -->
+  <div id="exercises-section">
+    <div class="section-title">Exercices pratiques</div>
+    <div class="section-sub">Situations d'examen — construire des DC, reverse engineering, DSeq</div>
+
+    <!-- Exercice 1 -->
+    <div class="exercise-card">
+      <div class="exercise-header">
+        <h3>Exercice 1 — DC à partir d'un texte</h3>
+        <span class="tag tag-blue">Ingénierie directe</span>
+      </div>
+      <div class="exercise-body">
+        <div class="situation">
+          <strong>Situation :</strong> Une bibliothèque gère des livres et des adhérents. Un livre possède un titre, un ISBN (identifiant unique), un nombre de pages et une date de parution. Un adhérent possède un nom, un prénom et une date d'inscription. Un adhérent peut emprunter plusieurs livres, mais un livre ne peut être emprunté que par un seul adhérent à la fois. L'emprunt est caractérisé par une date de début et une date de retour prévue.
+        </div>
+        <p>Construis le Diagramme de Classes correspondant.</p>
+        <button class="reveal-btn" onclick="toggleAnswer(this)">Voir la solution</button>
+        <div class="answer-block">
+          <h4>✅ Solution</h4>
+          <div class="diagram-container">
+            <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;justify-content:center">
+              <div class="uml-box" style="min-width:180px">
+                <div class="uml-class-name">Adherent</div>
+                <div class="uml-section">
+                  <div class="uml-attr">- nom : String</div>
+                  <div class="uml-attr">- prenom : String</div>
+                  <div class="uml-attr">- dateInscription : Date</div>
+                </div>
+                <div class="uml-section"></div>
+              </div>
+              <div style="text-align:center;font-size:11px;color:var(--text3);display:flex;flex-direction:column;justify-content:center;gap:4px">
+                <div class="rel-mult">1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0..*</div>
+                <div style="color:var(--text2)">────────────</div>
+                <div style="font-size:10px;color:var(--text3)">emprunter</div>
+              </div>
+              <div class="uml-box" style="min-width:180px">
+                <div class="uml-class-name">Emprunt <span style="font-size:10px;font-style:italic;color:var(--accent5)">[classe d'asso.]</span></div>
+                <div class="uml-section">
+                  <div class="uml-attr">- dateDebut : Date</div>
+                  <div class="uml-attr">- dateRetourPrevue : Date</div>
+                </div>
+              </div>
+              <div style="text-align:center;font-size:11px;color:var(--text3);display:flex;flex-direction:column;justify-content:center;gap:4px">
+                <div class="rel-mult">0..* &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1</div>
+                <div style="color:var(--text2)">────────────</div>
+              </div>
+              <div class="uml-box" style="min-width:180px">
+                <div class="uml-class-name">Livre</div>
+                <div class="uml-section">
+                  <div class="uml-attr">- titre : String</div>
+                  <div class="uml-attr">- ISBN : String</div>
+                  <div class="uml-attr">- nbPages : int</div>
+                  <div class="uml-attr">- dateParution : Date</div>
+                </div>
+                <div class="uml-section"></div>
+              </div>
+            </div>
+          </div>
+          <p style="font-size:12.5px;color:var(--text2);margin-top:12px">⚠️ L'emprunt est une <strong>classe d'association</strong> car il porte ses propres attributs (dates). La multiplicité "0..1" côté Livre signifie qu'un livre est actuellement emprunté par 0 ou 1 adhérent.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exercice 2 -->
+    <div class="exercise-card">
+      <div class="exercise-header">
+        <h3>Exercice 2 — Reverse Engineering PHP</h3>
+        <span class="tag tag-green">Reverse Engineering</span>
+      </div>
+      <div class="exercise-body">
+        <p>À partir du code PHP suivant, construis le Diagramme de Classes :</p>
+        <div class="situation" style="border-left-color:var(--accent3)">
+<code style="font-size:12px;line-height:1.8;color:var(--text2)">
+class Personne {
+  private string $nom;
+  public string $pnom;
+  protected $dateNais;
+  private static int $ageMajorite = 18;
+
+  public function getName() : string { return $this->nom; }
+  public function isAdult() : bool { ... }
+  public static function getMajorityAge() : int { return self::$ageMajorite; }
+}
+
+class Etudiant extends Personne {
+  private string $numEtu;
+  private float $moyenne;
+
+  public function getMoyenne() : float { return $this->moyenne; }
+}
+</code>
+        </div>
+        <button class="reveal-btn" onclick="toggleAnswer(this)">Voir la solution</button>
+        <div class="answer-block">
+          <h4>✅ Solution</h4>
+          <div class="diagram-container">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+              <div class="uml-box" style="min-width:240px">
+                <div class="uml-class-name">Personne</div>
+                <div class="uml-section">
+                  <div class="uml-attr"><span class="vis priv">-</span> nom : String</div>
+                  <div class="uml-attr"><span class="vis" style="color:var(--accent3)">+</span> pnom : String</div>
+                  <div class="uml-attr"><span class="vis prot">#</span> dateNais : Date</div>
+                  <div class="uml-attr" style="text-decoration:underline"><span class="vis priv">-</span> ageMajorite : int = 18</div>
+                </div>
+                <div class="uml-section">
+                  <div class="uml-attr"><span class="vis" style="color:var(--accent3)">+</span> getName() : String</div>
+                  <div class="uml-attr"><span class="vis" style="color:var(--accent3)">+</span> isAdult() : bool</div>
+                  <div class="uml-attr" style="text-decoration:underline"><span class="vis" style="color:var(--accent3)">+</span> getMajorityAge() : int</div>
+                </div>
+              </div>
+              <div style="font-size:14px;color:var(--text3)">△</div>
+              <div class="uml-box" style="min-width:240px">
+                <div class="uml-class-name">Etudiant</div>
+                <div class="uml-section">
+                  <div class="uml-attr"><span class="vis priv">-</span> numEtu : String</div>
+                  <div class="uml-attr"><span class="vis priv">-</span> moyenne : float</div>
+                </div>
+                <div class="uml-section">
+                  <div class="uml-attr"><span class="vis" style="color:var(--accent3)">+</span> getMoyenne() : float</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p style="font-size:12.5px;color:var(--text2);margin-top:12px">Points clés : <code>static</code> = souligné, <code>protected</code> = #, héritage = triangle. Etudiant hérite tous les attributs/méthodes de Personne.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exercice 3 -->
+    <div class="exercise-card">
+      <div class="exercise-header">
+        <h3>Exercice 3 — Diagramme de séquence</h3>
+        <span class="tag tag-red">DSeq</span>
+      </div>
+      <div class="exercise-body">
+        <div class="situation">
+          <strong>Situation :</strong> Un client passe une commande en ligne. Il se connecte au site, parcourt le catalogue, ajoute des produits au panier, et valide sa commande. Le système vérifie la disponibilité de chaque produit, crée la commande si tout est disponible, ou affiche un message d'erreur sinon. Le paiement est ensuite traité.
+        </div>
+        <p>Construis le diagramme de séquence pour le scénario nominal.</p>
+        <button class="reveal-btn" onclick="toggleAnswer(this)">Voir la solution</button>
+        <div class="answer-block">
+          <h4>✅ Solution</h4>
+          <div style="background:var(--bg3);border-radius:8px;padding:16px;font-family:monospace;font-size:11.5px;color:var(--text2);line-height:2;overflow-x:auto">
+            sd Commander_en_ligne<br><br>
+            Client &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Site &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Catalogue &nbsp;&nbsp;&nbsp; StockService &nbsp;&nbsp; PaiementService<br>
+            ─────── &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ──── &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ───────── &nbsp;&nbsp;&nbsp; ──────────── &nbsp;&nbsp; ───────────────<br>
+            &nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+            &nbsp;&nbsp;│──seConnecter()─▶│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+            &nbsp;&nbsp;│◀- - - ok - - - -│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+            &nbsp;&nbsp;│──getProduits()──▶│──listerProduits()▶│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+            &nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│◀- - - liste - - -│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+            &nbsp;&nbsp;│◀- - - liste - - -│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+            &nbsp;&nbsp;│──validerPanier()─▶│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+            ┌─loop[Pour chq produit]──────────────────────────────────────────────┐<br>
+            │&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│──verifierDispo()─────▶│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+            │&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│◀- - - disponible - - -│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+            └────────────────────────────────────────────────────────────────────┘<br>
+            &nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│──creerCommande()──────────────────────────────│<br>
+            &nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│──traiterPaiement()────────────────────────────▶│<br>
+            &nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│◀- - - paiementOK - - - - - - - - - - - - - - -│<br>
+            &nbsp;&nbsp;│◀- - - confirmation│
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exercice 4 -->
+    <div class="exercise-card">
+      <div class="exercise-header">
+        <h3>Exercice 4 — Héritage et abstraction</h3>
+        <span class="tag tag-purple">Héritage</span>
+      </div>
+      <div class="exercise-body">
+        <div class="situation">
+          <strong>Situation :</strong> Un zoo gère différents animaux. Tous les animaux ont un nom, une espèce et une date de naissance. Ils peuvent tous se nourrir et faire du bruit. Mais le bruit produit varie selon l'espèce : un Lion rugit, un Serpent siffle, un Perroquet parle. Certains animaux volent (Perroquet), d'autres nagent (Requin). Tous les animaux nageurs ont une profondeur maximale de plongée.
+        </div>
+        <p>Propose un DC avec héritage, classe(s) abstraite(s) et interface(s) si pertinent.</p>
+        <button class="reveal-btn" onclick="toggleAnswer(this)">Voir la solution</button>
+        <div class="answer-block">
+          <h4>✅ Solution proposée</h4>
+          <div class="diagram-container">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;font-family:monospace;font-size:11px">
+              <div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;justify-content:center">
+                <div class="uml-box" style="border-color:var(--accent2)">
+                  <div class="uml-class-name"><span class="stereotype">&lt;&lt;interface&gt;&gt;</span>Volant</div>
+                  <div class="uml-section"><div class="uml-attr" style="font-style:italic">+ voler() : void</div></div>
+                </div>
+                <div class="uml-box" style="border-color:var(--accent2)">
+                  <div class="uml-class-name"><span class="stereotype">&lt;&lt;interface&gt;&gt;</span>Nageur</div>
+                  <div class="uml-section"><div class="uml-attr" style="font-style:italic">+ nager() : void</div></div>
+                </div>
+              </div>
+              <div style="font-size:16px;color:var(--text3);margin:4px 0">△ (réalise)</div>
+              <div class="uml-box" style="min-width:220px">
+                <div class="uml-class-name abstract"><span class="stereotype">&lt;&lt;abstract&gt;&gt;</span>Animal</div>
+                <div class="uml-section">
+                  <div class="uml-attr">- nom : String</div>
+                  <div class="uml-attr">- espece : String</div>
+                  <div class="uml-attr">- dateNais : Date</div>
+                </div>
+                <div class="uml-section">
+                  <div class="uml-attr">+ seNourrir() : void</div>
+                  <div class="uml-attr" style="font-style:italic">+ faireDuBruit() : String {abstract}</div>
+                </div>
+              </div>
+              <div style="font-size:16px;color:var(--text3)">△</div>
+              <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center">
+                <div class="uml-box">
+                  <div class="uml-class-name">Lion</div>
+                  <div class="uml-section"></div>
+                  <div class="uml-section"><div class="uml-attr">+ faireDuBruit() : String {override}</div></div>
+                </div>
+                <div class="uml-box">
+                  <div class="uml-class-name">Serpent</div>
+                  <div class="uml-section"></div>
+                  <div class="uml-section"><div class="uml-attr">+ faireDuBruit() : String {override}</div></div>
+                </div>
+                <div class="uml-box">
+                  <div class="uml-class-name">Perroquet<br><span style="font-size:9px;color:var(--accent2)">impl. Volant</span></div>
+                  <div class="uml-section"></div>
+                  <div class="uml-section">
+                    <div class="uml-attr">+ faireDuBruit() : String {override}</div>
+                    <div class="uml-attr">+ voler() : void</div>
+                  </div>
+                </div>
+                <div class="uml-box">
+                  <div class="uml-class-name">Requin<br><span style="font-size:9px;color:var(--accent2)">impl. Nageur</span></div>
+                  <div class="uml-section"><div class="uml-attr">- profMax : float</div></div>
+                  <div class="uml-section">
+                    <div class="uml-attr">+ faireDuBruit() : String {override}</div>
+                    <div class="uml-attr">+ nager() : void</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== CHEAT SHEET ===================== -->
+  <div id="cheatsheet-section">
+    <div class="section-title">Cheat Sheet</div>
+    <div class="section-sub">Tout en un coup d'œil pour l'examen</div>
+    <div class="cheat-grid">
+      <div class="cheat-card">
+        <h4>Visibilité</h4>
+        <div class="cheat-item"><span class="term">+</span><span class="def">public — tout le monde</span></div>
+        <div class="cheat-item"><span class="term">-</span><span class="def">private — moi seul</span></div>
+        <div class="cheat-item"><span class="term">#</span><span class="def">protected — moi + enfants</span></div>
+        <div class="cheat-item"><span class="term">~</span><span class="def">package — même package</span></div>
+        <div class="cheat-item"><span class="term">souligné</span><span class="def">static (de classe)</span></div>
+        <div class="cheat-item"><span class="term">italique</span><span class="def">abstrait</span></div>
+      </div>
+      <div class="cheat-card">
+        <h4>Multiplicités</h4>
+        <div class="cheat-item"><span class="term">1</span><span class="def">exactement un</span></div>
+        <div class="cheat-item"><span class="term">0..1</span><span class="def">zéro ou un</span></div>
+        <div class="cheat-item"><span class="term">*</span><span class="def">zéro ou plusieurs</span></div>
+        <div class="cheat-item"><span class="term">1..*</span><span class="def">un ou plusieurs</span></div>
+        <div class="cheat-item"><span class="term">n..m</span><span class="def">entre n et m</span></div>
+        <div class="cheat-item"><span class="term">2,5</span><span class="def">exactement 2 ou 5</span></div>
+      </div>
+      <div class="cheat-card">
+        <h4>Relations DC</h4>
+        <div class="cheat-item"><span class="term">────</span><span class="def">association simple</span></div>
+        <div class="cheat-item"><span class="term">◇────</span><span class="def">agrégation</span></div>
+        <div class="cheat-item"><span class="term">◆────</span><span class="def">composition</span></div>
+        <div class="cheat-item"><span class="term">- - -▶</span><span class="def">dépendance</span></div>
+        <div class="cheat-item"><span class="term">─────△</span><span class="def">héritage (vers mère)</span></div>
+        <div class="cheat-item"><span class="term">- - -▷</span><span class="def">réalisation interface</span></div>
+      </div>
+      <div class="cheat-card">
+        <h4>Messages DSeq</h4>
+        <div class="cheat-item"><span class="term">─────▶</span><span class="def">synchrone</span></div>
+        <div class="cheat-item"><span class="term">──────▷</span><span class="def">asynchrone</span></div>
+        <div class="cheat-item"><span class="term">- - -▶</span><span class="def">retour</span></div>
+        <div class="cheat-item"><span class="term">réflexif</span><span class="def">boucle sur soi-même</span></div>
+        <div class="cheat-item"><span class="term">✕</span><span class="def">destruction d'objet</span></div>
+      </div>
+      <div class="cheat-card">
+        <h4>Opérateurs DSeq</h4>
+        <div class="cheat-item"><span class="term">loop</span><span class="def">répétition</span></div>
+        <div class="cheat-item"><span class="term">alt</span><span class="def">choix (if/else if)</span></div>
+        <div class="cheat-item"><span class="term">opt</span><span class="def">optionnel (if sans else)</span></div>
+        <div class="cheat-item"><span class="term">par</span><span class="def">parallèle</span></div>
+        <div class="cheat-item"><span class="term">critical</span><span class="def">région critique</span></div>
+        <div class="cheat-item"><span class="term">ref</span><span class="def">référence externe</span></div>
+      </div>
+      <div class="cheat-card">
+        <h4>Stéréotypes</h4>
+        <div class="cheat-item"><span class="term">&lt;&lt;abstract&gt;&gt;</span><span class="def">classe abstraite</span></div>
+        <div class="cheat-item"><span class="term">&lt;&lt;interface&gt;&gt;</span><span class="def">interface</span></div>
+        <div class="cheat-item"><span class="term">&lt;&lt;énumération&gt;&gt;</span><span class="def">enum</span></div>
+        <div class="cheat-item"><span class="term">&lt;&lt;use&gt;&gt;</span><span class="def">dépendance d'usage</span></div>
+        <div class="cheat-item"><span class="term">&lt;&lt;bind&gt;&gt;</span><span class="def">liaison paramètre</span></div>
+      </div>
+      <div class="cheat-card">
+        <h4>Règles DC</h4>
+        <div class="cheat-item"><span class="term">Attributs</span><span class="def">toujours private (-)</span></div>
+        <div class="cheat-item"><span class="term">Accesseurs</span><span class="def">public (+)</span></div>
+        <div class="cheat-item"><span class="term">Classe fille</span><span class="def">est une sorte de mère</span></div>
+        <div class="cheat-item"><span class="term">Agg. vs Comp.</span><span class="def">vie indép. vs liée</span></div>
+        <div class="cheat-item"><span class="term">Unidirec.</span><span class="def">flèche = attribut implicite</span></div>
+      </div>
+      <div class="cheat-card">
+        <h4>Reverse Eng. PHP→UML</h4>
+        <div class="cheat-item"><span class="term">private $x</span><span class="def">- x</span></div>
+        <div class="cheat-item"><span class="term">public $x</span><span class="def">+ x</span></div>
+        <div class="cheat-item"><span class="term">protected $x</span><span class="def"># x</span></div>
+        <div class="cheat-item"><span class="term">static $x</span><span class="def">x souligné</span></div>
+        <div class="cheat-item"><span class="term">extends A</span><span class="def">héritage (triangle)</span></div>
+        <div class="cheat-item"><span class="term">implements I</span><span class="def">réalisation interface</span></div>
+        <div class="cheat-item"><span class="term">private A $obj</span><span class="def">association/composition</span></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end #main -->
+
+<script>
+// ===== NAVIGATION =====
+const sections = ['home','intro','modstatic','classes','relations','heritage','interface','moddyn','dseq'];
+const specialSections = ['quiz','exercises','cheatsheet'];
+
+function navigate(id) {
+  // Hide all
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('quiz-section').classList.remove('active');
+  document.getElementById('exercises-section').classList.remove('active');
+  document.getElementById('cheatsheet-section').classList.remove('active');
+
+  // Show target
+  if (id === 'quiz') {
+    document.getElementById('quiz-section').classList.add('active');
+  } else if (id === 'exercises') {
+    document.getElementById('exercises-section').classList.add('active');
+  } else if (id === 'cheatsheet') {
+    document.getElementById('cheatsheet-section').classList.add('active');
+  } else {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('active');
+  }
+
+  // Update nav links
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  const navMap = {
+    'home':0,'intro':1,'modstatic':2,'classes':3,'relations':4,
+    'heritage':5,'interface':6,'moddyn':7,'dseq':8,'quiz':9,'exercises':10,'cheatsheet':11
+  };
+  const links = document.querySelectorAll('.nav-link');
+  if (navMap[id] !== undefined && links[navMap[id]]) links[navMap[id]].classList.add('active');
+
+  // Update topbar
+  const titles = {
+    home:'Accueil',intro:'Intro COO & UML',modstatic:'Modélisation Statique',
+    classes:'Diagramme de Classes',relations:'Relations & Multiplicités',
+    heritage:'Héritage & Abstrait',interface:'Interfaces & Énumérations',
+    moddyn:'Modélisation Dynamique',dseq:'Diagramme de Séquence',
+    quiz:'Quiz & QCM',exercises:'Exercices',cheatsheet:'Cheat Sheet'
+  };
+  document.getElementById('topbar-title').textContent = titles[id] || id;
+
+  // Close sidebar on mobile
+  if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
+
+  window.scrollTo(0,0);
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// ===== ACCORDION =====
+function toggleAcc(btn) {
+  const content = btn.nextElementSibling;
+  btn.classList.toggle('open');
+  content.classList.toggle('open');
+}
+
+// ===== SUB-SECTIONS =====
+function showSub(sectionId, subId) {
+  const section = document.getElementById(sectionId);
+  section.querySelectorAll('.sub-section').forEach(s => s.classList.remove('active'));
+  section.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  document.getElementById(subId).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ===== EXERCISE REVEAL =====
+function toggleAnswer(btn) {
+  const block = btn.nextElementSibling;
+  block.classList.toggle('show');
+  btn.textContent = block.classList.contains('show') ? 'Masquer la solution' : 'Voir la solution';
+}
+
+// ===== QUIZ =====
+const ALL_QUESTIONS = [
+  // ── CLASSES ──
+  {topic:'classes', q:'Quelle est la visibilité par défaut recommandée pour les attributs d\'une classe ?',
+   opts:['+ public','-  private','# protected','~ package'], ans:1,
+   expl:'Les attributs doivent TOUJOURS être privés (-) pour respecter l\'encapsulation. On y accède via des getters/setters publics.'},
+  {topic:'classes', q:'Dans un DC UML, comment représente-t-on un attribut de classe (static) ?',
+   opts:['En italique','Avec le stéréotype <<static>>','Souligné','En gras'], ans:2,
+   expl:'Un membre statique (de classe) est représenté souligné en UML. Il est partagé par toutes les instances.'},
+  {topic:'classes', q:'Quelle est la syntaxe correcte pour un attribut UML ?',
+   opts:['nom : Type [visibilité]','[visibilité] nom : Type [= valeur] [{propriétés}]','Type nom [= valeur]','{propriétés} [visibilité] Type : nom'], ans:1,
+   expl:'La syntaxe complète est : [visibilité] nomAtt : Type [= valeurInit] [{propriétés}]. La visibilité vient en premier.'},
+  {topic:'classes', q:'Un objet est une :',
+   opts:['Sous-classe','Instance d\'une classe','Interface implémentée','Méthode statique'], ans:1,
+   expl:'Un objet = instance d\'une classe. Il possède une identité, un état (valeurs des attributs) et un comportement (méthodes).'},
+  {topic:'classes', q:'Dans un diagramme d\'objets, le nom est noté :',
+   opts:['NomObjet','nomObjet : Classe (souligné)','Classe::nomObjet','<nomObjet>'], ans:1,
+   expl:'Dans un diagramme d\'objets, on note : nomObjet : NomClasse, le tout souligné. Ex: lise : Personne'},
+  // ── RELATIONS ──
+  {topic:'relations', q:'Quelle relation implique que si le composite est détruit, les composants le sont aussi ?',
+   opts:['Agrégation (losange vide)','Association simple','Composition (losange plein)','Dépendance'], ans:2,
+   expl:'La COMPOSITION (losange plein ◆) = agrégation forte. Le composite est responsable du cycle de vie du composant.'},
+  {topic:'relations', q:'La multiplicité "1..*" signifie :',
+   opts:['Exactement 1','Au plus 1','Au moins 1','0 ou plusieurs'], ans:2,
+   expl:'1..* = au moins 1 (1 ou plusieurs). Ne peut pas être 0.'},
+  {topic:'relations', q:'Dans une association unidirectionnelle A ────▶ B, quel attribut implicite est créé ?',
+   opts:['A a un attribut de type B','B a un attribut de type A','Les deux classes ont un attribut mutuel','Aucun attribut implicite'], ans:0,
+   expl:'La flèche va de A vers B : A "connaît" B. Donc A a un attribut privé de type B. B ne connaît pas A.'},
+  {topic:'relations', q:'Quelle est la différence entre agrégation et composition ?',
+   opts:['Aucune différence','Dans la composition, le composant peut exister sans le composite','Dans la composition, le composant est détruit avec le composite','L\'agrégation utilise un losange plein'], ans:2,
+   expl:'Composition = lien de vie. Si le composite disparaît, le composant aussi. Agrégation = contenance simple, le composant peut survivre.'},
+  {topic:'relations', q:'Une "classe d\'association" est utilisée quand :',
+   opts:['Une association doit être navigable','Une association porte ses propres attributs','Il y a plus de 2 classes associées','L\'héritage est multiple'], ans:1,
+   expl:'Une classe d\'association s\'utilise quand la relation elle-même a des attributs (ex: Emprunt avec dateDebut entre Adhérent et Livre).'},
+  {topic:'relations', q:'La relation de dépendance (A - - -▶ B) signifie :',
+   opts:['A hérite de B','A utilise B','A est composé de B','A implémente B'], ans:1,
+   expl:'La dépendance = A utilise B (appel de méthode, passage en paramètre, etc.). C\'est une relation faible.'},
+  // ── HERITAGE ──
+  {topic:'heritage', q:'En UML, l\'héritage est représenté par :',
+   opts:['Une flèche pleine simple','Un losange','Un triangle vide pointant vers la classe mère','Une flèche pointillée'], ans:2,
+   expl:'L\'héritage = triangle vide (△) côté classe mère. "B hérite de A" → flèche de B vers A avec triangle ouvert.'},
+  {topic:'heritage', q:'Une classe abstraite peut-elle être instanciée ?',
+   opts:['Oui, toujours','Oui, si elle a un constructeur','Non, jamais','Seulement via un cast'], ans:2,
+   expl:'Une classe abstraite ne peut JAMAIS être instanciée directement. Elle sert de modèle pour les classes filles.'},
+  {topic:'heritage', q:'En UML, une méthode abstraite est représentée :',
+   opts:['En gras','En italique','Soulignée','Avec le préfixe "abs:"'], ans:1,
+   expl:'Les méthodes et classes abstraites sont en ITALIQUE en UML. En PHP : "abstract public function maMethode()".'},
+  {topic:'heritage', q:'Si la classe Avion hérite de MoyenTransport et redéfinit seDeplacer(), que note-t-on en UML ?',
+   opts:['{abstract}','{override}','{static}','{final}'], ans:1,
+   expl:'{override} indique que la méthode redéfinit (surcharge) une méthode héritée. C\'est le polymorphisme par redéfinition.'},
+  {topic:'heritage', q:'La relation "est une sorte de" correspond à :',
+   opts:['L\'agrégation','La composition','L\'héritage','L\'interface'], ans:2,
+   expl:'"Chien est une sorte d\'Animal" → héritage. C\'est le test fondamental : si la phrase "B est un A" est vraie, c\'est de l\'héritage.'},
+  // ── REVERSE ──
+  {topic:'reverse', q:'En PHP, "private $nom" se traduit en UML par :',
+   opts:['+ nom','- nom','# nom','~ nom'], ans:1,
+   expl:'private = - en UML. C\'est la visibilité la plus restrictive, recommandée pour tous les attributs.'},
+  {topic:'reverse', q:'En PHP, "protected static int $ageMajorite = 18" se traduit en UML par :',
+   opts:['+ ageMajorite : int = 18','- ageMajorite : int = 18','# ageMajorite : int = 18 (souligné)','~ ageMajorite : int = 18'], ans:2,
+   expl:'protected = #, static = souligné. Donc : # ageMajorite : int = 18, avec le nom souligné.'},
+  {topic:'reverse', q:'En PHP, "class Etudiant extends Personne" se traduit en UML par :',
+   opts:['Une association Etudiant → Personne','Un héritage Etudiant ──△──▶ Personne','Une composition Etudiant ◆──── Personne','Une dépendance Etudiant - - -▶ Personne'], ans:1,
+   expl:'"extends" = héritage en PHP. En UML : triangle vide sur la flèche, pointant de la classe fille vers la classe mère.'},
+  {topic:'reverse', q:'En PHP, "class CanardColVert implements Volant" se traduit en UML par :',
+   opts:['Héritage : triangle plein','Réalisation : flèche pointillée avec triangle vide (- - -▷)','Association simple','Dépendance'], ans:1,
+   expl:'"implements" = réalisation d\'interface en PHP → flèche pointillée avec triangle vide en UML.'},
+  {topic:'reverse', q:'Si une classe PHP a un attribut "private Voiture $maVoiture", cela indique en UML :',
+   opts:['Une dépendance vers Voiture','Une association (navigabilité vers Voiture, attribut explicite)','Un héritage de Voiture','Une composition obligatoire'], ans:1,
+   expl:'Un attribut de type objet = association. "private" = - (attribut explicite dans le DC). La classe contient une référence vers Voiture.'},
+  // ── DSEQ ──
+  {topic:'dseq', q:'Dans un diagramme de séquence, une "ligne de vie" représente :',
+   opts:['Le temps de réponse d\'un système','L\'existence d\'un objet dans le temps (axe vertical)','Le nombre d\'instances créées','La durée d\'un message'], ans:1,
+   expl:'La ligne de vie = trait vertical pointillé sous le rectangle de l\'objet. Elle représente son existence dans le temps (axe vertical = temps).'},
+  {topic:'dseq', q:'Quel fragment utilise-t-on pour modéliser un "si ... sinon si ... sinon" ?',
+   opts:['opt','loop','alt','par'], ans:2,
+   expl:'"alt" (alternative) = choix entre plusieurs fragments mutuellement exclusifs. Séparés par des tirets. Équivalent d\'un if/else.'},
+  {topic:'dseq', q:'Le fragment "loop [Pour chaque produit de laCommande]" s\'utilise pour :',
+   opts:['Un message optionnel','Un comportement parallèle','Une répétition sur une collection','Un choix conditionnel'], ans:2,
+   expl:'"loop" = répétition. La garde entre crochets indique la condition de répétition (souvent une itération sur une collection).'},
+  {topic:'dseq', q:'Un message synchrone dans un DSeq signifie que :',
+   opts:['L\'émetteur n\'attend pas la réponse','L\'émetteur attend la fin de l\'exécution avant de continuer','Le message est envoyé en parallèle','Il n\'y a pas de message de retour'], ans:1,
+   expl:'Message synchrone = l\'émetteur attend la réponse (appel bloquant). C\'est le type le plus courant. Représenté par une flèche pleine.'},
+  {topic:'dseq', q:'Dans un DSeq, "obj2 := create()" signifie :',
+   opts:['La destruction de obj2','La création d\'une nouvelle instance de classe','Un message réflexif','L\'assignation d\'un attribut'], ans:1,
+   expl:'"obj2 := create()" ou "new ClasseB()" = création d\'une instance. En UML, la flèche pointe directement vers le rectangle de l\'instance créée.'},
+];
+
+let currentQuestions = [];
+let currentIndex = 0;
+let score = 0;
+let answered = false;
+
+document.querySelectorAll('.quiz-topic-btn').forEach(btn => {
+  btn.addEventListener('click', () => btn.classList.toggle('selected'));
+});
+
+function startQuiz() {
+  const selectedTopics = [...document.querySelectorAll('.quiz-topic-btn.selected')].map(b => b.dataset.topic);
+  if (selectedTopics.length === 0) { alert('Sélectionne au moins un thème !'); return; }
+  
+  currentQuestions = ALL_QUESTIONS
+    .filter(q => selectedTopics.includes(q.topic))
+    .sort(() => Math.random() - 0.5)
+    .slice(0, Math.min(20, ALL_QUESTIONS.length));
+  
+  currentIndex = 0; score = 0;
+  document.getElementById('quiz-setup').style.display = 'none';
+  document.getElementById('quiz-game').style.display = 'block';
+  document.getElementById('quiz-score').style.display = 'none';
+  renderQuestion();
+}
+
+function renderQuestion() {
+  answered = false;
+  document.getElementById('next-btn').style.display = 'none';
+  const q = currentQuestions[currentIndex];
+  const total = currentQuestions.length;
+  
+  document.getElementById('progress-fill').style.width = ((currentIndex / total) * 100) + '%';
+  document.getElementById('progress-text').textContent = (currentIndex + 1) + '/' + total;
+  
+  const topicLabels = {classes:'DC',relations:'Relations',heritage:'Héritage',reverse:'Reverse Eng.',dseq:'DSeq'};
+  
+  document.getElementById('question-container').innerHTML = `
+    <div class="question-card">
+      <div class="q-num">Question ${currentIndex + 1}/${total} · <span class="tag tag-blue">${topicLabels[q.topic] || q.topic}</span></div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">
+        ${q.opts.map((o, i) => `<button class="option-btn" onclick="selectAnswer(${i})">${o}</button>`).join('')}
+      </div>
+      <div class="q-explanation" id="q-expl">${q.expl}</div>
+    </div>
+  `;
+}
+
+function selectAnswer(i) {
+  if (answered) return;
+  answered = true;
+  const q = currentQuestions[currentIndex];
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach(b => b.disabled = true);
+  btns[q.ans].classList.add('correct');
+  if (i !== q.ans) btns[i].classList.add('wrong');
+  else score++;
+  document.getElementById('q-expl').classList.add('show');
+  document.getElementById('next-btn').style.display = 'block';
+}
+
+function nextQuestion() {
+  currentIndex++;
+  if (currentIndex >= currentQuestions.length) {
+    showScore();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showScore() {
+  document.getElementById('quiz-game').style.display = 'none';
+  document.getElementById('quiz-score').style.display = 'block';
+  const pct = Math.round((score / currentQuestions.length) * 100);
+  document.getElementById('score-number').textContent = score + '/' + currentQuestions.length;
+  const msgs = ['Continue à réviser ! 💪', 'Pas mal, mais tu peux mieux ! 📚', 'Bien joué ! 👍', 'Excellent ! Tu maîtrises ! 🎯'];
+  const msgIdx = pct < 40 ? 0 : pct < 60 ? 1 : pct < 80 ? 2 : 3;
+  document.getElementById('score-msg').textContent = pct + '% de réussite — ' + msgs[msgIdx];
+}
+
+function resetQuiz() {
+  document.getElementById('quiz-score').style.display = 'none';
+  document.getElementById('quiz-setup').style.display = 'block';
+}
+</script>
+</body>
+</html>
