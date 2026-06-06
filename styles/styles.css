@@ -557,3 +557,52 @@ input:checked + .slider-location::before {
 .iut-only.visible {
   display: flex !important;
 }
+
+
+/* ==========================================
+   Badge NOUVEAU
+========================================== */
+
+.new-content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.new-content::after {
+  content: "NOUVEAU";
+
+  background: white;
+  color: black;
+
+  font-size: 0.65em;
+  font-weight: 700;
+
+  padding: 4px 10px;
+
+  border-radius: 999px;
+
+  animation: pulse-new 1.5s infinite;
+
+  margin-left: 10px;
+
+  flex-shrink: 0;
+}
+
+@keyframes pulse-new {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255,255,255,0.8);
+  }
+
+  70% {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 10px rgba(255,255,255,0);
+  }
+
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255,255,255,0);
+  }
+}
