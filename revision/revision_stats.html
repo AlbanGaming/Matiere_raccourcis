@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Statistiques Descriptives — Révision BUT Info</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+/* ─── RESET & BASE ─────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+/* ─── TOKENS ────────────────────────────────────── */
+:root {
+  --bg:        #0D0D0D;
+  --bg2:       #141414;
+  --bg3:       #1A1A1A;
+  --surface:   #1F1F1F;
+  --border:    #2A2A2A;
+  --border2:   #333333;
+  --text:      #F0EDE8;
+  --muted:     #888880;
+  --accent:    #E8D44D;   /* jaune ocre */
+  --accent2:   #E05C4B;   /* rouge vif */
+  --accent3:   #5BB8A8;   /* vert sauge */
+  --accent4:   #7B9FE0;   /* bleu doux */
+  --code-bg:   #1A1A10;
+  --warn-bg:   #2A1F0A;
+  --warn-text: #E8AA55;
+  --tip-bg:    #0A1F15;
+  --tip-text:  #5BB8A8;
+
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 24px;
+
+  --f-display: 'Syne', sans-serif;
+  --f-body:    'DM Sans', sans-serif;
+  --f-mono:    'DM Mono', monospace;
+
+  --nav-h: 56px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--f-body);
+  font-size: 15px;
+  line-height: 1.65;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── NAV ───────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: var(--nav-h);
+  background: rgba(13,13,13,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 1rem;
+}
+.nav-brand {
+  font-family: var(--f-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.03em;
+  text-decoration: none;
+}
+.nav-brand span { color: var(--muted); font-weight: 400; }
+.nav-progress {
+  display: flex; gap: 4px; align-items: center;
+}
+.nav-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--border2);
+  transition: background 0.3s, transform 0.3s;
+  cursor: pointer;
+}
+.nav-dot.active { background: var(--accent); transform: scale(1.4); }
+.nav-dot.done   { background: var(--accent3); }
+
+/* ─── HERO ──────────────────────────────────────── */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: calc(var(--nav-h) + 2rem) 1.25rem 3rem;
+  position: relative; overflow: hidden;
+}
+.hero-grid {
+  position: absolute; inset: 0; opacity: 0.04;
+  background-image:
+    linear-gradient(var(--accent) 1px, transparent 1px),
+    linear-gradient(90deg, var(--accent) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--warn-bg);
+  border: 1px solid var(--accent);
+  border-radius: 100px;
+  padding: 4px 12px;
+  font-size: 11px;
+  font-family: var(--f-mono);
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  margin-bottom: 1.5rem;
+  width: fit-content;
+  animation: fadeUp 0.5s ease both;
+}
+.hero-title {
+  font-family: var(--f-display);
+  font-size: clamp(2.4rem, 8vw, 5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+  animation: fadeUp 0.5s 0.1s ease both;
+}
+.hero-title em {
+  font-style: normal;
+  color: var(--accent);
+  position: relative;
+}
+.hero-sub {
+  color: var(--muted);
+  font-size: 16px;
+  max-width: 420px;
+  margin-bottom: 2.5rem;
+  animation: fadeUp 0.5s 0.2s ease both;
+}
+.hero-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  animation: fadeUp 0.5s 0.3s ease both;
+}
+.hero-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r-md);
+  padding: 1rem;
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+  transition: transform 0.2s, border-color 0.2s, background 0.2s;
+  position: relative; overflow: hidden;
+}
+.hero-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--c, var(--accent));
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.hero-card:hover { transform: translateY(-2px); background: var(--bg3); }
+.hero-card:hover::before { opacity: 1; }
+.hero-card:hover { border-color: var(--c, var(--accent)); }
+.hc-icon { font-size: 22px; margin-bottom: 0.5rem; }
+.hc-title {
+  font-family: var(--f-display);
+  font-size: 13px; font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+}
+.hc-count {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.hero-cta {
+  margin-top: 1.5rem;
+  display: flex; gap: 0.75rem; flex-wrap: wrap;
+  animation: fadeUp 0.5s 0.4s ease both;
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 0.65rem 1.25rem;
+  border-radius: 100px;
+  font-family: var(--f-display);
+  font-size: 14px; font-weight: 600;
+  cursor: pointer; border: none;
+  text-decoration: none; transition: all 0.2s;
+}
+.btn-primary {
+  background: var(--accent); color: #0D0D0D;
+}
+.btn-primary:hover { background: #F0DE60; transform: translateY(-1px); }
+.btn-ghost {
+  background: transparent; color: var(--text);
+  border: 1px solid var(--border2);
+}
+.btn-ghost:hover { border-color: var(--text); background: var(--surface); }
+
+/* ─── LAYOUT ────────────────────────────────────── */
+main { padding-top: var(--nav-h); }
+.section {
+  padding: 3rem 1.25rem;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.section + .section {
+  border-top: 1px solid var(--border);
+}
+
+/* ─── SECTION HEADER ────────────────────────────── */
+.s-label {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+.s-label::before {
+  content: '';
+  display: inline-block;
+  width: 16px; height: 1px;
+  background: var(--muted);
+}
+.s-title {
+  font-family: var(--f-display);
+  font-size: clamp(1.5rem, 5vw, 2.2rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.5rem;
+}
+.s-title .hl { color: var(--accent); }
+.s-title .hl2 { color: var(--accent2); }
+.s-title .hl3 { color: var(--accent3); }
+.s-title .hl4 { color: var(--accent4); }
+
+/* ─── CARDS ─────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+.card-title {
+  font-family: var(--f-display);
+  font-size: 14px; font-weight: 700;
+  margin-bottom: 0.75rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.card-title .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+/* ─── TABLE ─────────────────────────────────────── */
+.tbl-wrap { overflow-x: auto; margin: 0.75rem 0; border-radius: var(--r-md); border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead tr { background: var(--bg3); }
+th {
+  font-family: var(--f-display);
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border2);
+}
+td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  line-height: 1.5;
+}
+tr:last-child td { border-bottom: none; }
+tbody tr:nth-child(even) { background: rgba(255,255,255,0.015); }
+
+/* ─── TAG ───────────────────────────────────────── */
+.tag {
+  display: inline-block;
+  padding: 2px 8px; border-radius: 4px;
+  font-family: var(--f-mono);
+  font-size: 11px; font-weight: 500;
+}
+.tag-y  { background: var(--warn-bg);  color: var(--accent); }
+.tag-r  { background: rgba(224,92,75,0.15); color: var(--accent2); }
+.tag-g  { background: var(--tip-bg);   color: var(--accent3); }
+.tag-b  { background: rgba(123,159,224,0.15); color: var(--accent4); }
+.tag-m  { background: var(--bg3); color: var(--muted); }
+
+/* ─── FORMULA BOX ───────────────────────────────── */
+.formula {
+  background: var(--code-bg);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  padding: 0.6rem 1rem;
+  font-family: var(--f-mono);
+  font-size: 13px;
+  color: var(--accent);
+  margin: 0.5rem 0;
+  overflow-x: auto;
+  white-space: pre;
+}
+.formula.red { border-color: var(--accent2); color: var(--accent2); }
+.formula.green { border-color: var(--accent3); color: var(--accent3); }
+.formula.blue { border-color: var(--accent4); color: var(--accent4); }
+
+/* ─── CALLOUTS ──────────────────────────────────── */
+.warn, .tip, .info {
+  border-radius: var(--r-sm);
+  padding: 0.75rem 1rem;
+  font-size: 13.5px;
+  line-height: 1.6;
+  margin: 0.75rem 0;
+  display: flex; gap: 0.75rem; align-items: flex-start;
+}
+.warn { background: var(--warn-bg); color: var(--warn-text); border: 1px solid rgba(232,170,85,0.25); }
+.tip  { background: var(--tip-bg);  color: var(--tip-text);  border: 1px solid rgba(91,184,168,0.25); }
+.info { background: rgba(123,159,224,0.1); color: var(--accent4); border: 1px solid rgba(123,159,224,0.2); }
+.callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.callout-body { flex: 1; }
+.callout-body strong { font-weight: 600; }
+
+/* ─── QUIZ ──────────────────────────────────────── */
+.quiz-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: 1.5rem 1.25rem;
+  margin-bottom: 1rem;
+}
+.quiz-q {
+  font-family: var(--f-display);
+  font-size: 15px; font-weight: 700;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+.quiz-q .qnum {
+  display: inline-block;
+  background: var(--accent);
+  color: #0D0D0D;
+  font-size: 11px; font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 4px;
+  margin-right: 6px;
+}
+.quiz-opts { display: flex; flex-direction: column; gap: 0.5rem; }
+.quiz-opt {
+  background: var(--bg3);
+  border: 1.5px solid var(--border2);
+  border-radius: var(--r-md);
+  padding: 0.75rem 1rem;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  color: var(--text);
+  display: flex; align-items: center; gap: 0.75rem;
+  -webkit-tap-highlight-color: transparent;
+}
+.quiz-opt:hover:not(:disabled) { border-color: var(--accent); background: rgba(232,212,77,0.06); }
+.quiz-opt.correct { border-color: var(--accent3) !important; background: var(--tip-bg) !important; color: var(--tip-text); }
+.quiz-opt.wrong   { border-color: var(--accent2) !important; background: rgba(224,92,75,0.08) !important; color: var(--accent2); }
+.quiz-opt.reveal  { border-color: var(--accent3); background: rgba(91,184,168,0.05); }
+.quiz-opt:disabled { cursor: default; }
+.opt-letter {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; border-radius: 6px;
+  font-family: var(--f-mono); font-size: 12px; font-weight: 600;
+  background: var(--border2); color: var(--muted);
+  flex-shrink: 0; transition: all 0.2s;
+}
+.correct .opt-letter { background: var(--accent3); color: #0D0D0D; }
+.wrong .opt-letter   { background: var(--accent2); color: #fff; }
+.reveal .opt-letter  { background: var(--accent3); color: #0D0D0D; }
+.quiz-feedback {
+  margin-top: 0.75rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  line-height: 1.5;
+  display: none;
+}
+.quiz-feedback.show { display: block; animation: fadeUp 0.25s ease both; }
+.quiz-feedback.ok { background: var(--tip-bg); color: var(--tip-text); border: 1px solid rgba(91,184,168,0.25); }
+.quiz-feedback.ko { background: var(--warn-bg); color: var(--warn-text); border: 1px solid rgba(232,170,85,0.25); }
+
+/* ─── PROGRESS BAR ──────────────────────────────── */
+.progress-wrap {
+  background: var(--border);
+  border-radius: 100px;
+  height: 4px;
+  margin: 1.5rem 0 0.5rem;
+  overflow: hidden;
+}
+.progress-bar {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 100px;
+  transition: width 0.4s ease;
+}
+.progress-label {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+}
+
+/* ─── SCORE ─────────────────────────────────────── */
+.score-display {
+  text-align: center;
+  padding: 2rem 1rem;
+  display: none;
+}
+.score-display.show { display: block; animation: fadeUp 0.4s ease both; }
+.score-num {
+  font-family: var(--f-display);
+  font-size: 4rem;
+  font-weight: 800;
+  color: var(--accent);
+}
+.score-sub { color: var(--muted); font-size: 14px; margin-top: 0.25rem; }
+.score-msg { font-size: 16px; margin: 1rem 0; font-weight: 500; }
+
+/* ─── ACCORDION ─────────────────────────────────── */
+.accord { margin-bottom: 0.5rem; }
+.accord-head {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  transition: border-color 0.2s, background 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  font-family: var(--f-display);
+  font-size: 14px; font-weight: 700;
+}
+.accord-head:hover { border-color: var(--border2); background: var(--bg3); }
+.accord-head.open  { border-color: var(--accent); border-radius: var(--r-md) var(--r-md) 0 0; background: var(--bg3); color: var(--accent); }
+.accord-arrow { transition: transform 0.3s; flex-shrink: 0; color: var(--muted); font-size: 18px; }
+.accord-head.open .accord-arrow { transform: rotate(180deg); color: var(--accent); }
+.accord-body {
+  background: var(--bg3);
+  border: 1px solid var(--accent);
+  border-top: none;
+  border-radius: 0 0 var(--r-md) var(--r-md);
+  padding: 1.25rem;
+  display: none;
+}
+.accord-body.open { display: block; animation: fadeUp 0.2s ease both; }
+
+/* ─── AIDE MÉMOIRE CARDS ────────────────────────── */
+.memo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+.memo-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 1rem;
+  position: relative; overflow: hidden;
+}
+.memo-card::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: var(--c, var(--accent));
+}
+.memo-card .mc-label {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.4rem;
+}
+.memo-card .mc-val {
+  font-family: var(--f-display);
+  font-size: 13px; font-weight: 700;
+  line-height: 1.35;
+}
+.memo-card .mc-formula {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  color: var(--accent);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+/* ─── SEPARATOR ─────────────────────────────────── */
+.sep {
+  display: flex; align-items: center; gap: 1rem;
+  margin: 2rem 0;
+  color: var(--muted);
+  font-family: var(--f-mono);
+  font-size: 11px;
+}
+.sep::before, .sep::after {
+  content: ''; flex: 1;
+  height: 1px; background: var(--border);
+}
+
+/* ─── STICKY BOTTOM NAV ─────────────────────────── */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(13,13,13,0.95);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+  display: flex;
+}
+.bn-item {
+  flex: 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 0.6rem 0.25rem;
+  gap: 3px;
+  text-decoration: none;
+  color: var(--muted);
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  transition: color 0.2s;
+  cursor: pointer; background: none; border: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.bn-item.active { color: var(--accent); }
+.bn-icon { font-size: 20px; }
+
+/* ─── ANIMATIONS ────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+
+/* ─── PAGES ─────────────────────────────────────── */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ─── DIVIDER ───────────────────────────────────── */
+hr.styled {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 1.5rem 0;
+}
+
+/* ─── INLINE CODE ───────────────────────────────── */
+code {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  background: var(--code-bg);
+  color: var(--accent);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+/* ─── FLEX ROW ──────────────────────────────────── */
+.row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+.flex-1 { flex: 1; min-width: 120px; }
+
+/* ─── TOOLTIP PIEGE ─────────────────────────────── */
+.piege-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: rgba(224,92,75,0.12);
+  border: 1px solid rgba(224,92,75,0.3);
+  color: var(--accent2);
+  border-radius: 100px;
+  padding: 2px 10px;
+  font-size: 11px; font-weight: 600;
+  font-family: var(--f-mono);
+  margin-bottom: 0.5rem;
+}
+
+/* ─── SCHEMA VISUEL ─────────────────────────────── */
+.schema-boxplot {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 1.5rem 1rem;
+  margin: 0.75rem 0;
+  text-align: center;
+}
+.bp-line { position: relative; height: 40px; margin: 0 auto; max-width: 320px; }
+.bp-axis {
+  position: absolute; top: 50%; left: 0; right: 0;
+  height: 2px; background: var(--muted); transform: translateY(-50%);
+}
+.bp-box {
+  position: absolute; top: 20%; height: 60%;
+  background: rgba(232,212,77,0.15);
+  border: 2px solid var(--accent);
+}
+.bp-median {
+  position: absolute; top: 10%; height: 80%;
+  width: 2px; background: var(--accent2);
+}
+.bp-whisker-l, .bp-whisker-r {
+  position: absolute; top: 50%; width: 2px;
+  background: var(--muted); transform: translateY(-50%);
+}
+.bp-whisker-l { height: 16px; }
+.bp-whisker-r { height: 16px; }
+.bp-cap-l, .bp-cap-r {
+  position: absolute; top: 50%; height: 2px;
+  background: var(--muted); transform: translateY(-50%);
+}
+.bp-outlier {
+  position: absolute; top: 50%;
+  width: 7px; height: 7px;
+  border-radius: 50%; border: 1.5px solid var(--accent2);
+  transform: translateY(-50%);
+}
+.bp-labels {
+  display: flex; justify-content: space-between;
+  font-family: var(--f-mono);
+  font-size: 10px; color: var(--muted);
+  margin-top: 0.75rem;
+  padding: 0 0;
+}
+
+/* ─── MEDIA ─────────────────────────────────────── */
+@media (min-width: 640px) {
+  .hero-cards { grid-template-columns: repeat(3, 1fr); }
+  .memo-grid { grid-template-columns: repeat(3, 1fr); }
+  .section { padding: 4rem 1.5rem; }
+}
+@media (min-width: 768px) {
+  :root { --nav-h: 60px; }
+  body { font-size: 16px; }
+  .hero-cards { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* ─── BOTTOM NAV SPACING ────────────────────────── */
+body { padding-bottom: 65px; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-brand" href="#" onclick="showPage('home')">Stats<span>.info</span></a>
+  <div class="nav-progress" id="navDots">
+    <div class="nav-dot active" onclick="showPage('home')" title="Accueil"></div>
+    <div class="nav-dot" onclick="showPage('cours')" title="Cours"></div>
+    <div class="nav-dot" onclick="showPage('formules')" title="Formules"></div>
+    <div class="nav-dot" onclick="showPage('quiz')" title="Quiz"></div>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- PAGE : ACCUEIL                                   -->
+<!-- ════════════════════════════════════════════════ -->
+<div id="page-home" class="page active">
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-badge">✦ BUT Informatique · Statistiques</div>
+  <h1 class="hero-title">Statistiques<br><em>Descriptives</em></h1>
+  <p class="hero-sub">Maîtrise les concepts, les formules et les pièges. Révision rapide avant le contrôle.</p>
+
+  <div class="hero-cards">
+    <a class="hero-card" href="#" onclick="showPage('cours')" style="--c: var(--accent)">
+      <div class="hc-icon">📐</div>
+      <div class="hc-title">Cours complet</div>
+      <div class="hc-count">11 chapitres</div>
+    </a>
+    <a class="hero-card" href="#" onclick="showPage('formules')" style="--c: var(--accent3)">
+      <div class="hc-icon">🧮</div>
+      <div class="hc-title">Toutes les formules</div>
+      <div class="hc-count">Aide-mémoire</div>
+    </a>
+    <a class="hero-card" href="#" onclick="showPage('quiz')" style="--c: var(--accent2)">
+      <div class="hc-icon">🎯</div>
+      <div class="hc-title">Quiz interactif</div>
+      <div class="hc-count">15 questions</div>
+    </a>
+    <a class="hero-card" href="#" onclick="showPage('pieges')" style="--c: var(--accent4)">
+      <div class="hc-icon">⚠️</div>
+      <div class="hc-title">Pièges classiques</div>
+      <div class="hc-count">6 erreurs fréquentes</div>
+    </a>
+  </div>
+
+  <div class="hero-cta">
+    <a class="btn btn-primary" href="#" onclick="showPage('cours')">Commencer →</a>
+    <a class="btn btn-ghost" href="#" onclick="showPage('quiz')">Quiz direct</a>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- PAGE : COURS                                     -->
+<!-- ════════════════════════════════════════════════ -->
+<div id="page-cours" class="page">
+
+<!-- 1. Types de variables -->
+<div class="section fade-in">
+  <div class="s-label">Chapitre 1</div>
+  <h2 class="s-title">Types de <span class="hl">variables</span></h2>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Type</th><th>Sous-type</th><th>Clé</th><th>Exemple</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag tag-b">Qualitative</span></td><td>Nominale</td><td>Pas d'ordre</td><td>Couleur, code postal</td></tr>
+        <tr><td><span class="tag tag-b">Qualitative</span></td><td>Ordinale</td><td>Ordre naturel</td><td>Satisfaction 1–5, mention</td></tr>
+        <tr><td><span class="tag tag-g">Quantitative</span></td><td>Discrète</td><td>Dénombrable</td><td>Nb de bugs, fratrie</td></tr>
+        <tr><td><span class="tag tag-g">Quantitative</span></td><td>Continue</td><td>Intervalle continu</td><td>Taille, poids, moyenne</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:var(--accent4)"></span>Règle pratique</div>
+    <p>Opérations arithmétiques <strong>sans sens</strong> → qualitative<br>
+    Ordre naturel entre modalités → ordinale ; sinon → nominale<br>
+    Opérations avec sens → quantitative<br>
+    Toutes les valeurs facilement listables → discrète ; sinon → continue</p>
+  </div>
+
+  <div class="warn">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body"><strong>Piège classique :</strong> un nombre n'est pas forcément quantitatif. Le code postal <code>51100</code> est qualitatif nominal — <code>51100 − 08200</code> ne signifie rien géographiquement.</div>
+  </div>
+</div>
+
+<!-- 2. Transformations -->
+<div class="section fade-in">
+  <div class="s-label">Chapitre 2</div>
+  <h2 class="s-title">Trans&shy;formations <span class="hl2">des données</span></h2>
+
+  <div class="accord" id="acc-disc">
+    <div class="accord-head" onclick="toggleAccord('acc-disc')">
+      <span>📦 Discrétisation</span>
+      <span class="accord-arrow">▾</span>
+    </div>
+    <div class="accord-body">
+      <p>Remplace chaque valeur numérique par l'intervalle (classe) auquel elle appartient. Transforme une variable continue en variable ordinale.</p>
+      <div class="warn" style="margin-top:0.75rem">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body"><strong>Perte d'info irréversible.</strong> La moyenne calculée sur les centres de classes diffère de la vraie moyenne. Ex : 9,06 estimé vs 10,36 réel.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="accord" id="acc-rangs">
+    <div class="accord-head" onclick="toggleAccord('acc-rangs')">
+      <span>🔢 Transformation en rangs</span>
+      <span class="accord-arrow">▾</span>
+    </div>
+    <div class="accord-body">
+      <p>Chaque valeur est remplacée par sa position dans la série triée (de la plus petite à la plus grande). En cas d'ex æquo : rang moyen.</p>
+      <div class="tip" style="margin-top:0.75rem">
+        <span class="callout-icon">✓</span>
+        <div class="callout-body">Supprime l'influence des valeurs extrêmes. Garde uniquement l'ordre relatif, pas les distances entre valeurs.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="accord" id="acc-log">
+    <div class="accord-head" onclick="toggleAccord('acc-log')">
+      <span>📈 Transformation logarithmique</span>
+      <span class="accord-arrow">▾</span>
+    </div>
+    <div class="accord-body">
+      <p>Remplace chaque valeur x par <code>ln(x)</code> ou <code>ln(1+x)</code>. Compresse les grandes valeurs, réduit l'asymétrie droite.</p>
+      <p style="margin-top:0.5rem">On préfère <code>ln(1+x)</code> car <code>ln(0)</code> est indéfini — utile si x peut valoir 0.</p>
+    </div>
+  </div>
+
+  <div class="accord" id="acc-scale">
+    <div class="accord-head" onclick="toggleAccord('acc-scale')">
+      <span>⚖️ Centrage-réduction (normalisation)</span>
+      <span class="accord-arrow">▾</span>
+    </div>
+    <div class="accord-body">
+      <div class="formula">z = (x − x̄) / σ</div>
+      <p>Variable résultante : moyenne = 0, écart-type = 1.</p>
+      <div class="tip" style="margin-top:0.75rem">
+        <span class="callout-icon">✓</span>
+        <div class="callout-body">Indispensable pour comparer des variables d'unités différentes et pour les algorithmes d'apprentissage automatique.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 3. Distribution groupée -->
+<div class="section fade-in">
+  <div class="s-label">Chapitre 3</div>
+  <h2 class="s-title">Distribution <span class="hl3">groupée</span></h2>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:var(--accent3)"></span>Formules fondamentales</div>
+    <div class="formula">f(m) = n(m) / n          (fréquence relative)</div>
+    <div class="formula">Σ f(m) = 1               (somme des fréquences)</div>
+    <div class="formula green">F(m) = Σ f(m')  pour m' ≤ m   (fréquence cumulée)</div>
+    <p style="margin-top:0.75rem"><strong>Mode</strong> : modalité (ou classe) d'effectif maximal.</p>
+    <p>La fréquence cumulée F(m) n'est définie que pour les variables <strong>ordinales</strong> ou <strong>quantitatives</strong> (ordre naturel).</p>
+  </div>
+</div>
+
+<!-- 4. Position -->
+<div class="section fade-in">
+  <div class="s-label">Chapitre 4</div>
+  <h2 class="s-title">Indicateurs de <span class="hl">position</span></h2>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Indicateur</th><th>Formule</th><th>Robustesse</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Moyenne x̄</strong></td><td>x̄ = (1/n) × Σxᵢ</td><td><span class="tag tag-r">Faible</span></td></tr>
+        <tr><td><strong>Médiane</strong></td><td>Valeur centrale (série triée)</td><td><span class="tag tag-g">Forte</span></td></tr>
+        <tr><td><strong>Quantile p</strong></td><td>Plus petite x t.q. F(x) ≥ p</td><td><span class="tag tag-g">Forte</span></td></tr>
+        <tr><td><strong>Mode</strong></td><td>Valeur d'effectif maximal</td><td><span class="tag tag-m">—</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>Calcul de la médiane</div>
+    <div class="formula">n impair →  Med = x[(n+1)/2]</div>
+    <div class="formula">n pair   →  Med = (x[n/2] + x[n/2+1]) / 2</div>
+    <p style="margin-top:0.75rem"><em>Toujours trier la série avant de calculer !</em></p>
+  </div>
+
+  <div class="tip">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body"><strong>Quand utiliser la médiane ?</strong> Dès qu'il y a des valeurs aberrantes ou une forte asymétrie (ex : salaires). La <em>moyenne</em> serait tirée vers les extrêmes et deviendrait non représentative.</div>
+  </div>
+</div>
+
+<!-- 5. Dispersion -->
+<div class="section fade-in">
+  <div class="s-label">Chapitre 5</div>
+  <h2 class="s-title">Indicateurs de <span class="hl2">dispersion</span></h2>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Indicateur</th><th>Formule</th><th>Avec</th></tr></thead>
+      <tbody>
+        <tr><td>Étendue</td><td>max − min</td><td>Moy. / Méd.</td></tr>
+        <tr><td>Variance σ²</td><td>σ² = (1/n)Σ(xᵢ−x̄)²</td><td>Moyenne</td></tr>
+        <tr><td>Écart-type σ</td><td>σ = √σ²</td><td>Moyenne</td></tr>
+        <tr><td>CV</td><td>CV = σ / x̄</td><td>Moyenne</td></tr>
+        <tr><td><strong>EIQ</strong></td><td>Q3 − Q1</td><td>Médiane</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:var(--accent2)"></span>Transformation linéaire Y = aX + b</div>
+    <div class="formula">ȳ = a × x̄ + b</div>
+    <div class="formula red">σ_Y = |a| × σ_X</div>
+    <div class="formula red">σ²_Y = a² × σ²_X</div>
+    <p style="margin-top:0.75rem">La translation <code>+b</code> décale la moyenne mais <strong>ne change pas la dispersion</strong>.</p>
+  </div>
+
+  <div class="info">
+    <span class="callout-icon">📌</span>
+    <div class="callout-body"><strong>Couples à retenir :</strong><br>
+    Distribution symétrique → <strong>Moyenne + σ</strong><br>
+    Distribution asymétrique / outliers → <strong>Médiane + EIQ</strong></div>
+  </div>
+</div>
+
+<!-- 6. Graphiques -->
+<div class="section fade-in">
+  <div class="s-label">Chapitre 6</div>
+  <h2 class="s-title">Repré&shy;sentations <span class="hl3">graphiques</span></h2>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Variable</th><th>Graphique</th><th>Règle clé</th></tr></thead>
+      <tbody>
+        <tr><td>Qualitative</td><td>Barplot</td><td>Barres <strong>espacées</strong>, axe Y à 0</td></tr>
+        <tr><td>Qualitative</td><td>Pie chart</td><td>Proportions seulement</td></tr>
+        <tr><td>Continue</td><td>Histogramme</td><td>Barres <strong>collées</strong></td></tr>
+        <tr><td>Quantitative</td><td>Boxplot</td><td>5 nombres : min, Q1, Med, Q3, max</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:var(--accent3)"></span>Boxplot — Schéma</div>
+    <div class="schema-boxplot">
+      <div class="bp-line">
+        <div class="bp-axis"></div>
+        <!-- whisker gauche -->
+        <div class="bp-cap-l" style="left:5%;width:10%;top:50%"></div>
+        <div style="position:absolute;left:10%;top:30%;width:2px;height:40%;background:var(--muted)"></div>
+        <!-- boîte -->
+        <div class="bp-box" style="left:20%;width:40%"></div>
+        <!-- médiane -->
+        <div class="bp-median" style="left:38%"></div>
+        <!-- whisker droite -->
+        <div style="position:absolute;left:60%;top:30%;width:2px;height:40%;background:var(--muted)"></div>
+        <div class="bp-cap-l" style="left:60%;width:15%;top:50%"></div>
+        <!-- outlier -->
+        <div class="bp-outlier" style="left:84%"></div>
+      </div>
+      <div class="bp-labels">
+        <span>Min</span><span>Q1</span><span>Méd.</span><span>Q3</span><span>Outlier</span>
+      </div>
+    </div>
+
+    <p style="margin-top:0.75rem"><strong>Convention Tukey (standard)</strong> : moustaches jusqu'à Q1 − 1,5×EIQ et Q3 + 1,5×EIQ. Points au-delà = valeurs aberrantes.</p>
+    <p style="margin-top:0.5rem"><strong>Convention min-max (Excel)</strong> : moustaches jusqu'aux vraies min/max. Aucun point isolé.</p>
+  </div>
+
+  <div class="warn">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body"><strong>Principe de Tufte</strong> : seule l'encre portant de l'information est légitime. Axe Y ne commençant pas à 0 → amplifie artificiellement les différences.</div>
+  </div>
+</div>
+
+<!-- 7–10. Bivariées -->
+<div class="section fade-in">
+  <div class="s-label">Chapitres 7 à 10</div>
+  <h2 class="s-title">Statistiques <span class="hl4">bivariées</span></h2>
+
+  <div class="card" style="margin-bottom:1.25rem">
+    <div class="card-title"><span class="dot" style="background:var(--accent4)"></span>Quel outil selon les types ?</div>
+    <div class="tbl-wrap" style="margin-top:0">
+      <table>
+        <thead><tr><th></th><th>Quantitative</th><th>Qualitative</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Quantitative</strong></td><td>Nuage de points + Pearson / Spearman</td><td>Sous-distributions + Boxplots</td></tr>
+          <tr><td><strong>Qualitative</strong></td><td>Sous-distributions + Boxplots</td><td>Tableau de contingence + V de Cramer</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="sep">Pearson</div>
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>Corrélation de Pearson (r)</div>
+    <p>Mesure la force d'un <strong>lien linéaire</strong>. r ∈ [−1 ; 1].</p>
+    <div class="formula" style="margin-top:0.75rem">r(X,Y) = Cov(X,Y) / (σ_X × σ_Y)</div>
+    <div class="formula">Cov(X,Y) = (1/n) × Σ(xᵢ−x̄)(yᵢ−ȳ)</div>
+    <div class="tbl-wrap" style="margin-top:0.75rem">
+      <table>
+        <thead><tr><th>r</th><th>Interprétation</th></tr></thead>
+        <tbody>
+          <tr><td><code>+1</code></td><td>Lien linéaire positif parfait</td></tr>
+          <tr><td><code>> 0,7</code></td><td>Lien fort positif</td></tr>
+          <tr><td><code>≈ 0</code></td><td>Pas de lien <em>linéaire</em></td></tr>
+          <tr><td><code>< −0,7</code></td><td>Lien fort négatif</td></tr>
+          <tr><td><code>−1</code></td><td>Lien linéaire négatif parfait</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="sep">Spearman</div>
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:var(--accent3)"></span>Corrélation de Spearman (ρ)</div>
+    <p>Pearson appliqué sur les <strong>rangs</strong>. Résistant aux outliers, capte les liens monotones non-linéaires.</p>
+    <div class="formula green" style="margin-top:0.75rem">ρ(X,Y) = r(Rang_X, Rang_Y)</div>
+    <div class="formula green">ρ ≈ 1 − (6 × Σdᵢ²) / (n³ − n)</div>
+    <p style="margin-top:0.5rem">où dᵢ = rang(xᵢ) − rang(yᵢ)</p>
+    <hr class="styled">
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Situation</th><th>Pearson</th><th>Spearman</th></tr></thead>
+        <tbody>
+          <tr><td>Y = 2X (linéaire)</td><td>r = 1</td><td>ρ = 1</td></tr>
+          <tr><td>Y = X² (monotone)</td><td>r &lt; 1</td><td>ρ = 1</td></tr>
+          <tr><td>Y = X² (symétrique)</td><td>r ≈ 0</td><td>ρ ≈ 0</td></tr>
+          <tr><td>Valeurs aberrantes</td><td>Biaisé</td><td>Robuste ✓</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="tip" style="margin-top:0.75rem">
+      <span class="callout-icon">💡</span>
+      <div class="callout-body">r faible mais ρ fort → lien monotone non-linéaire (exponentielle, puissance…)</div>
+    </div>
+  </div>
+
+  <div class="sep">V de Cramer</div>
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:var(--accent4)"></span>V de Cramer (qual × qual)</div>
+    <p style="margin-bottom:0.75rem"><strong>Étape 1</strong> — Tableau de contingence (effectifs observés)</p>
+    <p><strong>Étape 2</strong> — Effectif théorique (hypothèse d'indépendance) :</p>
+    <div class="formula blue">n_théo(m1,m2) = n(m1) × n(m2) / N</div>
+    <p><strong>Étape 3</strong> — Distance du χ² :</p>
+    <div class="formula blue">χ² = Σ (n_obs − n_théo)² / n_théo</div>
+    <p><strong>Étape 4</strong> — V de Cramer :</p>
+    <div class="formula blue">V = √( χ² / (N × (min(lignes, cols) − 1)) )</div>
+    <div class="tbl-wrap" style="margin-top:0.75rem">
+      <table>
+        <thead><tr><th>V</th><th>Interprétation</th></tr></thead>
+        <tbody>
+          <tr><td>≈ 0</td><td>Variables indépendantes</td></tr>
+          <tr><td>0 – 0,3</td><td>Lien faible</td></tr>
+          <tr><td>0,3 – 0,7</td><td>Lien modéré</td></tr>
+          <tr><td>≥ 0,7</td><td>Lien fort</td></tr>
+          <tr><td>= 1</td><td>Dépendance parfaite</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</div><!-- /page-cours -->
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- PAGE : FORMULES                                  -->
+<!-- ════════════════════════════════════════════════ -->
+<div id="page-formules" class="page">
+<div class="section">
+  <div class="s-label">Aide-mémoire</div>
+  <h2 class="s-title">Toutes les <span class="hl">formules</span></h2>
+
+  <div class="sep">Position</div>
+  <div class="memo-grid">
+    <div class="memo-card" style="--c:var(--accent)">
+      <div class="mc-label">Moyenne</div>
+      <div class="mc-val">x̄</div>
+      <div class="mc-formula">x̄ = (1/n) Σxᵢ</div>
+    </div>
+    <div class="memo-card" style="--c:var(--accent3)">
+      <div class="mc-label">Médiane (n impair)</div>
+      <div class="mc-val">Med</div>
+      <div class="mc-formula">x[(n+1)/2]</div>
+    </div>
+    <div class="memo-card" style="--c:var(--accent3)">
+      <div class="mc-label">Médiane (n pair)</div>
+      <div class="mc-val">Med</div>
+      <div class="mc-formula">(x[n/2]+x[n/2+1])/2</div>
+    </div>
+  </div>
+
+  <div class="sep">Dispersion</div>
+  <div class="memo-grid">
+    <div class="memo-card" style="--c:var(--accent2)">
+      <div class="mc-label">Variance</div>
+      <div class="mc-val">σ²</div>
+      <div class="mc-formula">(1/n)Σ(xᵢ−x̄)²</div>
+    </div>
+    <div class="memo-card" style="--c:var(--accent2)">
+      <div class="mc-label">Écart-type</div>
+      <div class="mc-val">σ</div>
+      <div class="mc-formula">√σ²</div>
+    </div>
+    <div class="memo-card" style="--c:var(--accent2)">
+      <div class="mc-label">Coeff. variation</div>
+      <div class="mc-val">CV</div>
+      <div class="mc-formula">σ / x̄</div>
+    </div>
+    <div class="memo-card" style="--c:var(--accent3)">
+      <div class="mc-label">Étendue</div>
+      <div class="mc-val">E</div>
+      <div class="mc-formula">max − min</div>
+    </div>
+    <div class="memo-card" style="--c:var(--accent3)">
+      <div class="mc-label">EIQ</div>
+      <div class="mc-val">Q3 − Q1</div>
+      <div class="mc-formula">Avec Médiane</div>
+    </div>
+  </div>
+
+  <div class="sep">Transformation linéaire</div>
+  <div class="card">
+    <div class="formula">Y = aX + b</div>
+    <div class="formula">ȳ = a×x̄ + b</div>
+    <div class="formula red">σ_Y = |a|×σ_X    (b ne change pas σ !)</div>
+    <div class="formula red">σ²_Y = a²×σ²_X</div>
+  </div>
+
+  <div class="sep">Centrage-réduction</div>
+  <div class="card">
+    <div class="formula">z = (x − x̄) / σ   →   z̄=0, σ_z=1</div>
+  </div>
+
+  <div class="sep">Corrélation de Pearson</div>
+  <div class="card">
+    <div class="formula">r = Cov(X,Y) / (σ_X × σ_Y)</div>
+    <div class="formula">Cov(X,Y) = (1/n)Σ(xᵢ−x̄)(yᵢ−ȳ)</div>
+    <p style="margin-top:0.5rem">r ∈ [−1 ; 1]</p>
+  </div>
+
+  <div class="sep">Corrélation de Spearman</div>
+  <div class="card">
+    <div class="formula green">ρ = r(Rang_X, Rang_Y)</div>
+    <div class="formula green">ρ ≈ 1 − 6Σdᵢ² / (n³−n)</div>
+    <p style="margin-top:0.5rem">dᵢ = rang(xᵢ) − rang(yᵢ)</p>
+  </div>
+
+  <div class="sep">V de Cramer</div>
+  <div class="card">
+    <div class="formula blue">n_théo = n(m1)×n(m2) / N</div>
+    <div class="formula blue">χ² = Σ (n_obs−n_théo)² / n_théo</div>
+    <div class="formula blue">V = √(χ² / (N×(min(l,c)−1)))</div>
+    <p style="margin-top:0.5rem">V ∈ [0 ; 1]</p>
+  </div>
+
+  <div class="sep">Distribution groupée</div>
+  <div class="card">
+    <div class="formula">f(m) = n(m) / n</div>
+    <div class="formula">Σ f(m) = 1</div>
+    <div class="formula green">F(m) = Σ f(m')  pour m'≤m</div>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- PAGE : QUIZ                                      -->
+<!-- ════════════════════════════════════════════════ -->
+<div id="page-quiz" class="page">
+<div class="section">
+  <div class="s-label">Entraînement</div>
+  <h2 class="s-title">Quiz <span class="hl2">interactif</span></h2>
+
+  <div class="progress-wrap"><div class="progress-bar" id="quizProgress" style="width:0%"></div></div>
+  <div class="progress-label" id="quizLabel">0 / 15 répondues</div>
+
+  <div id="quizContainer"></div>
+
+  <div class="score-display" id="scoreDisplay">
+    <div class="score-num" id="scoreNum">0/15</div>
+    <div class="score-sub">Score final</div>
+    <div class="score-msg" id="scoreMsg"></div>
+    <button class="btn btn-primary" onclick="resetQuiz()" style="margin-top:1rem">Recommencer</button>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- PAGE : PIÈGES                                    -->
+<!-- ════════════════════════════════════════════════ -->
+<div id="page-pieges" class="page">
+<div class="section">
+  <div class="s-label">À éviter absolument</div>
+  <h2 class="s-title">Pièges <span class="hl2">classiques</span></h2>
+
+  <div class="card" style="margin-bottom:1rem">
+    <div class="piege-pill">⚠ Piège 1</div>
+    <div class="card-title" style="margin-bottom:0.5rem">Chiffre ≠ Quantitatif</div>
+    <p>Un code postal, un numéro de téléphone ou un identifiant encodé en chiffres reste <strong>qualitatif nominal</strong>. La règle : les opérations arithmétiques ont-elles du sens ?</p>
+    <div class="formula" style="margin-top:0.75rem">51100 − 08200 = ???   → Pas de sens → Nominal</div>
+  </div>
+
+  <div class="card" style="margin-bottom:1rem">
+    <div class="piege-pill">⚠ Piège 2</div>
+    <div class="card-title" style="margin-bottom:0.5rem">r = 0 ≠ "pas de lien"</div>
+    <p>r = 0 signifie seulement <strong>pas de lien linéaire</strong>. Un lien non-linéaire parfait (parabole symétrique, cercle…) donne r = 0 !</p>
+    <div class="tip" style="margin-top:0.75rem">
+      <span class="callout-icon">💡</span>
+      <div class="callout-body">Toujours observer le nuage de points AVANT de calculer un coefficient.</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1rem">
+    <div class="piege-pill">⚠ Piège 3</div>
+    <div class="card-title" style="margin-bottom:0.5rem">Corrélation ≠ Causalité</div>
+    <p>Corrélation fallacieuse : deux variables peuvent avoir r ≈ 0,99 sans aucun lien causal, juste parce qu'elles partagent une <strong>tendance commune</strong> (temporelle, géographique…).</p>
+    <p style="margin-top:0.5rem; color:var(--muted); font-size:13px"><em>Exemple classique : consommation de margarine et taux de divorce dans le Maine (2000–2009) → r ≈ 0,99. Coïncidence temporelle.</em></p>
+  </div>
+
+  <div class="card" style="margin-bottom:1rem">
+    <div class="piege-pill">⚠ Piège 4</div>
+    <div class="card-title" style="margin-bottom:0.5rem">Discrétisation = perte d'info</div>
+    <p>La moyenne calculée avec les centres de classes peut être <strong>très différente</strong> de la vraie moyenne sur données brutes.</p>
+    <div class="formula" style="margin-top:0.75rem">Vraie moyenne : 10,36 → Après discrétisation : 9,06</div>
+    <p style="margin-top:0.5rem">N'utiliser les données groupées que si les données brutes ne sont pas disponibles.</p>
+  </div>
+
+  <div class="card" style="margin-bottom:1rem">
+    <div class="piege-pill">⚠ Piège 5</div>
+    <div class="card-title" style="margin-bottom:0.5rem">Paradoxe de Simpson</div>
+    <p>Une tendance observée dans <strong>chaque sous-groupe</strong> peut s'inverser quand on agrège les données. Cause : une <strong>variable de confusion</strong> crée un biais.</p>
+    <div class="info" style="margin-top:0.75rem">
+      <span class="callout-icon">📌</span>
+      <div class="callout-body">Ex : les garçons réussissent mieux que les filles dans chaque lycée séparément, mais globalement les filles semblent mieux réussir — car elles sont plus nombreuses dans le lycée plus facile.</div>
+    </div>
+    <p style="margin-top:0.5rem">→ Toujours chercher les variables de confusion avant de conclure !</p>
+  </div>
+
+  <div class="card" style="margin-bottom:1rem">
+    <div class="piege-pill">⚠ Piège 6</div>
+    <div class="card-title" style="margin-bottom:0.5rem">Convention du boxplot</div>
+    <p>Deux conventions existent. Avant d'interpréter un boxplot, identifier laquelle est utilisée :</p>
+    <div class="row" style="margin-top:0.75rem">
+      <div class="flex-1 card" style="margin:0; border-color:var(--accent3)">
+        <div class="mc-label">Tukey (standard)</div>
+        <p style="font-size:13px">Moustaches jusqu'à Q1−1,5×EIQ et Q3+1,5×EIQ<br>Points isolés = outliers</p>
+      </div>
+      <div class="flex-1 card" style="margin:0; border-color:var(--accent4)">
+        <div class="mc-label">Min-Max (Excel)</div>
+        <p style="font-size:13px">Moustaches jusqu'aux vraies min/max<br>Pas de points isolés</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!-- BOTTOM NAV                                       -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="bottom-nav">
+  <button class="bn-item active" id="bn-home" onclick="showPage('home')">
+    <span class="bn-icon">🏠</span>Accueil
+  </button>
+  <button class="bn-item" id="bn-cours" onclick="showPage('cours')">
+    <span class="bn-icon">📐</span>Cours
+  </button>
+  <button class="bn-item" id="bn-formules" onclick="showPage('formules')">
+    <span class="bn-icon">🧮</span>Formules
+  </button>
+  <button class="bn-item" id="bn-quiz" onclick="showPage('quiz')">
+    <span class="bn-icon">🎯</span>Quiz
+  </button>
+  <button class="bn-item" id="bn-pieges" onclick="showPage('pieges')">
+    <span class="bn-icon">⚠️</span>Pièges
+  </button>
+</div>
+
+<script>
+// ─── QUIZ DATA ──────────────────────────────────────
+const questions = [
+  {
+    q: "Un code postal (ex: 51100) est une variable de quel type ?",
+    opts: ["Quantitative discrète", "Qualitative nominale", "Qualitative ordinale", "Quantitative continue"],
+    ans: 1,
+    exp: "Bien que composé de chiffres, effectuer 51100 − 08200 n'a aucun sens géographique. → Qualitatif nominal."
+  },
+  {
+    q: "La satisfaction notée de 1 à 5 est une variable :",
+    opts: ["Quantitative continue", "Qualitative nominale", "Qualitative ordinale", "Quantitative discrète"],
+    ans: 2,
+    exp: "Il y a un ordre naturel (5 > 4 > … > 1) mais l'écart entre 1 et 2 n'est pas nécessairement identique à celui entre 4 et 5. → Qualitatif ordinal."
+  },
+  {
+    q: "r = 0 signifie obligatoirement :",
+    opts: ["Il n'y a aucun lien entre X et Y", "Il n'y a pas de lien linéaire entre X et Y", "Les variables sont indépendantes", "Le lien est négatif"],
+    ans: 1,
+    exp: "r = 0 exclut seulement le lien linéaire. Un lien quadratique (parabole symétrique) peut donner r = 0 avec un lien parfait !"
+  },
+  {
+    q: "On a Y = 3X + 10. Si σ_X = 4, alors σ_Y = ?",
+    opts: ["22", "12", "4", "10"],
+    ans: 1,
+    exp: "Transformation linéaire : σ_Y = |a| × σ_X = |3| × 4 = 12. La translation +10 ne change pas la dispersion."
+  },
+  {
+    q: "Pour comparer des variables d'unités différentes ou préparer des données pour le ML, on utilise :",
+    opts: ["La discrétisation", "La transformation en rangs", "Le centrage-réduction", "Le logarithme"],
+    ans: 2,
+    exp: "Le centrage-réduction (z = (x−x̄)/σ) donne une variable de moyenne 0 et d'écart-type 1, sans unité."
+  },
+  {
+    q: "La médiane est à utiliser plutôt que la moyenne quand :",
+    opts: ["La distribution est parfaitement symétrique", "Il y a des valeurs aberrantes ou une forte asymétrie", "La variable est qualitative nominale", "Toutes les valeurs sont identiques"],
+    ans: 1,
+    exp: "La moyenne est sensible aux extrêmes. La médiane est robuste et représente mieux la majorité quand des outliers existent."
+  },
+  {
+    q: "Quelle est la formule de l'écart interquartile (EIQ) ?",
+    opts: ["max − min", "σ / x̄", "Q3 − Q1", "Q3 − Q2"],
+    ans: 2,
+    exp: "EIQ = Q3 − Q1. Il représente l'étendue de la moitié centrale des données."
+  },
+  {
+    q: "Dans un histogramme, les barres sont :",
+    opts: ["Espacées (comme un barplot)", "Collées", "Triées par hauteur décroissante", "Optionnellement espacées ou collées"],
+    ans: 1,
+    exp: "L'histogramme est pour variables continues : les barres sont collées car il n'y a pas de vide entre les classes. Barres espacées = barplot (qualitatif)."
+  },
+  {
+    q: "Le coefficient de Spearman (ρ) est préférable à Pearson (r) quand :",
+    opts: ["La relation est parfaitement linéaire", "Les données suivent une loi normale", "Des valeurs aberrantes existent ou le lien est monotone non-linéaire", "Les variables sont qualitatives"],
+    ans: 2,
+    exp: "Spearman travaille sur les rangs, donc robuste aux outliers. Il capte aussi les liens monotones non-linéaires (exponentielle, puissance…)."
+  },
+  {
+    q: "Pour étudier un lien entre une variable qualitative et une variable quantitative, on utilise :",
+    opts: ["V de Cramer + χ²", "Coefficient de Pearson", "Sous-distributions + boîtes à moustaches", "Nuage de points"],
+    ans: 2,
+    exp: "On découpe les individus selon les modalités de la variable qualitative et on compare la distribution de la quantitative dans chaque groupe."
+  },
+  {
+    q: "La fréquence cumulée F(m) est définie seulement pour :",
+    opts: ["Variables qualitatives nominales uniquement", "Variables ordinales ou quantitatives (ordre naturel)", "Toutes les variables sans exception", "Variables quantitatives continues uniquement"],
+    ans: 1,
+    exp: "F(m) = Σ f(m') pour m' ≤ m nécessite un ordre entre les modalités. Pour une variable nominale, il n'y a pas d'ordre, donc F(m) n'a pas de sens."
+  },
+  {
+    q: "On observe r(margarine, divorces) ≈ 0,99 sur 10 ans. Cela signifie :",
+    opts: ["Manger de la margarine cause les divorces", "Il y a un lien causal fort", "C'est probablement une corrélation fallacieuse (tendance temporelle commune)", "Pearson a été mal calculé"],
+    ans: 2,
+    exp: "Corrélation ≠ causalité. Les deux variables partagent une tendance décroissante commune sur la période — aucun lien causal. Exemple classique de corrélation fallacieuse."
+  },
+  {
+    q: "Si r est faible mais ρ (Spearman) est fort, on conclut :",
+    opts: ["Erreur de calcul", "Il y a un lien monotone non-linéaire (ex: exponentiel)", "Il n'y a pas de lien", "Les variables sont qualitatives"],
+    ans: 1,
+    exp: "r capte seulement le lien linéaire. ρ fort + r faible → le lien existe mais il est monotone non-linéaire (courbe croissante ou décroissante, mais pas une droite)."
+  },
+  {
+    q: "Dans la formule de Spearman, dᵢ représente :",
+    opts: ["La différence entre xᵢ et yᵢ", "La différence entre les rangs de xᵢ et yᵢ", "L'écart-type de la variable i", "La distance de Mahalanobis"],
+    ans: 1,
+    exp: "dᵢ = rang(xᵢ) − rang(yᵢ). On calcule la différence de rangs pour chaque individu, puis on les élève au carré."
+  },
+  {
+    q: "Le paradoxe de Simpson dit que :",
+    opts: [
+      "La médiane est toujours meilleure que la moyenne",
+      "Une tendance dans chaque sous-groupe peut s'inverser à l'agrégation à cause d'une variable de confusion",
+      "r et ρ donnent toujours le même résultat",
+      "Le V de Cramer est toujours supérieur à 0,5"
+    ],
+    ans: 1,
+    exp: "La variable de confusion (ex : le lycée fréquenté) modifie la composition des groupes et peut inverser la tendance globale. Ne jamais conclure sans chercher les variables de confusion !"
+  }
+];
+
+let answered = new Array(questions.length).fill(null);
+
+function buildQuiz() {
+  const container = document.getElementById('quizContainer');
+  container.innerHTML = '';
+  questions.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-card';
+    div.id = 'qcard-'+i;
+    const optsHtml = q.opts.map((o, j) => `
+      <button class="quiz-opt" id="opt-${i}-${j}" onclick="answer(${i},${j})">
+        <span class="opt-letter">${String.fromCharCode(65+j)}</span>
+        ${o}
+      </button>`).join('');
+    div.innerHTML = `
+      <div class="quiz-q"><span class="qnum">Q${i+1}</span>${q.q}</div>
+      <div class="quiz-opts">${optsHtml}</div>
+      <div class="quiz-feedback" id="fb-${i}"></div>`;
+    container.appendChild(div);
+  });
+}
+
+function answer(qi, oi) {
+  if (answered[qi] !== null) return;
+  answered[qi] = oi;
+  const q = questions[qi];
+  const opts = document.querySelectorAll(`#qcard-${qi} .quiz-opt`);
+  opts.forEach((btn, j) => {
+    btn.disabled = true;
+    if (j === q.ans) { btn.classList.add('correct'); }
+    else if (j === oi && oi !== q.ans) { btn.classList.add('wrong'); }
+  });
+  const fb = document.getElementById('fb-'+qi);
+  fb.className = 'quiz-feedback show ' + (oi === q.ans ? 'ok' : 'ko');
+  fb.innerHTML = (oi === q.ans ? '✓ Correct ! ' : '✗ Incorrect. ') + q.exp;
+  updateProgress();
+}
+
+function updateProgress() {
+  const done = answered.filter(a => a !== null).length;
+  const pct = (done / questions.length) * 100;
+  document.getElementById('quizProgress').style.width = pct + '%';
+  document.getElementById('quizLabel').textContent = done + ' / ' + questions.length + ' répondues';
+  if (done === questions.length) showScore();
+}
+
+function showScore() {
+  const correct = answered.filter((a, i) => a === questions[i].ans).length;
+  const n = questions.length;
+  const sd = document.getElementById('scoreDisplay');
+  sd.classList.add('show');
+  document.getElementById('scoreNum').textContent = correct + '/' + n;
+  const pct = correct/n;
+  let msg = pct >= 0.9 ? '🔥 Excellent ! Tu maîtrises le sujet.' :
+            pct >= 0.7 ? '👍 Bien ! Relis les points incorrects.' :
+            pct >= 0.5 ? '😅 Passable — révise les formules clés.' :
+                         '📚 Retour aux cours recommandé !';
+  document.getElementById('scoreMsg').textContent = msg;
+}
+
+function resetQuiz() {
+  answered = new Array(questions.length).fill(null);
+  document.getElementById('scoreDisplay').classList.remove('show');
+  document.getElementById('quizProgress').style.width = '0%';
+  document.getElementById('quizLabel').textContent = '0 / ' + questions.length + ' répondues';
+  buildQuiz();
+  window.scrollTo(0,0);
+}
+
+// ─── NAVIGATION ─────────────────────────────────────
+const pages = ['home','cours','formules','quiz','pieges'];
+
+function showPage(id) {
+  pages.forEach(p => {
+    document.getElementById('page-'+p).classList.toggle('active', p === id);
+    const btn = document.getElementById('bn-'+p);
+    if (btn) btn.classList.toggle('active', p === id);
+  });
+  // nav dots (only for main pages)
+  const dotMap = ['home','cours','formules','quiz'];
+  document.querySelectorAll('.nav-dot').forEach((d, i) => {
+    d.classList.remove('active','done');
+    if (dotMap[i] === id) d.classList.add('active');
+  });
+  window.scrollTo(0, 0);
+}
+
+// ─── ACCORDION ──────────────────────────────────────
+function toggleAccord(id) {
+  const head = document.querySelector('#'+id+' .accord-head');
+  const body = document.querySelector('#'+id+' .accord-body');
+  head.classList.toggle('open');
+  body.classList.toggle('open');
+}
+
+// ─── SCROLL ANIMATIONS ──────────────────────────────
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.08 });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// ─── INIT ────────────────────────────────────────────
+buildQuiz();
+</script>
+</body>
+</html>
