@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Révision — Programmation Web PHP</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1e2530;
+    --border: #30363d;
+    --php-purple: #8b5cf6;
+    --php-purple-dim: #3b1d6e;
+    --accent: #a78bfa;
+    --accent2: #60a5fa;
+    --accent3: #34d399;
+    --accent4: #f59e0b;
+    --accent5: #f87171;
+    --text: #e2e8f0;
+    --text-muted: #8b949e;
+    --code-bg: #0d1117;
+    --code-border: #30363d;
+    --tag-ok: #1a3a2a;
+    --tag-ok-t: #34d399;
+    --tag-warn: #3a2a0a;
+    --tag-warn-t: #f59e0b;
+    --tag-danger: #3a1010;
+    --tag-danger-t: #f87171;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(135deg, #0d0218 0%, #1a0533 50%, #0d1117 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 2.5rem 2rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 300px;
+    background: radial-gradient(ellipse, rgba(139,92,246,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--php-purple);
+    margin-bottom: 0.5rem;
+  }
+  header h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, #a78bfa, #60a5fa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+    margin-bottom: 0.6rem;
+  }
+  header p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  /* NAV */
+  nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 1.5rem;
+    display: flex;
+    gap: 0.25rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    padding: 0.85rem 0.9rem;
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    font-family: inherit;
+  }
+  .nav-btn:hover { color: var(--text); }
+  .nav-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* MAIN LAYOUT */
+  main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+
+  /* SECTIONS */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* MODULE CARD */
+  .module-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .module-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem 1.4rem;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s;
+    text-align: left;
+  }
+  .module-card:hover { border-color: var(--php-purple); transform: translateY(-2px); }
+  .module-card .mc-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+  .module-card .mc-title { font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 0.25rem; }
+  .module-card .mc-sub { font-size: 0.78rem; color: var(--text-muted); }
+
+  /* CONTENT BLOCKS */
+  .content-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .content-section h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .content-section h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--accent2);
+    margin: 1rem 0 0.5rem;
+  }
+  .content-section p, .content-section li {
+    font-size: 0.875rem;
+    color: var(--text);
+    line-height: 1.65;
+  }
+  .content-section ul { padding-left: 1.2rem; margin: 0.4rem 0; }
+  .content-section li { margin-bottom: 0.2rem; }
+
+  /* CODE BLOCKS */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    font-family: 'Consolas', 'Fira Code', monospace;
+    font-size: 0.8rem;
+    line-height: 1.55;
+    margin: 0.6rem 0;
+    color: #c9d1d9;
+  }
+  .kw { color: #ff7b72; }
+  .fn { color: #d2a8ff; }
+  .str { color: #a5d6ff; }
+  .cm { color: #8b949e; font-style: italic; }
+  .var { color: #ffa657; }
+  .cls { color: #f8d9a0; }
+  .num { color: #79c0ff; }
+
+  /* TAGS */
+  .tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    margin-right: 0.3rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .tag-ok { background: var(--tag-ok); color: var(--tag-ok-t); }
+  .tag-warn { background: var(--tag-warn); color: var(--tag-warn-t); }
+  .tag-danger { background: var(--tag-danger); color: var(--tag-danger-t); }
+
+  /* INFO BOX */
+  .info-box {
+    background: rgba(96,165,250,0.08);
+    border-left: 3px solid var(--accent2);
+    padding: 0.75rem 1rem;
+    border-radius: 0 6px 6px 0;
+    margin: 0.75rem 0;
+    font-size: 0.85rem;
+  }
+  .warn-box {
+    background: rgba(245,158,11,0.08);
+    border-left: 3px solid var(--accent4);
+    padding: 0.75rem 1rem;
+    border-radius: 0 6px 6px 0;
+    margin: 0.75rem 0;
+    font-size: 0.85rem;
+  }
+
+  /* TABLE */
+  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin: 0.6rem 0; }
+  th { background: var(--surface2); color: var(--text-muted); text-align: left; padding: 0.5rem 0.75rem; font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  td { padding: 0.5rem 0.75rem; border-top: 1px solid var(--border); vertical-align: top; }
+  tr:hover td { background: var(--surface2); }
+  td code, th code { font-family: monospace; font-size: 0.82em; color: var(--accent); }
+
+  /* QUIZ */
+  .quiz-container { margin-top: 0.5rem; }
+  .quiz-q {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  .quiz-question { font-size: 0.88rem; font-weight: 600; margin-bottom: 0.7rem; }
+  .quiz-options { display: flex; flex-direction: column; gap: 0.4rem; }
+  .quiz-opt {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.55rem 0.9rem;
+    font-size: 0.83rem;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    text-align: left;
+    font-family: inherit;
+    color: var(--text);
+  }
+  .quiz-opt:hover:not([disabled]) { border-color: var(--php-purple); background: var(--php-purple-dim); }
+  .quiz-opt.correct { border-color: var(--accent3); background: rgba(52,211,153,0.1); }
+  .quiz-opt.wrong { border-color: var(--accent5); background: rgba(248,113,113,0.1); }
+  .quiz-feedback { font-size: 0.78rem; margin-top: 0.5rem; color: var(--text-muted); display: none; }
+  .quiz-feedback.show { display: block; }
+  .quiz-score {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+    display: none;
+  }
+
+  /* FLASHCARD */
+  .flash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0.8rem; }
+  .flashcard {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    cursor: pointer;
+    min-height: 90px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: border-color 0.2s;
+  }
+  .flashcard:hover { border-color: var(--php-purple); }
+  .flashcard .fc-q { font-size: 0.82rem; font-weight: 600; color: var(--text); }
+  .flashcard .fc-a { font-size: 0.8rem; color: var(--accent3); margin-top: 0.5rem; display: none; }
+  .flashcard.flipped .fc-a { display: block; }
+  .flashcard .fc-hint { font-size: 0.7rem; color: var(--text-muted); margin-top: 0.4rem; }
+  .flashcard.flipped .fc-hint { display: none; }
+
+  /* SECTION TITLE */
+  .sec-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+  }
+  .sec-desc { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+
+  /* DIVIDER */
+  hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    header h1 { font-size: 1.6rem; }
+    .module-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-eyebrow">IUT Reims · Programmation Web 2025-2026</div>
+  <h1>PHP &amp; Web — Révision</h1>
+  <p>HTTP · PHP · Objet · PDO · Singleton · GD · phpMyAdmin</p>
+</header>
+
+<nav id="mainNav">
+  <button class="nav-btn active" onclick="showSection('accueil')">🏠 Accueil</button>
+  <button class="nav-btn" onclick="showSection('http')">🌐 HTTP</button>
+  <button class="nav-btn" onclick="showSection('php-bases')">🐘 PHP bases</button>
+  <button class="nav-btn" onclick="showSection('php-objet')">📦 PHP Objet</button>
+  <button class="nav-btn" onclick="showSection('namespace')">🗂️ Namespace</button>
+  <button class="nav-btn" onclick="showSection('pdo')">🗄️ PDO</button>
+  <button class="nav-btn" onclick="showSection('singleton')">🔒 Singleton</button>
+  <button class="nav-btn" onclick="showSection('gd')">🖼️ GD</button>
+  <button class="nav-btn" onclick="showSection('phpmyadmin')">🛠️ phpMyAdmin</button>
+  <button class="nav-btn" onclick="showSection('quiz')">🧠 Quiz</button>
+  <button class="nav-btn" onclick="showSection('flash')">⚡ Flashcards</button>
+</nav>
+
+<main>
+
+<!-- ==================== ACCUEIL ==================== -->
+<div id="accueil" class="section active">
+  <div class="sec-title">Bienvenue</div>
+  <div class="sec-desc">Clique sur un module pour accéder au contenu, ou utilise le quiz et les flashcards pour te tester.</div>
+  <div class="module-grid">
+    <div class="module-card" onclick="showSection('http')">
+      <div class="mc-icon">🌐</div>
+      <div class="mc-title">HTTP, Cookies, Sessions</div>
+      <div class="mc-sub">Protocole, méthodes, codes, cookies, sessions PHP</div>
+    </div>
+    <div class="module-card" onclick="showSection('php-bases')">
+      <div class="mc-icon">🐘</div>
+      <div class="mc-title">PHP — Bases</div>
+      <div class="mc-sub">Fonctionnement serveur, versions, syntaxe, extensions</div>
+    </div>
+    <div class="module-card" onclick="showSection('php-objet')">
+      <div class="mc-icon">📦</div>
+      <div class="mc-title">PHP Orienté Objet</div>
+      <div class="mc-sub">Classes, encapsulation, héritage, traits, exceptions</div>
+    </div>
+    <div class="module-card" onclick="showSection('namespace')">
+      <div class="mc-icon">🗂️</div>
+      <div class="mc-title">Autoload &amp; Namespace</div>
+      <div class="mc-sub">spl_autoload_register, espaces de noms, Composer</div>
+    </div>
+    <div class="module-card" onclick="showSection('pdo')">
+      <div class="mc-icon">🗄️</div>
+      <div class="mc-title">PDO</div>
+      <div class="mc-sub">Connexion, requêtes préparées, fetch modes, erreurs</div>
+    </div>
+    <div class="module-card" onclick="showSection('singleton')">
+      <div class="mc-icon">🔒</div>
+      <div class="mc-title">Singleton MyPDO</div>
+      <div class="mc-sub">Pattern Singleton, connexion unique, getInstance()</div>
+    </div>
+    <div class="module-card" onclick="showSection('gd')">
+      <div class="mc-icon">🖼️</div>
+      <div class="mc-title">Bibliothèque GD</div>
+      <div class="mc-sub">Création, manipulation, envoi d'images en PHP</div>
+    </div>
+    <div class="module-card" onclick="showSection('phpmyadmin')">
+      <div class="mc-icon">🛠️</div>
+      <div class="mc-title">phpMyAdmin</div>
+      <div class="mc-sub">Interface Web MySQL, opérations sur bases et tables</div>
+    </div>
+    <div class="module-card" onclick="showSection('quiz')">
+      <div class="mc-icon">🧠</div>
+      <div class="mc-title">Quiz interactif</div>
+      <div class="mc-sub">30 questions sur tous les modules</div>
+    </div>
+    <div class="module-card" onclick="showSection('flash')">
+      <div class="mc-icon">⚡</div>
+      <div class="mc-title">Flashcards</div>
+      <div class="mc-sub">Clique pour révéler la réponse</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== HTTP ==================== -->
+<div id="http" class="section">
+  <div class="sec-title">HTTP, Cookies &amp; Sessions</div>
+  <div class="sec-desc">Protocole du Web — échanges client/serveur, gestion d'état.</div>
+
+  <div class="content-section">
+    <h2>🌐 Protocole HTTP</h2>
+    <p>HTTP (<em>HyperText Transfer Protocol</em>) est un protocole d'échange orienté lignes de caractères entre un client (navigateur) et un serveur Web. Il est <strong>sans état</strong> : le serveur oublie le client après chaque transaction.</p>
+    <h3>Versions</h3>
+    <table>
+      <tr><th>Version</th><th>Caractéristiques</th></tr>
+      <tr><td>HTTP/1.0</td><td>1 transaction = 1 ressource. Connexion fermée après chaque échange.</td></tr>
+      <tr><td>HTTP/1.1</td><td>Connexion persistante, cache standardisé, header <code>Host:</code> obligatoire, 1 IP = N serveurs virtuels.</td></tr>
+    </table>
+    <h3>Structure d'un message</h3>
+    <pre><span class="cm">// Requête ou état (1 ligne)</span>
+<span class="cm">// En-têtes : valeur</span>
+<span class="cm">// Ligne vide (fin des en-têtes)</span>
+<span class="cm">// Corps (optionnel)</span></pre>
+    <h3>Méthodes HTTP</h3>
+    <table>
+      <tr><th>Méthode</th><th>Usage</th></tr>
+      <tr><td><code>GET</code></td><td>Demande la ressource + ses infos</td></tr>
+      <tr><td><code>POST</code></td><td>Envoie des données (formulaire) + demande la ressource</td></tr>
+      <tr><td><code>HEAD</code></td><td>Infos sur la ressource uniquement (sans corps)</td></tr>
+      <tr><td><code>PUT/PATCH/DELETE</code></td><td>API Web (REST)</td></tr>
+    </table>
+    <h3>Codes de réponse</h3>
+    <table>
+      <tr><th>Classe</th><th>Code</th><th>Signification</th></tr>
+      <tr><td>2xx</td><td>200 OK</td><td>Succès</td></tr>
+      <tr><td>3xx</td><td>304 NOT MODIFIED</td><td>Redirection / cache</td></tr>
+      <tr><td>4xx</td><td>403 FORBIDDEN, 404 NOT FOUND</td><td>Erreur client</td></tr>
+      <tr><td>5xx</td><td>500 INTERNAL ERROR</td><td>Erreur serveur</td></tr>
+    </table>
+    <h3>Formulaires</h3>
+    <table>
+      <tr><th>method</th><th>Paramètres dans</th><th>Usage</th></tr>
+      <tr><td><code>GET</code></td><td>URL (query string)</td><td>Recherche, bookmark</td></tr>
+      <tr><td><code>POST</code></td><td>Corps du message</td><td>Données sensibles, fichiers</td></tr>
+    </table>
+  </div>
+
+  <div class="content-section">
+    <h2>🍪 Cookies</h2>
+    <p>Les cookies permettent au serveur de « se souvenir » du client entre les requêtes.</p>
+    <div class="info-box">Serveur → Client via header <code>Set-Cookie: var=val; expires=…; path=…; domain=…</code><br>
+    Client → Serveur via header <code>Cookie: var=val</code></div>
+    <h3>Avantages / Inconvénients</h3>
+    <ul>
+      <li><span class="tag tag-ok">✓</span> Pas besoin de modifier les pages HTML</li>
+      <li><span class="tag tag-ok">✓</span> Durée de validité configurable</li>
+      <li><span class="tag tag-danger">✗</span> Données en clair sur le réseau</li>
+      <li><span class="tag tag-danger">✗</span> Données transmises à chaque requête</li>
+    </ul>
+    <h3>setcookie() en PHP</h3>
+    <pre><span class="fn">setcookie</span>(
+  <span class="str">'nom'</span>,          <span class="cm">// nom du cookie</span>
+  <span class="str">'valeur'</span>,       <span class="cm">// valeur</span>
+  <span class="fn">time</span>() + <span class="num">864000</span>, <span class="cm">// expiration (+10 jours)</span>
+  <span class="str">'/'</span>,            <span class="cm">// path (tout le serveur)</span>
+  <span class="str">'example.com'</span>, <span class="cm">// domaine</span>
+  <span class="kw">false</span>,          <span class="cm">// secure (HTTPS only ?)</span>
+  <span class="kw">true</span>            <span class="cm">// httponly</span>
+);</pre>
+    <h3>Lecture</h3>
+    <pre><span class="cm">// Superglobal $_COOKIE</span>
+<span class="kw">if</span> (<span class="fn">isset</span>(<span class="var">$_COOKIE</span>[<span class="str">'passage'</span>])) { ... }
+
+<span class="cm">// Supprimer un cookie</span>
+<span class="fn">setcookie</span>(<span class="str">'passage'</span>, <span class="kw">false</span>);</pre>
+    <div class="warn-box">⚠️ <code>setcookie()</code> doit être appelé <strong>avant</strong> tout <code>echo</code> — il envoie un header HTTP.</div>
+  </div>
+
+  <div class="content-section">
+    <h2>🔐 Sessions</h2>
+    <p>Les sessions stockent les données <strong>côté serveur</strong>. Seul l'identifiant de session (SHA-2 512 bits) circule côté client via cookie.</p>
+    <h3>Fonctions principales</h3>
+    <pre><span class="fn">session_start</span>();         <span class="cm">// crée ou restaure une session</span>
+<span class="var">$_SESSION</span>[<span class="str">'user'</span>] = <span class="str">'Alice'</span>; <span class="cm">// stocker une donnée</span>
+<span class="var">$id</span> = <span class="fn">session_id</span>();      <span class="cm">// lire l'identifiant de session</span>
+<span class="fn">session_unset</span>();          <span class="cm">// détruire toutes les variables</span>
+<span class="fn">session_destroy</span>();        <span class="cm">// détruire la session</span></pre>
+    <h3>session_set_cookie_params()</h3>
+    <pre><span class="fn">session_set_cookie_params</span>(
+  <span class="num">10</span>*<span class="num">24</span>*<span class="num">60</span>*<span class="num">60</span>,  <span class="cm">// lifetime (secondes)</span>
+  <span class="str">'/'</span>,           <span class="cm">// path</span>
+  <span class="str">'example.com'</span>, <span class="cm">// domain</span>
+  <span class="kw">false</span>,         <span class="cm">// secure</span>
+  <span class="kw">true</span>           <span class="cm">// httponly</span>
+);</pre>
+    <div class="info-box">💡 Différence clé : les sessions stockent tout côté serveur. Les cookies stockent les données côté client.</div>
+  </div>
+</div>
+
+<!-- ==================== PHP BASES ==================== -->
+<div id="php-bases" class="section">
+  <div class="sec-title">PHP — Bases</div>
+  <div class="sec-desc">Langage de script serveur, interprété, faiblement typé.</div>
+
+  <div class="content-section">
+    <h2>🐘 Qu'est-ce que PHP ?</h2>
+    <ul>
+      <li>Créé en <strong>1994-1995</strong> par Rasmus Lerdorf</li>
+      <li>Acronyme récursif : <strong>PHP: Hypertext Preprocessor</strong></li>
+      <li>Utilisé par ≈72% des serveurs Web (2026)</li>
+      <li>Versions actuelles : <strong>8.2, 8.3, 8.4, 8.5</strong></li>
+      <li>Cycle : 2 ans support actif + 1 an sécurité</li>
+    </ul>
+    <h3>Caractéristiques</h3>
+    <table>
+      <tr><th>Propriété</th><th>Valeur</th></tr>
+      <tr><td>Paradigme</td><td>Impératif, orienté objet possible</td></tr>
+      <tr><td>Typage</td><td>Faible (coercition automatique)</td></tr>
+      <tr><td>Exécution</td><td>Interprété côté serveur</td></tr>
+      <tr><td>Plateformes</td><td>UNIX, Windows, macOS</td></tr>
+    </table>
+  </div>
+
+  <div class="content-section">
+    <h2>⚙️ Fonctionnement en mode Web</h2>
+    <p>Le client envoie une requête HTTP → le serveur Web localise le fichier <code>.php</code> → le module PHP l'exécute → le résultat HTML est renvoyé au client.</p>
+    <pre><span class="cm">// Séquence typique :</span>
+<span class="cm">// 1. GET /hello.php HTTP/1.0</span>
+<span class="cm">// 2. Localisation de hello.php</span>
+<span class="cm">// 3. Exécution du code PHP</span>
+<span class="cm">// 4. Réponse : 200 OK + HTML généré</span>
+
+<span class="kw">&lt;?php</span>
+<span class="kw">echo</span> <span class="str">"&lt;html&gt;&lt;body&gt;Hello world&lt;/body&gt;&lt;/html&gt;"</span>;
+<span class="cm">// La page HTML est construite à la volée</span></pre>
+    <div class="info-box">Le code PHP n'est <strong>jamais</strong> envoyé au client. Seul le résultat HTML/CSS/JS l'est.</div>
+  </div>
+
+  <div class="content-section">
+    <h2>🔧 Principales fonctionnalités PHP</h2>
+    <ul>
+      <li>Manipulation de chaînes et tableaux</li>
+      <li>Calendrier / dates / heures</li>
+      <li>Fonctions mathématiques</li>
+      <li>Accès aux bases de données (MySQL, PostgreSQL, Oracle…)</li>
+      <li>Accès au système de fichiers</li>
+      <li>Manipulation d'images (GD)</li>
+      <li>HTTP / FTP / IMAP</li>
+      <li>XML, JSON</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ==================== PHP OBJET ==================== -->
+<div id="php-objet" class="section">
+  <div class="sec-title">PHP Orienté Objet</div>
+  <div class="sec-desc">Classes, instances, encapsulation, héritage, polymorphisme, traits, exceptions.</div>
+
+  <div class="content-section">
+    <h2>🧱 Concepts fondamentaux</h2>
+    <table>
+      <tr><th>Concept</th><th>Définition</th></tr>
+      <tr><td><strong>Classe</strong></td><td>Modèle / moule décrivant attributs et méthodes</td></tr>
+      <tr><td><strong>Instance</strong></td><td>Objet créé à partir d'une classe via <code>new</code></td></tr>
+      <tr><td><strong>Encapsulation</strong></td><td>Données + traitements regroupés ; implémentation cachée</td></tr>
+      <tr><td><strong>Héritage</strong></td><td>Nouvelle classe héritant d'une classe existante (<code>extends</code>)</td></tr>
+      <tr><td><strong>Polymorphisme</strong></td><td>Choix dynamique de la méthode selon le type réel de l'objet</td></tr>
+    </table>
+    <h3>Visibilité</h3>
+    <table>
+      <tr><th>Mot-clé</th><th>Accessible par</th></tr>
+      <tr><td><code>public</code></td><td>Tout le monde</td></tr>
+      <tr><td><code>protected</code></td><td>La classe + classes dérivées</td></tr>
+      <tr><td><code>private</code></td><td>Uniquement la classe elle-même</td></tr>
+    </table>
+  </div>
+
+  <div class="content-section">
+    <h2>📝 Définir et utiliser une classe</h2>
+    <pre><span class="kw">class</span> <span class="cls">MyClass</span>
+{
+    <span class="kw">private</span> <span class="kw">string</span> <span class="var">$myData</span>;
+
+    <span class="kw">public function</span> <span class="fn">__construct</span>(<span class="kw">string</span> <span class="var">$data</span>) {
+        <span class="var">$this</span>-><span class="var">myData</span> = <span class="var">$data</span>;
+    }
+
+    <span class="kw">public function</span> <span class="fn">__destruct</span>() {
+        <span class="kw">echo</span> <span class="str">'Destruction...'</span>;
+    }
+
+    <span class="kw">public function</span> <span class="fn">show</span>(): <span class="kw">void</span> {
+        <span class="kw">echo</span> <span class="str">'my data : '</span> . <span class="var">$this</span>-><span class="var">myData</span>;
+    }
+}
+
+<span class="cm">// Utilisation</span>
+<span class="var">$object</span> = <span class="kw">new</span> <span class="cls">MyClass</span>(<span class="str">'test'</span>);
+<span class="var">$object</span>-><span class="fn">show</span>(); <span class="cm">// my data : test</span></pre>
+  </div>
+
+  <div class="content-section">
+    <h2>📌 Attributs et méthodes de classe (static)</h2>
+    <ul>
+      <li>Mot-clé <code>static</code> : utilisable sans instance</li>
+      <li>Attributs <strong>partagés</strong> par toutes les instances</li>
+      <li>Dans les méthodes statiques : <code>$this</code> non disponible</li>
+      <li>Accès : <code>Classe::$attribut</code> ou <code>Classe::methode()</code></li>
+    </ul>
+    <pre><span class="kw">class</span> <span class="cls">MyClass</span> {
+    <span class="kw">private static int</span> <span class="var">$n</span> = <span class="num">0</span>;
+    <span class="kw">public function</span> <span class="fn">__construct</span>() { <span class="var">$n</span>++; }
+    <span class="kw">public static function</span> <span class="fn">getCount</span>(): <span class="kw">int</span> {
+        <span class="kw">return self</span>::<span class="var">$n</span>;
+    }
+}
+<span class="fn">echo</span> <span class="cls">MyClass</span>::<span class="fn">getCount</span>(); <span class="cm">// 0</span></pre>
+  </div>
+
+  <div class="content-section">
+    <h2>🔗 Héritage</h2>
+    <pre><span class="kw">class</span> <span class="cls">Simple</span> {
+    <span class="kw">public function</span> <span class="fn">show</span>(): <span class="kw">void</span> { <span class="kw">echo</span> <span class="str">'Je suis Simple'</span>; }
+}
+
+<span class="kw">class</span> <span class="cls">Extended</span> <span class="kw">extends</span> <span class="cls">Simple</span> {
+    <span class="kw">public function</span> <span class="fn">show</span>(): <span class="kw">void</span> {
+        <span class="kw">parent</span>::<span class="fn">show</span>(); <span class="cm">// appel méthode parent</span>
+        <span class="kw">echo</span> <span class="str">' mais aussi Extended'</span>;
+    }
+}</pre>
+    <div class="info-box">PHP ne supporte que l'<strong>héritage simple</strong> (une seule classe mère). Pour réutiliser du code de plusieurs sources → utiliser les <strong>Traits</strong>.</div>
+  </div>
+
+  <div class="content-section">
+    <h2>🎭 Traits</h2>
+    <p>Mécanisme de réutilisation de code <strong>horizontale</strong> (composition). Un trait contient des méthodes incluses dans plusieurs classes sans relation d'héritage.</p>
+    <pre><span class="kw">trait</span> <span class="cls">Loggable</span> {
+    <span class="kw">public function</span> <span class="fn">log</span>(<span class="kw">string</span> <span class="var">$msg</span>): <span class="kw">string</span> {
+        <span class="kw">return</span> <span class="fn">date</span>(<span class="str">'H:i:s'</span>) . <span class="str">' - '</span> . <span class="var">$msg</span>;
+    }
+}
+
+<span class="kw">class</span> <span class="cls">User</span> {
+    <span class="kw">use</span> <span class="cls">Loggable</span>; <span class="cm">// intègre le trait</span>
+    <span class="kw">public function</span> <span class="fn">__construct</span>(<span class="kw">public string</span> <span class="var">$name</span>) {}
+}
+
+<span class="var">$u</span> = <span class="kw">new</span> <span class="cls">User</span>(<span class="str">'Alice'</span>);
+<span class="kw">echo</span> <span class="var">$u</span>-><span class="fn">log</span>(<span class="str">'Info'</span>); <span class="cm">// 10:33:11 - Info</span></pre>
+  </div>
+
+  <div class="content-section">
+    <h2>⚠️ Exceptions</h2>
+    <table>
+      <tr><th>Mot-clé</th><th>Rôle</th></tr>
+      <tr><td><code>throw</code></td><td>Jette une exception (arrête l'exécution locale)</td></tr>
+      <tr><td><code>try { }</code></td><td>Bloc à risque</td></tr>
+      <tr><td><code>catch (Type $e) { }</code></td><td>Capture l'exception</td></tr>
+    </table>
+    <pre><span class="kw">try</span> {
+    <span class="kw">throw new</span> <span class="cls">Exception</span>(<span class="str">'Mon erreur'</span>);
+    <span class="kw">echo</span> <span class="str">'Jamais exécuté'</span>;
+}
+<span class="kw">catch</span> (<span class="cls">Exception</span> <span class="var">$e</span>) {
+    <span class="kw">echo</span> <span class="var">$e</span>-><span class="fn">getMessage</span>(); <span class="cm">// Mon erreur</span>
+}
+
+<span class="cm">// Multi-catch PHP 8</span>
+<span class="kw">catch</span> (<span class="cls">InvalidArgumentException</span> | <span class="cls">RuntimeException</span> <span class="var">$e</span>) { ... }</pre>
+    <h3>Méthodes utiles de Exception</h3>
+    <ul>
+      <li><code>getMessage()</code> — message d'erreur</li>
+      <li><code>getCode()</code> — code numérique</li>
+      <li><code>getFile()</code> — fichier source</li>
+      <li><code>getLine()</code> — ligne du fichier</li>
+      <li><code>getTrace()</code> — tableau de backtrace</li>
+    </ul>
+  </div>
+
+  <div class="content-section">
+    <h2>🔄 Assignation vs Clonage</h2>
+    <div class="warn-box">⚠️ En PHP, affecter un objet (<code>$b = $a</code>) ne le copie <strong>pas</strong> ! Les deux variables pointent vers le même objet.</div>
+    <pre><span class="cm">// Assignation → même objet</span>
+<span class="var">$segment</span>[] = <span class="var">$point</span>;        <span class="cm">// référence partagée</span>
+
+<span class="cm">// Clonage → copie indépendante</span>
+<span class="var">$segment</span>[] = <span class="kw">clone</span> <span class="var">$point</span>;  <span class="cm">// objet distinct</span></pre>
+    <h3>Passage d'objet en paramètre</h3>
+    <p>Les objets sont passés <strong>par référence</strong> implicitement : modifier l'objet dans la fonction modifie l'original.</p>
+  </div>
+</div>
+
+<!-- ==================== NAMESPACE ==================== -->
+<div id="namespace" class="section">
+  <div class="sec-title">Autoload &amp; Namespace</div>
+  <div class="sec-desc">Organisation des classes, chargement automatique, espaces de noms.</div>
+
+  <div class="content-section">
+    <h2>🔄 Auto-chargement de classes</h2>
+    <p>Déclenché quand une classe utilisée n'est pas encore définie — dernière chance d'inclure sa définition.</p>
+    <pre><span class="cm">// autoload.php</span>
+<span class="fn">spl_autoload_register</span>(
+    <span class="kw">function</span> (<span class="kw">string</span> <span class="var">$class</span>) {
+        <span class="fn">require_once</span> <span class="kw">__DIR__</span> . <span class="str">"/src/{</span><span class="var">$class</span><span class="str">}.php"</span>;
+    }
+);
+
+<span class="cm">// Dans le programme (jamais dans une classe !)</span>
+<span class="fn">require_once</span> <span class="str">'autoload.php'</span>;
+<span class="var">$p</span> = <span class="kw">new</span> <span class="cls">Point</span>(); <span class="cm">// déclenche require_once 'src/Point.php'</span></pre>
+    <div class="warn-box">⚠️ L'autoload ne doit être configuré que dans les programmes, jamais dans les classes (qui doivent rester indépendantes).</div>
+  </div>
+
+  <div class="content-section">
+    <h2>🗂️ Espaces de noms (namespace)</h2>
+    <p>Évitent les <strong>collisions de noms</strong> et regroupent classes/fonctions/constantes dans un espace logique (comme des dossiers pour les fichiers).</p>
+    <pre><span class="cm">// src/Prj/MySQL/Connection.php</span>
+<span class="kw">namespace</span> Prj\MySQL;
+<span class="kw">class</span> <span class="cls">Connection</span> { <span class="cm">/* ... */</span> }
+
+<span class="cm">// src/Prj/LDAP/Connection.php</span>
+<span class="kw">namespace</span> Prj\LDAP;
+<span class="kw">class</span> <span class="cls">Connection</span> { <span class="cm">/* ... */</span> }
+
+<span class="cm">// Utilisation avec alias</span>
+<span class="kw">use</span> Prj\MySQL\Connection <span class="kw">as</span> <span class="cls">DBConnection</span>;
+<span class="kw">use</span> Prj\LDAP\Connection <span class="kw">as</span> <span class="cls">LDAPConnection</span>;
+
+<span class="var">$mysql</span> = <span class="kw">new</span> <span class="cls">DBConnection</span>();
+<span class="var">$ldap</span>  = <span class="kw">new</span> <span class="cls">LDAPConnection</span>();</pre>
+    <div class="info-box">Convention : le chemin du fichier correspond au namespace.<br>
+    <code>Prj\MySQL\Connection</code> → <code>src/Prj/MySQL/Connection.php</code></div>
+  </div>
+
+  <div class="content-section">
+    <h2>📦 Auto-chargement avec namespace</h2>
+    <pre><span class="fn">spl_autoload_register</span>(
+  <span class="kw">function</span> (<span class="kw">string</span> <span class="var">$className</span>) {
+    <span class="cm">// Remplace \ par / pour le chemin</span>
+    <span class="var">$fileName</span> = <span class="fn">implode</span>(<span class="str">'/'</span>, <span class="fn">explode</span>(<span class="str">'\\'</span>, <span class="var">$className</span>));
+    <span class="var">$path</span> = <span class="kw">__DIR__</span> . <span class="str">'/src/'</span> . <span class="var">$fileName</span> . <span class="str">'.php'</span>;
+    <span class="kw">if</span> (<span class="fn">file_exists</span>(<span class="var">$path</span>)) {
+        <span class="fn">require_once</span> <span class="var">$path</span>;
+    }
+  }
+);</pre>
+    <h3>Composer</h3>
+    <p>Outil de gestion des dépendances. Configure l'autoload via <code>composer.json</code>. Génère <code>vendor/autoload.php</code> à inclure une seule fois.</p>
+    <pre><span class="cm">// À inclure UNE seule fois dans le programme</span>
+<span class="fn">require_once</span> <span class="str">'vendor/autoload.php'</span>;
+<span class="cm">// Toutes les classes des vendor + src sont disponibles</span></pre>
+  </div>
+</div>
+
+<!-- ==================== PDO ==================== -->
+<div id="pdo" class="section">
+  <div class="sec-title">PDO — PHP Data Objects</div>
+  <div class="sec-desc">Interface orientée objet pour accéder aux bases de données.</div>
+
+  <div class="content-section">
+    <h2>🗄️ Présentation</h2>
+    <ul>
+      <li>Extension PHP fournissant une <strong>interface d'abstraction d'accès aux données</strong></li>
+      <li>N'abstrait PAS le SQL (qui reste spécifique au moteur)</li>
+      <li>Interface <strong>orientée objet</strong></li>
+      <li>Supporte : MySQL, PostgreSQL, Oracle, SQLite, SQL Server…</li>
+    </ul>
+    <h3>3 classes principales</h3>
+    <table>
+      <tr><th>Classe</th><th>Rôle</th></tr>
+      <tr><td><code>PDO</code></td><td>Connexion à la base de données</td></tr>
+      <tr><td><code>PDOStatement</code></td><td>Requête préparée, jeu de résultats</td></tr>
+      <tr><td><code>PDOException</code></td><td>Exception spécifique (hérite de Exception)</td></tr>
+    </table>
+  </div>
+
+  <div class="content-section">
+    <h2>🔌 Connexion</h2>
+    <pre><span class="cm">// DSN : "driver:host=...;dbname=...;charset=..."</span>
+<span class="var">$dbh</span> = <span class="kw">new</span> <span class="cls">PDO</span>(
+    <span class="str">'mysql:host=localhost;dbname=ma_base;charset=utf8'</span>,
+    <span class="var">$user</span>,
+    <span class="var">$pass</span>
+);
+
+<span class="cm">// Fermeture de connexion</span>
+<span class="var">$dbh</span> = <span class="kw">null</span>;</pre>
+    <h3>Gestion des erreurs de connexion</h3>
+    <pre><span class="kw">try</span> {
+    <span class="var">$dbh</span> = <span class="kw">new</span> <span class="cls">PDO</span>(<span class="str">'mysql:host=dbs;dbname=music'</span>, <span class="var">$user</span>, <span class="var">$pass</span>);
+    <span class="var">$dbh</span>-><span class="fn">setAttribute</span>(<span class="cls">PDO</span>::<span class="var">ATTR_ERRMODE</span>, <span class="cls">PDO</span>::<span class="var">ERRMODE_EXCEPTION</span>);
+    <span class="cm">// ... requêtes ...</span>
+    <span class="var">$dbh</span> = <span class="kw">null</span>;
+} <span class="kw">catch</span> (<span class="cls">PDOException</span> <span class="var">$e</span>) {
+    <span class="kw">echo</span> <span class="str">'&lt;p&gt;Erreur de base de données'</span>;
+    <span class="fn">die</span>();
+}</pre>
+    <h3>Modes d'erreur</h3>
+    <table>
+      <tr><th>Mode</th><th>Comportement</th></tr>
+      <tr><td><code>ERRMODE_SILENT</code></td><td>Silencieux (défaut) — errorCode() / errorInfo()</td></tr>
+      <tr><td><code>ERRMODE_WARNING</code></td><td>Émet un E_WARNING</td></tr>
+      <tr><td><code>ERRMODE_EXCEPTION</code></td><td>Lance une PDOException <span class="tag tag-ok">Recommandé</span></td></tr>
+    </table>
+  </div>
+
+  <div class="content-section">
+    <h2>📋 Requêtes préparées</h2>
+    <p>Une requête préparée est <strong>analysée + compilée + optimisée une fois</strong>, puis exécutée autant de fois que nécessaire avec des paramètres différents.</p>
+    <div class="warn-box">⚠️ <code>query()</code> est à bannir en production. Utiliser toujours <code>prepare()</code>/<code>execute()</code>.</div>
+    <h3>Paramètres anonymes (?)</h3>
+    <pre><span class="var">$stmt</span> = <span class="var">$pdo</span>-><span class="fn">prepare</span>(<span class="str">'SELECT * FROM user WHERE login = ?'</span>);
+<span class="var">$stmt</span>-><span class="fn">bindValue</span>(<span class="num">1</span>, <span class="str">'root'</span>);      <span class="cm">// position 1</span>
+<span class="var">$stmt</span>-><span class="fn">execute</span>();</pre>
+    <h3>Paramètres nommés (:nom)</h3>
+    <pre><span class="var">$stmt</span> = <span class="var">$pdo</span>-><span class="fn">prepare</span>(
+    <span class="str">'SELECT * FROM user WHERE login = :login'</span>
+);
+<span class="var">$stmt</span>-><span class="fn">bindValue</span>(<span class="str">':login'</span>, <span class="str">'root'</span>);
+<span class="var">$stmt</span>-><span class="fn">execute</span>();
+
+<span class="cm">// Ou directement dans execute()</span>
+<span class="var">$stmt</span>-><span class="fn">execute</span>([<span class="str">':login'</span> => <span class="str">'root'</span>]);</pre>
+  </div>
+
+  <div class="content-section">
+    <h2>📊 Modes de récupération (fetch)</h2>
+    <table>
+      <tr><th>Constante</th><th>Retourne</th><th>Accès</th></tr>
+      <tr><td><code>FETCH_ASSOC</code></td><td>Tableau associatif</td><td><code>$row['nom_colonne']</code></td></tr>
+      <tr><td><code>FETCH_NUM</code></td><td>Tableau indexé</td><td><code>$row[0]</code></td></tr>
+      <tr><td><code>FETCH_BOTH</code></td><td>Les deux (défaut)</td><td>Les deux</td></tr>
+      <tr><td><code>FETCH_OBJ</code></td><td>Objet anonyme</td><td><code>$row->nom_colonne</code></td></tr>
+      <tr><td><code>FETCH_CLASS</code></td><td>Instance d'une classe</td><td><code>$row->attribut</code></td></tr>
+    </table>
+    <h3>Parcourir les résultats</h3>
+    <pre><span class="cm">// Méthode 1 : foreach direct (itérable)</span>
+<span class="kw">foreach</span> (<span class="var">$stmt</span> <span class="kw">as</span> <span class="var">$row</span>) { <span class="kw">echo</span> <span class="var">$row</span>[<span class="str">'name'</span>]; }
+
+<span class="cm">// Méthode 2 : fetchAll (tableau complet)</span>
+<span class="kw">foreach</span> (<span class="var">$stmt</span>-><span class="fn">fetchAll</span>(<span class="cls">PDO</span>::<span class="var">FETCH_ASSOC</span>) <span class="kw">as</span> <span class="var">$row</span>) { ... }
+
+<span class="cm">// Méthode 3 : while + fetch</span>
+<span class="kw">while</span> ((<span class="var">$row</span> = <span class="var">$stmt</span>-><span class="fn">fetch</span>(<span class="cls">PDO</span>::<span class="var">FETCH_ASSOC</span>)) !== <span class="kw">false</span>) {
+    <span class="kw">echo</span> <span class="var">$row</span>[<span class="str">'name'</span>];
+}</pre>
+    <h3>FETCH_CLASS — instanciation automatique</h3>
+    <pre><span class="var">$stmt</span> = <span class="var">$pdo</span>-><span class="fn">query</span>(<span class="str">'SELECT id, name FROM artist WHERE id = 12'</span>);
+<span class="var">$stmt</span>-><span class="fn">setFetchMode</span>(<span class="cls">PDO</span>::<span class="var">FETCH_CLASS</span>, <span class="cls">Artist</span>::<span class="kw">class</span>);
+<span class="var">$artist</span> = <span class="var">$stmt</span>-><span class="fn">fetch</span>(); <span class="cm">// objet Artist avec $id, $name</span>
+
+<span class="cm">// Ou avec fetchObject()</span>
+<span class="var">$artist</span> = <span class="var">$stmt</span>-><span class="fn">fetchObject</span>(<span class="cls">Artist</span>::<span class="kw">class</span>);</pre>
+  </div>
+</div>
+
+<!-- ==================== SINGLETON ==================== -->
+<div id="singleton" class="section">
+  <div class="sec-title">Pattern Singleton — MyPDO</div>
+  <div class="sec-desc">Connexion unique à la base de données via le pattern Singleton.</div>
+
+  <div class="content-section">
+    <h2>🔒 Problème</h2>
+    <p>Dans un site orienté objet, plusieurs méthodes peuvent avoir besoin d'accéder à la base. Quand se connecter ? Se déconnecter ? Comment éviter les connexions multiples ?</p>
+    <h2>💡 Solution : Singleton</h2>
+    <ul>
+      <li>Objet à <strong>instance unique</strong></li>
+      <li>1 attribut <code>static</code> qui stocke l'instance</li>
+      <li>1 méthode <code>static getInstance()</code> qui la retourne (et la crée si nécessaire)</li>
+      <li>Constructeur <code>private</code> (interdit la construction directe)</li>
+      <li><code>__clone()</code> désactivé</li>
+    </ul>
+  </div>
+
+  <div class="content-section">
+    <h2>🏗️ MyPDO extends PDO</h2>
+    <pre><span class="kw">final class</span> <span class="cls">MyPdo</span> <span class="kw">extends</span> <span class="cls">PDO</span> {
+    <span class="kw">private static self</span> <span class="var">$myPdoInstance</span>; <span class="cm">// instance unique</span>
+    <span class="kw">private static string</span> <span class="var">$dsn</span>;
+    <span class="kw">private static string</span> <span class="var">$username</span> = <span class="str">''</span>;
+    <span class="kw">private static string</span> <span class="var">$password</span> = <span class="str">''</span>;
+    <span class="kw">private static array</span> <span class="var">$options</span> = [
+        <span class="cls">PDO</span>::<span class="var">ATTR_ERRMODE</span> => <span class="cls">PDO</span>::<span class="var">ERRMODE_EXCEPTION</span>,
+        <span class="cls">PDO</span>::<span class="var">ATTR_DEFAULT_FETCH_MODE</span> => <span class="cls">PDO</span>::<span class="var">FETCH_ASSOC</span>,
+    ];
+
+    <span class="kw">private function</span> <span class="fn">__construct</span>(<span class="kw">string</span> <span class="var">$dsn</span>, ...) {
+        <span class="kw">parent</span>::<span class="fn">__construct</span>(<span class="var">$dsn</span>, ...);
+    }
+
+    <span class="kw">public static function</span> <span class="fn">getInstance</span>(): <span class="kw">self</span> {
+        <span class="kw">if</span> (!<span class="fn">isset</span>(<span class="kw">self</span>::<span class="var">$myPdoInstance</span>)) {
+            <span class="kw">self</span>::<span class="var">$myPdoInstance</span> = <span class="kw">new self</span>(<span class="kw">self</span>::<span class="var">$dsn</span>, ...);
+        }
+        <span class="kw">return self</span>::<span class="var">$myPdoInstance</span>;
+    }
+
+    <span class="kw">public static function</span> <span class="fn">setConfiguration</span>(
+        <span class="kw">string</span> <span class="var">$dsn</span>, <span class="kw">string</span> <span class="var">$username</span>=<span class="str">''</span>, <span class="kw">string</span> <span class="var">$password</span>=<span class="str">''</span>
+    ): <span class="kw">void</span> {
+        <span class="kw">self</span>::<span class="var">$dsn</span>      = <span class="var">$dsn</span>;
+        <span class="kw">self</span>::<span class="var">$username</span> = <span class="var">$username</span>;
+        <span class="kw">self</span>::<span class="var">$password</span> = <span class="var">$password</span>;
+    }
+}</pre>
+  </div>
+
+  <div class="content-section">
+    <h2>🚀 Utilisation</h2>
+    <pre><span class="cm">// Configuration (une seule fois, fichier .ini conseillé)</span>
+<span class="cls">MyPDO</span>::<span class="fn">setConfiguration</span>(
+    <span class="str">'mysql:host=mysql;dbname=ma_base;charset=utf8'</span>,
+    <span class="str">'user'</span>, <span class="str">'pass'</span>
+);
+
+<span class="cm">// Utilisation : getInstance() crée la connexion si besoin</span>
+<span class="var">$stmt</span> = <span class="cls">MyPDO</span>::<span class="fn">getInstance</span>()-><span class="fn">prepare</span>(<span class="str"><<<SQL
+    SELECT id, name FROM artist ORDER BY name
+SQL</span>);
+<span class="var">$stmt</span>-><span class="fn">execute</span>();
+
+<span class="kw">while</span> ((<span class="var">$row</span> = <span class="var">$stmt</span>-><span class="fn">fetch</span>()) !== <span class="kw">false</span>) {
+    <span class="kw">echo</span> <span class="str">"&lt;p&gt;{$row['name']}"</span>;
+}
+<span class="cm">// Déconnexion automatique à la fin du script</span></pre>
+    <h3>Durée de vie</h3>
+    <table>
+      <tr><th>Événement</th><th>Moment</th></tr>
+      <tr><td>Connexion (construction PDO)</td><td>Premier appel à <code>getInstance()</code></td></tr>
+      <tr><td>Déconnexion (destruction PDO)</td><td>Fin du script PHP</td></tr>
+    </table>
+    <div class="info-box">La configuration peut être externalisée dans un fichier <code>.mypdo.ini</code> pour séparer identifiants et code.</div>
+  </div>
+</div>
+
+<!-- ==================== GD ==================== -->
+<div id="gd" class="section">
+  <div class="sec-title">Bibliothèque GD — Images en PHP</div>
+  <div class="sec-desc">Créer, manipuler et envoyer des images (GIF, JPEG, PNG) en PHP.</div>
+
+  <div class="content-section">
+    <h2>🖼️ Algorithme général</h2>
+    <pre><span class="kw">&lt;?php</span>
+<span class="cm">// 1. Créer l'image</span>
+<span class="var">$im</span> = <span class="fn">imageCreateTrueColor</span>(<span class="num">100</span>, <span class="num">100</span>);
+
+<span class="cm">// 2. Allouer des couleurs</span>
+<span class="var">$red</span> = <span class="fn">imageColorAllocate</span>(<span class="var">$im</span>, <span class="num">255</span>, <span class="num">0</span>, <span class="num">0</span>);
+
+<span class="cm">// 3. Dessiner</span>
+<span class="fn">imageFilledRectangle</span>(<span class="var">$im</span>, <span class="num">0</span>, <span class="num">0</span>, <span class="num">99</span>, <span class="num">99</span>, <span class="var">$red</span>);
+
+<span class="cm">// 4. Envoyer au navigateur</span>
+<span class="fn">header</span>(<span class="str">'Content-Type: image/png'</span>);
+<span class="fn">imagePNG</span>(<span class="var">$im</span>);
+
+<span class="cm">// 5. Libérer la mémoire</span>
+<span class="fn">imageDestroy</span>(<span class="var">$im</span>);</pre>
+  </div>
+
+  <div class="content-section">
+    <h2>🔧 Fonctions principales</h2>
+    <h3>Créer une image vide</h3>
+    <table>
+      <tr><th>Fonction</th><th>Type d'image</th></tr>
+      <tr><td><code>imageCreate($w, $h)</code></td><td>Couleurs indexées (palette)</td></tr>
+      <tr><td><code>imageCreateTrueColor($w, $h)</code></td><td>Couleurs réelles (24 bits) <span class="tag tag-ok">Recommandé</span></td></tr>
+      <tr><td><code>imageDestroy($im)</code></td><td>Libère la mémoire</td></tr>
+    </table>
+    <h3>Créer depuis un fichier</h3>
+    <table>
+      <tr><th>Fonction</th><th>Format</th></tr>
+      <tr><td><code>imageCreateFromGIF($nom)</code></td><td>GIF</td></tr>
+      <tr><td><code>imageCreateFromJPEG($nom)</code></td><td>JPEG</td></tr>
+      <tr><td><code>imageCreateFromPNG($nom)</code></td><td>PNG</td></tr>
+    </table>
+    <h3>Produire l'image</h3>
+    <pre><span class="cm">// Vers un fichier</span>
+<span class="fn">imagePNG</span>(<span class="var">$im</span>, <span class="str">'output.png'</span>);
+
+<span class="cm">// Vers le navigateur (sans 2ème arg + header Content-Type)</span>
+<span class="fn">header</span>(<span class="str">'Content-Type: image/png'</span>);
+<span class="fn">imagePNG</span>(<span class="var">$im</span>);</pre>
+    <h3>Couleurs</h3>
+    <pre><span class="cm">// RGB</span>
+<span class="var">$c</span> = <span class="fn">imageColorAllocate</span>(<span class="var">$im</span>, <span class="num">255</span>, <span class="num">128</span>, <span class="num">0</span>);
+
+<span class="cm">// RGBA (alpha 0=opaque, 127=transparent)</span>
+<span class="var">$c</span> = <span class="fn">imageColorAllocateAlpha</span>(<span class="var">$im</span>, <span class="num">255</span>, <span class="num">128</span>, <span class="num">0</span>, <span class="num">64</span>);</pre>
+    <h3>Dessin</h3>
+    <pre><span class="fn">imageArc</span>(<span class="var">$im</span>, <span class="var">$cx</span>, <span class="var">$cy</span>, <span class="var">$w</span>, <span class="var">$h</span>, <span class="var">$start</span>, <span class="var">$end</span>, <span class="var">$color</span>);
+<span class="fn">imageLine</span>(<span class="var">$im</span>, <span class="var">$x1</span>, <span class="var">$y1</span>, <span class="var">$x2</span>, <span class="var">$y2</span>, <span class="var">$color</span>);
+<span class="fn">imageString</span>(<span class="var">$im</span>, <span class="var">$font</span>, <span class="var">$x</span>, <span class="var">$y</span>, <span class="var">$texte</span>, <span class="var">$color</span>);</pre>
+  </div>
+
+  <div class="content-section">
+    <h2>🔄 Images à la volée</h2>
+    <pre><span class="cm">// Dans la page HTML :</span>
+<span class="str">&lt;img src="img.php?t=Coucou&amp;r=255" alt="Image générée"&gt;</span>
+
+<span class="cm">// img.php utilise $_GET['t'], $_GET['r'] etc.</span></pre>
+    <div class="info-box">Usages typiques : miniatures, CAPTCHA, graphiques, traitements par lots.</div>
+    <h3>Copie redimensionnée</h3>
+    <pre><span class="fn">imageCopyResized</span>(<span class="var">$dst</span>, <span class="var">$src</span>,
+    <span class="var">$dx</span>, <span class="var">$dy</span>, <span class="var">$sx</span>, <span class="var">$sy</span>,
+    <span class="var">$dw</span>, <span class="var">$dh</span>, <span class="var">$sw</span>, <span class="var">$sh</span>);
+
+<span class="cm">// Mieux (ré-échantillonnage) :</span>
+<span class="fn">imageCopyResampled</span>(...); <span class="cm">// qualité supérieure</span></pre>
+  </div>
+</div>
+
+<!-- ==================== PHPMYADMIN ==================== -->
+<div id="phpmyadmin" class="section">
+  <div class="sec-title">phpMyAdmin</div>
+  <div class="sec-desc">Interface Web open source pour administrer MySQL/MariaDB.</div>
+
+  <div class="content-section">
+    <h2>🛠️ Présentation</h2>
+    <ul>
+      <li>Interface Web pour MySQL/MariaDB écrite en PHP</li>
+      <li>Projet open source : <strong>phpmyadmin.net</strong></li>
+      <li>Connexion : login = mot de passe = nom de base (en IUT)</li>
+    </ul>
+    <h3>Moteurs supportés</h3>
+    <table>
+      <tr><th>Moteur</th><th>Caractéristiques</th></tr>
+      <tr><td><strong>MyISAM</strong></td><td>Relationnel, transactionnel, plain text, très rapide</td></tr>
+      <tr><td><strong>InnoDB</strong></td><td>Relationnel, transactionnel, <strong>ACID</strong>, moins rapide</td></tr>
+    </table>
+  </div>
+
+  <div class="content-section">
+    <h2>⚡ Fonctionnalités clés</h2>
+    <table>
+      <tr><th>Opération</th><th>Description</th></tr>
+      <tr><td>Structure</td><td>Afficher, créer, modifier les tables</td></tr>
+      <tr><td>Données</td><td>Afficher, insérer, modifier, supprimer les enregistrements</td></tr>
+      <tr><td>Requêtes</td><td>Exécuter du SQL manuellement ou via assistant</td></tr>
+      <tr><td>Recherche</td><td>Recherche dans la base ou dans une table</td></tr>
+      <tr><td>Import/Export</td><td>Formats SQL, CSV, XML, JSON…</td></tr>
+      <tr><td>Optimisation</td><td>Analyser, réparer, optimiser les tables</td></tr>
+      <tr><td>Concepteur</td><td>Visualiser les relations entre tables</td></tr>
+    </table>
+    <h3>Onglets d'une table</h3>
+    <div class="info-box">
+      <strong>Afficher</strong> · <strong>Structure</strong> · <strong>Rechercher</strong> · <strong>Insérer</strong> · <strong>Vider</strong> · <strong>Supprimer</strong>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== QUIZ ==================== -->
+<div id="quiz" class="section">
+  <div class="sec-title">Quiz — 30 questions</div>
+  <div class="sec-desc">Clique sur une réponse pour valider. Score affiché en fin de quiz.</div>
+  <div class="quiz-container" id="quizContainer"></div>
+  <div class="quiz-score" id="quizScore">
+    <div style="font-size:2rem;margin-bottom:0.5rem">🎯</div>
+    <div id="scoreText" style="font-size:1.1rem;font-weight:700;color:var(--accent)"></div>
+    <div style="font-size:0.8rem;color:var(--text-muted);margin-top:0.3rem">Recharge la page pour recommencer</div>
+  </div>
+</div>
+
+<!-- ==================== FLASHCARDS ==================== -->
+<div id="flash" class="section">
+  <div class="sec-title">Flashcards</div>
+  <div class="sec-desc">Clique sur une carte pour révéler la réponse.</div>
+  <div class="flash-grid" id="flashGrid"></div>
+</div>
+
+</main>
+
+<script>
+// NAV
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const buttons = document.querySelectorAll('.nav-btn');
+  buttons.forEach(b => { if (b.getAttribute('onclick').includes("'" + id + "'")) b.classList.add('active'); });
+  window.scrollTo(0, 0);
+}
+
+// QUIZ DATA
+const quizData = [
+  // HTTP
+  { q: "Que signifie l'acronyme HTTP ?", opts: ["HyperText Transfer Protocol","HyperText Transaction Protocol","HighTech Transfer Protocol","Hyperlink Text Transfer Protocol"], a: 0, ex: "HTTP = HyperText Transfer Protocol, le protocole du Web." },
+  { q: "HTTP est un protocole sans état. Que cela signifie-t-il ?", opts: ["Les données sont chiffrées","Le serveur oublie le client après chaque transaction","Le client doit toujours se reconnecter","Il n'y a pas de session possible"], a: 1, ex: "Protocole sans état = le serveur oublie le client après chaque transaction. Les cookies/sessions pallient ce manque." },
+  { q: "Quelle méthode HTTP envoie des données dans le corps du message ?", opts: ["GET","HEAD","POST","PUT"], a: 2, ex: "POST envoie les données dans le corps de la requête. GET les envoie dans l'URL (query string)." },
+  { q: "Quel code HTTP signifie 'Not Found' ?", opts: ["403","500","301","404"], a: 3, ex: "404 = ressource introuvable. 403 = interdit, 500 = erreur serveur." },
+  { q: "Quelle fonction PHP permet de placer un cookie sur le client ?", opts: ["cookie_set()","create_cookie()","setcookie()","header_cookie()"], a: 2, ex: "setcookie() envoie un header HTTP Set-Cookie. Doit être appelé avant tout echo." },
+  { q: "Comment lire un cookie en PHP ?", opts: ["$_GET['nom']","$_COOKIE['nom']","$_SESSION['nom']","$_POST['nom']"], a: 1, ex: "$_COOKIE est le superglobal qui contient tous les cookies reçus." },
+  { q: "Quelle fonction démarre ou restaure une session PHP ?", opts: ["session_init()","session_create()","session_start()","session_open()"], a: 2, ex: "session_start() doit être appelé au début du script, avant tout output." },
+  { q: "Où sont stockées les données de session en PHP par défaut ?", opts: ["Dans un cookie côté client","Dans la base de données","Côté serveur (fichier)","Dans le cache du navigateur"], a: 2, ex: "Les données $_SESSION sont stockées côté serveur (fichiers). Seul l'identifiant circule côté client." },
+
+  // PHP Objet
+  { q: "Quel mot-clé PHP hérite d'une classe ?", opts: ["inherit","implements","extends","parent"], a: 2, ex: "extends permet l'héritage : class Chien extends Animal { }" },
+  { q: "Quel est le rôle de $this en PHP ?", opts: ["Référence la classe","Référence l'instance courante","Accède à la classe parente","Référence un objet statique"], a: 1, ex: "$this référence l'instance sur laquelle la méthode est appelée." },
+  { q: "Quelle visibilité permet l'accès UNIQUEMENT depuis la classe elle-même ?", opts: ["public","protected","private","static"], a: 2, ex: "private = uniquement accessible depuis la classe. protected = classe + enfants." },
+  { q: "Comment appeler la méthode d'une classe parente depuis une classe enfant ?", opts: ["$this->methode()","super::methode()","parent::methode()","base::methode()"], a: 2, ex: "parent::methode() appelle la méthode de la classe mère." },
+  { q: "Qu'est-ce qu'un Trait en PHP ?", opts: ["Une interface","Un mécanisme de réutilisation de code horizontal","Un type de classe abstraite","Un mécanisme d'héritage multiple"], a: 1, ex: "Les Traits permettent de réutiliser des méthodes dans plusieurs classes sans héritage." },
+  { q: "Comment créer une copie indépendante d'un objet PHP ?", opts: ["$b = $a;","$b = copy($a);","$b = clone $a;","$b = new $a;"], a: 2, ex: "clone crée une copie distincte. = ne copie pas, les deux variables pointent vers le même objet." },
+  { q: "Quel mot-clé permet d'accéder à un attribut ou méthode statique ?", opts: ["->","::","=>",".."], a: 1, ex: ":: (double deux-points) pour les membres statiques : Classe::$attribut ou Classe::methode()." },
+
+  // PDO
+  { q: "Que signifie PDO ?", opts: ["PHP Database Objects","PHP Data Objects","PHP Driver Output","PHP Default Objects"], a: 1, ex: "PDO = PHP Data Objects, extension PHP pour l'accès aux bases de données." },
+  { q: "Quelle méthode PDO permet de préparer une requête SQL ?", opts: ["query()","exec()","prepare()","run()"], a: 2, ex: "prepare() prépare la requête (analyse, compile, optimise). execute() la lance ensuite." },
+  { q: "Quel mode ERRMODE lance une PDOException automatiquement ?", opts: ["ERRMODE_SILENT","ERRMODE_WARNING","ERRMODE_EXCEPTION","ERRMODE_THROW"], a: 2, ex: "PDO::ERRMODE_EXCEPTION lance une PDOException, recommandé en production." },
+  { q: "Quel mode de fetch retourne un tableau associatif ?", opts: ["PDO::FETCH_NUM","PDO::FETCH_OBJ","PDO::FETCH_ASSOC","PDO::FETCH_BOTH"], a: 2, ex: "FETCH_ASSOC retourne $row['nom_colonne']. FETCH_NUM retourne $row[0]." },
+  { q: "Comment passer un paramètre nommé dans une requête préparée ?", opts: ["Avec %nom","Avec :nom","Avec @nom","Avec $nom"], a: 1, ex: "Les paramètres nommés s'écrivent :nom dans le SQL, ex: WHERE id = :id" },
+  { q: "Quelle méthode PDOStatement récupère toutes les lignes d'un coup ?", opts: ["fetch()","fetchAll()","fetchColumn()","getAll()"], a: 1, ex: "fetchAll() retourne un tableau contenant toutes les lignes du résultat." },
+
+  // Singleton
+  { q: "Quel est le but du pattern Singleton ?", opts: ["Créer plusieurs instances identiques","Garantir une instance unique d'une classe","Partager des données entre classes","Accélérer les requêtes SQL"], a: 1, ex: "Le Singleton garantit une seule instance de la classe dans tout le programme." },
+  { q: "Pourquoi le constructeur de MyPDO est-il privé ?", opts: ["Pour hériter de PDO","Pour empêcher la construction directe depuis l'extérieur","Pour optimiser la connexion","Pour éviter les exceptions"], a: 1, ex: "Constructeur private = seule la classe peut s'instancier (via getInstance())." },
+  { q: "Quand la connexion PDO est-elle créée dans MyPDO ?", opts: ["Au chargement du fichier","Lors de setConfiguration()","Au premier appel à getInstance()","À la fin du script"], a: 2, ex: "La connexion est lazy : créée seulement au premier getInstance(), réutilisée ensuite." },
+
+  // Namespace
+  { q: "Quel est le but des namespaces en PHP ?", opts: ["Améliorer les performances","Éviter les collisions de noms de classes","Organiser les fichiers sur le disque","Remplacer les require_once"], a: 1, ex: "Les namespaces permettent d'avoir des classes de même nom dans des espaces différents." },
+  { q: "Quelle fonction enregistre un auto-chargeur de classes ?", opts: ["autoload_register()","class_autoload()","spl_autoload_register()","register_autoload()"], a: 2, ex: "spl_autoload_register() enregistre une fonction appelée automatiquement quand une classe est manquante." },
+  { q: "Quel mot-clé importe un namespace dans PHP ?", opts: ["import","include","use","namespace"], a: 2, ex: "use Prj\\MySQL\\Connection as DBConnection; permet d'utiliser DBConnection directement." },
+
+  // GD
+  { q: "Quelle fonction GD crée une image vierge en couleurs réelles (24 bits) ?", opts: ["imageCreate()","imageCreateTrueColor()","imageNew()","imageCreateRGB()"], a: 1, ex: "imageCreateTrueColor() crée une image 24 bits. imageCreate() crée une image indexée (palette)." },
+  { q: "Que doit-on envoyer AVANT d'envoyer une image PNG via imagePNG() sans fichier ?", opts: ["Un echo vide","Un header Content-Type: image/png","Un setcookie()","Un ob_start()"], a: 1, ex: "header('Content-Type: image/png') informe le navigateur du type de contenu." },
+  { q: "Quelle fonction GD libère la mémoire allouée à une image ?", opts: ["imageFree()","imageClose()","imageDestroy()","imageClear()"], a: 2, ex: "imageDestroy($im) libère les ressources mémoire de l'image." },
+];
+
+// BUILD QUIZ
+let answered = 0;
+let score = 0;
+const total = quizData.length;
+const container = document.getElementById('quizContainer');
+
+quizData.forEach((item, qi) => {
+  const div = document.createElement('div');
+  div.className = 'quiz-q';
+  div.innerHTML = `<div class="quiz-question">${qi+1}. ${item.q}</div>
+    <div class="quiz-options">${item.opts.map((o,oi) =>
+      `<button class="quiz-opt" data-qi="${qi}" data-oi="${oi}">${o}</button>`
+    ).join('')}</div>
+    <div class="quiz-feedback" id="qf${qi}"></div>`;
+  container.appendChild(div);
+});
+
+container.addEventListener('click', e => {
+  if (!e.target.matches('.quiz-opt')) return;
+  const btn = e.target;
+  const qi = +btn.dataset.qi;
+  const oi = +btn.dataset.oi;
+  const item = quizData[qi];
+  const opts = container.querySelectorAll(`[data-qi="${qi}"]`);
+  if (opts[0].disabled) return;
+  opts.forEach(b => b.disabled = true);
+  opts[item.a].classList.add('correct');
+  if (oi !== item.a) btn.classList.add('wrong');
+  else score++;
+  answered++;
+  const fb = document.getElementById('qf' + qi);
+  fb.textContent = item.ex;
+  fb.classList.add('show');
+  if (answered === total) {
+    setTimeout(() => {
+      document.getElementById('quizScore').style.display = 'block';
+      const pct = Math.round(score/total*100);
+      let emoji = pct >= 80 ? '🏆' : pct >= 60 ? '👍' : '💪';
+      document.getElementById('scoreText').textContent = `${emoji} ${score} / ${total} — ${pct}%`;
+    }, 300);
+  }
+});
+
+// FLASHCARDS
+const flashCards = [
+  { q: "Quelle est la différence entre cookie et session ?", a: "Cookie : données stockées côté CLIENT. Session : données stockées côté SERVEUR, seul l'identifiant circule." },
+  { q: "Pourquoi utiliser des requêtes préparées ?", a: "Performance (préparation faite une fois) + sécurité (protection contre les injections SQL)." },
+  { q: "Qu'est-ce que le DSN PDO ?", a: "Data Source Name : 'driver:host=...;dbname=...;charset=...' — identifie la source de données." },
+  { q: "Différence entre FETCH_ASSOC et FETCH_NUM ?", a: "FETCH_ASSOC → $row['colonne']. FETCH_NUM → $row[0]. FETCH_BOTH combine les deux." },
+  { q: "Qu'est-ce que l'encapsulation ?", a: "Regroupement des données et traitements dans l'objet. L'implémentation interne est cachée." },
+  { q: "Rôle de __construct() en PHP ?", a: "Constructeur : appelé automatiquement lors de new Classe(). Initialise l'objet." },
+  { q: "Rôle de __destruct() en PHP ?", a: "Destructeur : appelé automatiquement quand l'objet est détruit (fin de scope ou unset())." },
+  { q: "Comment hérite-t-on d'une classe en PHP ?", a: "class Enfant extends Parent { } — PHP supporte l'héritage simple (une seule classe mère)." },
+  { q: "Quel est l'avantage des Traits vs héritage ?", a: "Les Traits permettent de réutiliser du code dans des classes sans lien d'héritage (composition horizontale)." },
+  { q: "Comment cloner un objet indépendant en PHP ?", a: "$copie = clone $original; — crée une copie distincte en mémoire." },
+  { q: "Quel est le but de spl_autoload_register() ?", a: "Enregistrer une fonction de chargement automatique des classes : évite les require_once manuels." },
+  { q: "Convention : namespace Prj\\MySQL\\Connection → chemin fichier ?", a: "src/Prj/MySQL/Connection.php — le chemin correspond au namespace." },
+  { q: "Pattern Singleton : pourquoi le constructeur est-il private ?", a: "Pour interdire la création directe (new MyPDO()) depuis l'extérieur. Seule getInstance() peut créer l'objet." },
+  { q: "Quand est créée la connexion dans le Singleton MyPDO ?", a: "Lors du premier appel à MyPDO::getInstance() (connexion lazy)." },
+  { q: "Quelle méthode GD envoie une image PNG vers le navigateur ?", a: "imagePNG($im) sans 2ème argument, précédé de header('Content-Type: image/png')." },
+  { q: "Différence imageCreate() vs imageCreateTrueColor() ?", a: "imageCreate() → palette de couleurs indexées. imageCreateTrueColor() → 24 bits, millions de couleurs." },
+  { q: "Comment définir le mode d'erreur PDO ?", a: "$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);" },
+  { q: "Que fait bindValue() vs execute(['param' => val]) ?", a: "Les deux associent des valeurs aux paramètres. execute([...]) est plus concis pour une exécution unique." },
+  { q: "Codes HTTP 4xx vs 5xx ?", a: "4xx = erreur CLIENT (404 Not Found, 403 Forbidden). 5xx = erreur SERVEUR (500 Internal Error)." },
+  { q: "HTTP/1.1 vs HTTP/1.0 : différence principale ?", a: "1.1 : connexion persistante (X ressources par connexion), header Host obligatoire, 1 IP = N serveurs virtuels." },
+];
+
+const flashGrid = document.getElementById('flashGrid');
+flashCards.forEach(fc => {
+  const div = document.createElement('div');
+  div.className = 'flashcard';
+  div.innerHTML = `<div class="fc-q">${fc.q}</div>
+    <div class="fc-a">${fc.a}</div>
+    <div class="fc-hint">Cliquer pour révéler →</div>`;
+  div.addEventListener('click', () => div.classList.toggle('flipped'));
+  flashGrid.appendChild(div);
+});
+</script>
+</body>
+</html>
