@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MR210 — Gestion des SI · Révision</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --border: #e2e0d8;
+    --text: #1a1916;
+    --text-muted: #6b6860;
+    --accent: #2563eb;
+    --accent-soft: #dbeafe;
+    --red: #dc2626;
+    --red-soft: #fee2e2;
+    --green: #16a34a;
+    --green-soft: #dcfce7;
+    --orange: #ea580c;
+    --orange-soft: #ffedd5;
+    --mono: 'DM Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(245,244,240,0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; gap: 0; height: 52px;
+    overflow-x: auto;
+  }
+  .nav-brand {
+    font-family: var(--mono);
+    font-size: 13px; font-weight: 500;
+    color: var(--text-muted);
+    white-space: nowrap; margin-right: 2rem;
+  }
+  nav a {
+    font-size: 13px; font-weight: 500;
+    color: var(--text-muted); text-decoration: none;
+    padding: 0 1rem; height: 52px;
+    display: flex; align-items: center; white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: color .15s, border-color .15s;
+  }
+  nav a:hover { color: var(--text); }
+  nav a.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* LAYOUT */
+  .page { max-width: 900px; margin: 0 auto; padding: 3rem 2rem; }
+  .section { margin-bottom: 5rem; }
+  h1 {
+    font-family: var(--mono); font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 500; letter-spacing: -0.02em;
+    margin-bottom: 0.4rem;
+  }
+  .subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 3rem; }
+  h2 {
+    font-family: var(--mono); font-size: 1.1rem; font-weight: 500;
+    margin-bottom: 1.5rem; padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  h2 .tag {
+    font-size: 10px; font-weight: 500; padding: 2px 7px;
+    background: var(--accent-soft); color: var(--accent);
+    border-radius: 3px; letter-spacing: 0.05em; text-transform: uppercase;
+  }
+  h3 { font-size: 14px; font-weight: 600; margin-bottom: 0.8rem; color: var(--text); }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media(max-width: 600px) { .card-grid { grid-template-columns: 1fr; } }
+
+  /* BADGES */
+  .badge {
+    display: inline-block; font-size: 11px; font-weight: 500;
+    padding: 2px 8px; border-radius: 4px; font-family: var(--mono);
+  }
+  .badge-blue { background: var(--accent-soft); color: var(--accent); }
+  .badge-red { background: var(--red-soft); color: var(--red); }
+  .badge-green { background: var(--green-soft); color: var(--green); }
+  .badge-orange { background: var(--orange-soft); color: var(--orange); }
+
+  /* TABLE */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    background: var(--bg); padding: 8px 12px; text-align: left;
+    font-weight: 600; border-bottom: 2px solid var(--border);
+    font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);
+  }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--bg); }
+
+  /* QCM */
+  .qcm-block { margin-bottom: 1.5rem; }
+  .qcm-question { font-weight: 500; margin-bottom: 0.8rem; font-size: 14px; }
+  .qcm-options { display: flex; flex-direction: column; gap: 0.4rem; }
+  .qcm-opt {
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.5rem 0.8rem; border-radius: 6px; cursor: pointer;
+    border: 1px solid var(--border); background: var(--surface);
+    font-size: 13px; transition: border-color .15s, background .15s;
+    user-select: none;
+  }
+  .qcm-opt:hover { border-color: var(--accent); background: var(--accent-soft); }
+  .qcm-opt.correct { border-color: var(--green); background: var(--green-soft); }
+  .qcm-opt.wrong { border-color: var(--red); background: var(--red-soft); }
+  .qcm-opt.revealed-correct { border-color: var(--green); background: var(--green-soft); }
+  .qcm-dot {
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 2px solid var(--border); flex-shrink: 0; transition: all .15s;
+  }
+  .qcm-opt.correct .qcm-dot,
+  .qcm-opt.revealed-correct .qcm-dot { border-color: var(--green); background: var(--green); }
+  .qcm-opt.wrong .qcm-dot { border-color: var(--red); background: var(--red); }
+  .qcm-feedback { font-size: 12px; margin-top: 0.5rem; padding: 0.4rem 0.8rem; border-radius: 4px; display: none; }
+  .qcm-feedback.show { display: block; }
+  .qcm-feedback.ok { background: var(--green-soft); color: var(--green); }
+  .qcm-feedback.ko { background: var(--red-soft); color: var(--red); }
+
+  /* VRAI/FAUX */
+  .vf-grid { display: grid; gap: 0.6rem; }
+  .vf-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.7rem 1rem; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 6px; gap: 1rem;
+  }
+  .vf-statement { font-size: 13px; flex: 1; }
+  .vf-btns { display: flex; gap: 0.4rem; flex-shrink: 0; }
+  .vf-btn {
+    padding: 4px 12px; border-radius: 4px; border: 1px solid var(--border);
+    background: var(--bg); cursor: pointer; font-size: 12px; font-weight: 500;
+    transition: all .15s; font-family: var(--sans);
+  }
+  .vf-btn:hover { border-color: var(--text); }
+  .vf-btn.sel-vrai { background: var(--green-soft); border-color: var(--green); color: var(--green); }
+  .vf-btn.sel-faux { background: var(--red-soft); border-color: var(--red); color: var(--red); }
+  .vf-btn.correct { background: var(--green-soft); border-color: var(--green); color: var(--green); }
+  .vf-btn.wrong { background: var(--red-soft); border-color: var(--red); color: var(--red); }
+  .vf-explication { font-size: 11px; color: var(--text-muted); margin-top: 4px; display: none; }
+  .vf-explication.show { display: block; }
+
+  /* COCOMO CALCULATOR */
+  .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media(max-width: 600px){ .calc-grid { grid-template-columns: 1fr; } }
+  .calc-field label {
+    display: block; font-size: 12px; font-weight: 600;
+    color: var(--text-muted); margin-bottom: 0.4rem;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .calc-field input, .calc-field select {
+    width: 100%; padding: 0.5rem 0.8rem;
+    border: 1px solid var(--border); border-radius: 6px;
+    font-size: 14px; font-family: var(--sans);
+    background: var(--surface); color: var(--text);
+    outline: none; transition: border-color .15s;
+  }
+  .calc-field input:focus, .calc-field select:focus { border-color: var(--accent); }
+  .calc-btn {
+    margin-top: 1rem; padding: 0.6rem 1.5rem;
+    background: var(--accent); color: white;
+    border: none; border-radius: 6px; cursor: pointer;
+    font-size: 14px; font-weight: 500; font-family: var(--sans);
+    transition: opacity .15s;
+  }
+  .calc-btn:hover { opacity: 0.85; }
+  .calc-result {
+    margin-top: 1rem; padding: 1rem;
+    background: var(--bg); border-radius: 6px;
+    border: 1px solid var(--border); display: none;
+  }
+  .calc-result.show { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .result-item { text-align: center; }
+  .result-val { font-family: var(--mono); font-size: 1.4rem; font-weight: 500; color: var(--accent); }
+  .result-label { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  /* PERT BUILDER */
+  .pert-table-wrapper { overflow-x: auto; margin-bottom: 1rem; }
+  .pert-add-btn, .pert-calc-btn {
+    padding: 0.5rem 1.2rem; border-radius: 6px;
+    border: 1px dashed var(--border); background: var(--bg);
+    cursor: pointer; font-size: 13px; font-family: var(--sans);
+    transition: all .15s; margin-right: 0.5rem; margin-bottom: 0.5rem;
+  }
+  .pert-add-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .pert-calc-btn { background: var(--accent); color: white; border: none; font-weight: 500; }
+  .pert-calc-btn:hover { opacity: 0.85; }
+  .pert-input {
+    width: 100%; padding: 4px 6px;
+    border: 1px solid transparent; border-radius: 4px;
+    font-size: 13px; font-family: var(--sans); background: transparent;
+    outline: none;
+  }
+  .pert-input:focus { border-color: var(--accent); background: var(--surface); }
+  .pert-result-table { margin-top: 1rem; }
+  .pert-result-table td.critical { color: var(--red); font-weight: 600; }
+  .pert-critical-path {
+    margin-top: 1rem; padding: 0.8rem 1rem;
+    background: var(--red-soft); border: 1px solid var(--red);
+    border-radius: 6px; font-size: 13px; color: var(--red);
+    display: none;
+  }
+  .pert-critical-path.show { display: block; }
+
+  /* FORMULA BOX */
+  .formula {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 6px; padding: 0.8rem 1rem;
+    font-family: var(--mono); font-size: 13px; margin: 0.6rem 0;
+    color: var(--accent);
+  }
+
+  /* ACCORDION */
+  .accordion { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 0.6rem; }
+  .accordion-header {
+    padding: 0.9rem 1.2rem; cursor: pointer;
+    background: var(--surface); font-size: 14px; font-weight: 500;
+    display: flex; align-items: center; justify-content: space-between;
+    user-select: none; transition: background .15s;
+  }
+  .accordion-header:hover { background: var(--bg); }
+  .accordion-arrow { transition: transform .2s; font-size: 12px; color: var(--text-muted); }
+  .accordion.open .accordion-arrow { transform: rotate(90deg); }
+  .accordion-body { padding: 1rem 1.2rem; border-top: 1px solid var(--border); display: none; }
+  .accordion.open .accordion-body { display: block; }
+
+  /* STEPS */
+  .steps { counter-reset: step; display: flex; flex-direction: column; gap: 0.8rem; }
+  .step {
+    display: flex; gap: 1rem; align-items: flex-start;
+    padding: 0.8rem; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 6px;
+  }
+  .step-num {
+    counter-increment: step;
+    width: 28px; height: 28px; flex-shrink: 0;
+    background: var(--accent); color: white;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600; font-family: var(--mono);
+  }
+  .step-num::before { content: counter(step); }
+  .step-content { font-size: 13px; line-height: 1.5; }
+
+  /* COMPARISON SIDE BY SIDE */
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media(max-width: 600px) { .compare { grid-template-columns: 1fr; } }
+  .compare-col { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.2rem; }
+  .compare-title {
+    font-size: 12px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.07em; margin-bottom: 0.8rem;
+    padding-bottom: 0.5rem; border-bottom: 2px solid currentColor;
+  }
+  .compare-col.blue .compare-title { color: var(--accent); }
+  .compare-col.green .compare-title { color: var(--green); }
+  .compare-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
+  .compare-col ul li { font-size: 13px; display: flex; gap: 0.5rem; }
+  .compare-col ul li::before { content: "→"; color: var(--text-muted); flex-shrink: 0; }
+
+  /* RACI TABLE */
+  .raci-cell {
+    width: 32px; height: 32px; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px; cursor: default;
+  }
+  .raci-R { background: var(--accent-soft); color: var(--accent); }
+  .raci-A { background: var(--red-soft); color: var(--red); }
+  .raci-C { background: var(--orange-soft); color: var(--orange); }
+  .raci-I { background: var(--green-soft); color: var(--green); }
+
+  /* PROGRESS */
+  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; margin-bottom: 0.3rem; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.3s; }
+
+  /* SCROLL SECTION */
+  .section-anchor { scroll-margin-top: 60px; }
+
+  /* TOOLTIP */
+  .tooltip-wrap { position: relative; display: inline-block; }
+  .tooltip-wrap .tooltip-text {
+    visibility: hidden; opacity: 0; width: 200px;
+    background: var(--text); color: white;
+    font-size: 12px; text-align: left; border-radius: 6px;
+    padding: 8px 10px; position: absolute; z-index: 10;
+    bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+    transition: opacity .15s; pointer-events: none; line-height: 1.4;
+  }
+  .tooltip-wrap:hover .tooltip-text { visibility: visible; opacity: 1; }
+
+  /* CHIPS */
+  .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.6rem; }
+  .chip {
+    font-size: 12px; padding: 3px 10px; border-radius: 20px;
+    border: 1px solid var(--border); background: var(--surface);
+    color: var(--text-muted); font-family: var(--mono);
+  }
+
+  /* SCORE */
+  #score-display {
+    position: fixed; bottom: 1.5rem; right: 1.5rem;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 0.6rem 1rem;
+    font-family: var(--mono); font-size: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    display: none; z-index: 99;
+  }
+  #score-display.show { display: block; }
+
+  /* HERO */
+  .hero {
+    padding: 4rem 0 2rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 4rem;
+  }
+  .hero-meta { display: flex; gap: 0.8rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+
+  /* ALERT */
+  .alert {
+    padding: 0.8rem 1rem; border-radius: 6px;
+    font-size: 13px; margin-bottom: 1rem;
+    display: flex; gap: 0.6rem; align-items: flex-start;
+  }
+  .alert-info { background: var(--accent-soft); border: 1px solid var(--accent); color: #1e40af; }
+  .alert-warn { background: var(--orange-soft); border: 1px solid var(--orange); color: #9a3412; }
+
+  /* GANTT DEMO */
+  .gantt-demo { overflow-x: auto; }
+  .gantt-svg { min-width: 500px; }
+
+  ul.list { padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.3rem; }
+  ul.list li { font-size: 13px; }
+
+  hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+  @media(max-width: 480px) {
+    .page { padding: 2rem 1rem; }
+    nav { padding: 0 1rem; }
+  }
+
+.image-illustration{
+  width:100%;
+  max-width:700px;
+  display:block;
+  margin:1rem auto;
+  border-radius:8px;
+  border:1px solid var(--border);
+}
+
+</style>
+</head>
+<body>
+
+<nav id="main-nav">
+  <span class="nav-brand">MR210</span>
+  <a href="#bases" onclick="setActive(this)">Bases</a>
+  <a href="#pert" onclick="setActive(this)">PERT</a>
+  <a href="#cocomo" onclick="setActive(this)">COCOMO</a>
+  <a href="#gantt" onclick="setActive(this)">Gantt</a>
+  <a href="#ressources" onclick="setActive(this)">Ressources</a>
+  <a href="#raci" onclick="setActive(this)">RACI</a>
+  <a href="#qcm" onclick="setActive(this)">QCM</a>
+  <a href="#exercices" onclick="setActive(this)">Exercices</a>
+</nav>
+
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-meta">
+      <span class="badge badge-blue">MR210</span>
+      <span class="badge badge-orange">Gestion des SI</span>
+      <span class="badge badge-green">BUT Informatique S2</span>
+    </div>
+    <h1>Gestion de projet<br>informatique</h1>
+    <p class="subtitle">Fiches de révision · Simulateurs · QCM · Exercices corrigés</p>
+    <div style="display:flex; gap:0.6rem; flex-wrap:wrap; font-size:13px; color:var(--text-muted)">
+      <span>📐 PERT & chemin critique</span>
+      <span>·</span>
+      <span>🔢 Calculateur COCOMO</span>
+      <span>·</span>
+      <span>📊 Gantt</span>
+      <span>·</span>
+      <span>✅ RACI</span>
+      <span>·</span>
+      <span>❓ QCM interactifs</span>
+    </div>
+  </div>
+
+  <!-- ===================== SECTION BASES ===================== -->
+  <section class="section section-anchor" id="bases">
+    <h2>Bases du projet <span class="tag">Cours</span></h2>
+
+    <div class="card">
+      <h3>Définition d'un projet</h3><img src="images/img_9.png" alt="Cycle de vie du projet" class="image-illustration">
+      <p style="font-size:13px; margin-bottom:1rem">Un projet possède <strong>obligatoirement</strong> :</p>
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap:0.6rem">
+        <div style="padding:0.7rem; background:var(--bg); border-radius:6px; font-size:13px; text-align:center">
+          📅 <strong>Date de début</strong>
+        </div>
+        <div style="padding:0.7rem; background:var(--bg); border-radius:6px; font-size:13px; text-align:center">
+          🏁 <strong>Date de fin</strong>
+        </div>
+        <div style="padding:0.7rem; background:var(--bg); border-radius:6px; font-size:13px; text-align:center">
+          🎯 <strong>Objectif</strong>
+        </div>
+        <div style="padding:0.7rem; background:var(--bg); border-radius:6px; font-size:13px; text-align:center">
+          💰 <strong>Budget</strong>
+        </div>
+      </div>
+      <div class="alert alert-warn" style="margin-top:1rem">
+        ⚠️ Un projet n'a <strong>pas forcément</strong> un leader unique — c'est un piège classique d'exam.
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>MOA vs MOE</h3>
+      <div class="compare">
+        <div class="compare-col blue">
+          <div class="compare-title">MOA — Maître d'Ouvrage</div>
+          <ul>
+            <li>Le <strong>client</strong>, commanditaire</li>
+            <li>Exprime le besoin</li>
+            <li>Définit le budget</li>
+            <li>Valide le résultat</li>
+            <li>À l'origine du projet</li>
+          </ul>
+        </div>
+        <div class="compare-col green">
+          <div class="compare-title">MOE — Maître d'Œuvre</div>
+          <ul>
+            <li>Réalise le projet</li>
+            <li>Propose des solutions techniques</li>
+            <li>Gère les ressources</li>
+            <li>Livre le produit</li>
+            <li>Rend compte au MOA</li>
+          </ul>
+        </div>
+      </div>
+      <div class="alert alert-warn" style="margin-top:1rem">
+        ⚠️ Piège : le <strong>MOA</strong> est à l'origine du projet, pas le MOE (maître d'œuvre).
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Triangle d'or — QCD</h3>
+      <div style="text-align:center; padding:1rem">
+<img src="images/img_1.png" alt="Triangle QCD" class="image-illustration">
+</div>
+      <p style="font-size:13px">Les 3 contraintes sont <strong>interdépendantes</strong> : modifier l'une impacte les autres. Toute décision projet touche le <em>périmètre QCD</em>.</p>
+    </div>
+
+    <div class="card">
+      <h3>Méthodes Classique vs Agile</h3>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Critère</th>
+              <th>Classique (Waterfall)</th>
+              <th>Agile (Scrum...)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Cycle de vie</td><td>En cascade (séquentiel)</td><td>Incrémental / itératif</td></tr>
+            <tr><td>Documentation</td><td>Lourde, complète</td><td>Restreinte, légère</td></tr>
+            <tr><td>Contractuel</td><td>✅ Plus contractuel</td><td>❌ Moins contractuel</td></tr>
+            <tr><td>Chef de projet</td><td>Dirige l'équipe</td><td>Soutient l'équipe (Scrum Master)</td></tr>
+            <tr><td>Objectif principal</td><td>Respecter coûts & délais</td><td>Satisfaction du client</td></tr>
+            <tr><td>Tâches</td><td>Figées dès le début</td><td>User stories (évoluent)</td></tr>
+            <tr><td>Planning</td><td>Planning global</td><td>Backlog produit</td></tr>
+            <tr><td>Chemin critique</td><td>PERT</td><td>Priorités métier</td></tr>
+            <tr><td>Dates</td><td>Dates fixes</td><td>Sprints (2–4 semaines)</td></tr>
+            <tr><td>Rôle décisionnaire</td><td>Chef de projet</td><td>Product Owner / Scrum Master</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Qualités du chef de projet</h3>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.5rem">
+        <div style="font-size:13px; display:flex; gap:0.5rem; padding:0.5rem; background:var(--green-soft); border-radius:6px">✅ Planifier</div>
+        <div style="font-size:13px; display:flex; gap:0.5rem; padding:0.5rem; background:var(--green-soft); border-radius:6px">✅ Organiser</div>
+        <div style="font-size:13px; display:flex; gap:0.5rem; padding:0.5rem; background:var(--green-soft); border-radius:6px">✅ Se faire aider</div>
+        <div style="font-size:13px; display:flex; gap:0.5rem; padding:0.5rem; background:var(--green-soft); border-radius:6px">✅ Évaluer les coûts</div>
+        <div style="font-size:13px; display:flex; gap:0.5rem; padding:0.5rem; background:var(--green-soft); border-radius:6px">✅ Anticiper les dérives</div>
+        <div style="font-size:13px; display:flex; gap:0.5rem; padding:0.5rem; background:var(--green-soft); border-radius:6px">✅ Piloter</div>
+        <div style="font-size:13px; display:flex; gap:0.5rem; padding:0.5rem; background:var(--red-soft); border-radius:6px">❌ Sanctionner</div>
+        <div style="font-size:13px; display:flex; gap:0.5rem; padding:0.5rem; background:var(--red-soft); border-radius:6px">❌ Connaître TOUS les aspects techniques</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION PERT ===================== -->
+  <section class="section section-anchor" id="pert">
+    <h2>Diagramme PERT <span class="tag">Cours + Outil</span></h2>
+
+    <div class="card">
+      <h3>C'est quoi le PERT ?</h3>
+      <p style="font-size:13px; margin-bottom:1rem"><strong>Program Evaluation Review Technique</strong> — Outil de planification qui répond à 3 questions clés :</p>
+      <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:0.8rem">
+        <div style="padding:1rem; background:var(--red-soft); border-radius:6px; text-align:center; font-size:13px">
+          ⏱️ Durée <strong>minimale</strong> du projet ?
+        </div>
+        <div style="padding:1rem; background:var(--orange-soft); border-radius:6px; text-align:center; font-size:13px">
+          ⚠️ Quelles tâches sont <strong>critiques</strong> ?
+        </div>
+        <div style="padding:1rem; background:var(--green-soft); border-radius:6px; text-align:center; font-size:13px">
+          🔄 Où ai-je de la <strong>flexibilité</strong> ?
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Structure d'un nœud PERT</h3>
+      <div style="display:flex; align-items:center; gap:2rem; flex-wrap:wrap">
+<img src="images/img_2.png" alt="Structure d'un nœud PERT" class="image-illustration" style="max-width:320px;">
+        <div style="font-size:13px; flex:1; min-width:200px">
+          <p><strong>Date au plus tôt</strong> : date de début au plus vite (en avançant)</p>
+          <p style="margin-top:0.4rem"><strong>Date au plus tard</strong> : date limite sans retarder le projet (en reculant)</p>
+          <p style="margin-top:0.4rem"><strong>Marge</strong> = tard − tôt. Si = 0 → tâche <span style="color:var(--red)"><strong>critique</strong></span></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Méthode de calcul — Pas à pas</h3>
+      <div class="steps">
+        <div class="step"><div class="step-num"></div><div class="step-content"><strong>Dates au plus tôt (aller)</strong> — Partir du nœud 0. Pour chaque nœud : tôt = max(tôts des prédécesseurs + durée de la tâche entrante). Prendre le maximum si plusieurs chemins arrivent.</div></div>
+        <div class="step"><div class="step-num"></div><div class="step-content"><strong>Dates au plus tard (retour)</strong> — Partir du dernier nœud (tard = tôt). Reculer : tard = min(tards des successeurs − durée de la tâche sortante). Prendre le minimum si plusieurs chemins partent.</div></div>
+        <div class="step"><div class="step-num"></div><div class="step-content"><strong>Marge libre</strong> = tard − tôt pour chaque nœud.</div></div>
+        <div class="step"><div class="step-num"></div><div class="step-content"><strong>Chemin critique</strong> — Relier tous les nœuds où marge = 0. Ce sont les tâches critiques : tout retard = retard du projet.</div></div>
+        <div class="step"><div class="step-num"></div><div class="step-content"><strong>Tâches fictives</strong> — Si une tâche a plusieurs prédécesseurs, positionner la tâche derrière le prédécesseur avec le tôt le plus élevé, et créer une flèche fictive (durée = 0) depuis l'autre prédécesseur.</div></div>
+      </div>
+    </div>
+
+    
+<div class="card">
+<h3>Illustrations pédagogiques recommandées</h3>
+<img src="images/img_4.png" alt="Étape 1" class="image-illustration">
+<img src="images/img_5.png" alt="Étape 2" class="image-illustration">
+<img src="images/img_6.png" alt="Étape 3" class="image-illustration">
+<img src="images/img_7.png" alt="Étape 4" class="image-illustration">
+<img src="images/img_8.png" alt="Étape 5" class="image-illustration">
+<img src="images/img_11.png" alt="Comparaison PERT vs Gantt" class="image-illustration">
+</div>
+
+<!-- PERT SIMULATOR -->
+    <div class="card">
+      <h3>🛠️ Simulateur PERT interactif</h3>
+      <p style="font-size:12px; color:var(--text-muted); margin-bottom:1rem">Entrez vos tâches, cliquez sur Calculer pour obtenir les dates et le chemin critique.</p>
+      <div class="pert-table-wrapper">
+        <table id="pert-table">
+          <thead>
+            <tr>
+              <th>Tâche</th>
+              <th>Durée</th>
+              <th>Prédécesseurs (ex: A,B)</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="pert-body">
+          </tbody>
+        </table>
+      </div>
+      <button class="pert-add-btn" onclick="pertAddRow()">+ Ajouter une tâche</button>
+      <button class="pert-calc-btn" onclick="pertCalculate()">Calculer le PERT</button>
+      <button class="pert-add-btn" onclick="pertLoadExample('sql')" style="font-size:12px">Exemple: Requête SQL</button>
+      <button class="pert-add-btn" onclick="pertLoadExample('soiree')" style="font-size:12px">Exemple: Soirée télé</button>
+      <div id="pert-result" style="display:none; margin-top:1rem">
+        <div class="pert-table-wrapper">
+          <table class="pert-result-table">
+            <thead>
+              <tr>
+                <th>Tâche</th>
+                <th>Durée</th>
+                <th>Tôt</th>
+                <th>Tard</th>
+                <th>Marge</th>
+                <th>Critique ?</th>
+              </tr>
+            </thead>
+            <tbody id="pert-result-body"></tbody>
+          </table>
+        </div>
+        <div class="pert-critical-path show" id="pert-critical-display"></div>
+        <div id="pert-duration-display" style="margin-top:0.5rem; font-size:13px; font-weight:600"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>PERT vs Agile — ce qu'il faut savoir</h3>
+      <div class="compare">
+        <div class="compare-col blue">
+          <div class="compare-title">PERT / Classique</div>
+          <ul>
+            <li>Tout planifié à l'avance</li>
+            <li>Tâches figées</li>
+            <li>Durées, marges, chemin critique</li>
+            <li>Projets longs, stables, contractuels</li>
+          </ul>
+        </div>
+        <div class="compare-col green">
+          <div class="compare-title">Agile (Scrum)</div>
+          <ul>
+            <li>Projet évolue en continu</li>
+            <li>Planification incrémentale</li>
+            <li>Sprints (2–4 semaines)</li>
+            <li>Projets évolutifs, besoins changeants</li>
+          </ul>
+        </div>
+      </div>
+      <p style="font-size:12px; color:var(--text-muted); margin-top:0.8rem">PERT est peu utilisé en Agile : trop rigide, estimations vite obsolètes, impossible de tout prévoir au départ.</p>
+    </div>
+  </section>
+
+  <!-- ===================== COCOMO ===================== -->
+  <section class="section section-anchor" id="cocomo">
+    <h2>COCOMO <span class="tag">Cours + Calculateur</span></h2>
+
+    <div class="card">
+      <h3>C'est quoi COCOMO ?</h3>
+      <p style="font-size:13px; margin-bottom:0.8rem"><strong>COnstructive COst MOdel</strong> — modèle d'estimation de l'effort et de la durée d'un développement logiciel, créé par Barry Boehm en 1981 (analysé sur 63 projets de 2 000 à 100 000 lignes).</p>
+      <div class="formula">Charge = a × KLOC <sup>b</sup></div>
+      <div class="formula">Durée = c × Charge <sup>d</sup></div>
+      <div class="formula">Nb personnes = Charge / Durée</div>
+      <div class="formula">Productivité = Taille (LOC) / Charge</div>
+      <div class="alert alert-info" style="margin-top:0.8rem">
+        💡 1 homme-mois (HM) = 152 heures = 19 jours de travail effectif (congés, maladie déduits)
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Paramètres selon le type de projet</h3>
+      <table>
+        <thead>
+          <tr><th>Type de projet</th><th>a</th><th>b</th><th>c</th><th>d</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-green">Simple</span> (organique)</td>
+            <td class="mono">2,40</td><td class="mono">1,05</td><td class="mono">2,50</td><td class="mono">0,38</td>
+            <td style="font-size:12px">Petite équipe (2–8), domaine maîtrisé</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-orange">Moyen</span> (semi-détendu)</td>
+            <td class="mono">3,00</td><td class="mono">1,12</td><td class="mono">2,50</td><td class="mono">0,35</td>
+            <td style="font-size:12px">Difficulté moyenne, expérience limitée</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-red">Complexe</span> (embarqué)</td>
+            <td class="mono">3,60</td><td class="mono">1,20</td><td class="mono">2,50</td><td class="mono">0,23</td>
+            <td style="font-size:12px">Temps réel, sécurité, contraintes fortes</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- COCOMO CALCULATOR -->
+    <div class="card">
+      <h3>🔢 Calculateur COCOMO</h3>
+      <div class="calc-grid">
+        <div class="calc-field">
+          <label>Type de projet</label>
+          <select id="cocomo-type">
+            <option value="simple">Simple (organique)</option>
+            <option value="moyen" selected>Moyen (semi-détendu)</option>
+            <option value="complexe">Complexe (embarqué)</option>
+          </select>
+        </div>
+        <div class="calc-field">
+          <label>Taille estimée (lignes de code)</label>
+          <input type="number" id="cocomo-loc" placeholder="ex: 80000" value="80000">
+        </div>
+      </div>
+      <button class="calc-btn" onclick="cocomoCalc()">Calculer</button>
+      <div id="cocomo-result" class="calc-result">
+        <div class="result-item">
+          <div class="result-val" id="r-charge">—</div>
+          <div class="result-label">Charge (homme-mois)</div>
+        </div>
+        <div class="result-item">
+          <div class="result-val" id="r-duree">—</div>
+          <div class="result-label">Durée (mois)</div>
+        </div>
+        <div class="result-item">
+          <div class="result-val" id="r-equipe">—</div>
+          <div class="result-label">Taille équipe</div>
+        </div>
+      </div>
+      <div id="cocomo-steps" style="margin-top:1rem; font-size:12px; font-family:var(--mono); color:var(--text-muted); display:none; line-height:2"></div>
+    </div>
+
+    <div class="card">
+      <h3>COCOMO II — Améliorations (2000)</h3>
+      <p style="font-size:13px; margin-bottom:0.8rem">COCOMO II intègre <strong>15 facteurs supplémentaires</strong> là où COCOMO 81 n'en avait que 2 (difficulté + LOC).</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.5rem">
+        <div style="padding:0.5rem; background:var(--bg); border-radius:6px; font-size:12px"><strong>Produit :</strong> RELY, DATA, CPLX</div>
+        <div style="padding:0.5rem; background:var(--bg); border-radius:6px; font-size:12px"><strong>Matériel :</strong> TIME, STOR, VIRT</div>
+        <div style="padding:0.5rem; background:var(--bg); border-radius:6px; font-size:12px"><strong>Personnel :</strong> ACAP, PCAP, AEXP</div>
+      </div>
+      <div class="compare" style="margin-top:0.8rem">
+        <div style="background:var(--bg); padding:0.8rem; border-radius:6px; font-size:13px">
+          <span class="badge badge-green">✅ Avantages</span>
+          <ul class="list" style="margin-top:0.5rem">
+            <li>Basé sur données historiques réelles</li>
+            <li>Estimations chiffrées et claires</li>
+            <li>Adaptable au type de projet</li>
+          </ul>
+        </div>
+        <div style="background:var(--bg); padding:0.8rem; border-radius:6px; font-size:13px">
+          <span class="badge badge-red">❌ Limites</span>
+          <ul class="list" style="margin-top:0.5rem">
+            <li>Moins précis pour Agile/DevOps</li>
+            <li>Nécessite une estimation LOC initiale</li>
+            <li>Sensible aux variations de productivité</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== GANTT ===================== -->
+  <section class="section section-anchor" id="gantt">
+    <h2>Diagramme de Gantt <span class="tag">Cours</span></h2>
+
+    <div class="card">
+      <h3>Construction d'un Gantt</h3>
+      <ul class="list">
+        <li>Chaque <strong>colonne</strong> = une unité de temps (min, h, jour, semaine…)</li>
+        <li>Chaque <strong>ligne</strong> = une ressource</li>
+        <li>Chaque <strong>barre</strong> = une tâche (longueur = durée)</li>
+        <li><strong>Flèches</strong> = contraintes d'enchaînement</li>
+        <li><strong>Losanges ◆</strong> = jalons (début, fin, étapes importantes)</li>
+      </ul>
+      <div class="gantt-demo" style="margin-top:1rem">
+<img src="images/img_3.png" alt="Diagramme de Gantt" class="image-illustration">
+</div>
+    </div>
+
+    <div class="card">
+      <h3>Nivellement des ressources</h3>
+      <p style="font-size:13px; margin-bottom:0.8rem">Quand une ressource est en <strong>surcharge</strong> (fait trop de tâches simultanées), on peut :</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.6rem">
+        <div style="padding:0.8rem; background:var(--bg); border-radius:6px; font-size:12px; text-align:center">
+          <div style="font-size:1.5rem">🔀</div>
+          <strong>Décaler</strong> une tâche<br><span style="color:var(--red)">↑ Durée</span><br><span style="color:var(--text-muted)">→ Change D du QCD</span>
+        </div>
+        <div style="padding:0.8rem; background:var(--bg); border-radius:6px; font-size:12px; text-align:center">
+          <div style="font-size:1.5rem">👥</div>
+          <strong>Ajouter</strong> une ressource<br><span style="color:var(--orange)">↑ Coût</span><br><span style="color:var(--text-muted)">→ Change C du QCD</span>
+        </div>
+        <div style="padding:0.8rem; background:var(--bg); border-radius:6px; font-size:12px; text-align:center">
+          <div style="font-size:1.5rem">✂️</div>
+          <strong>Supprimer</strong> une tâche<br><span style="color:var(--blue)">↓ Qualité</span><br><span style="color:var(--text-muted)">→ Change Q du QCD</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>PERT vs Gantt — quand utiliser quoi ?</h3>
+      <table>
+        <thead><tr><th>Outil</th><th>Usage principal</th><th>Points forts</th><th>Limite</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>PERT</strong></td>
+            <td>Phase de <strong>planification</strong></td>
+            <td>Chemin critique visible, interdépendances claires</td>
+            <td>Pas de % d'avancement</td>
+          </tr>
+          <tr>
+            <td><strong>Gantt</strong></td>
+            <td>Phase d'<strong>exécution</strong></td>
+            <td>Suivi du statut, durées visibles</td>
+            <td>Chemin critique difficile à trouver</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-size:12px; color:var(--text-muted); margin-top:0.6rem">Les deux outils sont <strong>complémentaires</strong>.</p>
+    </div>
+  </section>
+
+  <!-- ===================== RESSOURCES ===================== -->
+  <section class="section section-anchor" id="ressources">
+    <h2>Gestion des ressources <span class="tag">Cours</span></h2>
+
+    <div class="card-grid">
+      <div class="card">
+        <h3>👥 Humaines</h3>
+        <p style="font-size:13px">Individus, groupes, personnes morales. Recrutement interne ou externe. Intervention ponctuelle ou sur toute la durée.</p>
+      </div>
+      <div class="card">
+        <h3>🖥️ Matérielles</h3>
+        <p style="font-size:13px">Machines, logiciels, licences, locaux, matières premières. Biens temporaires ou consommables à coût unitaire.</p>
+      </div>
+      <div class="card">
+        <h3>💰 Financières</h3>
+        <p style="font-size:13px">Budget du projet. Finance les RH, les achats matériels, les frais de déplacement, etc.</p>
+      </div>
+      <div class="card">
+        <h3>⏰ En temps</h3>
+        <p style="font-size:13px">Délais par tâche. Dépend des ressources humaines disponibles.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Problèmes courants</h3>
+      <div class="accordion" onclick="toggleAccordion(this)">
+        <div class="accordion-header">🔴 Surcharge <span class="accordion-arrow">▶</span></div>
+        <div class="accordion-body">
+          <p style="font-size:13px">Une ressource a <strong>plus de travail que sa capacité</strong>.<br>
+          Ex: dev assigné à 3 tâches simultanément.<br>
+          Conséquences : retard + stress + baisse qualité + erreurs = <span style="color:var(--red)">ralentissement du projet</span>.</p>
+        </div>
+      </div>
+      <div class="accordion" onclick="toggleAccordion(this)">
+        <div class="accordion-header">🔵 Sous-utilisation <span class="accordion-arrow">▶</span></div>
+        <div class="accordion-body">
+          <p style="font-size:13px">Une ressource <strong>n'est pas utilisée à pleine capacité</strong>.<br>
+          Ex: dev qui attend des specs.<br>
+          Conséquences : perte de temps + coûts inutiles = <span style="color:var(--red)">argent perdu</span>.</p>
+        </div>
+      </div>
+      <div class="accordion" onclick="toggleAccordion(this)">
+        <div class="accordion-header">🟡 Compétences rares <span class="accordion-arrow">▶</span></div>
+        <div class="accordion-body">
+          <p style="font-size:13px">Certaines compétences sont peu disponibles et critiques (ex: expert cybersécurité).<br>
+          Ces ressources deviennent un <strong>goulot d'étranglement</strong> = risque projet majeur.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>WBS — Work Breakdown Structure</h3><img src="images/img_10.png" alt="WBS" class="image-illustration">
+      <p style="font-size:13px; margin-bottom:0.8rem">Décomposition hiérarchique du projet en tâches plus petites. Permet d'estimer progressivement l'ensemble.</p>
+      <div style="font-size:12px; font-family:var(--mono); background:var(--bg); border-radius:6px; padding:1rem; line-height:2">
+        <div style="color:var(--accent); font-weight:600">📁 Projet</div>
+        <div style="padding-left:1.5rem">📂 Phase 1 — Infrastructure</div>
+        <div style="padding-left:3rem">📄 Tâche 1.1 — Installation réseau (3h)</div>
+        <div style="padding-left:3rem">📄 Tâche 1.2 — Configuration switch</div>
+        <div style="padding-left:1.5rem">📂 Phase 2 — Équipements</div>
+        <div style="padding-left:3rem">📄 Tâche 2.1 — Montage postes (×12)</div>
+        <div style="padding-left:1.5rem">📂 Phase 3 — Tests</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== RACI ===================== -->
+  <section class="section section-anchor" id="raci">
+    <h2>Matrice RACI <span class="tag">Cours</span></h2>
+
+    <div class="card">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; margin-bottom:1rem">
+        <div style="padding:0.8rem; border-radius:6px; background:var(--accent-soft); border:1px solid var(--accent)">
+          <span style="font-size:1.2rem; font-family:var(--mono); font-weight:700; color:var(--accent)">R</span> — <strong>Responsible</strong>
+          <p style="font-size:12px; margin-top:0.3rem; color:var(--text-muted)">Réalise la tâche. Peut y en avoir plusieurs.</p>
+        </div>
+        <div style="padding:0.8rem; border-radius:6px; background:var(--red-soft); border:1px solid var(--red)">
+          <span style="font-size:1.2rem; font-family:var(--mono); font-weight:700; color:var(--red)">A</span> — <strong>Accountable</strong>
+          <p style="font-size:12px; margin-top:0.3rem; color:var(--text-muted)">Responsable final, décideur. <strong>Un seul A par tâche !</strong></p>
+        </div>
+        <div style="padding:0.8rem; border-radius:6px; background:var(--orange-soft); border:1px solid var(--orange)">
+          <span style="font-size:1.2rem; font-family:var(--mono); font-weight:700; color:var(--orange)">C</span> — <strong>Consulted</strong>
+          <p style="font-size:12px; margin-top:0.3rem; color:var(--text-muted)">Donne un avis, expertise. Communication bidirectionnelle.</p>
+        </div>
+        <div style="padding:0.8rem; border-radius:6px; background:var(--green-soft); border:1px solid var(--green)">
+          <span style="font-size:1.2rem; font-family:var(--mono); font-weight:700; color:var(--green)">I</span> — <strong>Informed</strong>
+          <p style="font-size:12px; margin-top:0.3rem; color:var(--text-muted)">Est informé du résultat. Communication unidirectionnelle.</p>
+        </div>
+      </div>
+      <div class="alert alert-warn">⚠️ Règle clé : il doit y avoir <strong>exactement un A</strong> par tâche. Plusieurs R sont possibles.
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Exemple — Projet web marketing</h3>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Tâche</th>
+              <th>Chef projet</th>
+              <th>Informatique</th>
+              <th>Marketing</th>
+              <th>Formation</th>
+              <th>Ventes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="font-size:12px">Expression des besoins</td>
+              <td><div class="raci-cell raci-R">R</div></td>
+              <td></td>
+              <td><div style="display:flex; gap:3px"><div class="raci-cell raci-R">R</div><div class="raci-cell raci-A">A</div></div></td>
+              <td><div class="raci-cell raci-I">I</div></td>
+              <td><div class="raci-cell raci-C">C</div></td>
+            </tr>
+            <tr>
+              <td style="font-size:12px">Cahier des charges</td>
+              <td><div style="display:flex; gap:3px"><div class="raci-cell raci-R">R</div><div class="raci-cell raci-A">A</div></div></td>
+              <td><div class="raci-cell raci-C">C</div></td>
+              <td><div class="raci-cell raci-R">R</div></td>
+              <td></td>
+              <td><div class="raci-cell raci-I">I</div></td>
+            </tr>
+            <tr>
+              <td style="font-size:12px">Développement</td>
+              <td><div class="raci-cell raci-A">A</div></td>
+              <td><div class="raci-cell raci-R">R</div></td>
+              <td></td>
+              <td></td>
+              <td><div class="raci-cell raci-I">I</div></td>
+            </tr>
+            <tr>
+              <td style="font-size:12px">Formation utilisateurs</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td><div style="display:flex; gap:3px"><div class="raci-cell raci-R">R</div><div class="raci-cell raci-A">A</div></div></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td style="font-size:12px">Mise en production</td>
+              <td><div class="raci-cell raci-A">A</div></td>
+              <td><div class="raci-cell raci-R">R</div></td>
+              <td><div class="raci-cell raci-R">R</div></td>
+              <td></td>
+              <td><div class="raci-cell raci-I">I</div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== QCM ===================== -->
+  <section class="section section-anchor" id="qcm">
+    <h2>QCM & Vrai/Faux <span class="tag">Interactif</span></h2>
+    <div class="alert alert-info">Clique sur une réponse pour la valider. La correction s'affiche immédiatement.</div>
+
+    <div id="score-display">Score : <span id="score-val">0</span> / <span id="score-total">0</span></div>
+
+    <h3 style="margin-bottom:1rem">— Vrai / Faux (style cours)</h3>
+    <div class="vf-grid" id="vf-container">
+      <!-- Injected by JS -->
+    </div>
+
+    <hr>
+    <h3 style="margin:1.5rem 0 1rem">— QCM</h3>
+    <div id="qcm-container">
+      <!-- Injected by JS -->
+    </div>
+  </section>
+
+  <!-- ===================== EXERCICES ===================== -->
+  <section class="section section-anchor" id="exercices">
+    <h2>Exercices types <span class="tag">Examen</span></h2>
+
+    <!-- EX 1 COCOMO -->
+    <div class="accordion" onclick="toggleAccordion(this)">
+      <div class="accordion-header">
+        <span><span class="badge badge-orange" style="margin-right:0.5rem">COCOMO</span> Exercice 1 — Projet CRM simple, 40 000 lignes</span>
+        <span class="accordion-arrow">▶</span>
+      </div>
+      <div class="accordion-body">
+        <p style="font-size:13px; margin-bottom:1rem"><strong>Énoncé :</strong> Un CRM est à développer. Projet simple, équipe réduite. Taille estimée : <strong>40 000 lignes</strong>. Estimer la taille de l'équipe avec COCOMO.</p>
+        <div class="steps">
+          <div class="step"><div class="step-num"></div><div class="step-content">Projet <strong>simple</strong> → a = 2,40 ; b = 1,05 ; c = 2,50 ; d = 0,38. KLOC = 40 000 / 1000 = <strong>40</strong></div></div>
+          <div class="step"><div class="step-num"></div><div class="step-content"><strong>Charge</strong> = 2,40 × 40<sup>1,05</sup> = 2,40 × 47,57 ≈ <strong>114,18 HM</strong></div></div>
+          <div class="step"><div class="step-num"></div><div class="step-content"><strong>Durée</strong> = 2,50 × 114,18<sup>0,38</sup> = 2,50 × 6,97 ≈ <strong>17,43 mois</strong></div></div>
+          <div class="step"><div class="step-num"></div><div class="step-content"><strong>Nb personnes</strong> = 114,18 / 17,43 ≈ 6,55 → <strong>7 personnes</strong></div></div>
+        </div>
+        <div class="alert alert-info" style="margin-top:1rem">💡 Arrondir le nombre de personnes à l'entier supérieur.</div>
+      </div>
+    </div>
+
+    <!-- EX 2 PERT SOIREE -->
+    <div class="accordion" onclick="toggleAccordion(this)">
+      <div class="accordion-header">
+        <span><span class="badge badge-blue" style="margin-right:0.5rem">PERT</span> Exercice 2 — Soirée télé (TD1 corrigé)</span>
+        <span class="accordion-arrow">▶</span>
+      </div>
+      <div class="accordion-body">
+        <table style="margin-bottom:1rem">
+          <thead><tr><th>Tâche</th><th>Durée (min)</th><th>Prédécesseurs</th><th>Tôt</th><th>Tard</th><th>Marge</th></tr></thead>
+          <tbody>
+            <tr><td>A — S'installer canapé</td><td>1</td><td>—</td><td>0</td><td>8</td><td style="color:var(--orange)">8</td></tr>
+            <tr><td>B — Prendre télécommande</td><td>1</td><td>—</td><td>0</td><td>0</td><td style="color:var(--red); font-weight:600">0 ★</td></tr>
+            <tr><td>C — Allumer télé</td><td>1</td><td>B</td><td>1</td><td>1</td><td style="color:var(--red); font-weight:600">0 ★</td></tr>
+            <tr><td>D — Mettre Netflix</td><td>1</td><td>C</td><td>2</td><td>2</td><td style="color:var(--red); font-weight:600">0 ★</td></tr>
+            <tr><td>E — Choisir le film</td><td>5</td><td>D</td><td>3</td><td>3</td><td style="color:var(--red); font-weight:600">0 ★</td></tr>
+            <tr><td>F — Mettre en route le film</td><td>1</td><td>E</td><td>8</td><td>8</td><td style="color:var(--red); font-weight:600">0 ★</td></tr>
+            <tr><td>G — Regarder le film</td><td>120</td><td>A, F</td><td>9</td><td>9</td><td style="color:var(--red); font-weight:600">0 ★</td></tr>
+          </tbody>
+        </table>
+        <div style="padding:0.8rem; background:var(--red-soft); border-radius:6px; color:var(--red); font-size:13px">
+          🔴 <strong>Chemin critique :</strong> B → C → D → E → F → G (durée = 129 min)<br>
+          ⚠️ La tâche A (s'installer) a une marge de 8 min — on peut la faire juste avant que le film démarre.
+        </div>
+      </div>
+    </div>
+
+    <!-- EX 3 PERT RÉSEAU EAU -->
+    <div class="accordion" onclick="toggleAccordion(this)">
+      <div class="accordion-header">
+        <span><span class="badge badge-blue" style="margin-right:0.5rem">PERT</span> Exercice 3 — Réseau d'eau (TD2)</span>
+        <span class="accordion-arrow">▶</span>
+      </div>
+      <div class="accordion-body">
+        <p style="font-size:13px; margin-bottom:1rem"><strong>Données :</strong></p>
+        <table style="margin-bottom:1rem; font-size:12px">
+          <thead><tr><th>Tâche</th><th>Durée (j)</th><th>Prédécesseurs</th><th>Tôt</th><th>Tard</th><th>Marge</th></tr></thead>
+          <tbody>
+            <tr><td>A — Dossier administratif</td><td>20</td><td>—</td><td>0</td><td>0</td><td style="color:var(--red); font-weight:600">0★</td></tr>
+            <tr><td>B — Installation chantier</td><td>10</td><td>A</td><td>20</td><td>20</td><td style="color:var(--red); font-weight:600">0★</td></tr>
+            <tr><td>C — Fabrication canalisation</td><td>40</td><td>A</td><td>20</td><td>23</td><td style="color:var(--orange)">3</td></tr>
+            <tr><td>D — Fabrication valves</td><td>30</td><td>A</td><td>20</td><td>50</td><td style="color:var(--orange)">30</td></tr>
+            <tr><td>E — Implantation réseau</td><td>8</td><td>B</td><td>30</td><td>30</td><td style="color:var(--red); font-weight:600">0★</td></tr>
+            <tr><td>F — Tranchées et fouille</td><td>30</td><td>E</td><td>38</td><td>38</td><td style="color:var(--red); font-weight:600">0★</td></tr>
+            <tr><td>G — Mise en place réseau</td><td>25</td><td>C, F</td><td>68</td><td>68</td><td style="color:var(--red); font-weight:600">0★</td></tr>
+            <tr><td>H — Ancrage béton</td><td>10</td><td>G</td><td>93</td><td>93</td><td style="color:var(--red); font-weight:600">0★</td></tr>
+            <tr><td>I — Terrassements trappes</td><td>14</td><td>E, H</td><td>103</td><td>103</td><td style="color:var(--red); font-weight:600">0★</td></tr>
+            <tr><td>J — Mise en place valves</td><td>8</td><td>D, I</td><td>117</td><td>117</td><td style="color:var(--red); font-weight:600">0★</td></tr>
+            <tr><td>K — Essai réseau</td><td>6</td><td>G, J</td><td>125</td><td>125</td><td style="color:var(--red); font-weight:600">0★</td></tr>
+            <tr><td>L — Remblais</td><td>10</td><td>K</td><td>131</td><td>131</td><td style="color:var(--red); font-weight:600">0★</td></tr>
+            <tr><td>M — Réaménagement</td><td>12</td><td>L</td><td>141</td><td>141</td><td style="color:var(--red); font-weight:600">0★</td></tr>
+            <tr><td>N — Fermeture trappes</td><td>3</td><td>M</td><td>153</td><td>153</td><td style="color:var(--red); font-weight:600">0★</td></tr>
+            <tr><td>O — Repli chantier</td><td>2</td><td>N</td><td>156</td><td>156</td><td style="color:var(--red); font-weight:600">0★</td></tr>
+          </tbody>
+        </table>
+        <div style="background:var(--red-soft); border-radius:6px; padding:0.8rem; color:var(--red); font-size:13px; margin-bottom:0.8rem">
+          🔴 <strong>Durée minimale :</strong> 158 jours<br>
+          🔴 <strong>Chemin critique :</strong> A→B→E→F→G→H→I→J→K→L→M→N→O
+        </div>
+        <div style="background:var(--green-soft); border-radius:6px; padding:0.8rem; color:var(--green); font-size:13px; margin-bottom:0.5rem">
+          ✅ Retard de 2j sur <strong>tranchées (F)</strong> : marge = 0 → <strong>NON possible</strong>. Décale tout le projet de 2 jours.
+        </div>
+        <div style="background:var(--green-soft); border-radius:6px; padding:0.8rem; color:var(--green); font-size:13px">
+          ✅ Retard de 5j sur <strong>fabrication canalisations (C)</strong> : marge = 3j → <strong>partiellement possible</strong>. Retard de 5j − 3j = 2j répercutés sur le projet.
+        </div>
+      </div>
+    </div>
+
+    <!-- EX 4 COCOMO GMAO -->
+    <div class="accordion" onclick="toggleAccordion(this)">
+      <div class="accordion-header">
+        <span><span class="badge badge-orange" style="margin-right:0.5rem">COCOMO</span> Exercice 4 — GMAO moyen, 80 000 lignes (CM2 corrigé)</span>
+        <span class="accordion-arrow">▶</span>
+      </div>
+      <div class="accordion-body">
+        <p style="font-size:13px; margin-bottom:1rem"><strong>Énoncé :</strong> Logiciel de GMAO, projet <strong>moyen</strong>, 80 000 lignes.</p>
+        <div class="steps">
+          <div class="step"><div class="step-num"></div><div class="step-content">Projet <strong>moyen</strong> → a = 3,00 ; b = 1,12 ; c = 2,50 ; d = 0,35. KLOC = 80</div></div>
+          <div class="step"><div class="step-num"></div><div class="step-content"><strong>Charge</strong> = 3,00 × 80<sup>1,12</sup> = 3,00 × 135,35 ≈ <strong>406,05 HM</strong></div></div>
+          <div class="step"><div class="step-num"></div><div class="step-content"><strong>Durée</strong> = 2,50 × 406,05<sup>0,35</sup> = 2,50 × 8,18 ≈ <strong>20,46 mois</strong></div></div>
+          <div class="step"><div class="step-num"></div><div class="step-content"><strong>Nb personnes</strong> = 406,05 / 20,46 ≈ 19,84 → <strong>20 personnes</strong></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EX 5 RACI -->
+    <div class="accordion" onclick="toggleAccordion(this)">
+      <div class="accordion-header">
+        <span><span class="badge badge-green" style="margin-right:0.5rem">RACI</span> Exercice 5 — Compléter une matrice RACI</span>
+        <span class="accordion-arrow">▶</span>
+      </div>
+      <div class="accordion-body">
+        <p style="font-size:13px; margin-bottom:0.8rem">Questions types à l'examen pour une matrice RACI :</p>
+        <div class="steps">
+          <div class="step"><div class="step-num"></div><div class="step-content"><strong>R</strong> — Qui réalise concrètement la tâche ? (peut être plusieurs)</div></div>
+          <div class="step"><div class="step-num"></div><div class="step-content"><strong>A</strong> — Qui est responsable final, peut trancher, valide ? (<strong>Un seul A</strong>)</div></div>
+          <div class="step"><div class="step-num"></div><div class="step-content"><strong>C</strong> — Qui a une expertise utile, donne des conseils ?</div></div>
+          <div class="step"><div class="step-num"></div><div class="step-content"><strong>I</strong> — Qui est impacté par la tâche et doit être tenu au courant ?</div></div>
+        </div>
+        <div class="alert alert-warn" style="margin-top:1rem">
+          ⚠️ Piège classique : oublier qu'il doit y avoir <strong>exactement un A</strong> par ligne. Mettre deux A est une erreur.
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- end .page -->
+
+<script>
+// ===================== NAV ACTIVE =====================
+function setActive(el) {
+  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+  el.classList.add('active');
+}
+// Scroll spy
+window.addEventListener('scroll', () => {
+  const sections = document.querySelectorAll('.section-anchor');
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 80) current = s.id;
+  });
+  document.querySelectorAll('nav a').forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+
+// ===================== ACCORDION =====================
+function toggleAccordion(el) {
+  el.classList.toggle('open');
+}
+
+// ===================== VF DATA =====================
+const vfData = [
+  { text: "Un projet doit obligatoirement avoir un leader.", answer: false, expl: "Un projet n'a pas forcément de leader unique — en revanche il doit avoir date début, fin, objectif et budget." },
+  { text: "Le MOA (Maître d'Ouvrage) est à l'origine du projet.", answer: true, expl: "C'est le client/commanditaire qui lance le projet. Le MOE (Maître d'Œuvre) le réalise." },
+  { text: "Les méthodes classiques ont une documentation restreinte.", answer: false, expl: "C'est l'Agile qui a une documentation restreinte. Les méthodes classiques sont très documentées." },
+  { text: "Agile est plus contractuel que les méthodes classiques.", answer: false, expl: "C'est l'inverse. Les méthodes classiques sont plus contractuelles." },
+  { text: "Les méthodes classiques ont un cycle de vie en cascade.", answer: true, expl: "Waterfall = cascade séquentielle. Agile = incrémental/itératif." },
+  { text: "Dans les méthodes Agile, l'équipe est dirigée par un chef de projet.", answer: false, expl: "En Agile, le chef de projet soutient l'équipe (Scrum Master). C'est en méthode classique qu'il la dirige." },
+  { text: "Les méthodes Agile ont un cycle de vie incrémental.", answer: true, expl: "Agile fonctionne par sprints successifs (incréments), contrairement au Waterfall séquentiel." },
+  { text: "Les méthodes classiques visent principalement la satisfaction du client.", answer: false, expl: "Les méthodes classiques visent à respecter les engagements de coûts et délais. C'est l'Agile qui vise la satisfaction client." },
+  { text: "Dans PERT, le chemin critique relie les tâches avec une marge libre nulle.", answer: true, expl: "Tout retard sur le chemin critique retarde le projet entier." },
+  { text: "COCOMO 81 prend en compte 15 facteurs de coût.", answer: false, expl: "COCOMO 81 n'utilise que 2 facteurs (difficulté + LOC). Ce sont COCOMO II qui en intègre 15." },
+  { text: "Dans la matrice RACI, il doit y avoir exactement un A par tâche.", answer: true, expl: "Un seul Accountable (décideur) par tâche. En revanche plusieurs R sont possibles." },
+  { text: "Le PERT est l'outil idéal pour suivre l'avancement pendant l'exécution.", answer: false, expl: "Le Gantt est utilisé pour le suivi en exécution. Le PERT est surtout utile en phase de planification." },
+  { text: "En COCOMO, 1 homme-mois correspond à 152 heures de travail effectif.", answer: true, expl: "152h = 19 jours (hors congés, formation, maladie)." },
+  { text: "Le Gantt permet de trouver facilement le chemin critique.", answer: false, expl: "Le chemin critique est difficile à trouver sur un Gantt. C'est le PERT qui est fait pour ça." },
+];
+
+// ===================== QCM DATA =====================
+const qcmData = [
+  {
+    q: "Dans COCOMO, pour un projet moyen estimé à 50 KLOC, quelle est la formule de la charge ?",
+    opts: ["Charge = 2,40 × 50^1,05", "Charge = 3,00 × 50^1,12", "Charge = 3,60 × 50^1,20", "Charge = 2,50 × 50^0,35"],
+    correct: 1,
+    expl: "Projet moyen → a=3,00 ; b=1,12. Charge = 3,00 × 50^1,12"
+  },
+  {
+    q: "Une tâche PERT a une date au plus tôt = 15 et une date au plus tard = 22. Quelle est sa marge ?",
+    opts: ["7", "22", "15", "0"],
+    correct: 0,
+    expl: "Marge = tard − tôt = 22 − 15 = 7"
+  },
+  {
+    q: "Quel outil est utilisé en PHASE DE PLANIFICATION pour identifier les interdépendances ?",
+    opts: ["Gantt", "PERT", "RACI", "WBS"],
+    correct: 1,
+    expl: "Le PERT est utilisé en planification. Le Gantt est plutôt utilisé en exécution."
+  },
+  {
+    q: "Si une tâche du chemin critique prend 3 jours de retard, le projet prend...",
+    opts: ["0 jour de retard (on a des marges)", "3 jours de retard minimum", "1 jour de retard", "Ça dépend du budget"],
+    correct: 1,
+    expl: "Les tâches critiques ont marge = 0. Tout retard sur ces tâches se répercute directement sur la fin du projet."
+  },
+  {
+    q: "Dans COCOMO, que représente KLOC ?",
+    opts: ["Le nombre de personnes", "Les milliers de lignes de code", "La durée en mois", "Le coût total"],
+    correct: 1,
+    expl: "KLOC = Kilo Lines Of Code = taille du logiciel en milliers de lignes de code."
+  },
+  {
+    q: "Quel rôle dans la matrice RACI ne peut être attribué qu'à UNE SEULE personne par tâche ?",
+    opts: ["R — Responsible", "A — Accountable", "C — Consulted", "I — Informed"],
+    correct: 1,
+    expl: "Un seul Accountable (décideur) par tâche. Si plusieurs A, il y a ambiguïté sur la prise de décision."
+  },
+  {
+    q: "Qu'est-ce que le WBS (Work Breakdown Structure) ?",
+    opts: ["Un diagramme de réseau de tâches", "Une décomposition hiérarchique du projet en tâches", "Un tableau de responsabilités", "Un diagramme temporel"],
+    correct: 1,
+    expl: "Le WBS décompose le projet en livrables et tâches plus petites pour faciliter estimation et planification."
+  },
+  {
+    q: "Dans PERT, si une tâche a deux prédécesseurs A (tôt=10) et B (tôt=15), à quel nœud se place-t-elle ?",
+    opts: ["Derrière A (tôt=10)", "Derrière B (tôt=15) avec une flèche fictive depuis A", "À mi-chemin entre A et B", "Cela n'est pas possible"],
+    correct: 1,
+    expl: "On positionne la tâche derrière le prédécesseur avec le tôt le plus élevé (B). Une flèche fictive (durée=0) relie A à ce nœud pour respecter l'antériorité."
+  },
+];
+
+// ===================== RENDER VF =====================
+let score = 0, total = 0;
+function renderVF() {
+  const container = document.getElementById('vf-container');
+  vfData.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.className = 'vf-item';
+    div.innerHTML = `
+      <div>
+        <div class="vf-statement">${item.text}</div>
+        <div class="vf-explication" id="vf-expl-${i}">${item.expl}</div>
+      </div>
+      <div class="vf-btns">
+        <button class="vf-btn" id="vf-v-${i}" onclick="checkVF(${i}, true)">VRAI</button>
+        <button class="vf-btn" id="vf-f-${i}" onclick="checkVF(${i}, false)">FAUX</button>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+function checkVF(i, answer) {
+  const vBtn = document.getElementById(`vf-v-${i}`);
+  const fBtn = document.getElementById(`vf-f-${i}`);
+  const expl = document.getElementById(`vf-expl-${i}`);
+  if (vBtn.disabled) return;
+  const correct = vfData[i].answer;
+  total++;
+  if (answer === correct) {
+    score++;
+    (answer ? vBtn : fBtn).classList.add('correct');
+  } else {
+    (answer ? vBtn : fBtn).classList.add('wrong');
+    (correct ? vBtn : fBtn).classList.add('correct');
+  }
+  vBtn.disabled = true; fBtn.disabled = true;
+  expl.classList.add('show');
+  updateScore();
+}
+
+// ===================== RENDER QCM =====================
+function renderQCM() {
+  const container = document.getElementById('qcm-container');
+  qcmData.forEach((item, qi) => {
+    const div = document.createElement('div');
+    div.className = 'qcm-block card';
+    let optsHTML = item.opts.map((o, oi) => `
+      <div class="qcm-opt" id="qcm-opt-${qi}-${oi}" onclick="checkQCM(${qi}, ${oi})">
+        <div class="qcm-dot"></div>
+        <span>${o}</span>
+      </div>
+    `).join('');
+    div.innerHTML = `
+      <div class="qcm-question">Q${qi+1}. ${item.q}</div>
+      <div class="qcm-options">${optsHTML}</div>
+      <div class="qcm-feedback" id="qcm-fb-${qi}"></div>
+    `;
+    container.appendChild(div);
+  });
+}
+function checkQCM(qi, oi) {
+  const fb = document.getElementById(`qcm-fb-${qi}`);
+  for (let i = 0; i < qcmData[qi].opts.length; i++) {
+    const el = document.getElementById(`qcm-opt-${qi}-${i}`);
+    if (el.classList.contains('correct') || el.classList.contains('wrong')) return;
+  }
+  total++;
+  const el = document.getElementById(`qcm-opt-${qi}-${oi}`);
+  const correctEl = document.getElementById(`qcm-opt-${qi}-${qcmData[qi].correct}`);
+  if (oi === qcmData[qi].correct) {
+    el.classList.add('correct');
+    fb.classList.add('show', 'ok');
+    fb.textContent = '✅ ' + qcmData[qi].expl;
+    score++;
+  } else {
+    el.classList.add('wrong');
+    correctEl.classList.add('revealed-correct');
+    fb.classList.add('show', 'ko');
+    fb.textContent = '❌ ' + qcmData[qi].expl;
+  }
+  // disable all options
+  for (let i = 0; i < qcmData[qi].opts.length; i++) {
+    document.getElementById(`qcm-opt-${qi}-${i}`).style.cursor = 'default';
+    document.getElementById(`qcm-opt-${qi}-${i}`).onclick = null;
+  }
+  updateScore();
+}
+function updateScore() {
+  const display = document.getElementById('score-display');
+  document.getElementById('score-val').textContent = score;
+  document.getElementById('score-total').textContent = total;
+  display.classList.add('show');
+}
+
+// ===================== COCOMO CALC =====================
+const cocomoParams = {
+  simple:   {a:2.40, b:1.05, c:2.50, d:0.38},
+  moyen:    {a:3.00, b:1.12, c:2.50, d:0.35},
+  complexe: {a:3.60, b:1.20, c:2.50, d:0.23}
+};
+function cocomoCalc() {
+  const type = document.getElementById('cocomo-type').value;
+  const loc = parseFloat(document.getElementById('cocomo-loc').value);
+  if (!loc || loc <= 0) return;
+  const {a, b, c, d} = cocomoParams[type];
+  const kloc = loc / 1000;
+  const charge = a * Math.pow(kloc, b);
+  const duree = c * Math.pow(charge, d);
+  const equipe = charge / duree;
+  document.getElementById('r-charge').textContent = charge.toFixed(2);
+  document.getElementById('r-duree').textContent = duree.toFixed(2);
+  document.getElementById('r-equipe').textContent = Math.ceil(equipe);
+  document.getElementById('cocomo-result').classList.add('show');
+  const steps = document.getElementById('cocomo-steps');
+  steps.style.display = 'block';
+  steps.innerHTML = `
+    Paramètres [${type}] : a=${a}, b=${b}, c=${c}, d=${d}<br>
+    KLOC = ${loc} / 1000 = ${kloc}<br>
+    Charge = ${a} × ${kloc}^${b} = <strong>${charge.toFixed(2)} HM</strong><br>
+    Durée = ${c} × ${charge.toFixed(2)}^${d} = <strong>${duree.toFixed(2)} mois</strong><br>
+    Équipe = ${charge.toFixed(2)} / ${duree.toFixed(2)} = ${(charge/duree).toFixed(2)} → <strong>${Math.ceil(equipe)} personnes</strong>
+  `;
+}
+
+// ===================== PERT SIMULATOR =====================
+let pertRowCount = 0;
+function pertAddRow(task='', dur='', preds='') {
+  pertRowCount++;
+  const tbody = document.getElementById('pert-body');
+  const tr = document.createElement('tr');
+  tr.id = `pert-row-${pertRowCount}`;
+  const id = pertRowCount;
+  tr.innerHTML = `
+    <td><input class="pert-input" placeholder="Ex: A" value="${task}" id="pt-name-${id}"></td>
+    <td><input class="pert-input" type="number" placeholder="durée" value="${dur}" id="pt-dur-${id}" style="width:70px"></td>
+    <td><input class="pert-input" placeholder="Ex: A,B" value="${preds}" id="pt-pred-${id}"></td>
+    <td><button onclick="this.closest('tr').remove()" style="border:none; background:none; cursor:pointer; color:var(--text-muted); font-size:16px">×</button></td>
+  `;
+  tbody.appendChild(tr);
+}
+
+function pertLoadExample(type) {
+  document.getElementById('pert-body').innerHTML = '';
+  pertRowCount = 0;
+  document.getElementById('pert-result').style.display = 'none';
+  if (type === 'sql') {
+    [['1 - Lire énoncé','5',''],['2 - Ouvrir SQL','2',''],['3 - Se connecter','1','2'],['4 - Écrire requête','10','1,2'],['5 - Lancer requête','1','3,4'],['6 - Corriger erreurs','5','5'],['7 - Relancer','1','6'],['8 - Vérifier résultat','3','7']].forEach(([t,d,p]) => pertAddRow(t,d,p));
+  } else {
+    [['A - Canapé','1',''],['B - Télécommande','1',''],['C - Allumer télé','1','B'],['D - Netflix','1','C'],['E - Choisir film','5','D'],['F - Démarrer film','1','E'],['G - Regarder','120','A,F']].forEach(([t,d,p]) => pertAddRow(t,d,p));
+  }
+}
+
+function pertCalculate() {
+  // Collect tasks
+  const rows = document.querySelectorAll('#pert-body tr');
+  const tasks = [];
+  rows.forEach((row, i) => {
+    const id = row.id.split('-')[2];
+    const name = document.getElementById(`pt-name-${id}`).value.trim();
+    const dur = parseFloat(document.getElementById(`pt-dur-${id}`).value) || 0;
+    const predStr = document.getElementById(`pt-pred-${id}`).value.trim();
+    const preds = predStr ? predStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+    if (name) tasks.push({ name, dur, preds, earlyStart: 0, earlyFinish: 0, lateStart: 0, lateFinish: 0, slack: 0 });
+  });
+  if (!tasks.length) return;
+
+  // Forward pass (topological)
+  const nameToTask = {};
+  tasks.forEach(t => nameToTask[t.name] = t);
+
+  // Simple topological sort
+  const visited = new Set();
+  const order = [];
+  function visit(t) {
+    if (visited.has(t.name)) return;
+    visited.add(t.name);
+    t.preds.forEach(p => { if (nameToTask[p]) visit(nameToTask[p]); });
+    order.push(t);
+  }
+  tasks.forEach(t => visit(t));
+
+  // Forward
+  order.forEach(t => {
+    let maxPredFinish = 0;
+    t.preds.forEach(p => {
+      if (nameToTask[p]) maxPredFinish = Math.max(maxPredFinish, nameToTask[p].earlyFinish);
+    });
+    t.earlyStart = maxPredFinish;
+    t.earlyFinish = t.earlyStart + t.dur;
+  });
+
+  const projectEnd = Math.max(...tasks.map(t => t.earlyFinish));
+
+  // Backward
+  const reverseOrder = [...order].reverse();
+  reverseOrder.forEach(t => {
+    // find successors
+    const successors = tasks.filter(s => s.preds.includes(t.name));
+    if (successors.length === 0) {
+      t.lateFinish = projectEnd;
+    } else {
+      t.lateFinish = Math.min(...successors.map(s => s.lateStart));
+    }
+    t.lateStart = t.lateFinish - t.dur;
+    t.slack = t.lateFinish - t.earlyFinish;
+  });
+
+  // Render
+  const tbody = document.getElementById('pert-result-body');
+  tbody.innerHTML = '';
+  const critical = [];
+  tasks.forEach(t => {
+    const isCrit = Math.abs(t.slack) < 0.001;
+    if (isCrit) critical.push(t.name);
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td${isCrit ? ' class="critical"' : ''}>${t.name}</td>
+      <td>${t.dur}</td>
+      <td>${t.earlyStart}</td>
+      <td>${t.lateStart}</td>
+      <td${isCrit ? ' class="critical"' : ''}>${t.slack.toFixed(0)}</td>
+      <td>${isCrit ? '<span style="color:var(--red); font-weight:600">★ Critique</span>' : '—'}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById('pert-critical-display').textContent =
+    `🔴 Chemin critique : ${critical.join(' → ')}`;
+  document.getElementById('pert-duration-display').textContent =
+    `⏱️ Durée minimale du projet : ${projectEnd} unités`;
+  document.getElementById('pert-result').style.display = 'block';
+  document.getElementById('pert-critical-display').classList.add('show');
+}
+
+// ===================== INIT =====================
+renderVF();
+renderQCM();
+pertAddRow('A','5','');
+pertAddRow('B','2','');
+pertAddRow('C','1','B');
+pertAddRow('D','10','A,B');
+pertAddRow('E','1','C,D');
+</script>
+</body>
+</html>
