@@ -12,11 +12,11 @@ const toggle = document.getElementById('themeToggle');
   const linkEdt = document.getElementById('link-edt');
 
   function applyLocation(isIut) {
-    if (linkEdt) {
-      linkEdt.classList.toggle('hidden', !isIut);
-      linkEdt.classList.toggle('visible', isIut);
-    }
-    localStorage.setItem('location', isIut ? 'iut' : 'home');
+      document.querySelectorAll('.iut-only').forEach(el => {
+          el.classList.toggle('hidden', !isIut);
+          el.classList.toggle('visible', isIut);
+      });
+      localStorage.setItem('location', isIut ? 'iut' : 'home');
   }
 
   // Initialisation localisation — défaut : chez soi
