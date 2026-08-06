@@ -606,3 +606,54 @@ input:checked + .slider-location::before {
     box-shadow: 0 0 0 0 rgba(255,255,255,0);
   }
 }
+
+.revision-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.revision-subtitle-toggle {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+  color: var(--text-color);
+  opacity: 0.75;
+  font-size: 0.85em;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 10px 0 6px 0;
+  padding: 4px 6px;
+  transition: opacity 0.2s ease;
+}
+
+.revision-subtitle-toggle:hover {
+  opacity: 1;
+}
+
+.revision-subtitle-toggle .arrow {
+  transition: transform 0.25s ease;
+  font-size: 0.9em;
+}
+
+.revision-subtitle-toggle.open .arrow {
+  transform: rotate(90deg);
+}
+
+.revision-group-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: hidden;
+  max-height: 500px;
+  transition: max-height 0.3s ease;
+}
+
+.revision-group-links.hidden {
+  max-height: 0;
+}
+
+.validated-icon {
+  cursor: help;
+}

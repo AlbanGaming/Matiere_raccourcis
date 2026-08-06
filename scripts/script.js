@@ -109,3 +109,22 @@ const toggle = document.getElementById('themeToggle');
 
     window.open(lienFinal);
   }
+
+  // === Accordéon révisions par semestre ===
+document.querySelectorAll('.revision-subtitle-toggle').forEach(title => {
+  const groupId = title.dataset.group;
+  const linksDiv = title.nextElementSibling;
+
+  // Restaurer l'état sauvegardé
+  const saved = localStorage.getItem('revision-group-' + groupId);
+  if (saved === 'open') {
+    linksDiv.classList.remove('hidden');
+    title.classList.add('open');
+  }
+
+  title.addEventListener('click', () => {
+    const isOpen = title.classList.toggle('open');
+    linksDiv.classList.toggle('hidden');
+    localStorage.setItem('revision-group-' + groupId, isOpen ? 'open' : 'closed');
+  });
+});
