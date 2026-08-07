@@ -1,6 +1,6 @@
 # Accès rapide aux matières — README
 
-Ce document explique comment utiliser les différentes fonctionnalités du site, notamment pour ajouter ou modifier des liens de révision.
+Ce document explique comment utiliser les différentes fonctionnalités du site, notamment pour ajouter ou modifier des liens de révision. 
 
 ---
 
