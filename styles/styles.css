@@ -646,7 +646,7 @@ input:checked + .slider-location::before {
   flex-direction: column;
   gap: 8px;
   overflow: hidden;
-  max-height: 500px;
+  max-height: 2000px;
   transition: max-height 0.3s ease;
 }
 
