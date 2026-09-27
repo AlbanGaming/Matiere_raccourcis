@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Révisions BDD — Test Moodle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f1319; --panel:#171d26; --panel2:#1d2530; --border:#2a3442;
+  --text:#e7ecf2; --muted:#93a4b8; --teal:#4fb8a6; --teal-dim:#2d6b62;
+  --amber:#e0a458; --amber-dim:#7a5a2e; --red:#e2725b;
+  --code-bg:#0c0f14;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  box-sizing:border-box;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#f6f4ef; --panel:#ffffff; --panel2:#f0ede5; --border:#dcd6c9;
+    --text:#20242b; --muted:#5b6472; --teal:#1f7a6c; --teal-dim:#bfe4dd;
+    --amber:#a2650f; --amber-dim:#f2dcb3; --red:#b5402b;
+    --code-bg:#eeeae0;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#f6f4ef; --panel:#ffffff; --panel2:#f0ede5; --border:#dcd6c9;
+  --text:#20242b; --muted:#5b6472; --teal:#1f7a6c; --teal-dim:#bfe4dd;
+  --amber:#a2650f; --amber-dim:#f2dcb3; --red:#b5402b;
+  --code-bg:#eeeae0;
+}
+html{scroll-padding-top:calc(64px + env(safe-area-inset-top,0px));}
+*{box-sizing:border-box;}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:'Source Sans 3',sans-serif; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,code,pre,.mono{font-family:'JetBrains Mono',monospace;}
+
+header{
+  position:sticky; top:0; z-index:20;
+  padding:calc(14px + env(safe-area-inset-top,0px)) 20px 14px;
+  background:var(--bg); border-bottom:1px solid var(--border);
+  display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap;
+}
+header h1{margin:0; font-size:1.05rem; font-weight:700; letter-spacing:.01em;}
+header .exam-tag{color:var(--red); font-size:.85rem; font-weight:500;}
+
+nav.chips{
+  display:flex; gap:8px; overflow-x:auto; padding:12px 20px;
+  border-bottom:1px solid var(--border); background:var(--panel);
+  position:sticky; top:56px; z-index:19; scrollbar-width:thin;
+}
+nav.chips a{
+  flex:0 0 auto; text-decoration:none; color:var(--muted); font-size:.82rem;
+  padding:6px 12px; border:1px solid var(--border); border-radius:20px; white-space:nowrap;
+}
+nav.chips a:hover, nav.chips a:focus-visible{color:var(--text); border-color:var(--teal);}
+
+main{max-width:760px; margin:0 auto; padding:28px 20px 80px;}
+
+.section{margin-bottom:52px; scroll-margin-top:120px;}
+.section .num{color:var(--teal); font-size:.8rem; font-weight:700;}
+.section h2{font-size:1.4rem; margin:4px 0 14px; font-weight:700;}
+.section p{margin:0 0 14px; color:var(--text);}
+.section p.lead{color:var(--muted);}
+
+.card{
+  background:var(--panel); border:1px solid var(--border); border-radius:10px;
+  padding:16px 18px; margin:14px 0;
+}
+.card.pitfall{border-left:3px solid var(--red);}
+.card.pitfall .tag{color:var(--red);}
+.card.rule{border-left:3px solid var(--teal);}
+.card.rule .tag{color:var(--teal);}
+.tag{font-size:.75rem; font-weight:700; letter-spacing:.02em; display:block; margin-bottom:6px;}
+
+pre{
+  background:var(--code-bg); border:1px solid var(--border); border-radius:8px;
+  padding:14px 16px; overflow-x:auto; margin:10px 0; font-size:.83rem; line-height:1.5;
+}
+code{font-size:.83rem;}
+.kw{color:var(--teal); font-weight:700;}
+.cm{color:var(--muted); font-style:italic;}
+
+.compare{display:grid; grid-template-columns:1fr; gap:12px; margin:10px 0;}
+@media(min-width:640px){.compare{grid-template-columns:1fr 1fr;}}
+.compare .bad{border-left:3px solid var(--red);}
+.compare .good{border-left:3px solid var(--teal);}
+.compare .label{font-size:.75rem; font-weight:700; margin-bottom:6px; display:block;}
+.compare .bad .label{color:var(--red);}
+.compare .good .label{color:var(--teal);}
+
+.checklist{list-style:none; padding:0; margin:0;}
+.checklist li{
+  display:flex; gap:10px; padding:10px 0; border-bottom:1px solid var(--border);
+}
+.checklist li:last-child{border-bottom:none;}
+.checklist .box{
+  flex:0 0 18px; height:18px; border:1.5px solid var(--muted); border-radius:4px; margin-top:2px;
+}
+
+footer{max-width:760px; margin:0 auto; padding:0 20px 40px; color:var(--muted); font-size:.85rem;}
+a{color:var(--teal);}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Révisions — Requêtes BDD</h1>
+  <span class="exam-tag">Test Moodle · 28 sept · 30 min · 20 questions</span>
+</header>
+
+<nav class="chips">
+  <a href="#jointures">1. Jointures</a>
+  <a href="#externes">2. Jointures externes</a>
+  <a href="#priorite">3. Priorité des conditions</a>
+  <a href="#regroupement">4. Regroupement</a>
+  <a href="#cte">5. CTE</a>
+  <a href="#null">6. Pièges NULL</a>
+  <a href="#checklist">Checklist</a>
+</nav>
+
+<main>
+
+<section class="section" id="jointures">
+  <span class="num">01</span>
+  <h2>Jointures (TP01)</h2>
+  <p class="lead">Deux syntaxes existent pour joindre des tables — ne jamais les mélanger dans une même requête.</p>
+
+  <div class="compare">
+    <div class="card bad">
+      <span class="label">Ancienne syntaxe (virgules)</span>
+      <pre>SELECT ...
+FROM chambre c, agent_entretien a
+WHERE a.agt_id = c.agt_id
+AND UPPER(a.agt_nom) IN ('BOUSSEL','FECHOL')
+AND chb_communique IS NOT NULL;</pre>
+    </div>
+    <div class="card good">
+      <span class="label">Syntaxe ANSI (JOIN)</span>
+      <pre>SELECT ...
+FROM chambre c
+  JOIN agent_entretien a ON a.agt_id = c.agt_id
+WHERE UPPER(a.agt_nom) IN ('BOUSSEL','FECHOL')
+AND chb_communique IS NOT NULL;</pre>
+    </div>
+  </div>
+
+  <p>Une jointure classique peut aussi passer par plusieurs <code>INNER JOIN</code> successifs (ex. client → titre → adresse → planning → chambre), ou être remplacée par des sous-requêtes corrélées avec <code>IN</code> :</p>
+  <pre>SELECT t.tit_lib ||' '|| c.cli_nom ||' '|| c.cli_prenom
+FROM client c
+  JOIN titre t ON t.tit_code = c.tit_code
+WHERE cli_id IN (SELECT cli_id FROM adresse WHERE UPPER(adr_ville)='REIMS')
+AND cli_id IN (SELECT cli_id FROM planning WHERE pln_jour BETWEEN ...);</pre>
+
+  <div class="card rule">
+    <span class="tag">À retenir</span>
+    Jointure = combiner des tables sur une clé commune (<code>ON</code>). Sous-requête <code>IN</code> = filtrer une table par rapport à une liste issue d'une autre table. Les deux donnent souvent le même résultat mais ne sont pas interchangeables si on veut afficher des colonnes de la table filtrée.
+  </div>
+</section>
+
+<section class="section" id="externes">
+  <span class="num">02</span>
+  <h2>Jointures externes</h2>
+  <p class="lead">Une jointure externe garde les lignes d'une table même quand il n'y a pas de correspondance dans l'autre.</p>
+
+  <div class="compare">
+    <div class="card">
+      <span class="label mono" style="color:var(--muted)">Syntaxe Oracle (+)</span>
+      <pre>FROM agent_entretien a, chambre c
+WHERE a.agt_id = c.agt_id(+)</pre>
+      <p style="margin:6px 0 0; font-size:.85rem; color:var(--muted);">le <code>(+)</code> se met du côté de la table qui peut manquer (ici chambre) : LEFT JOIN.</p>
+    </div>
+    <div class="card">
+      <span class="label mono" style="color:var(--muted)">Syntaxe ANSI</span>
+      <pre>FROM agent_entretien a
+  LEFT JOIN chambre c ON a.agt_id = c.agt_id</pre>
+      <p style="margin:6px 0 0; font-size:.85rem; color:var(--muted);">agent_entretien = table maître, chambre = table esclave.</p>
+    </div>
+  </div>
+
+  <p>Cas typique : agents entre 50 et 60 ans même sans chambre affectée. On utilise <code>NVL</code>/<code>NVL2</code> pour gérer l'affichage des colonnes NULL côté esclave :</p>
+  <pre>SELECT DECODE(agt_sx,1,'M. ','Mme ')||agt_prenom||' '||agt_nom "Agent",
+       NVL2(chb_numero, 'N°'||chb_numero, 'AUCUNE CHAMBRE') "Chambre",
+       NVL(chb_etage,'--') "Etage"
+FROM agent_entretien a
+  LEFT JOIN chambre c ON a.agt_id = c.agt_id
+WHERE TRUNC(MONTHS_BETWEEN(SYSDATE,a.agt_dnais)/12) BETWEEN 50 AND 60;</pre>
+
+  <div class="card rule">
+    <span class="tag">Clients / agents "orphelins"</span>
+    Pour trouver ce qui n'a <em>aucune</em> correspondance (clients sans réservation, agents sans chambre) : jointure externe + <code>IS NULL</code> sur la clé de la table esclave.
+    <pre>FROM agent_entretien a
+  LEFT JOIN chambre c ON a.agt_id = c.agt_id
+WHERE c.agt_id IS NULL   <span class="cm">-- pas chb_numero au hasard : la clé de jointure</span></pre>
+  </div>
+</section>
+
+<section class="section" id="priorite">
+  <span class="num">03</span>
+  <h2>Priorité des conditions — le piège central</h2>
+  <p class="lead">C'est le point que la prof souligne explicitement : où placer une condition qui porte sur la table esclave d'une jointure externe.</p>
+
+  <div class="card pitfall">
+    <span class="tag">Le piège</span>
+    Si la condition sur la table esclave est mise dans le <code>WHERE</code>, elle s'applique <strong>après</strong> la jointure externe : les lignes où la table esclave était NULL (justement ce qu'on voulait garder) se retrouvent éliminées. Résultat : on perd l'effet du LEFT JOIN, la requête se comporte comme un INNER JOIN.
+  </div>
+
+  <div class="compare">
+    <div class="card bad">
+      <span class="label">Faux (perd les lignes sans FAX)</span>
+      <pre>FROM client c
+  LEFT JOIN telephone t ON c.cli_id=t.cli_id
+WHERE t.typ_code = 'FAX'</pre>
+    </div>
+    <div class="card good">
+      <span class="label">Correct — condition dans le ON</span>
+      <pre>FROM client c
+  LEFT JOIN telephone t
+    ON c.cli_id = t.cli_id AND t.typ_code = 'FAX'</pre>
+    </div>
+  </div>
+
+  <p>Même logique pour une condition de date sur la table esclave (planning) :</p>
+  <pre>-- Correct : toutes les chambres, réservées ou non, ce jour-là
+FROM chambre c
+  LEFT JOIN planning p
+    ON c.chb_id = p.chb_id
+    AND pln_jour = TO_DATE('26/12/2007','DD/MM/YYYY')</pre>
+
+  <div class="card rule">
+    <span class="tag">Règle générale</span>
+    Condition sur la table <strong>maître</strong> → dans le <code>WHERE</code> (filtre normal).<br>
+    Condition sur la table <strong>esclave</strong> d'une jointure externe → dans le <code>ON</code>, sinon elle annule l'effet du LEFT/RIGHT JOIN.
+  </div>
+
+  <p style="font-size:.85rem; color:var(--muted);">Avec l'ancienne syntaxe <code>(+)</code>, ce piège n'existe pas de la même façon : la condition peut rester dans le WHERE tant qu'elle porte sur une sous-requête déjà filtrée en amont (cf. exemples avec sous-requête dans le FROM).</p>
+</section>
+
+<section class="section" id="regroupement">
+  <span class="num">04</span>
+  <h2>Regroupement</h2>
+  <p class="lead"><code>GROUP BY</code> résume des lignes ; <code>HAVING</code> filtre des groupes (jamais des lignes individuelles).</p>
+
+  <pre>SELECT e.cli_id, cli_nom||' '||cli_prenom AS CLIENT,
+       COUNT(EML_ID)||' emails' AS "PLUSIEURS ADR"
+FROM CLIENT c JOIN EMAIL e ON c.cli_id=e.cli_id
+GROUP BY e.cli_id, cli_nom, cli_prenom
+HAVING COUNT(EML_ID) > 1;</pre>
+
+  <div class="card rule">
+    <span class="tag">Le mieux du meilleur</span>
+    Pour "le max par groupe" (ex. chambre avec le plus de couchages par étage) : sous-requête corrélée comparant chaque ligne au <code>MAX()</code> de son propre groupe.
+    <pre>WHERE chb_couchage = (SELECT MAX(cm.chb_couchage)
+                       FROM chambre cm
+                       WHERE cm.chb_etage = c.chb_etage)</pre>
+  </div>
+
+  <p>Combiner <code>GROUP BY</code> avec une jointure externe : la condition sur la table esclave va toujours dans le <code>ON</code>, même quand on compte ensuite avec <code>COUNT()</code>.</p>
+  <pre>FROM agent_entretien a
+  LEFT JOIN chambre c ON (c.agt_id=a.agt_id AND chb_couchage > 2)
+WHERE agt_sx = 2
+GROUP BY agt_nom;   <span class="cm">-- COUNT(chb_id) vaut 0 si aucune ligne rattachée</span></pre>
+
+  <p style="font-size:.85rem; color:var(--muted);"><code>HAVING COUNT(x) = (SELECT MAX(COUNT(y)) FROM ... GROUP BY ...)</code> est le patron classique pour "le client qui a le plus de X" — sous-requête qui refait le même GROUP BY pour calculer le maximum.</p>
+</section>
+
+<section class="section" id="cte">
+  <span class="num">05</span>
+  <h2>CTE — Common Table Expression</h2>
+  <p class="lead">Le <code>WITH</code> nomme une sous-requête réutilisable, plus lisible qu'une sous-requête imbriquée dans le FROM.</p>
+
+  <pre><span class="kw">WITH</span> agt_actifs AS (
+  SELECT DISTINCT agt_nom, agt_prenom, agt_emb
+  FROM agent_entretien a
+    INNER JOIN chambre c ON a.agt_id = c.agt_id
+  ORDER BY agt_emb
+)
+SELECT agt_nom||' '||agt_prenom AGENT, EXTRACT(YEAR FROM agt_emb) embauche
+FROM agt_actifs
+WHERE rownum <= 2;</pre>
+
+  <div class="card rule">
+    <span class="tag">Où elle remplace quoi</span>
+    Une CTE remplace typiquement une sous-requête placée après le <code>FROM</code> (ex. <code>(SELECT cli_id, tel_numero FROM telephone WHERE typ_code='FAX') t</code>) : on la déclare une fois en haut avec <code>WITH</code>, puis on la joint comme une table normale — souvent en <code>LEFT JOIN</code> si elle joue le rôle de table esclave.
+  </div>
+
+  <pre><span class="kw">WITH</span> planning_noel AS (
+  SELECT cli_id, pln_jour, chb_id FROM planning
+  WHERE pln_jour = TO_DATE('26/12/2007','DD/MM/YYYY')
+)
+SELECT chb_numero, cli_id
+FROM chambre c LEFT JOIN planning_noel p ON c.chb_id = p.chb_id
+ORDER BY 1;</pre>
+
+  <p style="font-size:.85rem; color:var(--muted);">La condition de filtrage (date, type) est faite <em>à l'intérieur</em> de la CTE — donc le piège de priorité du point 3 ne se pose plus une fois la CTE jointe en LEFT JOIN simple sur la clé.</p>
+</section>
+
+<section class="section" id="null">
+  <span class="num">06</span>
+  <h2>Pièges liés à NULL</h2>
+
+  <div class="card pitfall">
+    <span class="tag">NOT IN + NULL = danger</span>
+    Si la colonne testée par <code>NOT IN (sous-requête)</code> peut contenir NULL, la sous-requête entière renvoie un résultat indéterminé et <strong>zéro ligne</strong> n'est retournée — même si intuitivement des lignes devraient matcher.
+  </div>
+
+  <div class="compare">
+    <div class="card bad">
+      <span class="label">Risqué si agt_id peut être NULL dans chambre</span>
+      <pre>WHERE agt_id NOT IN (SELECT agt_id FROM chambre)</pre>
+    </div>
+    <div class="card good">
+      <span class="label">Sûr : NOT EXISTS ou filtrer les NULL</span>
+      <pre>WHERE NOT EXISTS (SELECT NULL FROM chambre c
+                   WHERE a.agt_id = c.agt_id)</pre>
+    </div>
+  </div>
+
+  <p><code>NOT EXISTS</code> est la méthode la plus fiable et la plus performante pour "n'a jamais / n'a aucun" — à privilégier par réflexe dès que la colonne de la sous-requête n'est pas garantie NON NULL.</p>
+
+  <div class="card rule">
+    <span class="tag">Fonctions utiles pour NULL</span>
+    <code>NVL(col, valeur_defaut)</code> — remplace NULL par une valeur.<br>
+    <code>NVL2(col, si_non_null, si_null)</code> — teste la présence avant de choisir quoi afficher.<br>
+    <code>col IS NULL</code> / <code>IS NOT NULL</code> — jamais <code>= NULL</code>.
+  </div>
+
+  <p style="font-size:.85rem; color:var(--muted);">Repère rapide : si l'énoncé garantit "colonne obligatoire" (NOT NULL) dans la table de la sous-requête, <code>NOT IN</code> est safe. Sinon, réflexe <code>NOT EXISTS</code>.</p>
+</section>
+
+<section class="section" id="checklist">
+  <span class="num">✓</span>
+  <h2>Checklist avant l'examen</h2>
+  <ul class="checklist">
+    <li><span class="box"></span> Je ne mélange jamais virgules et JOIN dans une même requête.</li>
+    <li><span class="box"></span> Je sais repérer la table maître / table esclave d'un LEFT ou RIGHT JOIN.</li>
+    <li><span class="box"></span> Condition sur la table esclave → dans le ON, jamais dans le WHERE (sinon ça annule le LEFT JOIN).</li>
+    <li><span class="box"></span> "N'a jamais / aucun" → LEFT JOIN + IS NULL sur la clé, ou NOT EXISTS.</li>
+    <li><span class="box"></span> NOT IN est dangereux si la colonne peut être NULL → je préfère NOT EXISTS.</li>
+    <li><span class="box"></span> HAVING filtre des groupes, WHERE filtre des lignes avant regroupement.</li>
+    <li><span class="box"></span> Une CTE (WITH ... AS) remplace une sous-requête du FROM pour plus de lisibilité.</li>
+    <li><span class="box"></span> NVL / NVL2 pour afficher proprement les colonnes NULL issues d'une jointure externe.</li>
+  </ul>
+</section>
+
+</main>
+
+<footer>Basé sur le corrigé TP01/TP02 (hôtel) — révision pour le test du 28 septembre.</footer>
+
+</body>
+</html>
