@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestion des SI — Cahier de révision</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<button class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu">☰</button>
+
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <p class="kicker">BUT INFORMATIQUE — S3</p>
+      <h1>Gestion&nbsp;des&nbsp;SI</h1>
+      <p class="sub">Cahier des charges, cycles de vie &amp; UML — fiches de révision, flashcards et quiz.</p>
+    </div>
+
+    <p class="navgroup-label">CHAPITRES</p>
+    <ul class="chapters" id="chapterNav"></ul>
+
+    <p class="navgroup-label">S'ENTRAÎNER</p>
+    <ul class="chapters">
+      <li><a href="#flashcards" data-route="flashcards"><span class="num">◆</span> Flashcards</a></li>
+      <li><a href="#quiz" data-route="quiz"><span class="num">◆</span> Quiz général</a></li>
+    </ul>
+
+    <div class="sidebar-footer">
+      D'après le cours de Gestion des SI, les « Cahiers du programmeur » (P. Roques) et le support UML de P. Gérard.
+    </div>
+  </aside>
+
+  <main>
+    <div class="sheet" id="sheet"></div>
+  </main>
+</div>
+
+<script src="data.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

@@ -102,6 +102,20 @@ code{font-size:.83rem;}
   flex:0 0 18px; height:18px; border:1.5px solid var(--muted); border-radius:4px; margin-top:2px;
 }
 
+
+.opt{display:block;width:100%;text-align:left;background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:11px 14px;margin:8px 0;font:inherit;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--teal)}
+.opt:focus-visible,.btn:focus-visible,.frag:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.opt.ok{border-color:var(--teal);background:var(--teal-dim);color:var(--text)}
+.opt.ko{border-color:var(--red)}
+.opt code{font-size:.8rem}
+.btn{background:var(--teal);color:#0b1014;border:0;border-radius:8px;padding:10px 18px;font:inherit;font-weight:600;cursor:pointer;margin:8px 8px 0 0}
+.btn.alt{background:transparent;color:var(--text);border:1px solid var(--border)}
+.qmeta{display:flex;justify-content:space-between;color:var(--muted);font-size:.85rem;margin-bottom:8px}
+.bar{height:4px;background:var(--border);border-radius:2px;margin-bottom:16px}.bar i{display:block;height:100%;background:var(--teal);border-radius:2px}
+.expl{margin-top:12px;padding:12px 14px;border-radius:8px;background:var(--panel2);font-size:.92rem}
+.frags{display:flex;flex-direction:column;gap:6px;margin:8px 0;min-height:44px;padding:8px;border:1px dashed var(--border);border-radius:8px}
+.frag{text-align:left;background:var(--code-bg);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-family:'JetBrains Mono',monospace;font-size:.78rem;cursor:pointer}
 footer{max-width:760px; margin:0 auto; padding:0 20px 40px; color:var(--muted); font-size:.85rem;}
 a{color:var(--teal);}
 </style>
@@ -120,6 +134,8 @@ a{color:var(--teal);}
   <a href="#regroupement">4. Regroupement</a>
   <a href="#cte">5. CTE</a>
   <a href="#null">6. Pièges NULL</a>
+  <a href="#complements">Compléments</a>
+  <a href="#qcm">QCM</a>
   <a href="#checklist">Checklist</a>
 </nav>
 
@@ -332,6 +348,33 @@ ORDER BY 1;</pre>
   <p style="font-size:.85rem; color:var(--muted);">Repère rapide : si l'énoncé garantit "colonne obligatoire" (NOT NULL) dans la table de la sous-requête, <code>NOT IN</code> est safe. Sinon, réflexe <code>NOT EXISTS</code>.</p>
 </section>
 
+
+<section class="section" id="complements">
+  <span class="num">+</span>
+  <h2>Compléments issus des énoncés</h2>
+  <div class="card rule"><span class="tag">GROUP BY : les règles</span>
+    Toute colonne du <code>SELECT</code> doit figurer dans le <code>GROUP BY</code>, sauf les fonctions d'agrégat (<code>SUM</code>, <code>COUNT</code>…). Les <strong>alias</strong> de colonnes ne peuvent pas être utilisés dans le <code>GROUP BY</code>.</div>
+  <div class="card rule"><span class="tag">Les 2 premiers après un tri : ROWNUM</span>
+    <code>ROWNUM</code> est attribué <em>avant</em> le <code>ORDER BY</code>. Pour prendre les N premiers d'un classement, on trie d'abord dans une sous-requête du <code>FROM</code> (ou une CTE), puis on filtre <code>WHERE ROWNUM &lt;= N</code> dans la requête principale.</div>
+  <div class="card rule"><span class="tag">CASE … WHEN</span>
+    Le "si / sinon" du SQL, utilisable dans SELECT, WHERE, ORDER BY, HAVING…
+    <pre>CASE COUNT(chb_id)
+  WHEN 0 THEN 'Pas de chambre de plus de 2 couchages'
+  ELSE COUNT(chb_id) || ' chambres'
+END</pre></div>
+  <div class="card rule"><span class="tag">NVL / NVL2 / EXTRACT</span>
+    <code>NVL(chp, val)</code> : les 2 paramètres doivent être du <strong>même type</strong> (d'où <code>TO_CHAR</code> pour un numéro). <code>NVL2(chp, val1, val2)</code> : val1 si non nul, val2 sinon. <code>EXTRACT(YEAR|MONTH FROM col_date)</code> renvoie un nombre.</div>
+  <div class="card rule"><span class="tag">Une même question, plusieurs méthodes</span>
+    "Jamais réservé" / "aucune chambre" se répond de 4 façons : jointure externe + <code>IS NULL</code>, <code>NOT IN</code>, <code>NOT EXISTS</code>, ensembliste (<code>MINUS</code>). La meilleure : <code>NOT EXISTS</code> (fiable avec NULL, performant). <code>UNION</code> (req 9b) supprime les doublons entre les deux blocs : un client qui a plusieurs mails <em>et</em> plusieurs adresses apparaît deux fois car la colonne "PLUSIEURS ADR" diffère.</div>
+</section>
+
+<section class="section" id="qcm">
+  <span class="num">?</span>
+  <h2>QCM d'auto-évaluation</h2>
+  <p class="lead">20 questions comme le test : 17 QCM + 3 requêtes à reconstruire. Vise 30 minutes.</p>
+  <div id="quiz"></div>
+</section>
+
 <section class="section" id="checklist">
   <span class="num">✓</span>
   <h2>Checklist avant l'examen</h2>
@@ -351,5 +394,49 @@ ORDER BY 1;</pre>
 
 <footer>Basé sur le corrigé TP01/TP02 (hôtel) — révision pour le test du 28 septembre.</footer>
 
+
+<script>
+(function(){
+var Q=[
+{t:"Table esclave d'un LEFT JOIN : on met sa condition dans le WHERE. Effet ?",o:["Les lignes sans correspondance sont éliminées : on retombe sur un INNER JOIN","Erreur de syntaxe","La condition est ignorée","Le résultat ne change pas"],a:0,e:"Le WHERE s'exécute après la jointure : les lignes où l'esclave est NULL sont rejetées."},
+{t:"Pour afficher tous les clients de Paris, avec leur FAX s'ils en ont un, où placer typ_code = 'FAX' ?",o:["Dans le WHERE","Dans le ON de la jointure externe","Dans le GROUP BY","Peu importe"],a:1,e:"Dans le ON, la condition est appliquée avant la jointure."},
+{t:"Syntaxe Oracle : agent a, chambre c. On veut tous les agents. Quelle écriture ?",o:["a.agt_id(+) = c.agt_id","a.agt_id = c.agt_id(+)","a.agt_id = c.agt_id","(+)a.agt_id = c.agt_id"],a:1,e:"Le (+) se met du côté de la table qui peut manquer (chambre)."},
+{t:"Avec la syntaxe (+), comment garder la main sur l'ordre des conditions ?",o:["Une sous-requête dans le FROM","Un HAVING","Un DISTINCT","Un ORDER BY"],a:0,e:"La sous-requête filtre d'abord, puis la jointure externe s'applique."},
+{t:"Meilleure méthode pour les clients n'ayant jamais réservé ?",o:["NOT IN","MINUS","NOT EXISTS","INNER JOIN"],a:2,e:"NOT EXISTS est fiable avec les NULL et performant."},
+{t:"agt_id peut être NULL dans chambre. Que renvoie WHERE agt_id NOT IN (SELECT agt_id FROM chambre) ?",o:["Les agents sans chambre","Aucune ligne","Tous les agents","Une erreur"],a:1,e:"Comparer à NULL donne UNKNOWN : aucune ligne n'est retournée."},
+{t:"Quelle condition est correcte pour tester un NULL ?",o:["col = NULL","col == NULL","col IS NULL","col LIKE NULL"],a:2,e:"Seul IS [NOT] NULL teste un NULL ; = NULL n'est jamais vrai."},
+{t:"Différence WHERE / HAVING ?",o:["Aucune","WHERE filtre les lignes avant regroupement, HAVING filtre les groupes","HAVING est plus rapide","WHERE filtre les groupes"],a:1,e:"HAVING porte sur les résultats d'agrégat (COUNT, SUM…)."},
+{t:"SELECT etage, COUNT(*) FROM chambre; (sans GROUP BY). Résultat ?",o:["Une ligne par étage","Erreur : etage doit être dans le GROUP BY","Le total seulement","Le premier étage"],a:1,e:"Toute colonne non agrégée du SELECT doit figurer dans le GROUP BY (ORA-00979)."},
+{t:"Peut-on utiliser un alias de colonne dans le GROUP BY ?",o:["Oui toujours","Non, il faut répéter l'expression","Oui si entre guillemets","Seulement avec HAVING"],a:1,e:"Les alias ne sont pas utilisables dans le GROUP BY."},
+{t:"Après un LEFT JOIN, un agent n'a aucune chambre. COUNT(chb_id) vaut ?",o:["NULL","1","0","Erreur"],a:2,e:"COUNT(col) ignore les NULL : il vaut 0. COUNT(*) vaudrait 1."},
+{t:"Pourquoi COUNT(DISTINCT pln_jour) pour le nombre de jours d'un client ?",o:["Pour aller plus vite","Pour ne pas compter deux fois un jour où il a réservé plusieurs chambres","Pour trier","Pour éviter les NULL"],a:1,e:"Un client peut avoir plusieurs chambres le même jour."},
+{t:"Les 2 premiers agents embauchés : que faut-il faire ?",o:["WHERE ROWNUM <= 2 avec ORDER BY dans la même requête","Trier dans une sous-requête (FROM ou CTE), puis WHERE ROWNUM <= 2","HAVING ROWNUM <= 2","GROUP BY ROWNUM"],a:1,e:"ROWNUM est attribué avant le tri : il faut trier avant, dans une sous-requête."},
+{t:"Quelle est la syntaxe d'une CTE ?",o:["WITH nom AS (SELECT …) SELECT … FROM nom","CREATE nom AS (SELECT …)","SELECT … FROM (WITH nom …)","DEFINE nom = SELECT …"],a:0,e:"WITH nom_cte AS (…) puis la requête principale."},
+{t:"Avantages d'une CTE selon le cours ?",o:["Lisibilité, réutilisation dans la même instruction, récursivité possible","Elle stocke définitivement les données","Elle remplace les index","Elle est toujours plus rapide"],a:0,e:"C'est un résultat temporaire nommé, valable pour l'instruction."},
+{t:"NVL(chb_numero, 'Aucune') pose problème car…",o:["NVL n'existe pas","les deux paramètres doivent être du même type (TO_CHAR)","chb_numero ne peut pas être NULL","NVL n'accepte pas de texte"],a:1,e:"Il faut NVL(TO_CHAR(chb_numero), 'Aucune')."},
+{t:"Jours où l'hôtel est complet : quelle clause ?",o:["WHERE COUNT(chb_id) = (SELECT COUNT(chb_id) FROM chambre)","GROUP BY pln_jour HAVING COUNT(chb_id) = (SELECT COUNT(chb_id) FROM chambre)","ORDER BY COUNT(chb_id)","GROUP BY chb_id"],a:1,e:"On regroupe par jour, puis HAVING compare au nombre total de chambres."}
+];
+var R=[
+{t:"Reconstruis : agents d'entretien sans aucune chambre (jointure externe).",f:["SELECT agt_nom, agt_prenom","FROM agent_entretien a","LEFT JOIN chambre c ON a.agt_id = c.agt_id","WHERE c.agt_id IS NULL;"],e:"LEFT JOIN puis IS NULL sur la clé de la table esclave."},
+{t:"Reconstruis : toutes les chambres avec leur client du 26/12/2007 (condition dans le ON).",f:["SELECT chb_numero, cli_id","FROM chambre c","LEFT JOIN planning p ON c.chb_id = p.chb_id","AND p.pln_jour = TO_DATE('26/12/2007','DD/MM/YYYY)","ORDER BY 1;"],e:"La date porte sur la table esclave : elle va dans le ON."},
+{t:"Reconstruis avec une CTE : clients de Paris et leur FAX éventuel.",f:["WITH tel_fax AS (SELECT cli_id, tel_numero FROM telephone WHERE typ_code = 'FAX')","SELECT cli_nom, tel_numero","FROM client c","LEFT JOIN tel_fax t ON c.cli_id = t.cli_id;"],e:"Le filtre FAX est fait dans la CTE, puis LEFT JOIN simple."}
+];
+R[1].f[3]="AND p.pln_jour = TO_DATE('26/12/2007','DD/MM/YYYY')";
+var items=Q.map(function(q){return {k:"q",d:q}}).concat(R.map(function(r){return {k:"r",d:r}}));
+var i=0,score=0,root=document.getElementById("quiz");
+function el(t,c,x){var n=document.createElement(t);if(c)n.className=c;if(x!=null)n.textContent=x;return n}
+function shuffle(a){a=a.slice();for(var j=a.length-1;j>0;j--){var k=Math.floor(Math.random()*(j+1));var t=a[j];a[j]=a[k];a[k]=t}return a}
+function head(){var m=el("div","qmeta");m.appendChild(el("span",null,"Question "+(i+1)+" / "+items.length));m.appendChild(el("span",null,"Score : "+score));root.appendChild(m);var b=el("div","bar"),f=el("i");f.style.width=(i/items.length*100)+"%";b.appendChild(f);root.appendChild(b)}
+function next(box){var b=el("button","btn","Suivant");b.onclick=function(){i++;render()};box.appendChild(b)}
+function render(){root.textContent="";if(i>=items.length)return end();head();var it=items[i];root.appendChild(el("h3",null,it.d.t)).style.fontSize="1rem";
+if(it.k==="q"){var box=el("div");it.d.o.forEach(function(x,idx){var b=el("button","opt",x);b.onclick=function(){var all=box.querySelectorAll(".opt");all.forEach(function(n){n.disabled=true});all[it.d.a].classList.add("ok");if(idx===it.d.a){score++}else{b.classList.add("ko")}box.appendChild(el("div","expl",(idx===it.d.a?"Correct. ":"Faux. ")+it.d.e));next(box)};box.appendChild(b)});root.appendChild(box)}
+else{var pool=el("div","frags"),ans=el("div","frags"),cor=it.d.f,items2=shuffle(cor),box=el("div");
+root.appendChild(el("div","qmeta",null)).textContent="Clique les lignes dans l'ordre (re-clique pour retirer).";root.appendChild(pool);root.appendChild(ans);
+function draw(){pool.textContent="";ans.textContent="";items2.forEach(function(f){var b=el("button","frag",f);b.onclick=function(){items2=items2.filter(function(x){return x!==f});sel.push(f);draw()};pool.appendChild(b)});sel.forEach(function(f){var b=el("button","frag",f);b.onclick=function(){sel=sel.filter(function(x){return x!==f});items2.push(f);draw()};ans.appendChild(b)})}
+var sel=[];draw();var v=el("button","btn","Valider");v.onclick=function(){if(sel.length!==cor.length){return}v.disabled=true;var ok=sel.every(function(x,n){return x===cor[n]});if(ok)score++;var e=el("div","expl",(ok?"Correct. ":"Faux. ")+it.d.e);if(!ok){var p=el("pre",null,cor.join("\n"));e.appendChild(p)}box.appendChild(e);next(box)};box.appendChild(v);root.appendChild(box)}}
+function end(){root.appendChild(el("h3",null,"Score final : "+score+" / "+items.length));var msg=score>=16?"Solide. Relis juste les pièges NULL et la priorité des conditions.":score>=11?"Correct, mais refais les questions ratées, surtout ON vs WHERE et NOT IN vs NOT EXISTS.":"Reprends les sections 3 et 6 (priorité des conditions, NULL), puis refais le QCM.";root.appendChild(el("p",null,msg));var b=el("button","btn","Recommencer");b.onclick=function(){i=0;score=0;items=shuffle(items);render()};root.appendChild(b)}
+render();
+})();
+</script>
 </body>
 </html>
