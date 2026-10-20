@@ -2,28 +2,33 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Figtree:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../styles/tokens.css">
+<link rel="icon" type="image/png" href="../styles/favicon.png">
+<script src="../scripts/theme.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SQL Oracle — Fiche de Révision</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0f0f13;
-  --surface: #16161d;
-  --surface2: #1e1e28;
-  --border: rgba(255,255,255,0.07);
-  --text: #f0eeff;
-  --muted: #8b87a8;
-  --accent1: #7c6bff;
-  --accent2: #ff6b9d;
-  --accent3: #43e8c8;
-  --accent4: #ffb443;
-  --accent5: #ff7043;
-  --accent6: #4fc3f7;
-  --accent7: #ff4f4f;
-  --accent8: #ff8c42;
-  --accent9: #c084fc;
-  --accent10: #34d399;
-  --tab-colors: #7c6bff,#ff6b9d,#43e8c8,#ffb443,#ff7043,#4fc3f7,#a8e063;
+  --bg: var(--r-bg);
+  --surface: var(--r-surface);
+  --surface2: var(--r-surface-2);
+  --border: color-mix(in srgb, var(--r-text) 7%, transparent);
+  --text: var(--r-text);
+  --muted: var(--r-text-2);
+  --accent1: var(--r-violet);
+  --accent2: var(--r-pink);
+  --accent3: var(--r-teal);
+  --accent4: var(--r-amber);
+  --accent5: var(--r-orange);
+  --accent6: var(--r-cyan);
+  --accent7: var(--r-red);
+  --accent8: var(--r-orange);
+  --accent9: var(--r-violet);
+  --accent10: var(--r-green);
+  --tab-colors: var(--r-violet),var(--r-pink),var(--r-teal),var(--r-amber),var(--r-orange),var(--r-cyan),var(--r-green);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -31,7 +36,7 @@
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--r-font-body);
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
@@ -44,8 +49,8 @@ body::before {
   position: fixed;
   inset: 0;
   background-image:
-    linear-gradient(rgba(124,107,255,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(124,107,255,0.04) 1px, transparent 1px);
+    linear-gradient(color-mix(in srgb, var(--r-violet) 4%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--r-violet) 4%, transparent) 1px, transparent 1px);
   background-size: 40px 40px;
   pointer-events: none;
   z-index: 0;
@@ -75,19 +80,16 @@ header {
   font-size: 2rem;
   line-height: 1;
   flex-shrink: 0;
-  box-shadow: 0 0 40px rgba(124,107,255,0.3);
+  box-shadow: 0 0 40px color-mix(in srgb, var(--r-violet) 30%, transparent);
 }
 
 .header-text h1 {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--r-font-display);
   font-size: clamp(1.8rem, 4vw, 2.8rem);
   font-weight: 800;
   line-height: 1.1;
   letter-spacing: -0.03em;
-  background: linear-gradient(90deg, #fff 0%, var(--accent3) 60%, var(--accent1) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--r-text);
 }
 
 .header-text p {
@@ -115,9 +117,9 @@ header {
   letter-spacing: .03em;
   text-transform: uppercase;
 }
-.pill-purple { background: rgba(124,107,255,0.15); color: var(--accent1); border: 1px solid rgba(124,107,255,0.3); }
-.pill-teal   { background: rgba(67,232,200,0.12); color: var(--accent3); border: 1px solid rgba(67,232,200,0.25); }
-.pill-yellow { background: rgba(255,180,67,0.12); color: var(--accent4); border: 1px solid rgba(255,180,67,0.25); }
+.pill-purple { background: color-mix(in srgb, var(--r-violet) 15%, transparent); color: var(--accent1); border: 1px solid color-mix(in srgb, var(--r-violet) 30%, transparent); }
+.pill-teal   { background: color-mix(in srgb, var(--r-teal) 12%, transparent); color: var(--accent3); border: 1px solid color-mix(in srgb, var(--r-teal) 25%, transparent); }
+.pill-yellow { background: color-mix(in srgb, var(--r-amber) 12%, transparent); color: var(--accent4); border: 1px solid color-mix(in srgb, var(--r-amber) 25%, transparent); }
 
 /* PROGRESS STRIP */
 .progress-strip {
@@ -137,7 +139,7 @@ header {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(15,15,19,0.85);
+  background: color-mix(in srgb, var(--r-bg) 85%, transparent);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
   padding: 0 2rem;
@@ -158,7 +160,7 @@ header {
   align-items: center;
   gap: .45rem;
   padding: .85rem 1.1rem;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--r-font-body);
   font-size: .82rem;
   font-weight: 500;
   color: var(--muted);
@@ -180,7 +182,7 @@ header {
   transition: opacity .2s, transform .2s;
 }
 
-.tab-btn.active { color: #fff; }
+.tab-btn.active { color: var(--r-text); }
 .tab-btn.active .dot { opacity: 1; transform: scale(1.3); }
 
 /* MAIN */
@@ -202,7 +204,7 @@ main {
 
 /* SECTION TITLE */
 .section-title {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--r-font-display);
   font-size: 1.4rem;
   font-weight: 700;
   margin-bottom: 1.5rem;
@@ -228,7 +230,7 @@ main {
   overflow: hidden;
   transition: border-color .2s, transform .2s;
 }
-.card:hover { border-color: rgba(255,255,255,0.14); transform: translateY(-1px); }
+.card:hover { border-color: color-mix(in srgb, var(--r-text) 14%, transparent); transform: translateY(-1px); }
 
 .card::before {
   content: '';
@@ -250,7 +252,7 @@ main {
 .card.c10::before { background: var(--accent10); }
 
 .card h3 {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--r-font-display);
   font-size: .95rem;
   font-weight: 600;
   color: var(--text);
@@ -271,49 +273,49 @@ pre {
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: .9rem 1rem;
-  font-family: 'DM Mono', monospace;
+  font-family: var(--r-font-mono);
   font-size: .78rem;
   line-height: 1.65;
   overflow-x: auto;
   margin: .7rem 0;
-  color: #c8c2f0;
+  color: var(--r-text);
   white-space: pre;
 }
 
-.kw  { color: #7c6bff; font-weight: 500; }
-.fn  { color: #43e8c8; }
-.str { color: #ffb443; }
-.cm  { color: #4a4666; font-style: italic; }
-.hi  { color: #ff6b9d; }
+.kw  { color: var(--r-violet); font-weight: 500; }
+.fn  { color: var(--r-teal); }
+.str { color: var(--r-amber); }
+.cm  { color: var(--r-text-3); font-style: italic; }
+.hi  { color: var(--r-pink); }
 
 /* RULE BOX */
 .rule {
-  background: rgba(124,107,255,0.08);
-  border: 1px solid rgba(124,107,255,0.2);
+  background: color-mix(in srgb, var(--r-violet) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--r-violet) 20%, transparent);
   border-left: 3px solid var(--accent1);
   border-radius: 0 10px 10px 0;
   padding: .7rem 1rem;
   margin: .7rem 0;
 }
-.rule p { font-size: .82rem; color: #a09cc4; line-height: 1.5; }
+.rule p { font-size: .82rem; color: var(--r-text-2); line-height: 1.5; }
 .rule.warn {
-  background: rgba(255,180,67,0.07);
-  border-color: rgba(255,180,67,0.2);
+  background: color-mix(in srgb, var(--r-amber) 7%, transparent);
+  border-color: color-mix(in srgb, var(--r-amber) 20%, transparent);
   border-left-color: var(--accent4);
 }
-.rule.warn p { color: #b89a65; }
+.rule.warn p { color: var(--r-amber); }
 .rule.danger {
-  background: rgba(255,107,157,0.07);
-  border-color: rgba(255,107,157,0.2);
+  background: color-mix(in srgb, var(--r-pink) 7%, transparent);
+  border-color: color-mix(in srgb, var(--r-pink) 20%, transparent);
   border-left-color: var(--accent2);
 }
-.rule.danger p { color: #b07090; }
+.rule.danger p { color: var(--r-text-2); }
 .rule.ok {
-  background: rgba(67,232,200,0.07);
-  border-color: rgba(67,232,200,0.2);
+  background: color-mix(in srgb, var(--r-teal) 7%, transparent);
+  border-color: color-mix(in srgb, var(--r-teal) 20%, transparent);
   border-left-color: var(--accent3);
 }
-.rule.ok p { color: #5ba898; }
+.rule.ok p { color: var(--r-text-3); }
 
 /* BADGE */
 .badge {
@@ -323,19 +325,19 @@ pre {
   padding: 2px 7px;
   border-radius: 5px;
   margin: 2px;
-  font-family: 'DM Mono', monospace;
+  font-family: var(--r-font-mono);
   letter-spacing: .02em;
 }
-.badge-r { background: rgba(124,107,255,.18); color: var(--accent1); }
-.badge-w { background: rgba(255,180,67,.15); color: var(--accent4); }
-.badge-e { background: rgba(255,107,157,.15); color: var(--accent2); }
-.badge-g { background: rgba(67,232,200,.12); color: var(--accent3); }
+.badge-r { background: color-mix(in srgb, var(--r-violet) 18%, transparent); color: var(--accent1); }
+.badge-w { background: color-mix(in srgb, var(--r-amber) 15%, transparent); color: var(--accent4); }
+.badge-e { background: color-mix(in srgb, var(--r-pink) 15%, transparent); color: var(--accent2); }
+.badge-g { background: color-mix(in srgb, var(--r-teal) 12%, transparent); color: var(--accent3); }
 
 /* TABLE */
 table.info { width: 100%; border-collapse: collapse; font-size: .82rem; }
 table.info td { padding: .45rem .6rem; border-bottom: 1px solid var(--border); vertical-align: top; }
 table.info td:first-child { color: var(--muted); white-space: nowrap; width: 35%; }
-table.info td:last-child { color: var(--text); font-family: 'DM Mono', monospace; font-size: .78rem; }
+table.info td:last-child { color: var(--text); font-family: var(--r-font-mono); font-size: .78rem; }
 
 /* TWO-COL inside card */
 .split { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
@@ -350,14 +352,14 @@ table.info td:last-child { color: var(--text); font-family: 'DM Mono', monospace
   margin-bottom: .35rem;
 }
 
-.pill-exam { background: rgba(255,107,107,0.18); color: #ff6b6b; border: 1px solid rgba(255,107,107,0.35); }
+.pill-exam { background: color-mix(in srgb, var(--r-red) 18%, transparent); color: var(--r-red); border: 1px solid color-mix(in srgb, var(--r-red) 35%, transparent); }
 
 /* EXAM BANNER */
 .exam-banner {
   position: relative;
   z-index: 200;
-  background: linear-gradient(90deg, rgba(255,100,60,0.18) 0%, rgba(255,180,67,0.13) 100%);
-  border-bottom: 1px solid rgba(255,130,60,0.3);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--r-red) 18%, transparent) 0%, color-mix(in srgb, var(--r-amber) 13%, transparent) 100%);
+  border-bottom: 1px solid color-mix(in srgb, var(--r-orange) 30%, transparent);
   padding: .65rem 2rem;
 }
 .exam-banner-inner {
@@ -369,18 +371,19 @@ table.info td:last-child { color: var(--text); font-family: 'DM Mono', monospace
 }
 .exam-icon { font-size: 1.3rem; flex-shrink: 0; }
 .exam-text { flex: 1; font-size: .82rem; line-height: 1.5; }
-.exam-text strong { color: #ffb443; font-weight: 600; display: block; margin-bottom: .1rem; }
-.exam-text span { color: #b09060; }
+.exam-text strong { color: var(--r-amber); font-weight: 600; display: block; margin-bottom: .1rem; }
+.exam-text span { color: var(--r-amber); }
 .exam-close {
-  background: none; border: none; color: #b09060;
+  background: none; border: none; color: var(--r-amber);
   cursor: pointer; font-size: 1rem; padding: 2px 6px;
   flex-shrink: 0;
 }
-.exam-close:hover { color: #ffb443; }
+.exam-close:hover { color: var(--r-amber); }
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 3px; }
 </style>
+<link rel="stylesheet" href="../styles/revision.css">
 </head>
 <body>
 
@@ -420,17 +423,17 @@ table.info td:last-child { color: var(--text); font-family: 'DM Mono', monospace
 
 <script>
 const TABS = [
-  { id: 'jointures', label: 'Jointures', dot: '#7c6bff', emoji: '🔗' },
-  { id: 'agreg',     label: 'Agrégation', dot: '#ff6b9d', emoji: '📊' },
-  { id: 'sous',      label: 'Sous-requêtes', dot: '#43e8c8', emoji: '🔍' },
-  { id: 'ens',       label: 'Ensemblistes', dot: '#ffb443', emoji: '⊕' },
-  { id: 'exists',    label: 'EXISTS', dot: '#ff7043', emoji: '✓' },
-  { id: 'arbo',      label: 'Arborescences', dot: '#4fc3f7', emoji: '🌲' },
-  { id: 'pieges',    label: 'Pièges', dot: '#a8e063', emoji: '⚠️' },
-  { id: 'ddl',       label: '🔴 DDL — Créer/Modifier', dot: '#ff4f4f', emoji: '🏗️' },
-  { id: 'dml',       label: '🔴 DML — Insert/Update/Delete', dot: '#ff8c42', emoji: '✏️' },
-  { id: 'vues',      label: '🔴 Vues & Séquences', dot: '#c084fc', emoji: '👁️' },
-  { id: 'droits',    label: '🔴 Droits & Transactions', dot: '#34d399', emoji: '🔑' },
+  { id: 'jointures', label: 'Jointures', dot: 'var(--r-violet)', emoji: '🔗' },
+  { id: 'agreg',     label: 'Agrégation', dot: 'var(--r-pink)', emoji: '📊' },
+  { id: 'sous',      label: 'Sous-requêtes', dot: 'var(--r-teal)', emoji: '🔍' },
+  { id: 'ens',       label: 'Ensemblistes', dot: 'var(--r-amber)', emoji: '⊕' },
+  { id: 'exists',    label: 'EXISTS', dot: 'var(--r-orange)', emoji: '✓' },
+  { id: 'arbo',      label: 'Arborescences', dot: 'var(--r-cyan)', emoji: '🌲' },
+  { id: 'pieges',    label: 'Pièges', dot: 'var(--r-green)', emoji: '⚠️' },
+  { id: 'ddl',       label: '🔴 DDL — Créer/Modifier', dot: 'var(--r-red)', emoji: '🏗️' },
+  { id: 'dml',       label: '🔴 DML — Insert/Update/Delete', dot: 'var(--r-orange)', emoji: '✏️' },
+  { id: 'vues',      label: '🔴 Vues & Séquences', dot: 'var(--r-violet)', emoji: '👁️' },
+  { id: 'droits',    label: '🔴 Droits & Transactions', dot: 'var(--r-green)', emoji: '🔑' },
 ];
 
 const CONTENT = {
@@ -905,7 +908,7 @@ arbo: `
 `,
 
 ddl: `
-<div class="section-title"><span>🏗️</span> DDL — Créer, Modifier, Supprimer des tables <span style="font-size:.75rem;padding:2px 9px;background:rgba(255,79,79,.18);color:#ff4f4f;border-radius:6px;font-family:var(--font-mono,monospace);margin-left:.5rem">🔴 Examen jeudi</span></div>
+<div class="section-title"><span>🏗️</span> DDL — Créer, Modifier, Supprimer des tables <span style="font-size:.75rem;padding:2px 9px;background:color-mix(in srgb, var(--r-red) 18%, transparent);color:var(--r-red);border-radius:6px;font-family:var(--r-font-mono);margin-left:.5rem">🔴 Examen jeudi</span></div>
 <div class="cards">
 
   <div class="card c7">
@@ -1037,7 +1040,7 @@ REGLT_COTISATION (FK → MEMBRE)</pre>
 `,
 
 dml: `
-<div class="section-title"><span>✏️</span> DML — INSERT / UPDATE / DELETE <span style="font-size:.75rem;padding:2px 9px;background:rgba(255,140,66,.18);color:#ff8c42;border-radius:6px;font-family:var(--font-mono,monospace);margin-left:.5rem">🔴 Examen jeudi</span></div>
+<div class="section-title"><span>✏️</span> DML — INSERT / UPDATE / DELETE <span style="font-size:.75rem;padding:2px 9px;background:color-mix(in srgb, var(--r-orange) 18%, transparent);color:var(--r-orange);border-radius:6px;font-family:var(--r-font-mono);margin-left:.5rem">🔴 Examen jeudi</span></div>
 <div class="cards">
 
   <div class="card c8">
@@ -1163,7 +1166,7 @@ dml: `
 `,
 
 vues: `
-<div class="section-title"><span>👁️</span> Vues & Séquences <span style="font-size:.75rem;padding:2px 9px;background:rgba(192,132,252,.18);color:#c084fc;border-radius:6px;font-family:var(--font-mono,monospace);margin-left:.5rem">🔴 Examen jeudi</span></div>
+<div class="section-title"><span>👁️</span> Vues & Séquences <span style="font-size:.75rem;padding:2px 9px;background:color-mix(in srgb, var(--r-violet) 18%, transparent);color:var(--r-violet);border-radius:6px;font-family:var(--r-font-mono);margin-left:.5rem">🔴 Examen jeudi</span></div>
 <div class="cards">
 
   <div class="card c9">
@@ -1275,7 +1278,7 @@ vues: `
 `,
 
 droits: `
-<div class="section-title"><span>🔑</span> Transactions & Droits <span style="font-size:.75rem;padding:2px 9px;background:rgba(52,211,153,.18);color:#34d399;border-radius:6px;font-family:var(--font-mono,monospace);margin-left:.5rem">🔴 Examen jeudi</span></div>
+<div class="section-title"><span>🔑</span> Transactions & Droits <span style="font-size:.75rem;padding:2px 9px;background:color-mix(in srgb, var(--r-green) 18%, transparent);color:var(--r-green);border-radius:6px;font-family:var(--r-font-mono);margin-left:.5rem">🔴 Examen jeudi</span></div>
 <div class="cards">
 
   <div class="card c10">
@@ -1547,5 +1550,6 @@ function switchTab(id) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 </script>
+<script src="../scripts/revision.js"></script>
 </body>
 </html>

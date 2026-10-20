@@ -1,0 +1,139 @@
+/* ==========================================================================
+   Couche commune des fiches de révision.
+   Chargée APRÈS le <style> propre à chaque fiche : elle harmonise la base
+   (typo, sélection, barres de défilement) et ajoute la barre d'outils.
+   ========================================================================== */
+
+body {
+  font-family: var(--r-font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3 { text-wrap: balance; }
+h1, h2, h3, h4 { font-family: var(--r-font-display); letter-spacing: -0.01em; }
+h1 { letter-spacing: -0.02em; }
+p, li { text-wrap: pretty; }
+
+code, pre, kbd, samp { font-family: var(--r-font-mono); font-variant-ligatures: none; }
+
+mark {
+  background: var(--r-mark-soft);
+  color: inherit;
+  padding: 0 0.15em;
+  border-radius: 3px;
+  box-shadow: inset 0 -0.45em 0 var(--r-mark);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+table { font-variant-numeric: tabular-nums; }
+.rv-scroll { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* Décors (halos, grilles) qui dépassent : jamais de défilement horizontal */
+body { overflow-x: clip; }
+
+/* Barres de défilement discrètes, accordées au thème */
+* { scrollbar-width: thin; scrollbar-color: var(--r-border-strong) transparent; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--r-border-strong);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover { background-color: var(--r-text-3); }
+
+button, [role="button"], summary, .rv-btn { -webkit-tap-highlight-color: transparent; }
+button:focus-visible, a:focus-visible, [onclick]:focus-visible, summary:focus-visible,
+input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--r-accent);
+  outline-offset: 2px;
+}
+
+/* --- Barre de progression de lecture ------------------------------------ */
+rv-progress.rv-progress {
+  all: initial;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  z-index: 9998;
+  pointer-events: none;
+}
+rv-progress.rv-progress > span {
+  all: initial;
+  display: block;
+  height: 100%;
+  background: var(--r-accent);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  transition: transform 0.12s linear;
+}
+
+/* --- Barre d'outils flottante ------------------------------------------- */
+rv-dock.rv-dock {
+  all: initial;
+  box-sizing: border-box;
+  position: fixed;
+  right: calc(var(--rv-dock-right, 16px) + env(safe-area-inset-right, 0px));
+  bottom: calc(var(--rv-dock-bottom, 16px) + env(safe-area-inset-bottom, 0px));
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--r-surface) 88%, transparent);
+  border: 1px solid var(--r-border);
+  box-shadow: var(--r-shadow-lg);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  backdrop-filter: blur(12px) saturate(1.4);
+  font-family: var(--r-font-body);
+}
+
+rv-dock.rv-dock .rv-btn {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 40px;
+  height: 40px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--r-text-2);
+  font: 600 14px/1 var(--r-font-body);
+  letter-spacing: 0;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+rv-dock.rv-dock .rv-btn:hover { background: var(--r-surface-3); color: var(--r-text); }
+rv-dock.rv-dock .rv-btn:focus-visible { outline: 2px solid var(--r-accent); outline-offset: 1px; }
+rv-dock.rv-dock .rv-btn svg {
+  all: unset;
+  display: block;
+  width: 19px; height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex: none;
+}
+rv-dock.rv-dock .rv-home { padding: 0 14px 0 12px; color: var(--r-text); }
+rv-dock.rv-dock .rv-top[hidden] { display: none !important; }
+
+@media (max-width: 520px) {
+  rv-dock.rv-dock .rv-home span { display: none; }
+  rv-dock.rv-dock .rv-home { padding: 0 10px; }
+}
+
+@media print {
+  .rv-dock, .rv-progress { display: none !important; }
+}

@@ -1,0 +1,169 @@
+/* ==========================================================================
+   Tokens partagés — page d'accueil + toutes les fiches de révision
+   Concept : un cahier de cours propre. Fond papier légèrement bleuté,
+   encre bleue pour l'interactif, surligneur jaune pour ce qui est à retenir.
+   Le thème suit localStorage "theme" (dark | light) via data-theme sur <html>,
+   sinon la préférence du système.
+   ========================================================================== */
+
+:root {
+  /* Typo */
+  --r-font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --r-font-body: "Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --r-font-mono: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+
+  /* Neutres (clair) — gris teintés vers le bleu de l'encre */
+  --r-bg: #f4f5f8;
+  --r-bg-deep: #eceef3;
+  --r-surface: #ffffff;
+  --r-surface-2: #f0f2f6;
+  --r-surface-3: #e6e9ef;
+  --r-border: #dde1e9;
+  --r-border-strong: #c3c9d5;
+  --r-text: #151922;
+  --r-text-2: #454d5e;
+  --r-text-3: #5d6577;
+  --r-on-accent: #ffffff;
+
+  /* Encre (accent interactif) */
+  --r-accent: #2c4fd0;
+  --r-accent-hover: #2341b0;
+  --r-accent-soft: #e2e8fb;
+
+  /* Surligneur */
+  --r-mark: #ffe25a;
+  --r-mark-soft: #fff3b3;
+  --r-mark-ink: #5a4500;
+
+  /* Teintes pour les fiches (catégories, coloration syntaxique, états) */
+  --r-blue: #2a4cc8;
+  --r-violet: #5d3bbd;
+  --r-pink: #a22b62;
+  --r-red: #ab2f2b;
+  --r-orange: #9a4508;
+  --r-amber: #7d5300;
+  --r-green: #166b40;
+  --r-teal: #0b666b;
+  --r-cyan: #11628c;
+
+  --r-blue-soft: #e2e8fb;
+  --r-violet-soft: #ece6fa;
+  --r-pink-soft: #f9e4ee;
+  --r-red-soft: #fae3e2;
+  --r-orange-soft: #fbe9dc;
+  --r-amber-soft: #f9efd2;
+  --r-green-soft: #dff1e7;
+  --r-teal-soft: #dcf0f1;
+  --r-cyan-soft: #ddedf6;
+
+  /* Formes */
+  --r-radius-sm: 6px;
+  --r-radius: 10px;
+  --r-radius-lg: 16px;
+  --r-shadow: 0 1px 2px rgb(21 25 34 / 0.06), 0 4px 16px rgb(21 25 34 / 0.06);
+  --r-shadow-lg: 0 2px 6px rgb(21 25 34 / 0.08), 0 16px 40px rgb(21 25 34 / 0.12);
+  --r-focus: 0 0 0 3px color-mix(in srgb, var(--r-accent) 35%, transparent);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --r-bg: #0e1117;
+    --r-bg-deep: #0a0c11;
+    --r-surface: #151922;
+    --r-surface-2: #1b202a;
+    --r-surface-3: #232935;
+    --r-border: #2a303c;
+    --r-border-strong: #3b4352;
+    --r-text: #e7eaf0;
+    --r-text-2: #a7aebc;
+    --r-text-3: #8b93a4;
+    --r-on-accent: #0e1117;
+    --r-accent: #8aa4ff;
+    --r-accent-hover: #a9bcff;
+    --r-accent-soft: #1d2645;
+    --r-mark: #f2d54a;
+    --r-mark-soft: #3a3418;
+    --r-mark-ink: #f7e58d;
+    --r-blue: #8aa4ff;
+    --r-violet: #b197ff;
+    --r-pink: #f287bb;
+    --r-red: #f2807b;
+    --r-orange: #f59f62;
+    --r-amber: #eabc55;
+    --r-green: #5ccb93;
+    --r-teal: #4cc9cc;
+    --r-cyan: #66bdea;
+    --r-blue-soft: #1d2645;
+    --r-violet-soft: #251f42;
+    --r-pink-soft: #3a1d2c;
+    --r-red-soft: #3b1e1f;
+    --r-orange-soft: #3a2517;
+    --r-amber-soft: #352b14;
+    --r-green-soft: #16301f;
+    --r-teal-soft: #13302f;
+    --r-cyan-soft: #142b3a;
+    --r-shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 4px 16px rgb(0 0 0 / 0.25);
+    --r-shadow-lg: 0 2px 6px rgb(0 0 0 / 0.35), 0 16px 40px rgb(0 0 0 / 0.45);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --r-bg: #0e1117;
+  --r-bg-deep: #0a0c11;
+  --r-surface: #151922;
+  --r-surface-2: #1b202a;
+  --r-surface-3: #232935;
+  --r-border: #2a303c;
+  --r-border-strong: #3b4352;
+  --r-text: #e7eaf0;
+  --r-text-2: #a7aebc;
+  --r-text-3: #8b93a4;
+  --r-on-accent: #0e1117;
+  --r-accent: #8aa4ff;
+  --r-accent-hover: #a9bcff;
+  --r-accent-soft: #1d2645;
+  --r-mark: #f2d54a;
+  --r-mark-soft: #3a3418;
+  --r-mark-ink: #f7e58d;
+  --r-blue: #8aa4ff;
+  --r-violet: #b197ff;
+  --r-pink: #f287bb;
+  --r-red: #f2807b;
+  --r-orange: #f59f62;
+  --r-amber: #eabc55;
+  --r-green: #5ccb93;
+  --r-teal: #4cc9cc;
+  --r-cyan: #66bdea;
+  --r-blue-soft: #1d2645;
+  --r-violet-soft: #251f42;
+  --r-pink-soft: #3a1d2c;
+  --r-red-soft: #3b1e1f;
+  --r-orange-soft: #3a2517;
+  --r-amber-soft: #352b14;
+  --r-green-soft: #16301f;
+  --r-teal-soft: #13302f;
+  --r-cyan-soft: #142b3a;
+  --r-shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 4px 16px rgb(0 0 0 / 0.25);
+  --r-shadow-lg: 0 2px 6px rgb(0 0 0 / 0.35), 0 16px 40px rgb(0 0 0 / 0.45);
+  color-scheme: dark;
+}
+
+/* Base commune */
+html { -webkit-text-size-adjust: 100%; }
+body {
+  background: var(--r-bg);
+  color: var(--r-text);
+  font-family: var(--r-font-body);
+}
+::selection { background: var(--r-mark); color: #151922; }
+:focus-visible { outline: 2px solid var(--r-accent); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

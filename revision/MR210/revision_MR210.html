@@ -2,33 +2,38 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Figtree:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../../styles/tokens.css">
+<link rel="icon" type="image/png" href="../../styles/favicon.png">
+<script src="../../scripts/theme.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MR210 — Gestion des SI · Révision</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f5f4f0;
-    --surface: #ffffff;
-    --border: #e2e0d8;
-    --text: #1a1916;
-    --text-muted: #6b6860;
-    --accent: #2563eb;
-    --accent-soft: #dbeafe;
-    --red: #dc2626;
-    --red-soft: #fee2e2;
-    --green: #16a34a;
-    --green-soft: #dcfce7;
-    --orange: #ea580c;
-    --orange-soft: #ffedd5;
-    --mono: 'DM Mono', monospace;
-    --sans: 'DM Sans', sans-serif;
+    --bg: var(--r-bg);
+    --surface: var(--r-surface);
+    --border: var(--r-border);
+    --text: var(--r-text);
+    --text-muted: var(--r-text-2);
+    --accent: var(--r-blue);
+    --accent-soft: var(--r-blue-soft);
+    --red: var(--r-red);
+    --red-soft: var(--r-red-soft);
+    --green: var(--r-green);
+    --green-soft: var(--r-green-soft);
+    --orange: var(--r-orange);
+    --orange-soft: var(--r-orange-soft);
+    --mono: var(--r-font-mono);
+    --sans: var(--r-font-body);
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
 
   /* ── BASE (mobile ~375px) ── */
   body {
-    font-family: var(--sans);
+    font-family: var(--r-font-body);
     background: var(--bg);
     color: var(--text);
     font-size: 15px;
@@ -38,7 +43,7 @@
   /* NAV — scrollable pill bar on mobile */
   nav {
     position: sticky; top: 0; z-index: 100;
-    background: rgba(245,244,240,0.95);
+    background: color-mix(in srgb, var(--r-surface) 95%, transparent);
     backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--border);
     padding: 0 0.8rem;
@@ -50,7 +55,7 @@
   }
   nav::-webkit-scrollbar { display: none; }
   .nav-brand {
-    font-family: var(--mono);
+    font-family: var(--r-font-mono);
     font-size: 12px; font-weight: 500;
     color: var(--text-muted);
     white-space: nowrap; margin-right: 1rem; flex-shrink: 0;
@@ -72,14 +77,14 @@
   .section { margin-bottom: 3.5rem; }
 
   h1 {
-    font-family: var(--mono);
+    font-family: var(--r-font-mono);
     font-size: clamp(1.4rem, 6vw, 2.4rem);
     font-weight: 500; letter-spacing: -0.02em;
     margin-bottom: 0.4rem;
   }
   .subtitle { color: var(--text-muted); font-size: 13px; margin-bottom: 2rem; }
   h2 {
-    font-family: var(--mono); font-size: 1rem; font-weight: 500;
+    font-family: var(--r-font-mono); font-size: 1rem; font-weight: 500;
     margin-bottom: 1.2rem; padding-bottom: 0.5rem;
     border-bottom: 1px solid var(--border);
     display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
@@ -106,7 +111,7 @@
   /* BADGES */
   .badge {
     display: inline-block; font-size: 11px; font-weight: 500;
-    padding: 2px 8px; border-radius: 4px; font-family: var(--mono);
+    padding: 2px 8px; border-radius: 4px; font-family: var(--r-font-mono);
   }
   .badge-blue { background: var(--accent-soft); color: var(--accent); }
   .badge-red { background: var(--red-soft); color: var(--red); }
@@ -166,7 +171,7 @@
   .vf-btn {
     padding: 6px 14px; border-radius: 4px; border: 1px solid var(--border);
     background: var(--bg); cursor: pointer; font-size: 12px; font-weight: 500;
-    transition: all .15s; font-family: var(--sans);
+    transition: all .15s; font-family: var(--r-font-body);
     min-height: 36px; -webkit-tap-highlight-color: transparent;
   }
   .vf-btn.sel-vrai { background: var(--green-soft); border-color: var(--green); color: var(--green); }
@@ -186,16 +191,16 @@
   .calc-field input, .calc-field select {
     width: 100%; padding: 0.6rem 0.8rem;
     border: 1px solid var(--border); border-radius: 6px;
-    font-size: 16px; /* prevent iOS zoom */ font-family: var(--sans);
+    font-size: 16px; /* prevent iOS zoom */ font-family: var(--r-font-body);
     background: var(--surface); color: var(--text);
     outline: none; transition: border-color .15s;
   }
   .calc-field input:focus, .calc-field select:focus { border-color: var(--accent); }
   .calc-btn {
     margin-top: 1rem; padding: 0.7rem 1.5rem;
-    background: var(--accent); color: white;
+    background: var(--accent); color: var(--r-on-accent);
     border: none; border-radius: 6px; cursor: pointer;
-    font-size: 15px; font-weight: 500; font-family: var(--sans);
+    font-size: 15px; font-weight: 500; font-family: var(--r-font-body);
     transition: opacity .15s; width: 100%; /* full width on mobile */
     min-height: 44px;
   }
@@ -207,7 +212,7 @@
   }
   .calc-result.show { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; }
   .result-item { text-align: center; }
-  .result-val { font-family: var(--mono); font-size: 1.4rem; font-weight: 500; color: var(--accent); }
+  .result-val { font-family: var(--r-font-mono); font-size: 1.4rem; font-weight: 500; color: var(--accent); }
   .result-label { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
   /* PERT BUILDER */
@@ -215,16 +220,16 @@
   .pert-add-btn, .pert-calc-btn {
     padding: 0.5rem 1.2rem; border-radius: 6px;
     border: 1px dashed var(--border); background: var(--bg);
-    cursor: pointer; font-size: 13px; font-family: var(--sans);
+    cursor: pointer; font-size: 13px; font-family: var(--r-font-body);
     transition: all .15s; margin-right: 0.5rem; margin-bottom: 0.5rem;
   }
   .pert-add-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .pert-calc-btn { background: var(--accent); color: white; border: none; font-weight: 500; }
+  .pert-calc-btn { background: var(--accent); color: var(--r-on-accent); border: none; font-weight: 500; }
   .pert-calc-btn:hover { opacity: 0.85; }
   .pert-input {
     width: 100%; padding: 4px 6px;
     border: 1px solid transparent; border-radius: 4px;
-    font-size: 13px; font-family: var(--sans); background: transparent;
+    font-size: 13px; font-family: var(--r-font-body); background: transparent;
     outline: none;
   }
   .pert-input:focus { border-color: var(--accent); background: var(--surface); }
@@ -242,7 +247,7 @@
   .formula {
     background: var(--bg); border: 1px solid var(--border);
     border-radius: 6px; padding: 0.8rem 1rem;
-    font-family: var(--mono); font-size: 13px; margin: 0.6rem 0;
+    font-family: var(--r-font-mono); font-size: 13px; margin: 0.6rem 0;
     color: var(--accent);
   }
 
@@ -270,9 +275,9 @@
   .step-num {
     counter-increment: step;
     width: 28px; height: 28px; flex-shrink: 0;
-    background: var(--accent); color: white;
+    background: var(--accent); color: var(--r-on-accent);
     border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 600; font-family: var(--mono);
+    font-size: 12px; font-weight: 600; font-family: var(--r-font-mono);
   }
   .step-num::before { content: counter(step); }
   .step-content { font-size: 13px; line-height: 1.5; }
@@ -314,7 +319,7 @@
   .tooltip-wrap { position: relative; display: inline-block; }
   .tooltip-wrap .tooltip-text {
     visibility: hidden; opacity: 0; width: 200px;
-    background: var(--text); color: white;
+    background: var(--text); color: var(--r-on-accent);
     font-size: 12px; text-align: left; border-radius: 6px;
     padding: 8px 10px; position: absolute; z-index: 10;
     bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
@@ -327,15 +332,15 @@
   .chip {
     font-size: 12px; padding: 3px 10px; border-radius: 20px;
     border: 1px solid var(--border); background: var(--surface);
-    color: var(--text-muted); font-family: var(--mono);
+    color: var(--text-muted); font-family: var(--r-font-mono);
   }
 
   /* SCORE */
   #score-display {
-    position: fixed; bottom: 1.5rem; right: 1.5rem;
+    position: fixed; bottom: 1.5rem; left: 1.5rem;
     background: var(--surface); border: 1px solid var(--border);
     border-radius: 8px; padding: 0.6rem 1rem;
-    font-family: var(--mono); font-size: 12px;
+    font-family: var(--r-font-mono); font-size: 12px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.08);
     display: none; z-index: 99;
   }
@@ -355,8 +360,8 @@
     font-size: 13px; margin-bottom: 1rem;
     display: flex; gap: 0.6rem; align-items: flex-start;
   }
-  .alert-info { background: var(--accent-soft); border: 1px solid var(--accent); color: #1e40af; }
-  .alert-warn { background: var(--orange-soft); border: 1px solid var(--orange); color: #9a3412; }
+  .alert-info { background: var(--accent-soft); border: 1px solid var(--accent); color: var(--r-blue); }
+  .alert-warn { background: var(--orange-soft); border: 1px solid var(--orange); color: var(--r-orange); }
 
   /* GANTT DEMO */
   .gantt-demo { overflow-x: auto; }
@@ -382,6 +387,7 @@
 }
 
 </style>
+<link rel="stylesheet" href="../../styles/revision.css">
 </head>
 <body>
 
@@ -723,7 +729,7 @@
           <div class="result-label">Taille équipe</div>
         </div>
       </div>
-      <div id="cocomo-steps" style="margin-top:1rem; font-size:12px; font-family:var(--mono); color:var(--text-muted); display:none; line-height:2"></div>
+      <div id="cocomo-steps" style="margin-top:1rem; font-size:12px; font-family:var(--r-font-mono); color:var(--text-muted); display:none; line-height:2"></div>
     </div>
 
     <div class="card">
@@ -868,7 +874,7 @@
     <div class="card">
       <h3>WBS — Work Breakdown Structure</h3><img src="images/img_10.jpg" alt="WBS" class="image-illustration">
       <p style="font-size:13px; margin-bottom:0.8rem">Décomposition hiérarchique du projet en tâches plus petites. Permet d'estimer progressivement l'ensemble.</p>
-      <div style="font-size:12px; font-family:var(--mono); background:var(--bg); border-radius:6px; padding:1rem; line-height:2">
+      <div style="font-size:12px; font-family:var(--r-font-mono); background:var(--bg); border-radius:6px; padding:1rem; line-height:2">
         <div style="color:var(--accent); font-weight:600">📁 Projet</div>
         <div style="padding-left:1.5rem">📂 Phase 1 — Infrastructure</div>
         <div style="padding-left:3rem">📄 Tâche 1.1 — Installation réseau (3h)</div>
@@ -887,19 +893,19 @@
     <div class="card">
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; margin-bottom:1rem">
         <div style="padding:0.8rem; border-radius:6px; background:var(--accent-soft); border:1px solid var(--accent)">
-          <span style="font-size:1.2rem; font-family:var(--mono); font-weight:700; color:var(--accent)">R</span> — <strong>Responsible</strong>
+          <span style="font-size:1.2rem; font-family:var(--r-font-mono); font-weight:700; color:var(--accent)">R</span> — <strong>Responsible</strong>
           <p style="font-size:12px; margin-top:0.3rem; color:var(--text-muted)">Réalise la tâche. Peut y en avoir plusieurs.</p>
         </div>
         <div style="padding:0.8rem; border-radius:6px; background:var(--red-soft); border:1px solid var(--red)">
-          <span style="font-size:1.2rem; font-family:var(--mono); font-weight:700; color:var(--red)">A</span> — <strong>Accountable</strong>
+          <span style="font-size:1.2rem; font-family:var(--r-font-mono); font-weight:700; color:var(--red)">A</span> — <strong>Accountable</strong>
           <p style="font-size:12px; margin-top:0.3rem; color:var(--text-muted)">Responsable final, décideur. <strong>Un seul A par tâche !</strong></p>
         </div>
         <div style="padding:0.8rem; border-radius:6px; background:var(--orange-soft); border:1px solid var(--orange)">
-          <span style="font-size:1.2rem; font-family:var(--mono); font-weight:700; color:var(--orange)">C</span> — <strong>Consulted</strong>
+          <span style="font-size:1.2rem; font-family:var(--r-font-mono); font-weight:700; color:var(--orange)">C</span> — <strong>Consulted</strong>
           <p style="font-size:12px; margin-top:0.3rem; color:var(--text-muted)">Donne un avis, expertise. Communication bidirectionnelle.</p>
         </div>
         <div style="padding:0.8rem; border-radius:6px; background:var(--green-soft); border:1px solid var(--green)">
-          <span style="font-size:1.2rem; font-family:var(--mono); font-weight:700; color:var(--green)">I</span> — <strong>Informed</strong>
+          <span style="font-size:1.2rem; font-family:var(--r-font-mono); font-weight:700; color:var(--green)">I</span> — <strong>Informed</strong>
           <p style="font-size:12px; margin-top:0.3rem; color:var(--text-muted)">Est informé du résultat. Communication unidirectionnelle.</p>
         </div>
       </div>
@@ -1451,5 +1457,6 @@ pertAddRow('C','1','B');
 pertAddRow('D','10','A,B');
 pertAddRow('E','1','C,D');
 </script>
+<script src="../../scripts/revision.js"></script>
 </body>
 </html>

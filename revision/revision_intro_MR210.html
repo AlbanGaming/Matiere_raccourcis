@@ -2,28 +2,32 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Figtree:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../styles/tokens.css">
+<link rel="icon" type="image/png" href="../styles/favicon.png">
+<script src="../scripts/theme.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gestion S2 — Révisions IUT Informatique</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #faf9f7;
-    --surface: #ffffff;
-    --surface2: #f3f1ee;
-    --border: #e8e4df;
-    --text: #1a1714;
-    --text-muted: #7a7268;
-    --accent: #c85a2a;
-    --accent-light: #f5e8e1;
-    --accent2: #2a6bc8;
-    --accent2-light: #e1ecf5;
-    --accent3: #2a8c5a;
-    --accent3-light: #e1f5ec;
-    --gold: #b8860b;
-    --gold-light: #fdf5dc;
-    --shadow: 0 2px 12px rgba(26,23,20,0.08);
-    --shadow-lg: 0 8px 32px rgba(26,23,20,0.12);
+    --bg: var(--r-bg);
+    --surface: var(--r-surface);
+    --surface2: var(--r-surface-2);
+    --border: var(--r-surface-3);
+    --text: var(--r-text);
+    --text-muted: var(--r-text-2);
+    --accent: var(--r-orange);
+    --accent-light: var(--r-orange-soft);
+    --accent2: var(--r-blue);
+    --accent2-light: var(--r-cyan-soft);
+    --accent3: var(--r-green);
+    --accent3-light: var(--r-green-soft);
+    --gold: var(--r-amber);
+    --gold-light: var(--r-amber-soft);
+    --shadow: 0 2px 12px color-mix(in srgb, var(--r-text) 8%, transparent);
+    --shadow-lg: 0 8px 32px color-mix(in srgb, var(--r-text) 12%, transparent);
     --radius: 12px;
     --radius-sm: 8px;
   }
@@ -31,7 +35,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: 'DM Sans', sans-serif;
+    font-family: var(--r-font-body);
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
@@ -47,7 +51,7 @@
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: 0 1px 8px rgba(26,23,20,0.06);
+    box-shadow: 0 1px 8px color-mix(in srgb, var(--r-text) 6%, transparent);
   }
   .header-inner {
     max-width: 1100px;
@@ -58,22 +62,22 @@
     height: 60px;
   }
   .logo {
-    font-family: 'DM Serif Display', serif;
+    font-family: var(--r-font-display);
     font-size: 1.25rem;
     color: var(--accent);
     white-space: nowrap;
     flex-shrink: 0;
   }
-  .logo span { color: var(--text-muted); font-size: 0.8rem; font-family: 'DM Sans', sans-serif; font-weight: 400; }
+  .logo span { color: var(--text-muted); font-size: 0.8rem; font-family: var(--r-font-body); font-weight: 400; }
   nav { display: flex; gap: 4px; overflow-x: auto; }
   .nav-btn {
     background: none; border: none; cursor: pointer;
     padding: 6px 14px; border-radius: 20px;
-    font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500;
+    font-family: var(--r-font-body); font-size: 0.82rem; font-weight: 500;
     color: var(--text-muted); transition: all 0.2s; white-space: nowrap;
   }
   .nav-btn:hover { background: var(--surface2); color: var(--text); }
-  .nav-btn.active { background: var(--accent); color: white; }
+  .nav-btn.active { background: var(--accent); color: var(--r-on-accent); }
 
   /* ── LAYOUT ── */
   main { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
@@ -86,7 +90,7 @@
     text-align: center; padding: 3rem 1rem 2rem;
   }
   .hero h1 {
-    font-family: 'DM Serif Display', serif;
+    font-family: var(--r-font-display);
     font-size: clamp(2rem, 5vw, 3.2rem);
     line-height: 1.15;
     margin-bottom: 0.75rem;
@@ -109,7 +113,7 @@
   }
   .chapter-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); border-color: transparent; }
   .chapter-card .ch-num {
-    font-family: 'DM Serif Display', serif; font-size: 2.5rem;
+    font-family: var(--r-font-display); font-size: 2.5rem;
     line-height: 1; margin-bottom: 0.5rem;
   }
   .ch1 .ch-num { color: var(--accent); }
@@ -131,7 +135,7 @@
     margin-bottom: 1.75rem;
   }
   .section-head h2 {
-    font-family: 'DM Serif Display', serif; font-size: 1.8rem;
+    font-family: var(--r-font-display); font-size: 1.8rem;
   }
   .section-head .pill {
     padding: 4px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 600;
@@ -143,11 +147,11 @@
   .tab-btn {
     background: var(--surface2); border: 1px solid var(--border);
     border-radius: 20px; padding: 6px 16px;
-    font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500;
+    font-family: var(--r-font-body); font-size: 0.82rem; font-weight: 500;
     cursor: pointer; transition: all 0.2s; color: var(--text-muted);
   }
   .tab-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .tab-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
+  .tab-btn.active { background: var(--accent); border-color: var(--accent); color: var(--r-on-accent); }
   .tab-content { display: none; }
   .tab-content.active { display: block; }
 
@@ -185,7 +189,7 @@
   }
   .formula-card .fname { font-size: 0.78rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 0.4rem; }
   .formula-card .fexpr {
-    font-family: 'DM Mono', monospace; font-size: 0.92rem;
+    font-family: var(--r-font-mono); font-size: 0.92rem;
     background: var(--surface2); padding: 8px 12px; border-radius: var(--radius-sm);
     border-left: 3px solid var(--accent); margin: 0.4rem 0;
   }
@@ -221,11 +225,11 @@
     background: var(--surface2); border: 2px solid var(--border);
     border-radius: var(--radius-sm); padding: 0.75rem 1rem;
     cursor: pointer; transition: all 0.2s; text-align: left;
-    font-family: 'DM Sans', sans-serif; font-size: 0.9rem; color: var(--text);
+    font-family: var(--r-font-body); font-size: 0.9rem; color: var(--text);
   }
   .quiz-option:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-light); }
-  .quiz-option.correct { background: #e8f5ee; border-color: var(--accent3); color: #1a5c38; }
-  .quiz-option.wrong { background: #fdecea; border-color: #e53935; color: #7a1a17; }
+  .quiz-option.correct { background: var(--r-surface-2); border-color: var(--accent3); color: var(--r-text); }
+  .quiz-option.wrong { background: var(--r-red-soft); border-color: var(--r-red); color: var(--r-red); }
   .quiz-option:disabled { cursor: not-allowed; }
 
   .quiz-feedback {
@@ -233,17 +237,17 @@
     border-radius: var(--radius-sm); font-size: 0.88rem; display: none;
   }
   .quiz-feedback.show { display: block; }
-  .quiz-feedback.ok { background: #e8f5ee; color: #1a5c38; border-left: 3px solid var(--accent3); }
-  .quiz-feedback.ko { background: #fdecea; color: #7a1a17; border-left: 3px solid #e53935; }
+  .quiz-feedback.ok { background: var(--r-surface-2); color: var(--r-text); border-left: 3px solid var(--accent3); }
+  .quiz-feedback.ko { background: var(--r-red-soft); color: var(--r-red); border-left: 3px solid var(--r-red); }
 
   .quiz-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; }
   .btn {
     padding: 10px 22px; border-radius: 8px; border: none; cursor: pointer;
-    font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 600;
+    font-family: var(--r-font-body); font-size: 0.88rem; font-weight: 600;
     transition: all 0.2s;
   }
-  .btn-primary { background: var(--accent); color: white; }
-  .btn-primary:hover { background: #a84820; }
+  .btn-primary { background: var(--accent); color: var(--r-on-accent); }
+  .btn-primary:hover { background: var(--r-orange); }
   .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
   .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
   .btn:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -254,7 +258,7 @@
     border: 1px solid var(--border); box-shadow: var(--shadow);
   }
   .quiz-result .big-score {
-    font-family: 'DM Serif Display', serif; font-size: 4rem; color: var(--accent);
+    font-family: var(--r-font-display); font-size: 4rem; color: var(--accent);
   }
   .quiz-result p { color: var(--text-muted); margin: 0.5rem 0 1.5rem; }
 
@@ -272,7 +276,7 @@
   .form-group label { font-size: 0.78rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .04em; }
   .form-group input, .form-group select {
     border: 1px solid var(--border); border-radius: var(--radius-sm);
-    padding: 8px 12px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+    padding: 8px 12px; font-family: var(--r-font-body); font-size: 0.9rem;
     background: var(--bg); color: var(--text); transition: border-color 0.2s;
   }
   .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--accent); }
@@ -283,7 +287,7 @@
   }
   .result-row:last-child { border-bottom: none; }
   .result-row .rlabel { color: var(--text-muted); }
-  .result-row .rval { font-family: 'DM Mono', monospace; font-weight: 500; font-size: 0.95rem; }
+  .result-row .rval { font-family: var(--r-font-mono); font-weight: 500; font-size: 0.95rem; }
   .result-row.total .rlabel { font-weight: 700; color: var(--text); }
   .result-row.total .rval { font-size: 1.1rem; color: var(--accent); font-weight: 700; }
   .result-box {
@@ -319,7 +323,7 @@
   .bilan-row label { font-size: 0.82rem; flex: 1; }
   .bilan-row input {
     width: 110px; border: 1px solid var(--border); border-radius: 6px;
-    padding: 5px 8px; font-family: 'DM Mono', monospace; font-size: 0.82rem;
+    padding: 5px 8px; font-family: var(--r-font-mono); font-size: 0.82rem;
     text-align: right; background: var(--bg);
   }
   .bilan-row input:focus { outline: none; border-color: var(--accent); }
@@ -333,8 +337,8 @@
     border-radius: var(--radius); margin-top: 1rem;
     font-weight: 600; font-size: 0.95rem; transition: all 0.3s;
   }
-  .bilan-check.ok { background: #e8f5ee; color: #1a5c38; border: 1px solid #b2dfcf; }
-  .bilan-check.ko { background: #fdecea; color: #7a1a17; border: 1px solid #f5c6c4; }
+  .bilan-check.ok { background: var(--r-surface-2); color: var(--r-text); border: 1px solid var(--r-border-strong); }
+  .bilan-check.ko { background: var(--r-red-soft); color: var(--r-red); border: 1px solid var(--r-red-soft); }
   .bilan-check.neutral { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
 
   /* ── PCG TABLE ── */
@@ -343,7 +347,7 @@
     background: var(--surface); border: 1px solid var(--border);
     border-radius: var(--radius-sm); padding: 1rem;
   }
-  .pcg-num { font-family: 'DM Serif Display', serif; font-size: 1.8rem; color: var(--accent); }
+  .pcg-num { font-family: var(--r-font-display); font-size: 1.8rem; color: var(--accent); }
   .pcg-name { font-weight: 600; font-size: 0.85rem; margin: 2px 0 4px; }
   .pcg-examples { font-size: 0.75rem; color: var(--text-muted); }
 
@@ -357,9 +361,9 @@
   .amort-table th:first-child { text-align: left; }
   .amort-table td {
     padding: 8px 12px; border-bottom: 1px solid var(--border);
-    font-family: 'DM Mono', monospace; text-align: right; font-size: 0.82rem;
+    font-family: var(--r-font-mono); text-align: right; font-size: 0.82rem;
   }
-  .amort-table td:first-child { font-family: 'DM Sans', sans-serif; text-align: left; font-weight: 500; }
+  .amort-table td:first-child { font-family: var(--r-font-body); text-align: left; font-weight: 500; }
   .amort-table tr:last-child td { font-weight: 700; background: var(--surface2); }
 
   /* ── TVA CALC ── */
@@ -376,7 +380,7 @@
     transition: all 0.2s;
   }
   .tva-box:hover, .tva-box.sel { border-color: var(--accent); background: var(--accent-light); }
-  .tva-box .rate { font-family: 'DM Serif Display', serif; font-size: 1.8rem; color: var(--accent); }
+  .tva-box .rate { font-family: var(--r-font-display); font-size: 1.8rem; color: var(--accent); }
   .tva-box .ex { font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; }
 
   /* SCROLL REVEAL */
@@ -387,7 +391,7 @@
   .tooltip-wrap { position: relative; display: inline-block; }
   .tooltip-wrap .tt {
     position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
-    background: var(--text); color: white; padding: 5px 10px; border-radius: 6px;
+    background: var(--text); color: var(--r-on-accent); padding: 5px 10px; border-radius: 6px;
     font-size: 0.75rem; white-space: nowrap; opacity: 0; pointer-events: none;
     transition: opacity 0.2s; z-index: 20;
   }
@@ -405,12 +409,12 @@
   .info-box {
     background: var(--accent2-light); border-left: 3px solid var(--accent2);
     border-radius: var(--radius-sm); padding: 0.75rem 1rem;
-    font-size: 0.85rem; margin-bottom: 1rem; color: #1a3a5c;
+    font-size: 0.85rem; margin-bottom: 1rem; color: var(--r-text);
   }
   .warning-box {
     background: var(--gold-light); border-left: 3px solid var(--gold);
     border-radius: var(--radius-sm); padding: 0.75rem 1rem;
-    font-size: 0.85rem; margin-bottom: 1rem; color: #5c3d00;
+    font-size: 0.85rem; margin-bottom: 1rem; color: var(--r-amber);
   }
   .divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
   .tag {
@@ -421,6 +425,7 @@
   .tag-ch2 { background: var(--accent2-light); color: var(--accent2); }
   .tag-ch3 { background: var(--accent3-light); color: var(--accent3); }
 </style>
+<link rel="stylesheet" href="../styles/revision.css">
 </head>
 <body>
 
@@ -434,7 +439,7 @@
       <button class="nav-btn" onclick="showPage('ch3')">Ch.3 Bilan</button>
       <button class="nav-btn" onclick="showPage('quiz')">🎯 Quiz</button>
       <button class="nav-btn" onclick="showPage('calcul')">🧮 Calculatrices</button>
-      <button class="nav-btn" style="background:#fef2f2;color:#c0392b;border:1.5px solid #f5c6c4;font-weight:700;" onclick="showPage('controle')">🚨 Contrôle du 4 juin</button>
+      <button class="nav-btn" style="background:var(--r-bg);color:var(--r-red);border:1.5px solid var(--r-red-soft);font-weight:700;" onclick="showPage('controle')">🚨 Contrôle du 4 juin</button>
     </nav>
   </div>
 </header>
@@ -547,7 +552,7 @@
         <div style="font-size:.85rem;">
           <div style="margin-bottom:.75rem;"><strong>Principe de la Partie Double :</strong></div>
           <p style="color:var(--text-muted);margin-bottom:.5rem;">Toute écriture débitée sur un compte doit être créditée du même montant sur un autre compte.</p>
-          <div style="background:var(--surface2);padding:10px;border-radius:8px;font-family:'DM Mono',monospace;font-size:.82rem;">
+          <div style="background:var(--surface2);padding:10px;border-radius:8px;font-family:var(--r-font-mono);font-size:.82rem;">
             Total Débit = Total Crédit
           </div>
           <p style="margin-top:.5rem;font-size:.8rem;color:var(--text-muted);">
@@ -586,7 +591,7 @@
     <div class="calc-card reveal" style="margin-top:1.25rem;">
       <h3><span class="icon">💡</span> Valeur Ajoutée</h3>
       <div style="background:var(--surface2);padding:1rem;border-radius:var(--radius-sm);margin-bottom:.75rem;">
-        <div style="font-family:'DM Mono',monospace;font-size:.9rem;text-align:center;">
+        <div style="font-family:var(--r-font-mono);font-size:.9rem;text-align:center;">
           VA = Chiffre d'Affaires HT − Valeur des consommations externes
         </div>
       </div>
@@ -638,10 +643,10 @@
     <div class="calc-card reveal">
       <h3><span class="icon">🧾</span> Structure d'une Facture</h3>
       <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem;font-size:.85rem;">
-        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);"><span>Montant Brut HT</span><span style="font-family:'DM Mono',monospace;">Prix catalogue × quantités</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);"><span>Montant Brut HT</span><span style="font-family:var(--r-font-mono);">Prix catalogue × quantités</span></div>
         <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);color:var(--accent);">
           <span>− Remise (%) &nbsp;<span style="font-size:.72rem;background:var(--accent-light);padding:2px 6px;border-radius:4px;">RRR commerciale</span></span>
-          <span style="font-family:'DM Mono',monospace;">Brut × taux</span>
+          <span style="font-family:var(--r-font-mono);">Brut × taux</span>
         </div>
         <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-weight:600;"><span>= Sous-total</span><span></span></div>
         <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);color:var(--accent);">
@@ -699,7 +704,7 @@
       <h3><span class="icon">💶</span> La TVA — Mécanisme</h3>
       <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:1rem;">Impôt indirect payé par le consommateur final. Les entreprises jouent un rôle d'intermédiaire collecteur.</p>
       <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:1rem;margin-bottom:1rem;">
-        <div style="font-family:'DM Mono',monospace;font-size:.88rem;text-align:center;line-height:2;">
+        <div style="font-family:var(--r-font-mono);font-size:.88rem;text-align:center;line-height:2;">
           TVA à reverser = TVA collectée (ventes) − TVA déductible (achats)
         </div>
       </div>
@@ -1139,35 +1144,35 @@
 <div class="page" id="page-controle">
 
   <!-- BANDEAU ALERTE -->
-  <div style="background:linear-gradient(135deg,#c0392b 0%,#e74c3c 100%);color:white;border-radius:var(--radius);padding:1.5rem 2rem;margin-bottom:1.75rem;display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap;">
+  <div style="background:var(--r-red);color:var(--r-on-accent);border-radius:var(--radius);padding:1.5rem 2rem;margin-bottom:1.75rem;display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap;">
     <div style="font-size:2.5rem;line-height:1;">🚨</div>
     <div style="flex:1;">
-      <div style="font-family:'DM Serif Display',serif;font-size:1.5rem;margin-bottom:2px;">Contrôle — Jeudi 4 juin 2026</div>
+      <div style="font-family:var(--r-font-display);font-size:1.5rem;margin-bottom:2px;">Contrôle — Jeudi 4 juin 2026</div>
       <div style="font-size:.9rem;opacity:.9;">TP Gestion des SI · Vérification des acquis TP N°2 et TP N°3</div>
     </div>
-    <div id="countdown-box" style="background:rgba(0,0,0,.25);border-radius:10px;padding:10px 18px;text-align:center;min-width:120px;">
-      <div id="countdown-val" style="font-family:'DM Serif Display',serif;font-size:1.8rem;line-height:1;">—</div>
+    <div id="countdown-box" style="background:color-mix(in srgb, var(--r-on-accent) 16%, transparent);border-radius:10px;padding:10px 18px;text-align:center;min-width:120px;">
+      <div id="countdown-val" style="font-family:var(--r-font-display);font-size:1.8rem;line-height:1;">—</div>
       <div style="font-size:.72rem;opacity:.8;margin-top:2px;">avant le contrôle</div>
     </div>
   </div>
 
   <!-- CALCULATRICE WARNING -->
-  <div style="background:#fff8e1;border:2px solid #f59e0b;border-radius:var(--radius);padding:1.25rem 1.5rem;margin-bottom:1.75rem;display:flex;align-items:center;gap:1rem;">
+  <div style="background:var(--r-amber-soft);border:2px solid var(--r-amber);border-radius:var(--radius);padding:1.25rem 1.5rem;margin-bottom:1.75rem;display:flex;align-items:center;gap:1rem;">
     <div style="font-size:2.2rem;">🧮</div>
     <div>
-      <div style="font-weight:700;font-size:1rem;color:#92400e;">RAPPEL IMPORTANT : APPORTER UNE CALCULATRICE</div>
-      <div style="font-size:.85rem;color:#78350f;margin-top:2px;">Sans calculatrice physique, les exercices de calcul (TVA, marge, amortissement) sont impossibles à terminer dans le temps imparti.</div>
+      <div style="font-weight:700;font-size:1rem;color:var(--r-orange);">RAPPEL IMPORTANT : APPORTER UNE CALCULATRICE</div>
+      <div style="font-size:.85rem;color:var(--r-orange);margin-top:2px;">Sans calculatrice physique, les exercices de calcul (TVA, marge, amortissement) sont impossibles à terminer dans le temps imparti.</div>
     </div>
   </div>
 
   <!-- CE QUI TOMBE -->
   <div style="margin-bottom:1.75rem;">
-    <h2 style="font-family:'DM Serif Display',serif;font-size:1.5rem;margin-bottom:1rem;">Ce qui tombe au contrôle</h2>
+    <h2 style="font-family:var(--r-font-display);font-size:1.5rem;margin-bottom:1rem;">Ce qui tombe au contrôle</h2>
 
     <!-- TP2 -->
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:1rem;">
       <div style="background:var(--accent2-light);color:var(--accent2);font-weight:700;padding:10px 18px;font-size:.92rem;display:flex;align-items:center;gap:.5rem;">
-        <span style="background:var(--accent2);color:white;border-radius:6px;padding:2px 9px;font-size:.8rem;">TP N°2</span>
+        <span style="background:var(--accent2);color:var(--r-on-accent);border-radius:6px;padding:2px 9px;font-size:.8rem;">TP N°2</span>
         Facturation & Calculs Commerciaux
       </div>
       <div style="padding:1.25rem;display:grid;gap:.75rem;">
@@ -1200,7 +1205,7 @@
     <!-- TP3 -->
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
       <div style="background:var(--accent3-light);color:var(--accent3);font-weight:700;padding:10px 18px;font-size:.92rem;display:flex;align-items:center;gap:.5rem;">
-        <span style="background:var(--accent3);color:white;border-radius:6px;padding:2px 9px;font-size:.8rem;">TP N°3</span>
+        <span style="background:var(--accent3);color:var(--r-on-accent);border-radius:6px;padding:2px 9px;font-size:.8rem;">TP N°3</span>
         Bilan, Compte de Résultat &amp; Amortissements
       </div>
       <div style="padding:1.25rem;display:grid;gap:.75rem;">
@@ -1241,20 +1246,20 @@
           </div>
 
           <!-- VARIATION DE STOCK WARNING -->
-          <div style="margin-top:.75rem;background:#fff8e1;border:1.5px solid #f59e0b;border-radius:8px;padding:.75rem 1rem;">
-            <div style="font-weight:700;color:#92400e;margin-bottom:.3rem;">⚠️ Variation de stock (Dagobah) — Point critique</div>
-            <div style="font-size:.83rem;color:#78350f;display:grid;grid-template-columns:1fr 1fr;gap:.5rem;">
+          <div style="margin-top:.75rem;background:var(--r-amber-soft);border:1.5px solid var(--r-amber);border-radius:8px;padding:.75rem 1rem;">
+            <div style="font-weight:700;color:var(--r-orange);margin-bottom:.3rem;">⚠️ Variation de stock (Dagobah) — Point critique</div>
+            <div style="font-size:.83rem;color:var(--r-orange);display:grid;grid-template-columns:1fr 1fr;gap:.5rem;">
               <div>
                 <strong>Marchandises / Matières 1ères (Charges 6031/6037) :</strong><br>
                 Variation = Stock Initial − Stock Final<br>
-                <span style="font-family:'DM Mono',monospace;">SI &gt; SF → déstockage → charge +</span><br>
-                <span style="font-family:'DM Mono',monospace;">SI &lt; SF → restockage → charge −</span>
+                <span style="font-family:var(--r-font-mono);">SI &gt; SF → déstockage → charge +</span><br>
+                <span style="font-family:var(--r-font-mono);">SI &lt; SF → restockage → charge −</span>
               </div>
               <div>
                 <strong>Production stockée (Produits 71) :</strong><br>
                 Production stockée = Stock Final − Stock Initial<br>
-                <span style="font-family:'DM Mono',monospace;">SF &gt; SI → production + → produit +</span><br>
-                <span style="font-family:'DM Mono',monospace;">SF &lt; SI → déstockage → produit −</span>
+                <span style="font-family:var(--r-font-mono);">SF &gt; SI → production + → produit +</span><br>
+                <span style="font-family:var(--r-font-mono);">SF &lt; SI → déstockage → produit −</span>
               </div>
             </div>
           </div>
@@ -1268,7 +1273,7 @@
             <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.75rem;">
               <div style="font-weight:700;color:var(--accent);margin-bottom:.4rem;">📐 Linéaire (App. N°3)</div>
               <ol style="padding-left:1.2rem;color:var(--text-muted);line-height:1.9;">
-                <li><strong style="color:#c0392b;">Si prix TTC → diviser par (1 + taux TVA) pour obtenir la base HT !</strong></li>
+                <li><strong style="color:var(--r-red);">Si prix TTC → diviser par (1 + taux TVA) pour obtenir la base HT !</strong></li>
                 <li>Taux = 100 ÷ durée</li>
                 <li>1ère annuité : prorata temporis en jours (base 360j/an)</li>
                 <li>Jours = du jour de mise en service au 31/12</li>
@@ -1279,19 +1284,19 @@
             <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.75rem;">
               <div style="font-weight:700;color:var(--accent3);margin-bottom:.4rem;">⚙️ Avantages économiques (App. N°4)</div>
               <ol style="padding-left:1.2rem;color:var(--text-muted);line-height:1.9;">
-                <li><strong style="color:#c0392b;">Si prix TTC → passer en HT d'abord !</strong></li>
+                <li><strong style="color:var(--r-red);">Si prix TTC → passer en HT d'abord !</strong></li>
                 <li>Calculer le total de production prévu sur toute la durée</li>
                 <li>Annuité N = Base × (pièces N ÷ total pièces)</li>
                 <li>La somme des annuités = Base amortissable</li>
               </ol>
-              <div style="background:var(--accent3-light);border-radius:6px;padding:6px 10px;margin-top:.5rem;font-family:'DM Mono',monospace;font-size:.8rem;color:var(--accent3);">
+              <div style="background:var(--accent3-light);border-radius:6px;padding:6px 10px;margin-top:.5rem;font-family:var(--r-font-mono);font-size:.8rem;color:var(--accent3);">
                 Annuité = Base × (Qté N / Qté totale)
               </div>
             </div>
           </div>
 
-          <div style="background:#fdecea;border:1.5px solid #e57373;border-radius:8px;padding:.75rem 1rem;font-size:.83rem;">
-            <strong style="color:#c0392b;">🔴 Piège classique :</strong> <span style="color:#7a1a17;">Le prix donné est souvent TTC. Il faut <strong>toujours amortir sur la base HT</strong>. Formule : Base HT = Prix TTC ÷ 1,20 (si TVA 20%).</span>
+          <div style="background:var(--r-red-soft);border:1.5px solid var(--r-red);border-radius:8px;padding:.75rem 1rem;font-size:.83rem;">
+            <strong style="color:var(--r-red);">🔴 Piège classique :</strong> <span style="color:var(--r-red);">Le prix donné est souvent TTC. Il faut <strong>toujours amortir sur la base HT</strong>. Formule : Base HT = Prix TTC ÷ 1,20 (si TVA 20%).</span>
           </div>
         </div>
 
@@ -1301,7 +1306,7 @@
 
   <!-- CHECKLIST -->
   <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.5rem;">
-    <h3 style="font-family:'DM Serif Display',serif;font-size:1.15rem;margin-bottom:1rem;">✅ Checklist de révision</h3>
+    <h3 style="font-family:var(--r-font-display);font-size:1.15rem;margin-bottom:1rem;">✅ Checklist de révision</h3>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.5rem;" id="checklist-grid"></div>
   </div>
 
@@ -1831,5 +1836,6 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 // ── Recalc amort on page load
 window.addEventListener('DOMContentLoaded', () => { calcAmort(); });
 </script>
+<script src="../scripts/revision.js"></script>
 </body>
 </html>

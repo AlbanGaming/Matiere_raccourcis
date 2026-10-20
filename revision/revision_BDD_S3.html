@@ -2,42 +2,31 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Révisions BDD — Test Moodle</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Figtree:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../styles/tokens.css">
+<link rel="icon" type="image/png" href="../styles/favicon.png">
+<script src="../scripts/theme.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Révisions BDD — Test Moodle</title>
 <style>
 :root{
-  --bg:#0f1319; --panel:#171d26; --panel2:#1d2530; --border:#2a3442;
-  --text:#e7ecf2; --muted:#93a4b8; --teal:#4fb8a6; --teal-dim:#2d6b62;
-  --amber:#e0a458; --amber-dim:#7a5a2e; --red:#e2725b;
-  --code-bg:#0c0f14;
+  --bg:var(--r-bg); --panel:var(--r-surface); --panel2:var(--r-surface-2); --border:var(--r-border);
+  --text:var(--r-text); --muted:var(--r-text-2); --teal:var(--r-teal); --teal-dim:var(--r-teal);
+  --amber:var(--r-orange); --amber-dim:var(--r-orange); --red:var(--r-red);
+  --code-bg:var(--r-bg);
   padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
   box-sizing:border-box;
-}
-@media (prefers-color-scheme: light){
-  :root:not([data-theme="dark"]){
-    --bg:#f6f4ef; --panel:#ffffff; --panel2:#f0ede5; --border:#dcd6c9;
-    --text:#20242b; --muted:#5b6472; --teal:#1f7a6c; --teal-dim:#bfe4dd;
-    --amber:#a2650f; --amber-dim:#f2dcb3; --red:#b5402b;
-    --code-bg:#eeeae0;
-  }
-}
-:root[data-theme="light"]{
-  --bg:#f6f4ef; --panel:#ffffff; --panel2:#f0ede5; --border:#dcd6c9;
-  --text:#20242b; --muted:#5b6472; --teal:#1f7a6c; --teal-dim:#bfe4dd;
-  --amber:#a2650f; --amber-dim:#f2dcb3; --red:#b5402b;
-  --code-bg:#eeeae0;
 }
 html{scroll-padding-top:calc(64px + env(safe-area-inset-top,0px));}
 *{box-sizing:border-box;}
 body{
   margin:0; background:var(--bg); color:var(--text);
-  font-family:'Source Sans 3',sans-serif; line-height:1.55;
+  font-family:var(--r-font-body); line-height:1.55;
   -webkit-font-smoothing:antialiased;
 }
-h1,h2,h3,code,pre,.mono{font-family:'JetBrains Mono',monospace;}
+h1,h2,h3,code,pre,.mono{font-family:var(--r-font-mono);}
 
 header{
   position:sticky; top:0; z-index:20;
@@ -109,16 +98,19 @@ code{font-size:.83rem;}
 .opt.ok{border-color:var(--teal);background:var(--teal-dim);color:var(--text)}
 .opt.ko{border-color:var(--red)}
 .opt code{font-size:.8rem}
-.btn{background:var(--teal);color:#0b1014;border:0;border-radius:8px;padding:10px 18px;font:inherit;font-weight:600;cursor:pointer;margin:8px 8px 0 0}
+.btn{background:var(--teal);color:var(--r-text-3);border:0;border-radius:8px;padding:10px 18px;font:inherit;font-weight:600;cursor:pointer;margin:8px 8px 0 0}
 .btn.alt{background:transparent;color:var(--text);border:1px solid var(--border)}
 .qmeta{display:flex;justify-content:space-between;color:var(--muted);font-size:.85rem;margin-bottom:8px}
 .bar{height:4px;background:var(--border);border-radius:2px;margin-bottom:16px}.bar i{display:block;height:100%;background:var(--teal);border-radius:2px}
 .expl{margin-top:12px;padding:12px 14px;border-radius:8px;background:var(--panel2);font-size:.92rem}
 .frags{display:flex;flex-direction:column;gap:6px;margin:8px 0;min-height:44px;padding:8px;border:1px dashed var(--border);border-radius:8px}
-.frag{text-align:left;background:var(--code-bg);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-family:'JetBrains Mono',monospace;font-size:.78rem;cursor:pointer}
+.frag{text-align:left;background:var(--code-bg);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-family:var(--r-font-mono);font-size:.78rem;cursor:pointer}
 footer{max-width:760px; margin:0 auto; padding:0 20px 40px; color:var(--muted); font-size:.85rem;}
 a{color:var(--teal);}
+/* Téléphone : les cartes et le code restent dans la largeur de l.écran */
+.card, .compare > * { min-width: 0; }
 </style>
+<link rel="stylesheet" href="../styles/revision.css">
 </head>
 <body>
 
@@ -438,5 +430,6 @@ function end(){root.appendChild(el("h3",null,"Score final : "+score+" / "+items.
 render();
 })();
 </script>
+<script src="../scripts/revision.js"></script>
 </body>
 </html>

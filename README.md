@@ -106,4 +106,53 @@ index.html       → structure de la page
 styles/styles.css → tous les styles (thème, menus, badges, tooltips)
 scripts/script.js → logique JS (thème, accordéon, localisation, ouverture des liens)
 revision/         → pages HTML de révision par matière
+styles/tokens.css   → couleurs, polices et thème clair/sombre communs aux fiches
+styles/revision.css → base commune des fiches + barre d'outils flottante
+scripts/theme.js    → applique le thème (même réglage que l'accueil)
+scripts/revision.js → barre d'outils (Accueil, thème, haut de page), barre de lecture
 ```
+
+---
+
+## 7. Thème commun des fiches de révision
+
+Toutes les fiches de `revision/` partagent la même identité : mêmes polices (Bricolage Grotesque pour les titres, Figtree pour le texte, JetBrains Mono pour le code), même palette, et un thème clair / sombre qui suit le switch de la page d'accueil (clé `theme` du `localStorage`). Sans réglage enregistré, les fiches suivent le thème du système.
+
+Chaque fiche a aussi, en bas à droite, une barre d'outils : retour à l'accueil, changement de thème, retour en haut de page. Une fine barre en haut de l'écran montre la progression de lecture.
+
+### Brancher une nouvelle fiche sur le thème
+
+Dans le `<head>`, juste après `<meta charset>` (adapter `../` selon la profondeur du dossier) :
+
+```html
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Figtree:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../styles/tokens.css">
+<link rel="icon" type="image/png" href="../styles/favicon.png">
+<script src="../scripts/theme.js"></script>
+```
+
+Juste avant `</head>` (après le `<style>` de la fiche) :
+
+```html
+<link rel="stylesheet" href="../styles/revision.css">
+```
+
+Juste avant `</body>` :
+
+```html
+<script src="../scripts/revision.js"></script>
+```
+
+Dans le CSS de la fiche, utiliser les variables plutôt que des couleurs en dur, sinon le thème sombre ne s'applique pas :
+
+| Rôle | Variable |
+|---|---|
+| Fond de page / cartes | `--r-bg`, `--r-surface`, `--r-surface-2`, `--r-surface-3` |
+| Bordures | `--r-border`, `--r-border-strong` |
+| Texte (fort → discret) | `--r-text`, `--r-text-2`, `--r-text-3` |
+| Accent (liens, boutons) | `--r-accent`, `--r-accent-soft`, texte sur accent : `--r-on-accent` |
+| Couleurs de catégorie | `--r-blue`, `--r-violet`, `--r-pink`, `--r-red`, `--r-orange`, `--r-amber`, `--r-green`, `--r-teal`, `--r-cyan` (+ `-soft` pour les fonds) |
+| Surligneur « à retenir » | `--r-mark`, `--r-mark-soft` (ou simplement la balise `<mark>`) |
+| Polices | `--r-font-display`, `--r-font-body`, `--r-font-mono` |
+
+Si un élément fixé en bas de la fiche gêne la barre d'outils, la remonter avec `--rv-dock-bottom` dans le `:root` de la fiche (exemple : la fiche Stats, à cause de sa barre de navigation du bas).

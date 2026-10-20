@@ -2,37 +2,43 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Figtree:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../styles/tokens.css">
+<link rel="icon" type="image/png" href="../styles/favicon.png">
+<script src="../scripts/theme.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Révision — Programmation Web PHP</title>
 <style>
   :root {
-    --bg: #0d1117;
-    --surface: #161b22;
-    --surface2: #1e2530;
-    --border: #30363d;
-    --php-purple: #8b5cf6;
-    --php-purple-dim: #3b1d6e;
-    --accent: #a78bfa;
-    --accent2: #60a5fa;
-    --accent3: #34d399;
-    --accent4: #f59e0b;
-    --accent5: #f87171;
-    --text: #e2e8f0;
-    --text-muted: #8b949e;
-    --code-bg: #0d1117;
-    --code-border: #30363d;
-    --tag-ok: #1a3a2a;
-    --tag-ok-t: #34d399;
-    --tag-warn: #3a2a0a;
-    --tag-warn-t: #f59e0b;
-    --tag-danger: #3a1010;
-    --tag-danger-t: #f87171;
+    --bg: var(--r-bg);
+    --surface: var(--r-surface);
+    --surface2: var(--r-surface-2);
+    --border: var(--r-border);
+    --php-purple: var(--r-violet);
+    --php-purple-dim: var(--r-violet);
+    --accent: var(--r-violet);
+    --accent2: var(--r-blue);
+    --accent3: var(--r-green);
+    --accent4: var(--r-amber);
+    --accent5: var(--r-red);
+    --text: var(--r-text);
+    --text-muted: var(--r-text-2);
+    --code-bg: var(--r-bg);
+    --code-border: var(--r-border);
+    --tag-ok: var(--r-surface-3);
+    --tag-ok-t: var(--r-green);
+    --tag-warn: var(--r-surface-2);
+    --tag-warn-t: var(--r-amber);
+    --tag-danger: var(--r-surface-2);
+    --tag-danger-t: var(--r-red);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-family: var(--r-font-body);
     background: var(--bg);
     color: var(--text);
     line-height: 1.6;
@@ -41,7 +47,7 @@
 
   /* HEADER */
   header {
-    background: linear-gradient(135deg, #0d0218 0%, #1a0533 50%, #0d1117 100%);
+    background: linear-gradient(135deg, var(--r-bg-deep) 0%, var(--r-surface) 50%, var(--r-bg) 100%);
     border-bottom: 1px solid var(--border);
     padding: 2.5rem 2rem 2rem;
     text-align: center;
@@ -56,7 +62,7 @@
     transform: translateX(-50%);
     width: 600px;
     height: 300px;
-    background: radial-gradient(ellipse, rgba(139,92,246,0.15) 0%, transparent 70%);
+    background: radial-gradient(ellipse, color-mix(in srgb, var(--r-violet) 15%, transparent) 0%, transparent 70%);
     pointer-events: none;
   }
   .header-eyebrow {
@@ -69,13 +75,10 @@
   header h1 {
     font-size: 2.2rem;
     font-weight: 700;
-    background: linear-gradient(90deg, #a78bfa, #60a5fa);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
     line-height: 1.2;
     margin-bottom: 0.6rem;
-  }
+  color: var(--r-text);
+}
   header p {
     color: var(--text-muted);
     font-size: 0.9rem;
@@ -107,7 +110,7 @@
     white-space: nowrap;
     border-bottom: 2px solid transparent;
     transition: color 0.2s, border-color 0.2s;
-    font-family: inherit;
+    font-family: var(--r-font-body);
   }
   .nav-btn:hover { color: var(--text); }
   .nav-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
@@ -182,19 +185,19 @@
     border-radius: 8px;
     padding: 1rem 1.2rem;
     overflow-x: auto;
-    font-family: 'Consolas', 'Fira Code', monospace;
+    font-family: var(--r-font-mono);
     font-size: 0.8rem;
     line-height: 1.55;
     margin: 0.6rem 0;
-    color: #c9d1d9;
+    color: var(--r-text);
   }
-  .kw { color: #ff7b72; }
-  .fn { color: #d2a8ff; }
-  .str { color: #a5d6ff; }
-  .cm { color: #8b949e; font-style: italic; }
-  .var { color: #ffa657; }
-  .cls { color: #f8d9a0; }
-  .num { color: #79c0ff; }
+  .kw { color: var(--r-red); }
+  .fn { color: var(--r-violet); }
+  .str { color: var(--r-blue); }
+  .cm { color: var(--r-text-2); font-style: italic; }
+  .var { color: var(--r-orange); }
+  .cls { color: var(--r-amber); }
+  .num { color: var(--r-blue); }
 
   /* TAGS */
   .tag {
@@ -213,7 +216,7 @@
 
   /* INFO BOX */
   .info-box {
-    background: rgba(96,165,250,0.08);
+    background: color-mix(in srgb, var(--r-blue) 8%, transparent);
     border-left: 3px solid var(--accent2);
     padding: 0.75rem 1rem;
     border-radius: 0 6px 6px 0;
@@ -221,7 +224,7 @@
     font-size: 0.85rem;
   }
   .warn-box {
-    background: rgba(245,158,11,0.08);
+    background: color-mix(in srgb, var(--r-amber) 8%, transparent);
     border-left: 3px solid var(--accent4);
     padding: 0.75rem 1rem;
     border-radius: 0 6px 6px 0;
@@ -234,7 +237,7 @@
   th { background: var(--surface2); color: var(--text-muted); text-align: left; padding: 0.5rem 0.75rem; font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
   td { padding: 0.5rem 0.75rem; border-top: 1px solid var(--border); vertical-align: top; }
   tr:hover td { background: var(--surface2); }
-  td code, th code { font-family: monospace; font-size: 0.82em; color: var(--accent); }
+  td code, th code { font-family: var(--r-font-mono); font-size: 0.82em; color: var(--accent); }
 
   /* QUIZ */
   .quiz-container { margin-top: 0.5rem; }
@@ -256,12 +259,12 @@
     cursor: pointer;
     transition: border-color 0.15s, background 0.15s;
     text-align: left;
-    font-family: inherit;
+    font-family: var(--r-font-body);
     color: var(--text);
   }
   .quiz-opt:hover:not([disabled]) { border-color: var(--php-purple); background: var(--php-purple-dim); }
-  .quiz-opt.correct { border-color: var(--accent3); background: rgba(52,211,153,0.1); }
-  .quiz-opt.wrong { border-color: var(--accent5); background: rgba(248,113,113,0.1); }
+  .quiz-opt.correct { border-color: var(--accent3); background: color-mix(in srgb, var(--r-green) 10%, transparent); }
+  .quiz-opt.wrong { border-color: var(--accent5); background: color-mix(in srgb, var(--r-red) 10%, transparent); }
   .quiz-feedback { font-size: 0.78rem; margin-top: 0.5rem; color: var(--text-muted); display: none; }
   .quiz-feedback.show { display: block; }
   .quiz-score {
@@ -313,6 +316,7 @@
     .module-grid { grid-template-columns: 1fr 1fr; }
   }
 </style>
+<link rel="stylesheet" href="../styles/revision.css">
 </head>
 <body>
 
@@ -1199,5 +1203,6 @@ flashCards.forEach(fc => {
   flashGrid.appendChild(div);
 });
 </script>
+<script src="../scripts/revision.js"></script>
 </body>
 </html>

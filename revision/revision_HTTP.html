@@ -2,35 +2,39 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Figtree:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../styles/tokens.css">
+<link rel="icon" type="image/png" href="../styles/favicon.png">
+<script src="../scripts/theme.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Protocole HTTP — Fiches de révision</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ─── Reset & base ─── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg: #0f0f11;
-  --bg2: #17171b;
-  --bg3: #1e1e24;
-  --border: rgba(255,255,255,0.08);
-  --border2: rgba(255,255,255,0.15);
-  --text: #e8e6df;
-  --muted: #8a8780;
-  --accent: #c8f060;
-  --accent2: #5eb8ff;
-  --accent3: #ff7b5e;
-  --accent4: #c084fc;
-  --serif: 'DM Serif Display', Georgia, serif;
-  --sans: 'Instrument Sans', system-ui, sans-serif;
-  --mono: 'DM Mono', 'Fira Code', monospace;
+  --bg: var(--r-bg);
+  --bg2: var(--r-surface);
+  --bg3: var(--r-surface-2);
+  --border: color-mix(in srgb, var(--r-text) 8%, transparent);
+  --border2: color-mix(in srgb, var(--r-text) 15%, transparent);
+  --text: var(--r-text);
+  --muted: var(--r-text-2);
+  --accent: var(--r-green);
+  --accent2: var(--r-cyan);
+  --accent3: var(--r-red);
+  --accent4: var(--r-violet);
+  --serif: var(--r-font-display);
+  --sans: var(--r-font-body);
+  --mono: var(--r-font-mono);
   --r: 10px;
 }
 html { scroll-behavior: smooth; }
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: var(--sans);
+  font-family: var(--r-font-body);
   font-size: 15px;
   line-height: 1.7;
   overflow-x: hidden;
@@ -68,8 +72,8 @@ body {
 .sidebar-brand .logo-badge {
   display: inline-block;
   background: var(--accent);
-  color: #000;
-  font-family: var(--mono);
+  color: var(--r-on-accent);
+  font-family: var(--r-font-mono);
   font-size: 11px;
   font-weight: 500;
   padding: 3px 8px;
@@ -78,7 +82,7 @@ body {
   letter-spacing: .04em;
 }
 .sidebar-brand h1 {
-  font-family: var(--serif);
+  font-family: var(--r-font-body);
   font-size: 18px;
   line-height: 1.3;
   color: var(--text);
@@ -115,7 +119,7 @@ body {
   text-align: left;
 }
 .nav-link:hover { background: var(--bg3); color: var(--text); }
-.nav-link.active { background: rgba(200,240,96,.1); color: var(--accent); }
+.nav-link.active { background: color-mix(in srgb, var(--r-green) 10%, transparent); color: var(--accent); }
 .nav-dot {
   width: 6px; height: 6px;
   border-radius: 50%;
@@ -161,21 +165,21 @@ body {
   content: 'HTTP';
   position: absolute;
   right: -20px; top: -10px;
-  font-family: var(--serif);
+  font-family: var(--r-font-body);
   font-size: 180px;
-  color: rgba(255,255,255,.03);
+  color: color-mix(in srgb, var(--r-text) 3%, transparent);
   pointer-events: none;
   line-height: 1;
 }
 .hero-tag {
-  font-family: var(--mono);
+  font-family: var(--r-font-mono);
   font-size: 12px;
   color: var(--accent);
   letter-spacing: .08em;
   margin-bottom: 16px;
 }
 .hero h2 {
-  font-family: var(--serif);
+  font-family: var(--r-font-body);
   font-size: 52px;
   line-height: 1.1;
   color: var(--text);
@@ -200,7 +204,7 @@ body {
 }
 .chip {
   font-size: 12px;
-  font-family: var(--mono);
+  font-family: var(--r-font-mono);
   padding: 4px 12px;
   border: 1px solid var(--border2);
   border-radius: 20px;
@@ -222,14 +226,14 @@ body {
   margin-bottom: 40px;
 }
 .section-num {
-  font-family: var(--mono);
+  font-family: var(--r-font-mono);
   font-size: 12px;
   color: var(--accent);
   letter-spacing: .08em;
   margin-bottom: 8px;
 }
 .section-title {
-  font-family: var(--serif);
+  font-family: var(--r-font-body);
   font-size: 40px;
   line-height: 1.15;
   color: var(--text);
@@ -250,7 +254,7 @@ body {
   margin-bottom: 20px;
 }
 .card-title {
-  font-family: var(--mono);
+  font-family: var(--r-font-mono);
   font-size: 11px;
   letter-spacing: .1em;
   text-transform: uppercase;
@@ -261,7 +265,7 @@ body {
 .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
 
 /* ─── Code blocks ─── */
-pre, code { font-family: var(--mono); }
+pre, code { font-family: var(--r-font-mono); }
 pre {
   background: var(--bg);
   border: 1px solid var(--border);
@@ -274,19 +278,19 @@ pre {
   position: relative;
 }
 code {
-  background: rgba(255,255,255,.07);
+  background: color-mix(in srgb, var(--r-text) 7%, transparent);
   padding: 1px 6px;
   border-radius: 4px;
   font-size: 13px;
   color: var(--accent);
 }
 pre code { background: none; padding: 0; color: inherit; }
-.kw { color: #5eb8ff; }
-.val { color: #c8f060; }
-.cmt { color: #555; font-style: italic; }
-.hdr { color: #c084fc; }
-.ok { color: #6ee7b7; }
-.err { color: #ff7b5e; }
+.kw { color: var(--r-cyan); }
+.val { color: var(--r-green); }
+.cmt { color: var(--r-text-3); font-style: italic; }
+.hdr { color: var(--r-violet); }
+.ok { color: var(--r-green); }
+.err { color: var(--r-red); }
 
 /* ─── URI anatomy ─── */
 .uri-display {
@@ -294,18 +298,18 @@ pre code { background: none; padding: 0; color: inherit; }
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 20px 24px;
-  font-family: var(--mono);
+  font-family: var(--r-font-mono);
   font-size: 14px;
   letter-spacing: .02em;
   line-height: 2;
   margin-bottom: 20px;
   word-break: break-all;
 }
-.uri-scheme { color: #5eb8ff; font-weight: 500; }
-.uri-auth   { color: #6ee7b7; font-weight: 500; }
-.uri-path   { color: #fde68a; font-weight: 500; }
-.uri-query  { color: #c8f060; font-weight: 500; }
-.uri-frag   { color: #c084fc; font-weight: 500; }
+.uri-scheme { color: var(--r-cyan); font-weight: 500; }
+.uri-auth   { color: var(--r-green); font-weight: 500; }
+.uri-path   { color: var(--r-amber); font-weight: 500; }
+.uri-query  { color: var(--r-green); font-weight: 500; }
+.uri-frag   { color: var(--r-violet); font-weight: 500; }
 .uri-sep    { color: var(--muted); }
 
 .legend {
@@ -319,7 +323,7 @@ pre code { background: none; padding: 0; color: inherit; }
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  font-family: var(--mono);
+  font-family: var(--r-font-mono);
 }
 .legend-dot {
   width: 10px; height: 10px;
@@ -337,7 +341,7 @@ pre code { background: none; padding: 0; color: inherit; }
 .msg-part {
   padding: 12px 20px;
   border-bottom: 1px solid var(--border);
-  font-family: var(--mono);
+  font-family: var(--r-font-mono);
   font-size: 13px;
   line-height: 1.7;
   position: relative;
@@ -353,10 +357,10 @@ pre code { background: none; padding: 0; color: inherit; }
   letter-spacing: .08em;
   opacity: .5;
 }
-.msg-part.line1   { background: rgba(94,184,255,.07); }
-.msg-part.headers { background: rgba(192,132,252,.05); }
-.msg-part.blank   { background: rgba(255,123,94,.08); padding: 8px 20px; }
-.msg-part.body    { background: rgba(200,240,96,.04); }
+.msg-part.line1   { background: color-mix(in srgb, var(--r-cyan) 7%, transparent); }
+.msg-part.headers { background: color-mix(in srgb, var(--r-violet) 5%, transparent); }
+.msg-part.blank   { background: color-mix(in srgb, var(--r-red) 8%, transparent); padding: 8px 20px; }
+.msg-part.body    { background: color-mix(in srgb, var(--r-green) 4%, transparent); }
 
 /* ─── Status codes ─── */
 .status-grid {
@@ -375,17 +379,17 @@ pre code { background: none; padding: 0; color: inherit; }
   gap: 12px;
 }
 .status-num {
-  font-family: var(--mono);
+  font-family: var(--r-font-mono);
   font-size: 22px;
   font-weight: 500;
   line-height: 1;
   flex-shrink: 0;
 }
 .s1 .status-num { color: var(--accent2); }
-.s2 .status-num { color: #6ee7b7; }
+.s2 .status-num { color: var(--r-green); }
 .s3 .status-num { color: var(--accent); }
 .s4 .status-num { color: var(--accent3); }
-.s5 .status-num { color: #f87171; }
+.s5 .status-num { color: var(--r-red); }
 .status-info p { font-size: 13px; color: var(--muted); margin-top: 2px; }
 .status-info strong { font-size: 14px; color: var(--text); font-weight: 500; }
 
@@ -399,7 +403,7 @@ pre code { background: none; padding: 0; color: inherit; }
   text-align: left;
   padding: 10px 16px;
   background: var(--bg3);
-  font-family: var(--mono);
+  font-family: var(--r-font-mono);
   font-size: 11px;
   letter-spacing: .08em;
   text-transform: uppercase;
@@ -414,7 +418,7 @@ pre code { background: none; padding: 0; color: inherit; }
 }
 .compare-table tr:last-child td { border-bottom: none; }
 .compare-table td:first-child { color: var(--text); font-weight: 500; }
-.compare-table .yes { color: #6ee7b7; }
+.compare-table .yes { color: var(--r-green); }
 .compare-table .no  { color: var(--accent3); }
 
 /* ─── Cookie/session flow ─── */
@@ -445,7 +449,7 @@ pre code { background: none; padding: 0; color: inherit; }
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--mono);
+  font-family: var(--r-font-mono);
   font-size: 12px;
   color: var(--accent);
   flex-shrink: 0;
@@ -466,7 +470,7 @@ pre code { background: none; padding: 0; color: inherit; }
   margin-bottom: 24px;
 }
 .exercise-header {
-  background: rgba(200,240,96,.06);
+  background: color-mix(in srgb, var(--r-green) 6%, transparent);
   border-bottom: 1px solid var(--border);
   padding: 14px 20px;
   display: flex;
@@ -474,12 +478,12 @@ pre code { background: none; padding: 0; color: inherit; }
   gap: 10px;
 }
 .exercise-tag {
-  font-family: var(--mono);
+  font-family: var(--r-font-mono);
   font-size: 10px;
   letter-spacing: .1em;
   text-transform: uppercase;
   background: var(--accent);
-  color: #000;
+  color: var(--r-on-accent);
   padding: 2px 8px;
   border-radius: 3px;
 }
@@ -509,11 +513,11 @@ pre code { background: none; padding: 0; color: inherit; }
   transition: all .15s;
   text-align: left;
   width: 100%;
-  font-family: var(--sans);
+  font-family: var(--r-font-body);
 }
 .quiz-opt:hover { border-color: var(--border2); color: var(--text); }
-.quiz-opt.correct { border-color: #6ee7b7; background: rgba(110,231,183,.08); color: #6ee7b7; }
-.quiz-opt.wrong   { border-color: var(--accent3); background: rgba(255,123,94,.08); color: var(--accent3); }
+.quiz-opt.correct { border-color: var(--r-green); background: color-mix(in srgb, var(--r-green) 8%, transparent); color: var(--r-green); }
+.quiz-opt.wrong   { border-color: var(--accent3); background: color-mix(in srgb, var(--r-red) 8%, transparent); color: var(--accent3); }
 .quiz-feedback {
   margin-top: 12px;
   padding: 12px 14px;
@@ -523,12 +527,12 @@ pre code { background: none; padding: 0; color: inherit; }
   display: none;
 }
 .quiz-feedback.show { display: block; }
-.quiz-feedback.good { background: rgba(110,231,183,.08); color: #6ee7b7; border: 1px solid rgba(110,231,183,.2); }
-.quiz-feedback.bad  { background: rgba(255,123,94,.08);  color: var(--accent3); border: 1px solid rgba(255,123,94,.2); }
+.quiz-feedback.good { background: color-mix(in srgb, var(--r-green) 8%, transparent); color: var(--r-green); border: 1px solid color-mix(in srgb, var(--r-green) 20%, transparent); }
+.quiz-feedback.bad  { background: color-mix(in srgb, var(--r-red) 8%, transparent);  color: var(--accent3); border: 1px solid color-mix(in srgb, var(--r-red) 20%, transparent); }
 .quiz-next {
   margin-top: 12px;
   background: var(--accent);
-  color: #000;
+  color: var(--r-on-accent);
   border: none;
   border-radius: 7px;
   padding: 9px 20px;
@@ -536,7 +540,7 @@ pre code { background: none; padding: 0; color: inherit; }
   font-weight: 600;
   cursor: pointer;
   display: none;
-  font-family: var(--sans);
+  font-family: var(--r-font-body);
   transition: opacity .15s;
 }
 .quiz-next:hover { opacity: .85; }
@@ -549,7 +553,7 @@ pre code { background: none; padding: 0; color: inherit; }
   border-radius: 6px;
   color: var(--text);
   padding: 8px 12px;
-  font-family: var(--mono);
+  font-family: var(--r-font-mono);
   font-size: 13px;
   width: 100%;
   outline: none;
@@ -559,7 +563,7 @@ pre code { background: none; padding: 0; color: inherit; }
 .uri-builder label { font-size: 12px; color: var(--muted); margin-bottom: 4px; display: block; }
 .uri-builder .field { margin-bottom: 12px; }
 .uri-result {
-  font-family: var(--mono);
+  font-family: var(--r-font-mono);
   font-size: 13px;
   background: var(--bg);
   border: 1px solid var(--border2);
@@ -580,7 +584,7 @@ pre code { background: none; padding: 0; color: inherit; }
 .builder-col { }
 .builder-label {
   font-size: 11px;
-  font-family: var(--mono);
+  font-family: var(--r-font-mono);
   letter-spacing: .08em;
   text-transform: uppercase;
   color: var(--muted);
@@ -597,15 +601,15 @@ pre code { background: none; padding: 0; color: inherit; }
   padding: 9px 12px;
   cursor: pointer;
   font-size: 13px;
-  font-family: var(--mono);
+  font-family: var(--r-font-mono);
   color: var(--muted);
   transition: all .15s;
   user-select: none;
 }
 .builder-choice:hover { border-color: var(--border2); color: var(--text); }
-.builder-choice.selected { border-color: var(--accent); color: var(--accent); background: rgba(200,240,96,.06); }
+.builder-choice.selected { border-color: var(--accent); color: var(--accent); background: color-mix(in srgb, var(--r-green) 6%, transparent); }
 .builder-output {
-  font-family: var(--mono);
+  font-family: var(--r-font-mono);
   font-size: 12.5px;
   background: var(--bg);
   border: 1px solid var(--border);
@@ -618,14 +622,14 @@ pre code { background: none; padding: 0; color: inherit; }
 .builder-check {
   margin-top: 12px;
   background: var(--accent2);
-  color: #000;
+  color: var(--r-on-accent);
   border: none;
   border-radius: 7px;
   padding: 9px 20px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  font-family: var(--sans);
+  font-family: var(--r-font-body);
   transition: opacity .15s;
 }
 .builder-check:hover { opacity: .85; }
@@ -638,7 +642,7 @@ pre code { background: none; padding: 0; color: inherit; }
 }
 .match-col-label {
   font-size: 11px;
-  font-family: var(--mono);
+  font-family: var(--r-font-mono);
   letter-spacing: .1em;
   text-transform: uppercase;
   color: var(--muted);
@@ -649,7 +653,7 @@ pre code { background: none; padding: 0; color: inherit; }
   border: 1px solid var(--border);
   border-radius: 7px;
   padding: 9px 14px;
-  font-family: var(--mono);
+  font-family: var(--r-font-mono);
   font-size: 13px;
   color: var(--text);
   margin-bottom: 6px;
@@ -658,9 +662,9 @@ pre code { background: none; padding: 0; color: inherit; }
   user-select: none;
 }
 .match-item:hover { border-color: var(--border2); }
-.match-item.selected { border-color: var(--accent2); background: rgba(94,184,255,.07); }
-.match-item.matched  { border-color: #6ee7b7; background: rgba(110,231,183,.07); color: #6ee7b7; cursor: default; }
-.match-item.wrong    { border-color: var(--accent3); background: rgba(255,123,94,.07); animation: shake .3s; }
+.match-item.selected { border-color: var(--accent2); background: color-mix(in srgb, var(--r-cyan) 7%, transparent); }
+.match-item.matched  { border-color: var(--r-green); background: color-mix(in srgb, var(--r-green) 7%, transparent); color: var(--r-green); cursor: default; }
+.match-item.wrong    { border-color: var(--accent3); background: color-mix(in srgb, var(--r-red) 7%, transparent); animation: shake .3s; }
 @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
 
 /* Score */
@@ -669,7 +673,7 @@ pre code { background: none; padding: 0; color: inherit; }
   align-items: center;
   gap: 12px;
   margin-top: 14px;
-  font-family: var(--mono);
+  font-family: var(--r-font-mono);
   font-size: 13px;
   color: var(--muted);
 }
@@ -684,7 +688,7 @@ pre code { background: none; padding: 0; color: inherit; }
   padding: 8px 16px;
   font-size: 12px;
   cursor: pointer;
-  font-family: var(--sans);
+  font-family: var(--r-font-body);
   transition: all .15s;
 }
 .btn-reset:hover { color: var(--text); border-color: var(--text); }
@@ -705,7 +709,7 @@ pre code { background: none; padding: 0; color: inherit; }
 .fake-browser-bar {
   background: var(--bg3);
   padding: 8px 12px;
-  font-family: var(--mono);
+  font-family: var(--r-font-mono);
   font-size: 11px;
   color: var(--muted);
   border-bottom: 1px solid var(--border);
@@ -726,7 +730,7 @@ pre code { background: none; padding: 0; color: inherit; }
   border: 1px solid var(--border);
   border-radius: 4px;
   padding: 3px 8px;
-  font-family: var(--mono);
+  font-family: var(--r-font-mono);
   font-size: 11px;
   color: var(--muted);
   flex: 1;
@@ -737,8 +741,8 @@ pre code { background: none; padding: 0; color: inherit; }
 .tip {
   display: flex;
   gap: 12px;
-  background: rgba(200,240,96,.04);
-  border: 1px solid rgba(200,240,96,.15);
+  background: color-mix(in srgb, var(--r-green) 4%, transparent);
+  border: 1px solid color-mix(in srgb, var(--r-green) 15%, transparent);
   border-radius: 8px;
   padding: 14px 16px;
   margin: 16px 0;
@@ -748,8 +752,8 @@ pre code { background: none; padding: 0; color: inherit; }
 .tip-text strong { color: var(--accent); }
 
 .warn {
-  background: rgba(255,123,94,.05);
-  border: 1px solid rgba(255,123,94,.2);
+  background: color-mix(in srgb, var(--r-red) 5%, transparent);
+  border: 1px solid color-mix(in srgb, var(--r-red) 20%, transparent);
 }
 .warn .tip-text strong { color: var(--accent3); }
 
@@ -779,7 +783,7 @@ pre code { background: none; padding: 0; color: inherit; }
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,.6);
+  background: color-mix(in srgb, var(--r-bg-deep) 60%, transparent);
   z-index: 90;
 }
 
@@ -797,13 +801,14 @@ pre code { background: none; padding: 0; color: inherit; }
 
 /* ─── Utilities ─── */
 p { color: var(--muted); line-height: 1.7; margin-bottom: 12px; }
-h3 { font-family: var(--serif); font-size: 22px; color: var(--text); margin: 28px 0 12px; }
+h3 { font-family: var(--r-font-body); font-size: 22px; color: var(--text); margin: 28px 0 12px; }
 h4 { font-size: 14px; font-weight: 600; color: var(--text); margin: 20px 0 8px; letter-spacing: .02em; }
 strong { color: var(--text); }
 ul { padding-left: 18px; }
 li { color: var(--muted); margin-bottom: 4px; font-size: 14px; }
 li strong { color: var(--text); }
 </style>
+<link rel="stylesheet" href="../styles/revision.css">
 </head>
 <body>
 
@@ -939,11 +944,11 @@ li strong { color: var(--text); }
       <span class="uri-scheme">https</span><span class="uri-sep">://</span><span class="uri-auth">user:pass@iut.univ-reims.fr:443</span><span class="uri-path">/cours/http/index.php</span><span class="uri-sep">?</span><span class="uri-query">page=2&amp;theme=dark</span><span class="uri-sep">#</span><span class="uri-frag">intro</span>
     </div>
     <div class="legend">
-      <div class="legend-item"><div class="legend-dot" style="background:#5eb8ff"></div><span style="color:#5eb8ff">scheme</span> — protocole</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#6ee7b7"></div><span style="color:#6ee7b7">authority</span> — [userinfo@]host[:port]</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#fde68a"></div><span style="color:#fde68a">path</span> — chemin ressource</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#c8f060"></div><span style="color:#c8f060">query</span> — paramètres</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#c084fc"></div><span style="color:#c084fc">fragment</span> — ancre dans la page</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--r-cyan)"></div><span style="color:var(--r-cyan)">scheme</span> — protocole</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--r-green)"></div><span style="color:var(--r-green)">authority</span> — [userinfo@]host[:port]</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--r-amber)"></div><span style="color:var(--r-amber)">path</span> — chemin ressource</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--r-green)"></div><span style="color:var(--r-green)">query</span> — paramètres</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--r-violet)"></div><span style="color:var(--r-violet)">fragment</span> — ancre dans la page</div>
     </div>
 
     <div class="tip" style="margin-top:24px;">
@@ -1272,7 +1277,7 @@ li strong { color: var(--text); }
       <table class="compare-table">
         <tr><th>Code</th><th>Signification</th><th>Quand ?</th></tr>
         <tr><td><code class="ok">200</code></td><td>OK</td><td>Tout s'est bien passé, voici la ressource</td></tr>
-        <tr><td><code style="color:#6ee7b7">201</code></td><td>Created</td><td>Ressource créée (PUT/POST sur une API)</td></tr>
+        <tr><td><code style="color:var(--r-green)">201</code></td><td>Created</td><td>Ressource créée (PUT/POST sur une API)</td></tr>
         <tr><td><code class="val">301</code></td><td>Moved Permanently</td><td>L'URL a changé définitivement (+ en-tête Location:)</td></tr>
         <tr><td><code class="val">302</code></td><td>Found</td><td>Redirection temporaire</td></tr>
         <tr><td><code class="val">304</code></td><td>Not Modified</td><td>Cache valide, pas de corps dans la réponse</td></tr>
@@ -1610,7 +1615,7 @@ echo htmlspecialchars($_GET['q'],
       </div>
       <div class="exercise-body">
         <p>Reconstruit cette URI en utilisant le constructeur ci-dessus :</p>
-        <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 16px;font-family:var(--mono);font-size:13px;margin-bottom:14px;word-break:break-all;color:var(--accent);">
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 16px;font-family:var(--r-font-mono);font-size:13px;margin-bottom:14px;word-break:break-all;color:var(--accent);">
           mysql://app:!ChangeMe!@127.0.0.1:3306/app?serverVersion=8&amp;charset=utf8mb4
         </div>
         <p>Identifie : scheme · userinfo · host · port · path · query</p>
@@ -2149,5 +2154,6 @@ function selectMatchRight(i, role) {
   matchSelected = null;
 }
 </script>
+<script src="../scripts/revision.js"></script>
 </body>
 </html>

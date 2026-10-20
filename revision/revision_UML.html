@@ -2,39 +2,44 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Figtree:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../styles/tokens.css">
+<link rel="icon" type="image/png" href="../styles/favicon.png">
+<script src="../scripts/theme.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>iCOO — Révision UML & Conception Objet</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ===== VARIABLES & RESET ===== */
 :root {
-  --bg: #0d0f14;
-  --bg2: #13161e;
-  --bg3: #1a1e2a;
-  --border: #252a38;
-  --accent: #4f9eff;
-  --accent2: #a259ff;
-  --accent3: #00e5a0;
-  --accent4: #ff6b6b;
-  --accent5: #ffa94d;
-  --text: #e8eaf0;
-  --text2: #8892a4;
-  --text3: #5c6478;
-  --success: #00e5a0;
-  --error: #ff6b6b;
-  --card: #161b27;
-  --card2: #1c2133;
+  --bg: var(--r-bg);
+  --bg2: var(--r-surface);
+  --bg3: var(--r-surface-2);
+  --border: var(--r-surface-3);
+  --accent: var(--r-blue);
+  --accent2: var(--r-violet);
+  --accent3: var(--r-teal);
+  --accent4: var(--r-red);
+  --accent5: var(--r-orange);
+  --text: var(--r-text);
+  --text2: var(--r-text-2);
+  --text3: var(--r-text-3);
+  --success: var(--r-teal);
+  --error: var(--r-red);
+  --card: var(--r-surface);
+  --card2: var(--r-surface-2);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{
-  font-family:'Sora',sans-serif;
+  font-family:var(--r-font-display);
   background:var(--bg);
   color:var(--text);
   min-height:100vh;
   line-height:1.6;
 }
-code,pre,.mono{font-family:'JetBrains Mono',monospace}
+code,pre,.mono{font-family:var(--r-font-mono)}
 
 /* ===== SCROLLBAR ===== */
 ::-webkit-scrollbar{width:6px}
@@ -69,7 +74,7 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
   border-left:3px solid transparent;
 }
 .nav-link:hover{color:var(--text);background:var(--bg3);border-left-color:var(--border)}
-.nav-link.active{color:var(--accent);background:rgba(79,158,255,.08);border-left-color:var(--accent)}
+.nav-link.active{color:var(--accent);background:color-mix(in srgb, var(--r-blue) 8%, transparent);border-left-color:var(--accent)}
 .nav-link .dot{
   width:6px;height:6px;border-radius:50%;
   background:var(--text3);flex-shrink:0;transition:background .15s;
@@ -80,7 +85,7 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
 #main{margin-left:260px;min-height:100vh}
 #topbar{
   position:sticky;top:0;z-index:50;
-  background:rgba(13,15,20,.85);backdrop-filter:blur(12px);
+  background:color-mix(in srgb, var(--r-bg) 85%, transparent);backdrop-filter:blur(12px);
   border-bottom:1px solid var(--border);
   padding:0 32px;height:56px;
   display:flex;align-items:center;justify-content:space-between;
@@ -90,18 +95,17 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
 .tab-btn{
   padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;
   border:none;cursor:pointer;background:transparent;color:var(--text2);
-  font-family:'Sora',sans-serif;transition:all .15s;
+  font-family:var(--r-font-display);transition:all .15s;
 }
 .tab-btn:hover{background:var(--bg3);color:var(--text)}
-.tab-btn.active{background:var(--accent);color:#fff}
+.tab-btn.active{background:var(--accent);color:var(--r-on-accent)}
 
 /* ===== SECTIONS ===== */
 .page-section{display:none;padding:40px 32px;max-width:1100px}
 .page-section.active{display:block}
 .section-title{
   font-size:28px;font-weight:800;margin-bottom:8px;
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  color: var(--r-text);
 }
 .section-sub{font-size:14px;color:var(--text2);margin-bottom:32px}
 
@@ -129,18 +133,18 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
 .tag{
   display:inline-block;padding:2px 10px;border-radius:20px;
   font-size:11px;font-weight:700;letter-spacing:.04em;
-  font-family:'JetBrains Mono',monospace;
+  font-family:var(--r-font-mono);
 }
-.tag-blue{background:rgba(79,158,255,.15);color:var(--accent)}
-.tag-green{background:rgba(0,229,160,.12);color:var(--accent3)}
-.tag-purple{background:rgba(162,89,255,.15);color:var(--accent2)}
-.tag-red{background:rgba(255,107,107,.12);color:var(--accent4)}
-.tag-orange{background:rgba(255,169,77,.12);color:var(--accent5)}
+.tag-blue{background:color-mix(in srgb, var(--r-blue) 15%, transparent);color:var(--accent)}
+.tag-green{background:color-mix(in srgb, var(--r-teal) 12%, transparent);color:var(--accent3)}
+.tag-purple{background:color-mix(in srgb, var(--r-violet) 15%, transparent);color:var(--accent2)}
+.tag-red{background:color-mix(in srgb, var(--r-red) 12%, transparent);color:var(--accent4)}
+.tag-orange{background:color-mix(in srgb, var(--r-orange) 12%, transparent);color:var(--accent5)}
 
 /* ===== UML DIAGRAMS (CSS-drawn) ===== */
 .uml-box{
   background:var(--bg3);border:2px solid var(--border);
-  border-radius:8px;overflow:hidden;font-family:'JetBrains Mono',monospace;
+  border-radius:8px;overflow:hidden;font-family:var(--r-font-mono);
   font-size:12px;display:inline-block;min-width:160px;margin:8px;
   vertical-align:top;
 }
@@ -173,12 +177,12 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
 }
 
 /* Relations CSS */
-.rel-container{display:flex;align-items:center;gap:8px;margin:8px 0;font-family:'JetBrains Mono',monospace;font-size:12px}
+.rel-container{display:flex;align-items:center;gap:8px;margin:8px 0;font-family:var(--r-font-mono);font-size:12px}
 .rel-line{flex:1;height:1px;background:var(--text3);position:relative}
 .rel-line::after{content:'';position:absolute;right:-1px;top:50%;transform:translateY(-50%)}
 .rel-arrow{color:var(--text3)}
 .rel-label{font-size:11px;color:var(--text3);text-align:center}
-.rel-mult{font-size:10px;color:var(--accent5);font-family:'JetBrains Mono',monospace}
+.rel-mult{font-size:10px;color:var(--accent5);font-family:var(--r-font-mono)}
 
 /* Sequence diagram */
 .seq-container{
@@ -188,7 +192,7 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
 .seq-diagram{position:relative;min-height:300px}
 .seq-actors{display:flex;gap:80px;padding-bottom:16px;border-bottom:1px solid var(--border)}
 .seq-actor{
-  text-align:center;font-size:12px;font-family:'JetBrains Mono',monospace;
+  text-align:center;font-size:12px;font-family:var(--r-font-mono);
   display:flex;flex-direction:column;align-items:center;gap:6px;
   width:120px;
 }
@@ -205,7 +209,7 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
 .seq-messages{padding:16px 0}
 .seq-msg{
   display:flex;align-items:center;gap:8px;margin:8px 0;
-  font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--text2);
+  font-size:12px;font-family:var(--r-font-mono);color:var(--text2);
 }
 .seq-msg-line{flex:1;height:1px;position:relative}
 .seq-msg-line.solid{background:var(--accent)}
@@ -220,7 +224,7 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
 .accordion-btn{
   width:100%;padding:16px 20px;background:var(--card);
   display:flex;justify-content:space-between;align-items:center;
-  cursor:pointer;border:none;color:var(--text);font-family:'Sora',sans-serif;
+  cursor:pointer;border:none;color:var(--text);font-family:var(--r-font-display);
   font-size:14px;font-weight:600;text-align:left;transition:background .15s;
 }
 .accordion-btn:hover{background:var(--card2)}
@@ -243,14 +247,14 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
 .quiz-topic-btn{
   padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;
   border:2px solid var(--border);background:var(--card);color:var(--text2);
-  cursor:pointer;font-family:'Sora',sans-serif;transition:all .15s;
+  cursor:pointer;font-family:var(--r-font-display);transition:all .15s;
 }
 .quiz-topic-btn:hover{border-color:var(--accent);color:var(--accent)}
-.quiz-topic-btn.selected{border-color:var(--accent);background:rgba(79,158,255,.1);color:var(--accent)}
+.quiz-topic-btn.selected{border-color:var(--accent);background:color-mix(in srgb, var(--r-blue) 10%, transparent);color:var(--accent)}
 .quiz-start-btn{
   padding:12px 32px;border-radius:8px;font-size:14px;font-weight:700;
-  border:none;background:var(--accent);color:#fff;cursor:pointer;
-  font-family:'Sora',sans-serif;transition:opacity .15s;margin-top:8px;
+  border:none;background:var(--accent);color:var(--r-on-accent);cursor:pointer;
+  font-family:var(--r-font-display);transition:opacity .15s;margin-top:8px;
 }
 .quiz-start-btn:hover{opacity:.85}
 
@@ -259,29 +263,29 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
   padding:28px;margin-bottom:24px;
 }
 .question-card .q-num{
-  font-size:11px;color:var(--text3);font-family:'JetBrains Mono',monospace;
+  font-size:11px;color:var(--text3);font-family:var(--r-font-mono);
   margin-bottom:12px;
 }
 .question-card .q-text{font-size:15px;font-weight:600;margin-bottom:20px;line-height:1.6}
 .question-card .q-context{
   background:var(--bg3);border-left:3px solid var(--accent);
   padding:12px 16px;border-radius:6px;margin-bottom:20px;
-  font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2);
+  font-family:var(--r-font-mono);font-size:12px;color:var(--text2);
   line-height:1.8;
 }
 .options{display:flex;flex-direction:column;gap:10px}
 .option-btn{
   padding:12px 18px;border-radius:8px;border:2px solid var(--border);
   background:var(--bg3);color:var(--text2);cursor:pointer;text-align:left;
-  font-family:'Sora',sans-serif;font-size:13.5px;transition:all .15s;
+  font-family:var(--r-font-display);font-size:13.5px;transition:all .15s;
 }
-.option-btn:hover:not(:disabled){border-color:var(--accent);color:var(--text);background:rgba(79,158,255,.06)}
-.option-btn.correct{border-color:var(--success)!important;background:rgba(0,229,160,.1)!important;color:var(--success)!important}
-.option-btn.wrong{border-color:var(--error)!important;background:rgba(255,107,107,.1)!important;color:var(--error)!important}
+.option-btn:hover:not(:disabled){border-color:var(--accent);color:var(--text);background:color-mix(in srgb, var(--r-blue) 6%, transparent)}
+.option-btn.correct{border-color:var(--success)!important;background:color-mix(in srgb, var(--r-teal) 10%, transparent)!important;color:var(--success)!important}
+.option-btn.wrong{border-color:var(--error)!important;background:color-mix(in srgb, var(--r-red) 10%, transparent)!important;color:var(--error)!important}
 .option-btn:disabled{cursor:default}
 .q-explanation{
   margin-top:16px;padding:14px;border-radius:8px;
-  background:rgba(79,158,255,.07);border:1px solid rgba(79,158,255,.2);
+  background:color-mix(in srgb, var(--r-blue) 7%, transparent);border:1px solid color-mix(in srgb, var(--r-blue) 20%, transparent);
   font-size:13px;color:var(--text2);display:none;line-height:1.7;
 }
 .q-explanation.show{display:block}
@@ -292,21 +296,20 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
   flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;
 }
 .progress-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .3s}
-.progress-text{font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace;white-space:nowrap}
+.progress-text{font-size:12px;color:var(--text3);font-family:var(--r-font-mono);white-space:nowrap}
 .score-display{
   text-align:center;padding:48px;background:var(--card);
   border:1px solid var(--border);border-radius:16px;
 }
 .score-display .big-score{
   font-size:72px;font-weight:800;
-  background:linear-gradient(135deg,var(--accent),var(--accent3));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  color: var(--r-accent);
 }
 .score-display p{color:var(--text2);margin-top:8px;font-size:15px}
 .retry-btn{
   margin-top:24px;padding:12px 32px;border-radius:8px;
   background:var(--card2);border:2px solid var(--border);
-  color:var(--text);cursor:pointer;font-family:'Sora',sans-serif;
+  color:var(--text);cursor:pointer;font-family:var(--r-font-display);
   font-size:14px;font-weight:600;transition:all .15s;
 }
 .retry-btn:hover{border-color:var(--accent);color:var(--accent)}
@@ -334,13 +337,13 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
 .reveal-btn{
   padding:10px 20px;border-radius:8px;border:2px solid var(--border);
   background:transparent;color:var(--text2);cursor:pointer;
-  font-family:'Sora',sans-serif;font-size:13px;font-weight:600;
+  font-family:var(--r-font-display);font-size:13px;font-weight:600;
   transition:all .15s;
 }
 .reveal-btn:hover{border-color:var(--accent3);color:var(--accent3)}
 .answer-block{
-  margin-top:20px;padding:20px;background:rgba(0,229,160,.05);
-  border:1px solid rgba(0,229,160,.2);border-radius:10px;
+  margin-top:20px;padding:20px;background:color-mix(in srgb, var(--r-teal) 5%, transparent);
+  border:1px solid color-mix(in srgb, var(--r-teal) 20%, transparent);border-radius:10px;
   display:none;
 }
 .answer-block.show{display:block}
@@ -359,7 +362,7 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
   padding:6px 0;border-bottom:1px solid var(--border);font-size:12.5px;
 }
 .cheat-item:last-child{border-bottom:none}
-.cheat-item .term{color:var(--text);font-weight:600;font-family:'JetBrains Mono',monospace}
+.cheat-item .term{color:var(--text);font-weight:600;font-family:var(--r-font-mono)}
 .cheat-item .def{color:var(--text2);text-align:right;font-size:11.5px;max-width:55%}
 
 /* ===== VISIB TABLE ===== */
@@ -367,18 +370,18 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
 .visib-table th{background:var(--bg3);padding:10px 14px;text-align:left;font-size:11px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase}
 .visib-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text2)}
 .visib-table tr:last-child td{border-bottom:none}
-.visib-table .sym{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:16px}
+.visib-table .sym{font-family:var(--r-font-mono);font-weight:700;font-size:16px}
 
 /* ===== MULT TABLE ===== */
-.mult-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px;font-family:'JetBrains Mono',monospace}
+.mult-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px;font-family:var(--r-font-mono)}
 .mult-table th{background:var(--bg3);padding:8px 14px;text-align:left;font-size:11px;color:var(--text3)}
 .mult-table td{padding:8px 14px;border-bottom:1px solid var(--border);color:var(--text2)}
 .mult-table .notation{color:var(--accent5);font-weight:700}
 
 /* ===== HERO BANNER ===== */
 .hero-banner{
-  background:linear-gradient(135deg,rgba(79,158,255,.1) 0%,rgba(162,89,255,.1) 100%);
-  border:1px solid rgba(79,158,255,.2);border-radius:16px;
+  background:linear-gradient(135deg,color-mix(in srgb, var(--r-blue) 10%, transparent) 0%,color-mix(in srgb, var(--r-violet) 10%, transparent) 100%);
+  border:1px solid color-mix(in srgb, var(--r-blue) 20%, transparent);border-radius:16px;
   padding:32px;margin-bottom:32px;
   display:flex;flex-direction:column;gap:12px;
 }
@@ -393,14 +396,14 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
 .img-placeholder{
   background:var(--bg3);border:2px dashed var(--border);border-radius:8px;
   padding:24px;text-align:center;margin:16px 0;
-  color:var(--text3);font-size:12px;font-family:'JetBrains Mono',monospace;
+  color:var(--text3);font-size:12px;font-family:var(--r-font-mono);
 }
 .img-placeholder code{
   display:block;color:var(--accent5);font-size:11px;margin-top:6px;
 }
 
 /* ===== INHERITANCE TREE ===== */
-.tree{font-family:'JetBrains Mono',monospace;font-size:12px;line-height:2;padding:12px 0;color:var(--text2)}
+.tree{font-family:var(--r-font-mono);font-size:12px;line-height:2;padding:12px 0;color:var(--text2)}
 .tree .node{color:var(--text);font-weight:700}
 .tree .abstract-node{color:var(--accent2);font-style:italic}
 
@@ -439,7 +442,7 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
   color:var(--text2);cursor:pointer;transition:all .15s;
 }
 .pill:hover{border-color:var(--accent);color:var(--accent)}
-.pill.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.pill.active{background:var(--accent);border-color:var(--accent);color:var(--r-on-accent)}
 
 .sub-section{display:none}
 .sub-section.active{display:block}
@@ -452,11 +455,11 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
 .frame-box{
   border:2px solid var(--accent2);border-radius:8px;padding:12px;
   position:relative;margin:12px 0;
-  font-size:12px;font-family:'JetBrains Mono',monospace;
+  font-size:12px;font-family:var(--r-font-mono);
 }
 .frame-label{
   position:absolute;top:-1px;left:-1px;
-  background:var(--accent2);color:#fff;
+  background:var(--accent2);color:var(--r-on-accent);
   font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px 0 8px 0;
 }
 .frame-guard{
@@ -465,6 +468,7 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
 }
 .frame-content{padding-top:16px;color:var(--text2)}
 </style>
+<link rel="stylesheet" href="../styles/revision.css">
 </head>
 <body>
 
@@ -662,7 +666,7 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
             <div class="card" style="padding:14px">
               <h3>Commentaire</h3>
               <p style="font-size:12.5px">Rectangle avec coin replié. Peut être attaché à n'importe quel élément par un trait pointillé.</p>
-              <div style="margin-top:8px;background:var(--bg3);border:1px solid var(--border);padding:8px;font-size:11px;font-family:monospace;border-radius:4px;color:var(--text2)">📝 Ceci est un commentaire</div>
+              <div style="margin-top:8px;background:var(--bg3);border:1px solid var(--border);padding:8px;font-size:11px;font-family:var(--r-font-mono);border-radius:4px;color:var(--text2)">📝 Ceci est un commentaire</div>
             </div>
             <div class="card" style="padding:14px">
               <h3>Dépendance</h3>
@@ -940,7 +944,7 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
         <h3>Association simple</h3>
         <p>Connexion <strong>sémantique bidirectionnelle</strong> entre classes. C'est la relation de base.</p>
         <div class="diagram-container" style="margin-top:12px">
-          <div style="display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:12px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:8px;font-family:var(--r-font-mono);font-size:12px;flex-wrap:wrap">
             <div class="uml-box" style="min-width:120px"><div class="uml-class-name">Personne</div><div class="uml-section"></div></div>
             <div style="text-align:center">
               <div style="font-size:11px;color:var(--text3)">1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0..*</div>
@@ -968,7 +972,7 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
           <p>Relation de <strong>contenance</strong>. Le composant peut exister sans le conteneur.</p>
           <p style="margin-top:8px;font-size:12.5px;color:var(--text3)">Symbole : <strong>losange vide</strong> côté conteneur</p>
           <div class="diagram-container" style="margin-top:12px;padding:12px">
-            <div style="font-family:monospace;font-size:12px;color:var(--text2)">
+            <div style="font-family:var(--r-font-mono);font-size:12px;color:var(--text2)">
               Page ◇────── Mot<br>
               <span style="font-size:11px;color:var(--text3)">(conteneur) &nbsp;&nbsp; (composant)</span>
             </div>
@@ -980,7 +984,7 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
           <p>Agrégation <strong>forte</strong>. Lien de vie : si le composite est détruit, les composants aussi.</p>
           <p style="margin-top:8px;font-size:12.5px;color:var(--text3)">Symbole : <strong>losange plein</strong> côté composite</p>
           <div class="diagram-container" style="margin-top:12px;padding:12px">
-            <div style="font-family:monospace;font-size:12px;color:var(--text2)">
+            <div style="font-family:var(--r-font-mono);font-size:12px;color:var(--text2)">
               Livre ◆────1..* Page<br>
               <span style="font-size:11px;color:var(--text3)">(composite) &nbsp;&nbsp; (composant)</span>
             </div>
@@ -993,7 +997,7 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
         <h3>- - -▶ Dépendance</h3>
         <p>Lorsque la classe A <strong>utilise</strong> la classe B (appel d'une méthode, utilisation d'un attribut). Relation faible.</p>
         <p style="margin-top:8px;font-size:12.5px">Stéréotype courant : <code>&lt;&lt;use&gt;&gt;</code></p>
-        <div class="diagram-container" style="margin-top:12px;padding:12px;font-family:monospace;font-size:12px;color:var(--text2)">
+        <div class="diagram-container" style="margin-top:12px;padding:12px;font-family:var(--r-font-mono);font-size:12px;color:var(--text2)">
           PageWeb &nbsp;&nbsp; - - -▶ &nbsp;&nbsp; ConnectionBD
         </div>
       </div>
@@ -1061,7 +1065,7 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
         <div class="card">
           <h3>Association n-aire</h3>
           <p style="font-size:13px">Lien entre <strong>plus de 2 classes</strong>. Représenté par un losange central.</p>
-          <div class="diagram-container" style="margin-top:12px;padding:12px;font-family:monospace;font-size:11px;text-align:center;color:var(--text2)">
+          <div class="diagram-container" style="margin-top:12px;padding:12px;font-family:var(--r-font-mono);font-size:11px;text-align:center;color:var(--text2)">
             Enseignant<br>
             &nbsp;&nbsp;&nbsp;&nbsp;|<br>
             ────◇────<br>
@@ -1073,7 +1077,7 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
         <div class="card">
           <h3>Classe d'association</h3>
           <p style="font-size:13px">Association qui possède ses propres attributs. S'implémente par une classe intermédiaire.</p>
-          <div class="diagram-container" style="margin-top:12px;padding:12px;font-family:monospace;font-size:11px;text-align:center;color:var(--text2)">
+          <div class="diagram-container" style="margin-top:12px;padding:12px;font-family:var(--r-font-mono);font-size:11px;text-align:center;color:var(--text2)">
             Commande ──constituer──* Produit<br>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[LigneCmde]<br>
@@ -1086,7 +1090,7 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
       <div class="card card-accent" style="margin-top:4px">
         <h3>Association qualifiée</h3>
         <p style="font-size:13px">Permet de retrouver un composant dans une collection grâce à un qualificateur (clé). Réduit la multiplicité apparente.</p>
-        <div class="diagram-container" style="margin-top:12px;padding:12px;font-family:monospace;font-size:11px;color:var(--text2)">
+        <div class="diagram-container" style="margin-top:12px;padding:12px;font-family:var(--r-font-mono);font-size:11px;color:var(--text2)">
           Commande [nLig: int] ──────▶ 0..1 LigneCmde
         </div>
       </div>
@@ -1111,7 +1115,7 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
           </ul>
           <div class="diagram-container" style="margin-top:16px">
             <h4>Représentation UML — triangle vide côté mère</h4>
-            <div style="font-family:monospace;font-size:12px;color:var(--text2);text-align:center">
+            <div style="font-family:var(--r-font-mono);font-size:12px;color:var(--text2);text-align:center">
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A<br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;△<br>
               &nbsp;&nbsp;&nbsp;&nbsp;────────<br>
@@ -1151,7 +1155,7 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
               </div>
             </div>
             <div class="diagram-container">
-              <div style="display:flex;justify-content:center;flex-direction:column;align-items:center;gap:8px;font-family:monospace;font-size:11px">
+              <div style="display:flex;justify-content:center;flex-direction:column;align-items:center;gap:8px;font-family:var(--r-font-mono);font-size:11px">
                 <div class="uml-box">
                   <div class="uml-class-name abstract"><span class="stereotype">&lt;&lt;abstract&gt;&gt;</span>MoyenTransport</div>
                   <div class="uml-section">
@@ -1226,7 +1230,7 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
       <div class="grid-2" style="margin-top:16px">
         <div class="diagram-container">
           <h4>Notation UML</h4>
-          <div style="display:flex;align-items:center;gap:16px;font-family:monospace;font-size:11px;justify-content:center;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:16px;font-family:var(--r-font-mono);font-size:11px;justify-content:center;flex-wrap:wrap">
             <div class="uml-box">
               <div class="uml-class-name"><span class="stereotype">&lt;&lt;interface&gt;&gt;</span>Volant</div>
               <div class="uml-section"></div>
@@ -1269,7 +1273,7 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
       <div class="grid-2" style="margin-top:16px">
         <div class="diagram-container">
           <h4>Notation UML</h4>
-          <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;font-family:monospace;font-size:11px">
+          <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;font-family:var(--r-font-mono);font-size:11px">
             <div class="uml-box">
               <div class="uml-class-name"><span class="stereotype">&lt;&lt;énumération&gt;&gt;</span>Couleur</div>
               <div class="uml-section">
@@ -1313,7 +1317,7 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
       </div>
       <div class="diagram-container" style="margin-top:16px">
         <h4>Notation UML</h4>
-        <div style="font-family:monospace;font-size:12px;color:var(--text2);text-align:center">
+        <div style="font-family:var(--r-font-mono);font-size:12px;color:var(--text2);text-align:center">
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;┌─────┐<br>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;T&nbsp;&nbsp;│<br>
           &nbsp;&nbsp;Pile &nbsp;&nbsp;&nbsp;└─────┘<br>
@@ -1395,7 +1399,7 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
             <p style="font-size:13.5px"><strong>Création</strong> : flèche pointant vers le rectangle de l'instance créée. <strong>Destruction</strong> : croix (X) en bas de la ligne de vie.</p>
           </div>
           <div class="seq-container">
-            <div style="font-family:monospace;font-size:11px;color:var(--text2);line-height:2">
+            <div style="font-family:var(--r-font-mono);font-size:11px;color:var(--text2);line-height:2">
               Paul:Acteur &nbsp;&nbsp; obj1:ClasseA &nbsp;&nbsp; obj2:ClasseB<br>
               ─────────── &nbsp;&nbsp; ─────────── &nbsp;&nbsp; ───────────<br>
               &nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
@@ -1416,22 +1420,22 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
         <div class="card card-accent">
           <h3>Message synchrone</h3>
           <p style="font-size:13px">L'émetteur <strong>attend</strong> la réponse avant de continuer. Flèche pleine (<strong>─────▶</strong>). C'est le type par défaut.</p>
-          <div style="margin-top:12px;font-family:monospace;font-size:12px;color:var(--text2)">A ─────────▶ B</div>
+          <div style="margin-top:12px;font-family:var(--r-font-mono);font-size:12px;color:var(--text2)">A ─────────▶ B</div>
         </div>
         <div class="card card-purple">
           <h3>Message asynchrone</h3>
           <p style="font-size:13px">L'émetteur <strong>n'attend pas</strong> la réponse. Flèche ouverte (<strong>──────▷</strong>).</p>
-          <div style="margin-top:12px;font-family:monospace;font-size:12px;color:var(--text2)">A ──────────▷ B</div>
+          <div style="margin-top:12px;font-family:var(--r-font-mono);font-size:12px;color:var(--text2)">A ──────────▷ B</div>
         </div>
         <div class="card card-green">
           <h3>Message de retour</h3>
           <p style="font-size:13px">Réponse à un message. Flèche pointillée (<strong>- - - -▶</strong>). Peut être omis si implicite.</p>
-          <div style="margin-top:12px;font-family:monospace;font-size:12px;color:var(--text2)">B - - - - -▶ A</div>
+          <div style="margin-top:12px;font-family:var(--r-font-mono);font-size:12px;color:var(--text2)">B - - - - -▶ A</div>
         </div>
         <div class="card card-orange">
           <h3>Message réflexif</h3>
           <p style="font-size:13px">Un objet s'envoie un message à lui-même. Boucle sur la même ligne de vie.</p>
-          <div style="margin-top:12px;font-family:monospace;font-size:12px;color:var(--text2)">A ─┐<br>&nbsp;&nbsp;&nbsp;└─▶ A (calcul interne)</div>
+          <div style="margin-top:12px;font-family:var(--r-font-mono);font-size:12px;color:var(--text2)">A ─┐<br>&nbsp;&nbsp;&nbsp;└─▶ A (calcul interne)</div>
         </div>
       </div>
     </div>
@@ -1483,7 +1487,7 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
     <div id="ds-oi" class="sub-section">
       <div class="card card-accent">
         <h3>Opérateur Loop — Exemple complet</h3>
-        <div style="margin-top:16px;background:var(--bg3);border-radius:8px;padding:16px;font-family:monospace;font-size:12px;color:var(--text2);line-height:2">
+        <div style="margin-top:16px;background:var(--bg3);border-radius:8px;padding:16px;font-family:var(--r-font-mono);font-size:12px;color:var(--text2);line-height:2">
           Dupont:Personne &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmd:Commande<br>
           ─────────────── &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ─────────────<br>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
@@ -1497,7 +1501,7 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
 
       <div class="card card-red" style="margin-top:16px">
         <h3>Opérateur Alt — Exemple</h3>
-        <div style="margin-top:12px;background:var(--bg3);border-radius:8px;padding:16px;font-family:monospace;font-size:12px;color:var(--text2);line-height:2">
+        <div style="margin-top:12px;background:var(--bg3);border-radius:8px;padding:16px;font-family:var(--r-font-mono);font-size:12px;color:var(--text2);line-height:2">
           ┌──────────────[alt qualif = "Étudiant"]──────────────┐<br>
           │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;som += forfaitEtudiant()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
           ├──────────────────────────────────────────────────────┤<br>
@@ -1532,7 +1536,7 @@ code,pre,.mono{font-family:'JetBrains Mono',monospace}
       </div>
       <div id="question-container"></div>
       <div id="quiz-nav" style="display:flex;gap:12px;margin-top:16px">
-        <button onclick="nextQuestion()" id="next-btn" style="padding:10px 24px;border-radius:8px;border:none;background:var(--accent);color:#fff;font-family:'Sora',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:none">Question suivante →</button>
+        <button onclick="nextQuestion()" id="next-btn" style="padding:10px 24px;border-radius:8px;border:none;background:var(--accent);color:var(--r-on-accent);font-family:var(--r-font-display);font-size:13px;font-weight:600;cursor:pointer;display:none">Question suivante →</button>
       </div>
     </div>
     <div id="quiz-score" style="display:none">
@@ -1687,7 +1691,7 @@ class Etudiant extends Personne {
         <button class="reveal-btn" onclick="toggleAnswer(this)">Voir la solution</button>
         <div class="answer-block">
           <h4>✅ Solution</h4>
-          <div style="background:var(--bg3);border-radius:8px;padding:16px;font-family:monospace;font-size:11.5px;color:var(--text2);line-height:2;overflow-x:auto">
+          <div style="background:var(--bg3);border-radius:8px;padding:16px;font-family:var(--r-font-mono);font-size:11.5px;color:var(--text2);line-height:2;overflow-x:auto">
             sd Commander_en_ligne<br><br>
             Client &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Site &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Catalogue &nbsp;&nbsp;&nbsp; StockService &nbsp;&nbsp; PaiementService<br>
             ─────── &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ──── &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ───────── &nbsp;&nbsp;&nbsp; ──────────── &nbsp;&nbsp; ───────────────<br>
@@ -1726,7 +1730,7 @@ class Etudiant extends Personne {
         <div class="answer-block">
           <h4>✅ Solution proposée</h4>
           <div class="diagram-container">
-            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;font-family:monospace;font-size:11px">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;font-family:var(--r-font-mono);font-size:11px">
               <div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;justify-content:center">
                 <div class="uml-box" style="border-color:var(--accent2)">
                   <div class="uml-class-name"><span class="stereotype">&lt;&lt;interface&gt;&gt;</span>Volant</div>
@@ -2114,5 +2118,6 @@ function resetQuiz() {
   document.getElementById('quiz-setup').style.display = 'block';
 }
 </script>
+<script src="../scripts/revision.js"></script>
 </body>
 </html>

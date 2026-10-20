@@ -2,6 +2,12 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Figtree:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../styles/tokens.css">
+<link rel="icon" type="image/png" href="../styles/favicon.png">
+<script src="../scripts/theme.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fiches de Révision - HTML/CSS BUT MR102</title>
   <style>
@@ -12,19 +18,19 @@
     }
 
     :root {
-      --primary: #6366f1;
-      --secondary: #8b5cf6;
-      --success: #10b981;
-      --danger: #ef4444;
-      --warning: #f59e0b;
-      --dark: #1f2937;
-      --light: #f9fafb;
-      --border: #e5e7eb;
+      --primary: var(--r-blue);
+      --secondary: var(--r-violet);
+      --success: var(--r-teal);
+      --danger: var(--r-red);
+      --warning: var(--r-amber);
+      --dark: var(--r-text);
+      --light: var(--r-bg);
+      --border: var(--r-surface-3);
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: var(--r-font-body);
+      background: var(--r-bg);
       min-height: 100vh;
       color: var(--dark);
     }
@@ -37,7 +43,7 @@
 
     header {
       text-align: center;
-      color: white;
+      color: var(--r-text);
       padding: 40px 20px;
       margin-bottom: 30px;
     }
@@ -45,21 +51,20 @@
     header h1 {
       font-size: 3rem;
       margin-bottom: 10px;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
     }
 
     header p {
       font-size: 1.2rem;
-      opacity: 0.95;
+      color: var(--r-text-2);
     }
 
     .nav-tabs {
       display: flex;
       gap: 10px;
-      background: white;
+      background: var(--r-surface);
       padding: 10px;
       border-radius: 12px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      border: 1px solid var(--r-border);
       margin-bottom: 20px;
       flex-wrap: wrap;
     }
@@ -69,7 +74,7 @@
       min-width: 150px;
       padding: 12px 20px;
       border: none;
-      background: var(--light);
+      background: var(--r-surface-2);
       color: var(--dark);
       border-radius: 8px;
       cursor: pointer;
@@ -80,22 +85,23 @@
 
     .nav-tab:hover {
       background: var(--primary);
-      color: white;
+      color: var(--r-on-accent);
       transform: translateY(-2px);
     }
 
     .nav-tab.active {
       background: var(--primary);
-      color: white;
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+      color: var(--r-on-accent);
+      box-shadow: 0 4px 12px color-mix(in srgb, var(--r-blue) 40%, transparent);
     }
 
     .content-section {
       display: none;
-      background: white;
+      background: var(--r-surface);
       border-radius: 12px;
       padding: 30px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      border: 1px solid var(--r-border);
+      box-shadow: var(--r-shadow);
       animation: fadeIn 0.3s;
     }
 
@@ -127,34 +133,35 @@
     }
 
     .code-block {
-      background: #282c34;
-      color: #abb2bf;
+      background: var(--r-surface-2);
+      color: var(--r-text);
+      border: 1px solid var(--r-border);
       padding: 15px;
       border-radius: 8px;
       overflow-x: auto;
       margin: 10px 0;
-      font-family: 'Courier New', monospace;
+      font-family: var(--r-font-mono);
       font-size: 0.9rem;
       line-height: 1.5;
       border-left: 4px solid var(--primary);
     }
 
-    .code-block .keyword { color: #c678dd; }
-    .code-block .string { color: #98c379; }
-    .code-block .comment { color: #5c6370; font-style: italic; }
-    .code-block .tag { color: #e06c75; }
-    .code-block .attr { color: #d19a66; }
+    .code-block .keyword { color: var(--r-violet); }
+    .code-block .string { color: var(--r-green); }
+    .code-block .comment { color: var(--r-text-3); font-style: italic; }
+    .code-block .tag { color: var(--r-red); }
+    .code-block .attr { color: var(--r-orange); }
 
     .info-box {
-      background: #dbeafe;
-      border-left: 4px solid #3b82f6;
+      background: var(--r-blue-soft);
+      border-left: 4px solid var(--r-blue);
       padding: 15px;
       margin: 15px 0;
       border-radius: 4px;
     }
 
     .warning-box {
-      background: #fef3c7;
+      background: var(--r-amber-soft);
       border-left: 4px solid var(--warning);
       padding: 15px;
       margin: 15px 0;
@@ -162,7 +169,7 @@
     }
 
     .success-box {
-      background: #d1fae5;
+      background: var(--r-green-soft);
       border-left: 4px solid var(--success);
       padding: 15px;
       margin: 15px 0;
@@ -170,7 +177,7 @@
     }
 
     .danger-box {
-      background: #fee2e2;
+      background: var(--r-red-soft);
       border-left: 4px solid var(--danger);
       padding: 15px;
       margin: 15px 0;
@@ -181,7 +188,7 @@
       width: 100%;
       border-collapse: collapse;
       margin: 15px 0;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      border: 1px solid var(--r-border);
     }
 
     th, td {
@@ -192,7 +199,7 @@
 
     th {
       background: var(--primary);
-      color: white;
+      color: var(--r-on-accent);
       font-weight: 600;
     }
 
@@ -210,9 +217,9 @@
     .quiz-question {
       margin-bottom: 30px;
       padding: 20px;
-      background: white;
+      background: var(--r-surface);
       border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      border: 1px solid var(--r-border);
     }
 
     .quiz-question h4 {
@@ -229,7 +236,7 @@
 
     .quiz-option {
       padding: 12px 15px;
-      background: var(--light);
+      background: var(--r-surface);
       border: 2px solid var(--border);
       border-radius: 6px;
       cursor: pointer;
@@ -238,27 +245,27 @@
 
     .quiz-option:hover {
       border-color: var(--primary);
-      background: white;
+      background: var(--r-surface);
     }
 
     .quiz-option.selected {
       border-color: var(--primary);
-      background: #dbeafe;
+      background: var(--r-blue-soft);
     }
 
     .quiz-option.correct {
       border-color: var(--success);
-      background: #d1fae5;
+      background: var(--r-green-soft);
     }
 
     .quiz-option.incorrect {
       border-color: var(--danger);
-      background: #fee2e2;
+      background: var(--r-red-soft);
     }
 
     .check-btn {
       background: var(--primary);
-      color: white;
+      color: var(--r-on-accent);
       border: none;
       padding: 12px 30px;
       border-radius: 6px;
@@ -276,7 +283,7 @@
     }
 
     .check-btn:disabled {
-      background: #9ca3af;
+      background: var(--r-text-3);
       cursor: not-allowed;
       transform: none;
     }
@@ -294,7 +301,7 @@
     }
 
     .interactive-demo {
-      background: white;
+      background: var(--r-surface);
       border: 2px solid var(--border);
       border-radius: 8px;
       padding: 20px;
@@ -321,7 +328,7 @@
 
     .demo-btn:hover, .demo-btn.active {
       background: var(--primary);
-      color: white;
+      color: var(--r-on-accent);
     }
 
     .demo-output {
@@ -342,7 +349,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
+      color: var(--r-on-accent);
       font-weight: 600;
       transition: all 0.3s;
     }
@@ -351,7 +358,7 @@
       display: inline-block;
       padding: 4px 12px;
       background: var(--primary);
-      color: white;
+      color: var(--r-on-accent);
       border-radius: 12px;
       font-size: 0.85rem;
       font-weight: 600;
@@ -367,7 +374,7 @@
 
     footer {
       text-align: center;
-      color: white;
+      color: var(--r-text-3);
       padding: 20px;
       margin-top: 40px;
       font-size: 0.9rem;
@@ -384,6 +391,7 @@
       }
     }
   </style>
+<link rel="stylesheet" href="../styles/revision.css">
 </head>
 <body>
   <header>
@@ -1043,8 +1051,8 @@
 
       if (!selectedOption) {
         result.className = 'result show';
-        result.style.background = '#fef3c7';
-        result.style.color = '#92400e';
+        result.style.background = 'var(--r-amber-soft)';
+        result.style.color = 'var(--r-orange)';
         result.textContent = '⚠️ Veuillez sélectionner une réponse';
         return;
       }
@@ -1067,13 +1075,13 @@
       if (isCorrect) {
         score++;
         result.className = 'result show';
-        result.style.background = '#d1fae5';
-        result.style.color = '#065f46';
+        result.style.background = 'var(--r-green-soft)';
+        result.style.color = 'var(--r-teal)';
         result.textContent = '✅ Correct ! Bonne réponse.';
       } else {
         result.className = 'result show';
-        result.style.background = '#fee2e2';
-        result.style.color = '#991b1b';
+        result.style.background = 'var(--r-red-soft)';
+        result.style.color = 'var(--r-red)';
         result.textContent = '❌ Incorrect. Regardez la bonne réponse ci-dessus.';
       }
 
@@ -1096,5 +1104,6 @@
       });
     });
   </script>
+<script src="../scripts/revision.js"></script>
 </body>
 </html>
