@@ -1150,7 +1150,7 @@
 
     /* Watermark impression */
     #recap::before {
-      content: '⚠ DOCUMENT DE RÉVISION — SEULE LA FEUILLE MANUSCRITE ORIGINALE EST AUTORISÉE À L\'EXAMEN';
+      content: '⚠ DOCUMENT DE RÉVISION';
       display: block;
       text-align: center;
       background: var(--r-text);
@@ -1175,7 +1175,7 @@
     <li><a href="#chapitres">Cours</a></li>
     <li><a href="#flashcards">Flashcards</a></li>
     <li><a href="#quiz">Quiz</a></li>
-    <li><a href="#recap">Mémo exam</a></li>
+    <li><a href="#recap">Aide-mémoire</a></li>
   </ul>
 </nav>
 
@@ -1300,24 +1300,13 @@
 <section id="recap">
   <div class="section-header">
     <div class="section-tag">// 04 — Aide-mémoire</div>
-    <h2 class="section-title">Mémo <span>Examen</span></h2>
-  </div>
-
-  <!-- BANNIÈRE AVERTISSEMENT -->
-  <div class="exam-warning">
-    <div class="exam-warning-icon">✋</div>
-    <div class="exam-warning-content">
-      <div class="exam-warning-title">Aide-mémoire manuscrit UNIQUEMENT autorisé</div>
-      <div class="exam-warning-body">
-        Pour l'épreuve <strong>MR205 du 30 avril 2026 à 16h</strong>, seule une <strong>feuille A4 manuscrite originale (1 face)</strong> est autorisée. Cette page peut t'aider à préparer ce que tu recopies, mais <strong>l'impression de cette page n'est pas autorisée à l'examen.</strong>
-      </div>
-    </div>
+    <h2 class="section-title">Aide-<span>mémoire</span></h2>
   </div>
 
   <!-- BOUTON IMPRIMER (usage révision uniquement) -->
   <div style="display:flex;align-items:center;gap:1rem;margin-bottom:2.5rem;flex-wrap:wrap">
     <button class="btn-primary" onclick="window.print()">🖨 Imprimer pour révisions</button>
-    <span style="font-size:.8rem;color:var(--text3);font-family:var(--r-font-mono)">// pour préparer ta feuille manuscrite — non autorisé à l'examen</span>
+    <span style="font-size:.8rem;color:var(--text3);font-family:var(--r-font-mono)">// pour préparer ta feuille manuscrite</span>
   </div>
 
   <!-- CONTENU MÉMO -->
