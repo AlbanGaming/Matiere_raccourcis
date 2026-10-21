@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Carnet de vol SQL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=IBM+Plex+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="#accueil"><b>Carnet de vol SQL</b><span>ORACLE · PL/SQL</span></a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#accueil" data-view="accueil">Accueil</a>
+      <a href="#fiches" data-view="fiches">Fiches</a>
+      <a href="#flashcards" data-view="flashcards">Flashcards</a>
+      <a href="#quiz" data-view="quiz">Quiz</a>
+      <a href="#exercices" data-view="exercices">Exercices</a>
+      <a href="#memento" data-view="memento">Memento</a>
+    </nav>
+    <button class="theme-btn" id="themeBtn" type="button" aria-label="Changer de thème">Thème : auto</button>
+  </div>
+</header>
+
+<main>
+<div class="wrap">
+
+<!-- ================= ACCUEIL ================= -->
+<section class="view" id="view-accueil">
+  <div class="hero">
+    <div>
+      <div class="eyebrow">BUT Informatique · Bases de données avancées</div>
+      <h1>Réviser SQL <em>&amp;</em> PL/SQL avant l'examen</h1>
+      <p class="lead">Les 7 CM résumés en 17 fiches, avec le code d'exemple du cours (la base PILOTE, AVION, VOL, AFFECTATION), puis des flashcards, un quiz et des exercices corrigés pour vérifier ce qui est acquis. Le memento autorisé à l'examen est téléchargeable.</p>
+      <div class="hero-actions">
+        <a class="btn primary" href="#fiches" id="resumeBtn">Ouvrir les fiches</a>
+        <a class="btn signal" href="#quiz" id="examBtn">Lancer un examen blanc</a>
+        <a class="btn" href="#memento">Télécharger le memento</a>
+      </div>
+    </div>
+    <div class="board" aria-label="Avancement par fiche">
+      <div class="board-head"><span>Fiches · avancement</span><span id="boardCount">0 / 17</span></div>
+      <div id="boardRows"></div>
+      <div class="meter"><i id="boardMeter" style="width:0%"></i></div>
+    </div>
+  </div>
+
+  <div class="grid-3" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+    <a class="tool-card" href="#flashcards"><span class="n" id="statCards">— cartes</span><b>Flashcards</b><span>Question au recto, réponse au verso. Triez ce que vous savez de ce qui reste à revoir.</span></a>
+    <a class="tool-card" href="#quiz"><span class="n" id="statQuiz">— questions</span><b>Quiz</b><span>QCM corrigés et expliqués, par thème ou en examen blanc de 20 questions.</span></a>
+    <a class="tool-card" href="#exercices"><span class="n" id="statExos">— exercices</span><b>Exercices</b><span>Requêtes à écrire, code PL/SQL à trous, clauses à remettre dans l'ordre.</span></a>
+    <a class="tool-card" href="#memento"><span class="n">PDF · 2 pages</span><b>Memento</b><span>La fiche fournie à l'examen : à télécharger et à connaître par cœur.</span></a>
+  </div>
+
+  <div class="grid-2" style="margin-top:var(--s6)">
+    <div class="panel">
+      <h2>Les 10 pièges classiques</h2>
+      <ol class="traps" id="trapList"></ol>
+    </div>
+    <div class="panel">
+      <h2>La base du cours</h2>
+      <p class="lead" style="margin:0 0 12px;font-size:14px">Tous les exemples et exercices utilisent ce schéma de compagnie aérienne.</p>
+      <div class="schema" id="schemaHome"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FICHES ================= -->
+<section class="view" id="view-fiches" hidden>
+  <div class="course">
+    <aside class="toc" aria-label="Sommaire des fiches">
+      <label for="tocSearch" class="eyebrow">Rechercher dans les fiches</label>
+      <input id="tocSearch" type="text" placeholder="ex. EXISTS, :NEW, ROWNUM…" autocomplete="off">
+      <div id="tocList"></div>
+    </aside>
+    <div class="fiche">
+      <label for="tocSelect" class="eyebrow" style="display:none" id="tocSelectLabel">Fiche</label>
+      <select id="tocSelect" class="toc-select" aria-label="Choisir une fiche"></select>
+      <article id="ficheBody"></article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FLASHCARDS ================= -->
+<section class="view" id="view-flashcards" hidden>
+  <div class="section-title" style="margin-top:0">
+    <h2 class="h-display">Flashcards</h2>
+    <span class="chip" id="fcStats"></span>
+  </div>
+  <div class="toolbar">
+    <label for="fcModule" class="eyebrow">Thème</label>
+    <select id="fcModule"></select>
+    <select id="fcFilter" aria-label="Filtre">
+      <option value="all">Toutes les cartes</option>
+      <option value="review">À revoir seulement</option>
+    </select>
+    <button class="btn small" id="fcShuffle" type="button">Mélanger</button>
+    <button class="btn small" id="fcReset" type="button">Réinitialiser le suivi</button>
+  </div>
+  <div class="card-stage">
+    <div class="fcard" id="fcCard" tabindex="0" role="button" aria-label="Retourner la carte">
+      <div class="face front"><span class="tag" id="fcTagF"></span><div class="q" id="fcQ"></div><span class="hint">Cliquer ou Espace pour retourner</span></div>
+      <div class="face back"><span class="tag" id="fcTagB"></span><div class="a" id="fcA"></div></div>
+    </div>
+    <div class="card-ctrl">
+      <button class="btn" id="fcPrev" type="button">← Précédente</button>
+      <button class="btn" id="fcBad" type="button" style="color:var(--bad)">À revoir</button>
+      <button class="btn" id="fcGood" type="button" style="color:var(--ok)">Je sais</button>
+      <button class="btn" id="fcNext" type="button">Suivante →</button>
+    </div>
+    <div class="card-count" id="fcCount"></div>
+  </div>
+</section>
+
+<!-- ================= QUIZ ================= -->
+<section class="view" id="view-quiz" hidden>
+  <div class="section-title" style="margin-top:0">
+    <h2 class="h-display">Quiz</h2>
+    <span class="chip" id="quizBest"></span>
+  </div>
+  <div class="toolbar">
+    <label for="quizModule" class="eyebrow">Thème</label>
+    <select id="quizModule"></select>
+    <button class="btn primary small" id="quizStart" type="button">Commencer</button>
+    <button class="btn signal small" id="quizExam" type="button">Examen blanc (20 questions)</button>
+  </div>
+  <div class="quiz-box" id="quizBox"></div>
+</section>
+
+<!-- ================= EXERCICES ================= -->
+<section class="view" id="view-exercices" hidden>
+  <div class="section-title" style="margin-top:0"><h2 class="h-display">Exercices</h2></div>
+  <div class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-tab="req" type="button">Requêtes à écrire</button>
+    <button role="tab" aria-selected="false" data-tab="gap" type="button">Code à trous</button>
+    <button role="tab" aria-selected="false" data-tab="ord" type="button">Remettre dans l'ordre</button>
+  </div>
+  <div id="tab-req">
+    <div class="ex-layout">
+      <div>
+        <div class="toolbar">
+          <label for="exModule" class="eyebrow">Thème</label>
+          <select id="exModule"></select>
+        </div>
+        <div id="exList"></div>
+      </div>
+      <aside class="ex-side panel">
+        <h3>Schéma de référence</h3>
+        <div class="schema" id="schemaEx" style="grid-template-columns:1fr 1fr"></div>
+        <p style="font-size:13px;color:var(--muted);margin:10px 0 0">Écrivez votre requête, puis comparez avec la correction. Plusieurs méthodes sont souvent acceptées.</p>
+      </aside>
+    </div>
+  </div>
+  <div id="tab-gap" hidden></div>
+  <div id="tab-ord" hidden></div>
+</section>
+
+<!-- ================= MEMENTO ================= -->
+<section class="view" id="view-memento" hidden>
+  <div class="memento-hero">
+    <div>
+      <span class="meta">Document autorisé à l'examen</span>
+      <h1>Memento SQL – PL/SQL</h1>
+      <p>La fiche de syntaxe fournie le jour de l'examen. Elle donne les squelettes des ordres : à vous de savoir quand et comment les utiliser. Sa version consultable est reprise ci-dessous.</p>
+      <div class="dl-status" id="dlStatus" aria-live="polite"></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <button class="btn signal" id="dlBtn" type="button">Télécharger le PDF</button>
+      <a class="btn" href="docs/memento.pdf" target="_blank" rel="noopener" style="background:transparent;color:var(--board-fg);border-color:#ffffff40">Ouvrir dans un onglet</a>
+    </div>
+  </div>
+  <div id="mementoBody" class="grid-2"></div>
+</section>
+
+</div>
+</main>
+<div class="toast" id="toast" hidden></div>
+
+<script src="js/data-cours.js"></script>
+<script src="js/data-pratique.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
