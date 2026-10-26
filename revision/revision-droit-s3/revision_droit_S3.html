@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Figtree:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../../styles/tokens.css">
+<link rel="icon" type="image/png" href="../../styles/favicon.png">
+<script src="../../scripts/theme.js"></script>
+<title>Droit des Contrats et du Numérique — S3</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../../styles/revision.css">
+</head>
+<body>
+
+<div class="topbar">
+  <button type="button" id="menuToggle" aria-controls="sidebar" aria-expanded="false">☰ Sommaire</button>
+  <span class="t">Droit des contrats &amp; du numérique</span>
+</div>
+<div class="scrim" id="scrim" hidden></div>
+
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <p class="kicker">MR3.11 · BUT Info S3</p>
+      <h1>Droit des Contrats et du Numérique</h1>
+      <p class="sub">Fiches de cours, flashcards, QCM, questions rédigées et analyse de contrats.</p>
+    </div>
+    <p class="navgroup-label">Cours</p>
+    <ul class="nav" id="navCours"></ul>
+    <p class="navgroup-label">Analyse de contrat</p>
+    <ul class="nav" id="navMethode"></ul>
+    <p class="navgroup-label">S'entraîner</p>
+    <ul class="nav" id="navTrain"></ul>
+    <p class="sidebar-footer">D'après le cours et le polycopié de TD de M. Escuyer (IUT de Reims). Les compléments hors cours sont signalés.</p>
+  </aside>
+
+  <main>
+    <div class="sheet" id="sheet"></div>
+  </main>
+</div>
+
+<script src="data-cours.js"></script>
+<script src="data-entrainement.js"></script>
+<script src="data-contrats.js"></script>
+<script src="script.js"></script>
+<script src="../../scripts/revision.js"></script>
+</body>
+</html>
