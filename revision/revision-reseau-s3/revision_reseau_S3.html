@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Figtree:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../../styles/tokens.css">
+<link rel="icon" type="image/png" href="../../styles/favicon.png">
+<script src="../../scripts/theme.js"></script>
+<title>Architecture réseau (R3.06) — S3</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../../styles/revision.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-in">
+    <a class="brand" href="#fiches"><span class="brand-mark">R3.06</span><span class="brand-name">Révision Réseaux</span></a>
+    <nav class="tabs" aria-label="Sections">
+      <a class="tab" href="#fiches" data-v="fiches"><span class="k">01</span>Fiches</a>
+      <a class="tab" href="#terminal" data-v="terminal"><span class="k">02</span>Terminal</a>
+      <a class="tab" href="#quiz" data-v="quiz"><span class="k">03</span>Quiz</a>
+      <a class="tab" href="#cartes" data-v="cartes"><span class="k">04</span>Cartes</a>
+      <a class="tab" href="#exercices" data-v="exercices"><span class="k">05</span>Exercices</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- FICHES -->
+  <section class="view" id="v-fiches">
+    <div class="layout">
+      <aside class="side">
+        <input type="search" id="f-search" placeholder="Chercher une commande…" aria-label="Chercher une commande">
+        <div class="side-list" id="f-nav"></div>
+      </aside>
+      <div id="f-content"></div>
+    </div>
+  </section>
+
+  <!-- TERMINAL -->
+  <section class="view" id="v-terminal" hidden>
+    <div class="view-head">
+      <h1>Terminal simulé</h1>
+      <p>Tape les commandes comme dans Packet Tracer ou la VM. Abréviations acceptées, <kbd>Tab</kbd> complète, <kbd>↑</kbd> rappelle la commande précédente, <code>?</code> liste les commandes du mode.</p>
+    </div>
+    <div class="sc-pick" id="t-pick"></div>
+    <div class="term-grid">
+      <div class="mission" id="t-mission"></div>
+      <div>
+        <div class="term" id="t-term">
+          <div class="term-bar"><span class="dot on"></span><span id="t-title">console</span></div>
+          <div class="term-goal" id="t-goal"></div>
+          <div class="term-out" id="t-out" aria-live="polite"></div>
+          <form class="term-in" id="t-form" autocomplete="off">
+            <span class="p" id="t-prompt">Router&gt;</span>
+            <input id="t-input" type="text" spellcheck="false" autocapitalize="off" autocorrect="off" aria-label="Commande">
+          </form>
+        </div>
+        <p class="term-help">Le terminal vérifie chaque étape de la mission. Une commande valide mais hors mission s'exécute quand même : tu peux explorer.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section class="view" id="v-quiz" hidden>
+    <div class="view-head">
+      <h1>Quiz</h1>
+      <p>QCM de cours et de commandes, remise en ordre des séquences, et calcul de masques inversés générés au hasard.</p>
+    </div>
+    <div id="q-root"></div>
+  </section>
+
+  <!-- CARTES -->
+  <section class="view" id="v-cartes" hidden>
+    <div class="view-head">
+      <h1>Cartes mémoire</h1>
+      <p>Une consigne, tu retrouves la commande. Les cartes « Je savais » sortent du paquet ; ta progression reste dans ce navigateur.</p>
+    </div>
+    <div id="c-root"></div>
+  </section>
+
+  <!-- EXERCICES -->
+  <section class="view" id="v-exercices" hidden>
+    <div class="layout">
+      <aside class="side">
+        <div class="eyebrow">Exercices type contrôle</div>
+        <div class="side-list" id="e-nav"></div>
+      </aside>
+      <div id="e-content"></div>
+    </div>
+  </section>
+
+  <p class="foot">Contenu tiré des TP1 à TP6 du module R3.06 (BUT Informatique, IUT de Reims). Les éléments marqués « complément » ne figurent pas dans les TP. En cas de doute, le sujet du TP fait foi.</p>
+</main>
+
+<script src="engine.js"></script>
+<script src="data-fiches.js"></script>
+<script src="data-quiz.js"></script>
+<script src="data-tp.js"></script>
+<script src="script.js"></script>
+<script src="../../scripts/revision.js"></script>
+</body>
+</html>
