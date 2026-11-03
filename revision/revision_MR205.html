@@ -1184,7 +1184,7 @@
   <div class="hero-grid"></div>
   <div class="hero-glow"></div>
 
-  <div class="hero-badge">BUT Informatique — IUT Reims</div>
+  <div class="hero-badge">BUT Informatique</div>
 
   <h1>
     <span class="line1">Services</span>
@@ -1463,13 +1463,13 @@
             nslookup<br>
             > server 8.8.8.8 <span style="color:var(--text3)"># changer DNS</span><br>
             > set type=NS<br>
-            > univ-reims.fr
+            > exemple-univ.fr
           </div>
         </div>
         <div>
           <div style="font-family:var(--r-font-mono);font-size:.7rem;color:var(--accent);margin-bottom:.4rem">dig</div>
           <div style="font-size:.8rem;color:var(--text2);line-height:1.7;font-family:var(--r-font-mono)">
-            dig @srv univ-reims.fr MX<br>
+            dig @srv exemple-univ.fr MX<br>
             dig +trace www.example.fr<br>
             <span style="color:var(--text3)"># trace depuis racine .</span>
           </div>
@@ -1597,8 +1597,8 @@ R# <span class="fn">show ip dhcp binding</span></pre>
         <div class="diagram">
           <pre class="dns-tree"><span class="root">. (racine)</span>
 ├── <span class="tld">fr</span>
-│   └── <span class="domain">univ-reims</span>
-│       └── <span class="host">iut-info</span>  →  iut-info.univ-reims.fr.
+│   └── <span class="domain">exemple-univ</span>
+│       └── <span class="host">iut-info</span>  →  iut-info.exemple-univ.fr.
 ├── <span class="tld">com</span>
 │   └── <span class="domain">google</span>
 │       └── <span class="host">www</span>  →  www.google.com.
@@ -1846,11 +1846,11 @@ host -t NS .
 nslookup
 <span class="fn">&gt; server 8.8.8.8</span>      <span class="cm"># changer de serveur DNS</span>
 <span class="fn">&gt; set type=NS</span>         <span class="cm"># changer le type de requête</span>
-<span class="fn">&gt; univ-reims.fr</span>
+<span class="fn">&gt; exemple-univ.fr</span>
 
 <span class="cm"># dig : MX via un serveur spécifique + trace</span>
-dig @anne.univ-reims.fr univ-reims.fr MX
-dig +trace www.univ-reims.fr</pre>
+dig @ns1.exemple-univ.fr exemple-univ.fr MX
+dig +trace www.exemple-univ.fr</pre>
         </div>
 
         <div class="info-box info-tip">
@@ -2292,7 +2292,7 @@ sudo systemctl status vsftpd</pre>
 
 <!-- FOOTER -->
 <footer>
-  MR205 — Services Réseaux · BUT Informatique IUT Reims · Fait avec <span>♥</span> pour les révisions
+  MR205 — Services Réseaux · BUT Informatique · Fait avec <span>♥</span> pour les révisions
 </footer>
 
 <script>
@@ -2303,7 +2303,7 @@ const flashcards = [
   { q: "Port(s) utilisé(s) par FTP", a: "Port 21 (contrôle / commandes) et port 20 (transfert de données)." },
   { q: "Port SSH", a: "Port 22 (TCP). SSH remplace Telnet (23) avec chiffrement et authentification par clés." },
   { q: "Différence POP3 vs IMAP", a: "POP3 télécharge et supprime du serveur. IMAP laisse les mails sur le serveur (synchronisé multi-appareils)." },
-  { q: "Que signifie FQDN ?", a: "Fully Qualified Domain Name : nom complet incluant tous les niveaux. Ex: www.iut-info.univ-reims.fr." },
+  { q: "Que signifie FQDN ?", a: "Fully Qualified Domain Name : nom complet incluant tous les niveaux. Ex: www.iut-info.exemple-univ.fr." },
   { q: "Enregistrement DNS A", a: "Associe un nom d'hôte (FQDN) à une adresse IPv4." },
   { q: "Enregistrement DNS PTR", a: "Résolution inverse : adresse IP → nom de domaine. Utilisé dans la zone in-addr.arpa." },
   { q: "Enregistrement DNS MX", a: "Mail eXchanger : désigne le(s) serveur(s) de messagerie d'une zone. Inclut une priorité numérique." },

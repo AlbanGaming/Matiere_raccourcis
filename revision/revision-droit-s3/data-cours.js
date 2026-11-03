@@ -9,7 +9,7 @@ const CHAPTERS = [
   num: "00",
   label: "Accueil",
   title: "Droit des Contrats et du Numérique",
-  dek: "MR3.11 · BUT Informatique S3 · IUT de Reims. Le cours en fiches, des flashcards, des QCM, des questions de cours rédigées et des contrats à analyser avec la grille du cours.",
+  dek: "MR3.11 · BUT Informatique S3. Le cours en fiches, des flashcards, des QCM, des questions de cours rédigées et des contrats à analyser avec la grille du cours.",
   body: `
   <div class="exam-box">
     <p class="eyebrow">Ce qui tombe à l'examen</p>
@@ -44,7 +44,7 @@ const CHAPTERS = [
 
   <div class="callout complement">
     <span class="label">Compléments signalés</span>
-    Le contenu suit le cours de M. Escuyer et le polycopié de TD. Quand une règle a changé depuis la rédaction du cours, ou quand un corrigé du poly était incomplet, l'ajout est signalé par un encadré <em>Complément</em>. <strong>À l'examen, donne d'abord la réponse du cours</strong>, tu peux ajouter la précision ensuite.
+    Le contenu suit le cours et les TD. Quand une règle a changé depuis la rédaction du cours, ou quand un corrigé était incomplet, l'ajout est signalé par un encadré <em>Complément</em>. <strong>À l'examen, donne d'abord la réponse du cours</strong>, tu peux ajouter la précision ensuite.
   </div>
   <p class="note">Ta progression (cartes sues, meilleurs scores, grilles commencées) est enregistrée dans ton navigateur uniquement.</p>
   <div id="progressPanel"></div>
@@ -304,7 +304,7 @@ const CHAPTERS = [
     <div class="card-def"><p class="eyebrow">Obligations du salarié</p><ul><li>Exécuter le travail <strong>personnellement, consciencieusement et loyalement</strong></li><li>Respecter l'outil de travail</li><li>Respecter les ordres reçus et le règlement intérieur</li><li>Respecter le secret professionnel, ne pas concurrencer son employeur (obligation de loyauté)</li></ul></div>
   </div>
 
-  <h4>Conditions de travail et rémunération (support du poly)</h4>
+  <h4>Conditions de travail et rémunération (support de TD)</h4>
   <table class="tbl">
     <tr><th>Durée du travail</th><th>Repos</th><th>Rémunération</th><th>Sécurité</th></tr>
     <tr><td>35 h hebdomadaires<br>maxi 10 h / jour<br>maxi 48 h / semaine<br>44 h en moyenne sur 12 semaines consécutives</td>
@@ -686,7 +686,7 @@ const CHAPTERS = [
   title: "Méthode — Analyser un contrat avec la grille du cours",
   dek: "La grille de l'examen ligne par ligne, ce qu'il faut écrire dans chaque case, et les pièges qui coûtent des points.",
   body: `
-  <h2>La grille d'analyse (celle du poly)</h2>
+  <h2>La grille d'analyse (celle du cours)</h2>
   <table class="tbl grille-modele">
     <tr><th>Ligne de la grille</th><th>Ce qu'on attend</th></tr>
     <tr><td>Dénomination du contrat et éléments essentiels</td><td>Le <strong>nom juridique précis</strong> (contrat de bail, de prêt d'argent, de licence, contrat de travail à durée indéterminée…) + l'essentiel en une phrase : qui fournit quoi, contre quoi, pour combien de temps.</td></tr>

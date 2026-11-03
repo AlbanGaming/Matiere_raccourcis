@@ -941,7 +941,7 @@ li strong { color: var(--text); }
 
     <h3>Anatomie d'une URI</h3>
     <div class="uri-display">
-      <span class="uri-scheme">https</span><span class="uri-sep">://</span><span class="uri-auth">user:pass@iut.univ-reims.fr:443</span><span class="uri-path">/cours/http/index.php</span><span class="uri-sep">?</span><span class="uri-query">page=2&amp;theme=dark</span><span class="uri-sep">#</span><span class="uri-frag">intro</span>
+      <span class="uri-scheme">https</span><span class="uri-sep">://</span><span class="uri-auth">user:pass@www.exemple.fr:443</span><span class="uri-path">/cours/http/index.php</span><span class="uri-sep">?</span><span class="uri-query">page=2&amp;theme=dark</span><span class="uri-sep">#</span><span class="uri-frag">intro</span>
     </div>
     <div class="legend">
       <div class="legend-item"><div class="legend-dot" style="background:var(--r-cyan)"></div><span style="color:var(--r-cyan)">scheme</span> — protocole</div>
@@ -992,8 +992,8 @@ li strong { color: var(--text); }
           <td>https</td><td>example.com</td><td>/</td><td>—</td>
         </tr>
         <tr>
-          <td><code style="font-size:11px">http://demo.ad-urca.univ-reims.fr/?info</code></td>
-          <td>http</td><td>demo.ad-urca…</td><td>/</td><td>info</td>
+          <td><code style="font-size:11px">http://demo.exemple.fr/?info</code></td>
+          <td>http</td><td>demo.exemple.fr</td><td>/</td><td>info</td>
         </tr>
         <tr>
           <td><code style="font-size:11px">mysql://app:pass@127.0.0.1:3306/app</code></td>
@@ -1018,7 +1018,7 @@ li strong { color: var(--text); }
           <div class="flow-num">1</div>
           <div class="flow-content">
             <strong>Résolution DNS</strong>
-            <span>Le navigateur convertit le nom de domaine en adresse IP. <code>iut.univ-reims.fr</code> → <code>193.50.230.10</code></span>
+            <span>Le navigateur convertit le nom de domaine en adresse IP. <code>www.exemple.fr</code> → <code>203.0.113.10</code></span>
           </div>
         </div>
         <div class="flow-step">
@@ -1079,9 +1079,9 @@ li strong { color: var(--text); }
     <h3>Virtual Hosting</h3>
     <div class="card">
       <div class="card-title">Pourquoi Host: est obligatoire en HTTP/1.1</div>
-      <p>Tous les enseignants et étudiants de l'IUT partagent la même IP <code>10.31.6.118</code>. Sans l'en-tête <code>Host:</code>, le serveur ne saurait pas quel "site virtuel" est demandé.</p>
+      <p>Plusieurs sites hébergés sur le même serveur partagent la même IP <code>10.0.0.118</code>. Sans l'en-tête <code>Host:</code>, le serveur ne saurait pas quel "site virtuel" est demandé.</p>
       <pre><span class="kw">GET</span> / <span class="kw">HTTP/1.1</span>
-<span class="hdr">Host:</span> <span class="val">cutrona.ad-urca.univ-reims.fr</span>   <span class="cmt">← indispensable !</span>
+<span class="hdr">Host:</span> <span class="val">site1.exemple.fr</span>   <span class="cmt">← indispensable !</span>
 <span class="hdr">Connection:</span> close</pre>
       <div class="tip">
         <div class="tip-icon">💡</div>
@@ -1102,7 +1102,7 @@ li strong { color: var(--text); }
     <div class="msg-block">
       <div class="msg-part line1"><span class="kw">GET</span> /cours/http HTTP/1.1<div class="msg-label">① ligne de requête</div></div>
       <div class="msg-part headers">
-        <span class="hdr">Host:</span> <span class="val">iut.univ-reims.fr</span><br>
+        <span class="hdr">Host:</span> <span class="val">www.exemple.fr</span><br>
         <span class="hdr">Connection:</span> close<br>
         <span class="hdr">Accept:</span> text/html,*/*<br>
         <span class="hdr">User-Agent:</span> Mozilla/5.0<br>
@@ -1340,7 +1340,7 @@ li strong { color: var(--text); }
     <div class="msg-block">
       <div class="msg-part line1"><span class="kw">GET</span> /bonjour.html <span class="kw">HTTP/1.1</span></div>
       <div class="msg-part headers">
-        <span class="hdr">Host:</span> <span class="val">demo.ad-urca.univ-reims.fr</span><br>
+        <span class="hdr">Host:</span> <span class="val">demo.exemple.fr</span><br>
         <span class="hdr">Connection:</span> close<br>
         <span class="hdr">If-Modified-Since:</span> <span class="val">Thu, 17 Oct 2019 07:18:26 GMT</span>  <span class="cmt">← requête conditionnelle</span>
       </div>
@@ -1570,7 +1570,7 @@ echo htmlspecialchars($_GET['q'],
           </div>
           <div class="field">
             <label>Host (nom de domaine ou IP)</label>
-            <input id="ub-host" type="text" value="iut.univ-reims.fr" oninput="buildURI()">
+            <input id="ub-host" type="text" value="www.exemple.fr" oninput="buildURI()">
           </div>
           <div class="field">
             <label>Port (laisser vide si standard)</label>
@@ -1943,7 +1943,7 @@ const reqScenarios = [
       version:{ label: "Version HTTP", opts: ["HTTP/1.0", "HTTP/1.1"], correct: 1 },
       cond:   { label: "En-tête conditionnel", opts: ["If-Modified-Since: Thu, 17 Oct 2019 07:18:26 GMT", "Last-Modified: Thu, 17 Oct 2019", "Cache-Control: max-age=0", "Expires: Thu, 17 Oct 2019"], correct: 0 },
     },
-    expected: "GET /bonjour.html HTTP/1.1\nHost: demo.ad-urca.univ-reims.fr\nConnection: close\nIf-Modified-Since: Thu, 17 Oct 2019 07:18:26 GMT\n"
+    expected: "GET /bonjour.html HTTP/1.1\nHost: demo.exemple.fr\nConnection: close\nIf-Modified-Since: Thu, 17 Oct 2019 07:18:26 GMT\n"
   }
 ];
 

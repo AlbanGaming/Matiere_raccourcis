@@ -144,6 +144,13 @@ O    10.2.2.0/24 [110/65] via 10.4.4.2, 00:00:12, Serial0/3/0</pre>
 <tr><td>PC 3 · PC 4</td><td>172.16.3.3 · 172.16.3.4</td></tr>
 </table>
 <p>Routeur 1 ne connaît pas 172.16.3.0/24, Routeur 2 ne connaît pas 172.16.1.0/24, et les PC ont une mauvaise passerelle (.1). <b>Il faut configurer toutes les machines</b>, car la réponse doit aussi trouver son chemin du retour.</p>` },
+    { h: "TP1 : un ping vu dans Wireshark", html: `
+<ul>
+<li>Wireshark tourne dans le conteneur <b>routeur1</b> : page <code>localhost:3000</code>, capture sur l'interface 172.16.1.254 (eth0 ou eth1), filtre <code>ip.addr == 172.16.1.11</code>.</li>
+<li>Paquets observés : <b>ICMP Echo request</b> (type 8) et <b>Echo reply</b> (type 0), avec identifiant, numéro de séquence et données.</li>
+<li>Couches : <b>Ethernet II</b> (adresses MAC) → <b>IPv4</b> (adresses IP, TTL, protocole ICMP) → <b>ICMP</b>. Pas de couche transport.</li>
+<li>Avant le premier ping, un échange <b>ARP</b> peut apparaître : « qui a 172.16.1.254 ? » pour obtenir l'adresse MAC.</li>
+</ul>` },
     { h: "Ce qu'il faut savoir sur le routage", html: `
 <ul>
 <li><b>Routage</b> = trouver l'interface ou le routeur capable d'acheminer un paquet vers sa destination.</li>
@@ -213,7 +220,12 @@ O    10.2.2.0/24 [110/65] via 10.4.4.2, 00:00:12, Serial0/3/0</pre>
 <li><b>Honeypot</b> (pot de miel) : machine volontairement non protégée pour attirer et étudier les attaquants.</li>
 </ul>` },
     { h: "Ce que montre Wireshark (TP5)", html: `
-<p>En <b>FTP</b> (et HTTP, Telnet), le login et le mot de passe passent <b>en clair</b> : on les lit dans la capture. En <b>SSH</b>, tout est chiffré. À privilégier : SSH, HTTPS. FTP et Telnet : seulement sur réseau privé. On repère aussi l'ARP, puis la poignée de main TCP (SYN, SYN/ACK, ACK).</p>` }
+<ul>
+<li>Connexion FTP : d'abord <b>ARP</b> (adresse MAC de la VM), puis la poignée de main <b>TCP</b> sur le port 21 : SYN, SYN/ACK, ACK.</li>
+<li>Puis l'échange FTP : bannière <code>220</code>, <code>USER iutinfo</code>, réponse <code>331</code>, <code>PASS …</code>, réponse <code>230</code> (connecté). Login et mot de passe passent <b>en clair</b>, comme en HTTP et Telnet.</li>
+<li>En <b>SSH</b>, tout est chiffré. À privilégier : SSH, HTTPS. FTP et Telnet : seulement sur réseau privé.</li>
+<li>SSH depuis Windows : <b>PuTTYgen</b> (Conversions → Import key → <code>id_rsa_remote</code> → enregistrer en <code>.ppk</code>), puis <b>PuTTY</b> : IP de la VM, Connection → SSH → Auth → Credentials → le <code>.ppk</code>.</li>
+</ul>` }
   ],
   groups: [
     { h: "Activer et consulter", items: [
@@ -243,6 +255,14 @@ O    10.2.2.0/24 [110/65] via 10.4.4.2, 00:00:12, Serial0/3/0</pre>
       { p: "$", c: "sudo ss -tunlp", d: "<code>-t</code> TCP · <code>-u</code> UDP · <code>-n</code> numérique · <code>-l</code> en écoute · <code>-p</code> processus.", q: "Lister avec ss les ports TCP et UDP en écoute, en numérique, avec le processus" },
       { p: "$", c: "sudo lsof -i -P -n", d: "<code>-i</code> fichiers réseau · <code>-P</code> ports en chiffres · <code>-n</code> pas de résolution DNS.", q: "Lister avec lsof les connexions réseau ouvertes sans résolution de noms ni de ports" },
       { p: "$", c: "cat /etc/services", d: "Correspondance nom de service ↔ port/protocole.", q: "Afficher le fichier qui associe les noms de services aux ports" }
+    ]},
+    { h: "Préparer la VM OpenNebula (TP5)", items: [
+      { p: "$", c: "setfacl -Rb ~/.ssh", d: "Supprime les ACL sur le dossier .ssh et son contenu (sinon ssh refuse la clé).", q: "Supprimer les ACL du dossier ~/.ssh et de son contenu" },
+      { p: "#", c: "apt update", d: "Met à jour la liste des paquets (puis <code>apt dist-upgrade</code> et <code>reboot</code>).", q: "Mettre à jour la liste des paquets Debian" },
+      { p: "#", c: "adduser iutinfo sudo", d: "Ajoute l'utilisateur iutinfo (créé avec <code>adduser iutinfo</code>) au groupe sudo.", q: "Ajouter l'utilisateur iutinfo au groupe sudo" },
+      { p: "#", c: "chmod -R go-rwx ~iutinfo/.ssh", d: "Retire tous les droits au groupe et aux autres sur le .ssh d'iutinfo (après y avoir copié <code>authorized_keys</code>).", q: "Retirer tous les droits du groupe et des autres sur ~iutinfo/.ssh, récursivement" },
+      { p: "#", c: "chown -R iutinfo:iutinfo ~iutinfo/.ssh", d: "Donne le dossier .ssh à iutinfo.", q: "Rendre iutinfo propriétaire de son dossier .ssh, récursivement" },
+      { p: "#", c: "apt install vsftpd lighttpd", d: "Serveur FTP (vsftpd) et serveur web (lighttpd) utilisés pour les tests du TP.", q: "Installer le serveur FTP vsftpd et le serveur web lighttpd" }
     ]},
     { h: "SSH par clé (mise en place de la VM)", items: [
       { p: "$", c: "ssh-keygen -t rsa -f ~/.ssh/id_rsa_remote", d: "Crée une paire de clés RSA. La clé publique (<code>.pub</code>) se colle dans OpenNebula.", q: "Créer une paire de clés RSA nommée id_rsa_remote" },
@@ -298,6 +318,13 @@ uid: AtkinsoD</pre>
 <li>Serveur : <code>/etc/ldap/slapd.conf</code> : schémas (<code>include inetorgperson.schema</code>), backend (<code>backend bdb</code>), <code>suffix "dc=iutinfo,dc=test"</code> (racine), <code>rootdn</code> + <code>rootpw</code> (admin), <code>directory "/var/lib/ldap"</code>, ACL (<code>access to … by … write/read/auth/none</code>).</li>
 <li>Client : <code>/etc/ldap/ldap.conf</code> : <code>BASE dc=iutinfo,dc=test</code>, <code>BINDDN uid=toto,ou=People,dc=iutinfo,dc=test</code>, <code>URI ldap://123.234.56.78:389/</code>.</li>
 <li>Outils graphiques : Apache Directory Studio (navigateur LDAP, import LDIF), Thunderbird (carnet d'adresses LDAP).</li>
+</ul>` },
+    { h: "Activités : Apache Directory Studio et Thunderbird", html: `
+<ul>
+<li><b>TP4</b> : serveur dans Docker (<code>bin/start tp4</code>, <code>bin/stop tp4</code>). Dans Apache Directory Studio : nouvelle connexion vers <code>172.18.0.2:389</code> (vérifier avec <code>ip addr show</code>), authentification simple <code>cn=admin,dc=example,dc=org</code> / admin.</li>
+<li>Créer une entrée : clic droit sur le domaine → Nouvelle entrée → classe <code>inetOrgPerson</code> → Ajouter → parent <code>dc=example,dc=org</code> → attributs → confirmer. Vérifier avec <code>ldapsearch</code>.</li>
+<li><b>TP6</b> : sur la VM, <b>désactiver ufw</b> d'abord (<code>sudo ufw disable</code>), sinon le port 389 est bloqué. Connexion <code>cn=admin,dc=iut-info,dc=test</code>, puis clic droit sur <code>dc=iut-info,dc=test</code> → Import → Import LDIF.</li>
+<li><b>Thunderbird</b> : Carnet d'adresses → nouveau carnet LDAP. Nom <code>iut-info.test</code>, nom d'hôte = IP de la VM, nom distinct de la base <code>dc=iut-info,dc=test</code>, utilisateur vide (lecture anonyme).</li>
 </ul>` },
     { h: "Options des commandes ldap*", html: `
 <table class="t">

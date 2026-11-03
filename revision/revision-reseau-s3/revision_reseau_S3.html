@@ -24,6 +24,7 @@
       <a class="tab" href="#quiz" data-v="quiz"><span class="k">03</span>Quiz</a>
       <a class="tab" href="#cartes" data-v="cartes"><span class="k">04</span>Cartes</a>
       <a class="tab" href="#exercices" data-v="exercices"><span class="k">05</span>Exercices</a>
+      <a class="tab" href="#examen" data-v="examen"><span class="k">06</span>Contrôle</a>
     </nav>
   </div>
 </header>
@@ -59,7 +60,7 @@
             <input id="t-input" type="text" spellcheck="false" autocapitalize="off" autocorrect="off" aria-label="Commande">
           </form>
         </div>
-        <p class="term-help">Le terminal vérifie chaque étape de la mission. Une commande valide mais hors mission s'exécute quand même : tu peux explorer.</p>
+        <p class="term-help">Le terminal vérifie chaque étape de la mission. Une commande valide mais hors mission s'exécute quand même : tu peux explorer. Le jour du contrôle, tout se fait sur papier : entraîne-toi aussi à écrire les commandes en entier, sans compter sur <kbd>Tab</kbd>.</p>
       </div>
     </div>
   </section>
@@ -87,19 +88,36 @@
     <div class="layout">
       <aside class="side">
         <div class="eyebrow">Exercices type contrôle</div>
+        <p class="side-note">Au contrôle, c'est sur papier. Écris d'abord ta réponse sur une feuille, sans regarder, puis recopie-la ici pour la faire corriger.</p>
         <div class="side-list" id="e-nav"></div>
       </aside>
       <div id="e-content"></div>
     </div>
   </section>
 
-  <p class="foot">Contenu tiré des TP1 à TP6 du module R3.06 (BUT Informatique, IUT de Reims). Les éléments marqués « complément » ne figurent pas dans les TP. En cas de doute, le sujet du TP fait foi.</p>
+  <!-- CONTRÔLE -->
+  <section class="view" id="v-examen" hidden>
+    <div class="view-head">
+      <h1>Préparer le contrôle</h1>
+      <p>Épreuve sur papier, sans appareil électronique. Prépare ton aide-mémoire, travaille les questions de chaque TP, puis fais un sujet blanc chronométré.</p>
+    </div>
+    <div class="exam-info" id="x-info"></div>
+    <div class="chips x-tabs" id="x-tabs">
+      <button class="chip" data-x="aide">Aide-mémoire A4</button>
+      <button class="chip" data-x="qtp">Questions de TP</button>
+      <button class="chip" data-x="blanc">Sujet blanc</button>
+    </div>
+    <div id="x-root"></div>
+  </section>
+
+  <p class="foot">Contenu tiré des TP1 à TP6 du module R3.06 (BUT Informatique) : tous les TP, éléments de cours et activités pratiques peuvent tomber au contrôle. Les éléments marqués « complément » ne figurent pas dans les TP. En cas de doute, le sujet du TP fait foi.</p>
 </main>
 
 <script src="engine.js"></script>
 <script src="data-fiches.js"></script>
 <script src="data-quiz.js"></script>
 <script src="data-tp.js"></script>
+<script src="data-exam.js"></script>
 <script src="script.js"></script>
 <script src="../../scripts/revision.js"></script>
 </body>

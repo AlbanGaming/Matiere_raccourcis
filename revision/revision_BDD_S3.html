@@ -159,7 +159,7 @@ AND chb_communique IS NOT NULL;</pre>
   <pre>SELECT t.tit_lib ||' '|| c.cli_nom ||' '|| c.cli_prenom
 FROM client c
   JOIN titre t ON t.tit_code = c.tit_code
-WHERE cli_id IN (SELECT cli_id FROM adresse WHERE UPPER(adr_ville)='REIMS')
+WHERE cli_id IN (SELECT cli_id FROM adresse WHERE UPPER(adr_ville)='LYON')
 AND cli_id IN (SELECT cli_id FROM planning WHERE pln_jour BETWEEN ...);</pre>
 
   <div class="card rule">
@@ -208,7 +208,7 @@ WHERE c.agt_id IS NULL   <span class="cm">-- pas chb_numero au hasard : la clé 
 <section class="section" id="priorite">
   <span class="num">03</span>
   <h2>Priorité des conditions — le piège central</h2>
-  <p class="lead">C'est le point que la prof souligne explicitement : où placer une condition qui porte sur la table esclave d'une jointure externe.</p>
+  <p class="lead">C'est un point clé, et un piège classique : où placer une condition qui porte sur la table esclave d'une jointure externe.</p>
 
   <div class="card pitfall">
     <span class="tag">Le piège</span>

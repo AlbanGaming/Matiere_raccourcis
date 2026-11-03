@@ -381,7 +381,7 @@
         '<span class="lvl">' + LVL[c.niveau] + '</span>' + (status ? '<span class="lvl">· ' + status + '</span>' : '') + '</div></a>';
     }).join('');
     sheet.innerHTML = '<p class="crumb">Analyse de contrat</p><h1 class="title">Contrats à analyser</h1>' +
-      '<p class="dek">Les cinq contrats du polycopié (corrigés complétés) et six contrats inédits qui couvrent tout le cours : contrats civils, informatiques et de travail. Pour chacun : la grille du cours à remplir, la nature juridique à cocher, puis le corrigé ligne par ligne.</p>' +
+      '<p class="dek">Les cinq contrats des TD (corrigés complétés) et six contrats inédits qui couvrent tout le cours : contrats civils, informatiques et de travail. Pour chacun : la grille du cours à remplir, la nature juridique à cocher, puis le corrigé ligne par ligne.</p>' +
       '<div class="actions"><a class="btn outline" href="#methode">Relire la méthode</a></div>' +
       '<div class="ctr-grid">' + cards + '</div>';
   }
@@ -403,7 +403,7 @@
     var nature = NATURE_ROWS.map(function (n) {
       return '<div class="n-row" data-n="' + n.key + '"><div class="n-opts">' + n.options.map(function (o) {
         return '<label><input type="radio" name="n-' + n.key + '" value="' + o[0] + '"> ' + o[1] + '</label>';
-      }).join('') + (n.key === 'reglementation' ? '<span class="note">(vu en cours, pas dans la grille du poly)</span>' : '') +
+      }).join('') + (n.key === 'reglementation' ? '<span class="note">(vu en cours, hors grille)</span>' : '') +
       '</div><div class="n-just" hidden>' + c.justif[n.key] + '</div></div>';
     }).join('');
 

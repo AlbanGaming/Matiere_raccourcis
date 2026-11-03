@@ -14,7 +14,7 @@ function copyText(t, btn) {
 }
 
 /* ---------- navigation ---------- */
-const VIEWS = ["fiches", "terminal", "quiz", "cartes", "exercices"];
+const VIEWS = ["fiches", "terminal", "quiz", "cartes", "exercices", "examen"];
 function show(v) {
   if (!VIEWS.includes(v)) v = "fiches";
   $$(".view").forEach((x) => (x.hidden = x.id !== "v-" + v));
@@ -476,10 +476,106 @@ function initEx() {
   $("#e-content").addEventListener("input", (e) => { if (e.target.dataset.k) { const d = store.get("drafts", {}); d[e.target.dataset.k] = e.target.value; store.set("drafts", d); } });
 }
 
+
+/* =================== CONTRÔLE =================== */
+const XS = { tab: store.get("xTab", "aide"), tp: store.get("xTp", "all"), qk: store.get("qtpKnown", {}), sheet: null, timer: null };
+function examInfo() {
+  $("#x-info").innerHTML = `<div class="sc"><b>Programme</b>${esc(EXAM_INFO.scope)}</div><div class="ok"><b>Autorisé</b>${esc(EXAM_INFO.allowed)}</div><div class="no"><b>Interdit</b>${esc(EXAM_INFO.banned)}</div>`;
+}
+function examTabs() { $$("#x-tabs .chip").forEach((c) => c.setAttribute("aria-pressed", String(c.dataset.x === XS.tab))); }
+function renderAide() {
+  $("#x-root").innerHTML = `<div class="panel" style="margin-bottom:16px;max-width:860px">
+    <h2>Modèle d'aide-mémoire</h2>
+    <p>Une proposition de contenu pour ta feuille A4 recto-verso. Elle doit être <b>écrite à la main</b> : recopie-la, ne l'imprime pas. Adapte-la : garde ce que tu ne retiens pas (syntaxe exacte, options, masques, numéros de ports) et retire ce que tu sais déjà par cœur. Le fait de la recopier est déjà une révision.</p>
+    <p class="alts">Conseils : deux colonnes par face, une couleur pour les commandes, une pour les explications. Écris les commandes en entier, avec le mode où elles se tapent.</p>
+  </div>
+  <div class="a4-row"><div><div class="a4-lbl">Recto : Cisco, OSPF, routage</div><div class="a4">${AIDE.recto}</div></div>
+  <div><div class="a4-lbl">Verso : pare-feu, services, LDAP, cours OSPF</div><div class="a4">${AIDE.verso}</div></div></div>`;
+}
+function renderQtp() {
+  const tps = ["all"].concat(Array.from(new Set(QTP.map((q) => q[0]))));
+  const list = QTP.map((q, i) => ({ q, i })).filter((x) => XS.tp === "all" || x.q[0] === XS.tp);
+  const known = list.filter((x) => XS.qk[x.i] === "k").length;
+  $("#x-root").innerHTML = `<div class="chips" id="x-tp" style="margin-bottom:10px">${tps.map((t) => `<button class="chip" data-tp="${t}" aria-pressed="${XS.tp === t}">${t === "all" ? "Tous les TP" : esc(t)}</button>`).join("")}</div>
+  <p class="progress-line">${known} / ${list.length} sues · réponds de tête (ou sur papier) avant d'ouvrir la réponse</p>
+  <div class="qtp-list">${list.map(({ q, i }) => `<details class="qtp" data-i="${i}"><summary><span class="tp">${esc(q[0])}</span><span>${q[1]}</span>${XS.qk[i] ? `<span class="st${XS.qk[i] === "r" ? " r" : ""}">${XS.qk[i] === "k" ? "✓ su" : "à revoir"}</span>` : "<span></span>"}</summary><div class="a">${q[2]}<div class="row"><button class="btn" data-mark="r" data-i="${i}">À revoir</button><button class="btn primary" data-mark="k" data-i="${i}">Je savais</button></div></div></details>`).join("")}</div>`;
+}
+function pick(arr, n) { return shuffle(arr).slice(0, n); }
+function buildSheet(nq) {
+  const byTp = {};
+  QTP.forEach((q, i) => { (byTp[q[0]] = byTp[q[0]] || []).push(i); });
+  let ids = Object.values(byTp).map((a) => a[Math.floor(Math.random() * a.length)]);
+  const rest = shuffle(QTP.map((q, i) => i).filter((i) => !ids.includes(i)));
+  ids = shuffle(ids).slice(0, nq);
+  while (ids.length < nq && rest.length) ids.push(rest.pop());
+  ids.sort((a, b) => a - b);
+  const parts = [];
+  EXERCICES.forEach((x) => x.parts.forEach((p, k) => parts.push({ x, p, k })));
+  const cisco = pick(parts.filter((e) => e.p.kind === "cisco"), 1);
+  const other = pick(parts.filter((e) => e.p.kind !== "cisco"), 1);
+  return { ids, exs: cisco.concat(other), start: Date.now(), done: false, n: nq };
+}
+function renderBlanc() {
+  clearInterval(XS.timer);
+  if (!XS.sheet) {
+    $("#x-root").innerHTML = `<div class="panel setup qbox"><h2>Sujet blanc</h2><p>Un sujet tiré au hasard : des questions de cours couvrant chaque TP, puis deux exercices (une configuration Cisco et un exercice Linux, ufw ou LDAP). Réponds sur une feuille, avec ton aide-mémoire seulement, puis affiche le corrigé et note-toi.</p>
+    <div><div class="lbl">Questions de cours</div><div class="chips" id="x-n">${[6, 8, 12].map((n) => `<button class="chip" data-n="${n}" aria-pressed="${(XS.n || 8) === n}">${n}</button>`).join("")}</div></div>
+    <div class="row"><button class="btn primary" id="x-gen">Générer un sujet</button></div></div>`;
+    return;
+  }
+  const sh = XS.sheet;
+  let html = `<div class="sheet"><div class="sheet-head"><div><div class="eyebrow">R3.06 · sujet blanc</div><h2>Architecture réseau</h2></div><div class="chrono" id="x-chrono">00:00</div></div>
+  <p class="alts">Sur papier · aide-mémoire manuscrit seul autorisé · aucun appareil.</p>
+  <h3>Partie A : questions de cours (${sh.ids.length})</h3><ol class="qs">`;
+  sh.ids.forEach((i, k) => {
+    const q = QTP[i];
+    html += `<li><span class="tp eyebrow">${esc(q[0])}</span> ${q[1]}${sh.done ? `<div class="corr">${q[2]}<br><label><input type="checkbox" data-ok="${k}"> J'avais juste</label></div>` : ""}</li>`;
+  });
+  html += `</ol><h3>Partie B : exercices</h3>`;
+  sh.exs.forEach((e, k) => {
+    const x = e.x;
+    html += `<div class="ex"><b>Exercice ${k + 1} · ${esc(x.title)}</b> <span class="eyebrow">${esc(x.tp)}</span>${x.enonce}`;
+    if (x.table) html += `<table class="t"><tr>${x.table[0].map((c) => `<th>${esc(c)}</th>`).join("")}</tr>${x.table.slice(1).map((r) => `<tr>${r.map((c) => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</table>`;
+    html += `<p><b>À écrire : ${esc(e.p.label)}.</b></p>`;
+    if (sh.done) html += `<div class="corr">${solutionHtml(e.p)}<button class="btn" data-goex="${x.id}">Faire corriger ma réponse dans Exercices</button><br><label><input type="checkbox" data-ok="ex${k}"> Exercice réussi</label></div>`;
+    html += `</div>`;
+  });
+  html += `<div class="row" style="margin-top:18px">${sh.done ? `<span class="progress-line" id="x-score"></span><button class="btn primary" id="x-new">Nouveau sujet</button>` : `<button class="btn primary" id="x-end">J'ai fini : voir le corrigé</button><button class="btn ghost" id="x-new">Autre sujet</button>`}</div></div>`;
+  $("#x-root").innerHTML = html;
+  const tick = () => { const s = Math.floor(((sh.end || Date.now()) - sh.start) / 1000); const el = $("#x-chrono"); if (el) el.textContent = String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0"); };
+  tick();
+  if (!sh.done) XS.timer = setInterval(tick, 1000);
+  updScore();
+}
+function updScore() {
+  const el = $("#x-score"); if (!el) return;
+  const boxes = $$("#x-root input[data-ok]");
+  const ok = boxes.filter((b) => b.checked).length;
+  el.textContent = `Auto-évaluation : ${ok} / ${boxes.length} · temps ${$("#x-chrono").textContent}`;
+}
+function renderExam() {
+  examTabs();
+  if (XS.tab === "qtp") renderQtp(); else if (XS.tab === "blanc") renderBlanc(); else renderAide();
+}
+function initExam() {
+  examInfo(); renderExam();
+  $("#x-tabs").addEventListener("click", (e) => { const b = e.target.closest("[data-x]"); if (!b) return; XS.tab = b.dataset.x; store.set("xTab", XS.tab); renderExam(); });
+  $("#x-root").addEventListener("click", (e) => {
+    const t = e.target.closest("button"); if (!t) return;
+    if (t.dataset.tp) { XS.tp = t.dataset.tp; store.set("xTp", XS.tp); return renderQtp(); }
+    if (t.dataset.mark) { XS.qk[t.dataset.i] = t.dataset.mark; store.set("qtpKnown", XS.qk); const open = +t.dataset.i; renderQtp(); const nx = $(`.qtp[data-i="${open}"]`); if (nx && nx.nextElementSibling) nx.nextElementSibling.open = true; return; }
+    if (t.dataset.n) { XS.n = +t.dataset.n; return renderBlanc(); }
+    if (t.id === "x-gen" || t.id === "x-new") { XS.sheet = t.id === "x-new" && !XS.sheet.done ? buildSheet(XS.sheet.n) : t.id === "x-gen" ? buildSheet(XS.n || 8) : null; return renderBlanc(); }
+    if (t.id === "x-end") { XS.sheet.done = true; XS.sheet.end = Date.now(); renderBlanc(); return window.scrollTo(0, 0); }
+    if (t.dataset.goex) { curEx = t.dataset.goex; store.set("ex", curEx); exNav(); exRender(); location.hash = "exercices"; }
+  });
+  $("#x-root").addEventListener("change", (e) => { if (e.target.dataset.ok !== undefined) updScore(); });
+}
+
 /* ---------- intégration au site : masquer la barre d'outils pendant la saisie ---------- */
 $("#t-input").addEventListener("focus", () => document.body.classList.add("term-focus"));
 $("#t-input").addEventListener("blur", () => document.body.classList.remove("term-focus"));
 
 /* ---------- démarrage ---------- */
-initFiches(); initTerminal(); initQuiz(); initCards(); initEx();
+initFiches(); initTerminal(); initQuiz(); initCards(); initEx(); initExam();
 show(location.hash.slice(1));

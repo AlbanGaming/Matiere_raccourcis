@@ -226,6 +226,46 @@ kbd { font-size: 11.5px; border: 1px solid var(--line); border-bottom-width: 2px
 .qa summary { cursor: pointer; font-weight: 500; }
 .qa .a { margin: 6px 0 2px 16px; color: var(--ink); background: var(--surface-2); padding: 8px 10px; border-radius: 6px; font-size: 14px; }
 .foot { color: var(--muted); font-size: 12.5px; border-top: 1px solid var(--line); padding-top: 14px; margin-top: 40px; }
+/* ---- contrôle ---- */
+.side-note { font-size: 13px; color: var(--muted); margin: 0 0 4px; }
+.exam-info { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 18px; }
+@media (max-width: 860px) { .exam-info { grid-template-columns: minmax(0, 1fr); } }
+.exam-info div { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 12px 14px; font-size: 14px; }
+.exam-info b { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 4px; }
+.exam-info .ok b { color: var(--ok); } .exam-info .no b { color: var(--bad); } .exam-info .sc b { color: var(--accent); }
+.x-tabs { margin-bottom: 16px; }
+.a4-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+@media (max-width: 1000px) { .a4-row { grid-template-columns: minmax(0, 1fr); } }
+.a4 { background: #fffef9; color: #1d2430; border: 1px solid var(--line); box-shadow: 0 2px 10px rgba(0,0,0,.08); aspect-ratio: 210 / 297; padding: 18px 20px; font-size: 11.5px; line-height: 1.38; column-count: 2; column-gap: 16px; column-rule: 1px dotted #c9cfd8; }
+@media (max-width: 700px) { .a4 { aspect-ratio: auto; column-count: 1; font-size: 13px; } }
+.a4-lbl { font: 600 12px var(--f-mono); color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .08em; }
+.a4 h4 { font: 700 12.5px/1.2 var(--f-body); margin: 8px 0 3px; color: #1d4fb8; break-after: avoid; text-transform: none; letter-spacing: 0; }
+.a4 h4:first-child { margin-top: 0; }
+.a4 p { margin: 0 0 4px; }
+.a4 pre { margin: 0 0 4px; font: 10.5px/1.35 var(--f-mono); white-space: pre-wrap; background: none; padding: 0; break-inside: avoid; }
+.a4 code { background: none; padding: 0; font-size: 1em; }
+.a4 table { border-collapse: collapse; font: 10.5px var(--f-mono); margin-bottom: 4px; }
+.a4 td { padding: 0 6px 0 0; }
+.qtp-list { display: flex; flex-direction: column; gap: 8px; max-width: 860px; }
+.qtp { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
+.qtp summary { cursor: pointer; padding: 11px 14px; list-style: none; display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 10px; align-items: baseline; }
+.qtp summary::-webkit-details-marker { display: none; }
+.qtp .tp { font: 500 12px var(--f-mono); color: var(--copper); }
+.qtp .st { font-size: 12px; color: var(--ok); white-space: nowrap; }
+.qtp .st.r { color: var(--warn); }
+.qtp .a { padding: 0 14px 12px 88px; font-size: 14.5px; }
+@media (max-width: 560px) { .qtp summary { grid-template-columns: minmax(0, 1fr) auto; } .qtp .tp { grid-column: 1 / -1; } .qtp .a { padding-left: 14px; } }
+.qtp .a .row { margin-top: 10px; }
+.sheet { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 22px; max-width: 900px; }
+.sheet-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 14px; }
+.chrono { font: 600 22px var(--f-mono); font-variant-numeric: tabular-nums; }
+.sheet ol.qs { padding-left: 1.4em; display: flex; flex-direction: column; gap: 14px; }
+.sheet ol.qs li { padding-left: 4px; }
+.sheet .corr { margin-top: 6px; padding: 8px 10px; background: var(--surface-2); border-radius: 6px; font-size: 14px; }
+.sheet .corr label { display: inline-flex; gap: 6px; align-items: center; font-weight: 600; margin-top: 6px; cursor: pointer; }
+.sheet .ex { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 16px; }
+.sheet .ex .t { margin: 8px 0; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+
 /* La barre d'outils du site (Accueil / thème) se masque pendant la saisie dans le terminal pour ne pas cacher la ligne de commande */
 body.term-focus rv-dock.rv-dock { display: none !important; }

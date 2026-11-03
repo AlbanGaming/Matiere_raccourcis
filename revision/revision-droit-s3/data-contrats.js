@@ -31,7 +31,7 @@ const CONTRATS = [
 {
   id: "bail",
   titre: "Location d'un appartement étudiant",
-  source: "TD n°1 · Exercice 2 (corrigé du prof complété)",
+  source: "TD n°1 · Exercice 2 (corrigé complété)",
   type: "Civil",
   niveau: 1,
   texte: `
@@ -60,8 +60,8 @@ const CONTRATS = [
   },
   nature: { formation: "consensuel", negociation: "adhesion", obligations: "synallagmatique", contrepartie: "onereux", alea: "commutatif", execution: "successive", reglementation: "nomme" },
   justif: {
-    formation: "L'accord des volontés suffit ; l'écrit sert de preuve (corrigé du prof : « l'accord de volonté suffit »).",
-    negociation: "Clauses rédigées par le bailleur et non librement débattues (corrigé du prof). On peut défendre le gré à gré si on montre une négociation, mais rien ne l'indique.",
+    formation: "L'accord des volontés suffit ; l'écrit sert de preuve (« l'accord de volonté suffit »).",
+    negociation: "Clauses rédigées par le bailleur et non librement débattues. On peut défendre le gré à gré si on montre une négociation, mais rien ne l'indique.",
     obligations: "Obligations réciproques : mise à disposition contre loyer.",
     contrepartie: "Chaque partie y trouve son intérêt : logement contre loyer.",
     alea: "Le contenu des obligations est connu dès la signature (loyer fixe, durée fixe).",
@@ -75,7 +75,7 @@ const CONTRATS = [
 {
   id: "pret",
   titre: "Prêt d'argent entre particuliers",
-  source: "TD n°1 · Exercice 3 (grille vide dans le poly)",
+  source: "TD n°1 · Exercice 3 (grille à compléter)",
   type: "Civil",
   niveau: 1,
   texte: `
@@ -107,14 +107,14 @@ const CONTRATS = [
     execution: "Réponse attendue : <strong>instantanée</strong>, le remboursement se fait en une prestation unique à l'échéance. On peut défendre « successive » en insistant sur les intérêts qui courent pendant un an : l'essentiel est de justifier.",
     reglementation: "Le prêt de consommation est réglementé par le Code civil (art. 1892 s.)."
   },
-  critique: "<p>Le poly indiquait « vice possible : vol » : le vol n'est pas un vice du consentement. Les vices sont l'erreur, le dol et la violence.</p><div class='callout complement'><span class='label'>Complément</span>Pour un engagement unilatéral de payer une somme d'argent, l'écrit fait preuve s'il porte la signature du débiteur et la somme <strong>en chiffres et en lettres</strong>, mention écrite par le débiteur lui-même (art. 1376 C. civ.) : la somme figure bien sous les deux formes, encore faut-il que Mme Vatel l'ait écrite de sa main. Le taux d'intérêt conventionnel doit être fixé <strong>par écrit</strong> (art. 1907) et ne pas dépasser le taux d'usure.</div>"
+  critique: "<p>Piège : le vol n'est pas un vice du consentement. Les vices sont l'erreur, le dol et la violence.</p><div class='callout complement'><span class='label'>Complément</span>Pour un engagement unilatéral de payer une somme d'argent, l'écrit fait preuve s'il porte la signature du débiteur et la somme <strong>en chiffres et en lettres</strong>, mention écrite par le débiteur lui-même (art. 1376 C. civ.) : la somme figure bien sous les deux formes, encore faut-il que Mme Vatel l'ait écrite de sa main. Le taux d'intérêt conventionnel doit être fixé <strong>par écrit</strong> (art. 1907) et ne pas dépasser le taux d'usure.</div>"
 },
 
 // ------------------------------------------------------------
 {
   id: "site",
   titre: "Conception du site du restaurant L'Olivier",
-  source: "TD n°1 · Exercice 4 (corrigé du prof corrigé et complété)",
+  source: "TD n°1 · Exercice 4 (corrigé et complété)",
   type: "Informatique",
   niveau: 3,
   texte: `
@@ -158,14 +158,14 @@ const CONTRATS = [
     execution: "Le mieux est <strong>successive</strong> : conception page par page avec visas, livraison, paiement différé, contrat jusqu'au 31 août. « Instantanée » se défend si on considère la livraison d'un ouvrage unique.",
     reglementation: "Contrat d'entreprise (louage d'ouvrage, art. 1710 et 1779 C. civ.) combiné à une cession de droits d'auteur (CPI)."
   },
-  critique: "<p>Le corrigé du poly listait une « clause de résultat » : c'est une notion de droit du travail (objectifs du salarié), elle n'a pas sa place ici. Il écrivait aussi « majeur » pour la capacité : ce sont des personnes morales.</p><p>Point fort à citer : grâce à l'art. 5, le client obtient bien les droits patrimoniaux. Sans cette clause, SIGR, prestataire indépendant, serait restée titulaire des droits (L113-9 CPI ne joue que pour les salariés).</p>"
+  critique: "<p>Pièges : ne pas citer de « clause de résultat », notion de droit du travail (objectifs du salarié) qui n'a pas sa place ici ; ne pas écrire « majeur » pour la capacité, ce sont des personnes morales.</p><p>Point fort à citer : grâce à l'art. 5, le client obtient bien les droits patrimoniaux. Sans cette clause, SIGR, prestataire indépendant, serait restée titulaire des droits (L113-9 CPI ne joue que pour les salariés).</p>"
 },
 
 // ------------------------------------------------------------
 {
   id: "licence",
   titre: "Licence d'utilisation « Initiation à la logistique »",
-  source: "TD n°1 · Exercice 5 (grille vide dans le poly)",
+  source: "TD n°1 · Exercice 5 (grille à compléter)",
   type: "Informatique",
   niveau: 2,
   texte: `
@@ -209,7 +209,7 @@ const CONTRATS = [
 {
   id: "travail",
   titre: "CDI d'assistante chez PERI-LOGIC SERVICES",
-  source: "TD n°2 · Exercice 1 (pas de corrigé dans le poly)",
+  source: "TD n°2 · Exercice 1 ",
   type: "Travail",
   niveau: 3,
   texte: `
@@ -260,7 +260,7 @@ const CONTRATS = [
   niveau: 2,
   texte: `
   <p class="c-title">Contrat de maintenance informatique</p>
-  <p>Entre :<br>La société NETSOIN, SAS au capital de 20 000 €, dont le siège est 8 rue Gambetta, 51100 Reims, inscrite au RCS de Reims, représentée par Mme Claire ROUSSEL, présidente, ci-après « le Prestataire »,<br>Et :<br>Le cabinet MOREAU & ASSOCIÉS, SELARL d'expertise comptable, 14 boulevard de la Paix, 51100 Reims, représenté par M. Julien MOREAU, gérant, ci-après « le Client ».</p>
+  <p>Entre :<br>La société NETSOIN, SAS au capital de 20 000 €, dont le siège est 8 rue Gambetta, 69003 Lyon, inscrite au RCS de Lyon, représentée par Mme Claire ROUSSEL, présidente, ci-après « le Prestataire »,<br>Et :<br>Le cabinet MOREAU & ASSOCIÉS, SELARL d'expertise comptable, 14 boulevard de la Paix, 69003 Lyon, représenté par M. Julien MOREAU, gérant, ci-après « le Client ».</p>
   <p><b>Article 1 – Objet.</b> Le Prestataire assure la maintenance des 12 postes de travail, du serveur de fichiers et de l'imprimante réseau du Client, dont la liste figure en annexe 1.</p>
   <p><b>Article 2 – Maintenance préventive.</b> Le Prestataire effectue une visite trimestrielle sur site : mises à jour du système et de l'antivirus, vérification des sauvegardes, nettoyage du matériel.</p>
   <p><b>Article 3 – Maintenance curative.</b> En cas de panne signalée par téléphone ou par le portail d'assistance, le Prestataire intervient à distance dans un délai de 4 heures ouvrées et, si nécessaire, sur site dans un délai de 8 heures ouvrées. Le Prestataire met en œuvre tous les moyens nécessaires au rétablissement du service.</p>
@@ -271,20 +271,20 @@ const CONTRATS = [
   <p><b>Article 8 – Données.</b> Dans le cadre de ses interventions, le Prestataire peut accéder aux fichiers des clients du cabinet. Il s'engage à n'agir que sur instruction du Client, à ne pas copier ces données, à garantir leur confidentialité et à signaler sans délai toute violation de données.</p>
   <p><b>Article 9 – Responsabilité.</b> La responsabilité du Prestataire, en cas de faute prouvée, est limitée au montant des redevances perçues au cours des douze derniers mois.</p>
   <p><b>Article 10 – Résiliation.</b> En cas de manquement grave de l'une des parties, non réparé dans les 30 jours d'une mise en demeure par lettre recommandée, l'autre partie pourra résilier le contrat de plein droit.</p>
-  <p><b>Article 11 – Litiges.</b> Tout litige relève de la compétence du tribunal de commerce de Reims.</p>
-  <p>Fait à Reims, en deux exemplaires, le 20 janvier N.</p>
+  <p><b>Article 11 – Litiges.</b> Tout litige relève de la compétence du tribunal de commerce de Lyon.</p>
+  <p>Fait à Lyon, en deux exemplaires, le 20 janvier N.</p>
   <p class="c-sign"><span>Pour NETSOIN<br>C. Roussel</span><span>Pour le cabinet Moreau & Associés<br>J. Moreau</span></p>`,
   grille: {
     denomination: "<strong>Contrat de maintenance informatique</strong> (prestation de services) : NETSOIN assure la maintenance préventive et curative du parc du cabinet contre une redevance mensuelle de 180 € HT, pour un an renouvelable.",
-    conclusion: "À Reims, le 20 janvier N ; prise d'effet le 1er février N pour un an.",
+    conclusion: "À Lyon, le 20 janvier N ; prise d'effet le 1er février N pour un an.",
     forme: "Écrit <strong>sous signature privée</strong>, en <strong>deux exemplaires</strong> (contrat synallagmatique : un par partie), avec annexes.",
-    parties: "<strong>Prestataire (mainteneur)</strong> : NETSOIN SAS, 8 rue Gambetta à Reims, représentée par Mme Roussel, présidente.<br><strong>Client</strong> : cabinet Moreau & Associés, SELARL, 14 boulevard de la Paix à Reims, représenté par M. Moreau, gérant.",
+    parties: "<strong>Prestataire (mainteneur)</strong> : NETSOIN SAS, 8 rue Gambetta à Lyon, représentée par Mme Roussel, présidente.<br><strong>Client</strong> : cabinet Moreau & Associés, SELARL, 14 boulevard de la Paix à Lyon, représenté par M. Moreau, gérant.",
     capacite: "Deux <strong>personnes morales</strong>, capacité limitée à leur objet, représentées par leurs dirigeants (présidente de SAS, gérant de SELARL) qui ont le pouvoir de les engager.",
     consentement: "Consentement libre et éclairé, signatures des représentants.<br>Vices possibles : <strong>erreur</strong> sur l'étendue de la prestation (le client croit les pièces incluses) ; <strong>dol</strong> si NETSOIN ment sur ses certifications ou délais réels ; <strong>violence</strong> économique peu probable.",
     objet: "Prestataire : maintenir en état de fonctionnement 12 postes, un serveur et une imprimante (préventif + curatif + matériel de secours). Client : payer 180 € HT / mois et les pièces sur devis. Objet déterminé (annexe 1) et licite.",
     cause: "Client : disposer d'un parc fiable pour son activité. Prestataire : percevoir une redevance régulière. Cause <strong>licite</strong>.",
     obligations: "<strong>Mainteneur</strong> : obligation <strong>préventive et curative</strong> ; <strong>obligation de moyens</strong> (« tous les moyens nécessaires ») ; obligation de conseil.<br><strong>Client</strong> : <strong>payer la redevance</strong>, signaler les pannes, laisser l'accès au matériel, ne pas intervenir lui-même.",
-    clauses: "<ul><li>Art. 2-3 : <strong>délais d'intervention</strong> (4 h à distance, 8 h sur site).</li><li>Art. 4 : <strong>clause de secours</strong> (poste de remplacement au-delà de 24 h).</li><li>Art. 5 : <strong>clause d'exclusion</strong> de garantie (intervention du client, sinistre, logiciels non autorisés).</li><li>Art. 6 : <strong>prix forfaitaire</strong> + pièces sur devis ; remise pour engagement.</li><li>Art. 7 : <strong>durée d'un an</strong> et <strong>tacite reconduction</strong>, préavis de 2 mois.</li><li>Art. 8 : <strong>confidentialité et protection des données</strong> (le prestataire agit comme sous-traitant au sens du RGPD).</li><li>Art. 9 : <strong>clause limitative de responsabilité</strong> (plafond d'un an de redevances), valable entre professionnels si elle ne vide pas l'obligation essentielle.</li><li>Art. 10 : <strong>clause résolutoire</strong> (résiliation de plein droit après mise en demeure de 30 jours).</li><li>Art. 11 : <strong>clause attributive de juridiction</strong> (tribunal de commerce de Reims).</li></ul>"
+    clauses: "<ul><li>Art. 2-3 : <strong>délais d'intervention</strong> (4 h à distance, 8 h sur site).</li><li>Art. 4 : <strong>clause de secours</strong> (poste de remplacement au-delà de 24 h).</li><li>Art. 5 : <strong>clause d'exclusion</strong> de garantie (intervention du client, sinistre, logiciels non autorisés).</li><li>Art. 6 : <strong>prix forfaitaire</strong> + pièces sur devis ; remise pour engagement.</li><li>Art. 7 : <strong>durée d'un an</strong> et <strong>tacite reconduction</strong>, préavis de 2 mois.</li><li>Art. 8 : <strong>confidentialité et protection des données</strong> (le prestataire agit comme sous-traitant au sens du RGPD).</li><li>Art. 9 : <strong>clause limitative de responsabilité</strong> (plafond d'un an de redevances), valable entre professionnels si elle ne vide pas l'obligation essentielle.</li><li>Art. 10 : <strong>clause résolutoire</strong> (résiliation de plein droit après mise en demeure de 30 jours).</li><li>Art. 11 : <strong>clause attributive de juridiction</strong> (tribunal de commerce de Lyon).</li></ul>"
   },
   nature: { formation: "consensuel", negociation: "gre", obligations: "synallagmatique", contrepartie: "onereux", alea: "commutatif", execution: "successive", reglementation: "nomme" },
   justif: {
@@ -308,19 +308,19 @@ const CONTRATS = [
   niveau: 2,
   texte: `
   <p class="c-title">Attestation de vente d'un ordinateur portable d'occasion</p>
-  <p>Je soussigné, Lucas MARTIN, 19 ans, demeurant 5 rue Chanzy, 51100 Reims, vendeur,</p>
-  <p>déclare vendre à Inès DUBOIS, 17 ans, lycéenne, demeurant 22 avenue de Champagne, 51200 Épernay, acheteuse,</p>
+  <p>Je soussigné, Lucas MARTIN, 19 ans, demeurant 5 rue Chanzy, 69003 Lyon, vendeur,</p>
+  <p>déclare vendre à Inès DUBOIS, 17 ans, lycéenne, demeurant 22 avenue des Tilleuls, 69100 Villeurbanne, acheteuse,</p>
   <p>un ordinateur portable de jeu de marque Astra, modèle G15, numéro de série AG15-77K3012, avec son chargeur et sa housse.</p>
   <p>Annonce en ligne d'origine : « PC gamer comme neuf, batterie neuve changée le mois dernier, 700 € ». Après discussion, le prix est fixé à 650 € (six cent cinquante euros), payé ce jour en espèces. L'ordinateur est remis ce jour à l'acheteuse.</p>
   <p>L'ordinateur est vendu en l'état, sans garantie. L'acheteuse déclare l'avoir essayé et ne pourra exercer aucun recours contre le vendeur.</p>
-  <p>Fait à Reims, le 14 septembre N, en deux exemplaires.</p>
+  <p>Fait à Lyon, le 14 septembre N, en deux exemplaires.</p>
   <p class="c-sign"><span>Le vendeur<br>L. Martin</span><span>L'acheteuse<br>I. Dubois</span></p>
   <p class="c-note">Information complémentaire : la batterie d'origine n'a jamais été changée et ne tient que 20 minutes. Lucas le savait et a branché l'ordinateur sur secteur pendant l'essai.</p>`,
   grille: {
     denomination: "<strong>Contrat de vente</strong> d'un bien meuble d'occasion entre particuliers : Lucas transfère la propriété d'un PC portable à Inès contre 650 €.",
-    conclusion: "À Reims, le 14 septembre N (paiement et remise le même jour).",
+    conclusion: "À Lyon, le 14 septembre N (paiement et remise le même jour).",
     forme: "Écrit <strong>sous signature privée</strong> en deux exemplaires. La vente de meubles n'exige aucun écrit : il sert de preuve.",
-    parties: "<strong>Vendeur</strong> : Lucas Martin, 19 ans, 5 rue Chanzy à Reims.<br><strong>Acheteuse</strong> : Inès Dubois, 17 ans, 22 avenue de Champagne à Épernay.",
+    parties: "<strong>Vendeur</strong> : Lucas Martin, 19 ans, 5 rue Chanzy à Lyon.<br><strong>Acheteuse</strong> : Inès Dubois, 17 ans, 22 avenue des Tilleuls à Villeurbanne.",
     capacite: "Lucas : majeur, capable. <strong>Inès : mineure non émancipée, donc incapable de contracter</strong> (art. 1146). Elle peut seulement faire seule les <strong>actes courants</strong> autorisés par l'usage, à des conditions normales (art. 1148). Un achat de 650 € n'est probablement pas un acte courant : la vente est exposée à la <strong>nullité relative</strong>, que seule Inès (ou ses représentants légaux) peut demander.",
     consentement: "Signatures et mention de l'essai, mais le consentement d'Inès est <strong>vicié</strong> : <strong>dol</strong> (mensonge sur la « batterie neuve » et mise en scène pendant l'essai, branché sur secteur : manœuvre intentionnelle et déterminante) et <strong>réticence dolosive</strong> (art. 1137). L'<strong>erreur</strong> sur une qualité essentielle (autonomie) est aussi possible. Pas de violence.",
     objet: "Vendeur : transférer la propriété du PC (corps certain identifié par son numéro de série) et le livrer. Acheteuse : payer 650 €. Objet existant, déterminé, licite.",
@@ -350,23 +350,23 @@ const CONTRATS = [
   niveau: 3,
   texte: `
   <p class="c-title">Contrat de travail à durée déterminée</p>
-  <p>Entre la société DATAFORGE, SAS, 40 rue de Vesle, 51100 Reims, représentée par M. Pierre AUBRY, directeur des ressources humaines, ci-après « l'employeur »,<br>et M. Thomas LEROY, né le 3 mars N-23, demeurant 9 rue Hincmar, 51100 Reims, ci-après « le salarié »,</p>
+  <p>Entre la société DATAFORGE, SAS, 40 rue de la Gare, 69003 Lyon, représentée par M. Pierre AUBRY, directeur des ressources humaines, ci-après « l'employeur »,<br>et M. Thomas LEROY, né le 3 mars N-23, demeurant 9 rue Victor-Hugo, 69003 Lyon, ci-après « le salarié »,</p>
   <p><b>Article 1 – Motif.</b> Le présent contrat est conclu pour faire face à un accroissement temporaire d'activité lié au projet de migration du client Vitis vers le cloud. Le salarié pourra également être affecté au remplacement des développeurs absents pour cause de grève.</p>
   <p><b>Article 2 – Durée.</b> Le contrat débute le 1er octobre N pour une durée de 20 mois. Il pourra être renouvelé trois fois.</p>
   <p><b>Article 3 – Période d'essai.</b> Le contrat comporte une période d'essai de deux mois.</p>
-  <p><b>Article 4 – Fonctions.</b> Le salarié est engagé en qualité de développeur back-end, statut ETAM, au siège de la société à Reims, pour 35 heures par semaine.</p>
+  <p><b>Article 4 – Fonctions.</b> Le salarié est engagé en qualité de développeur back-end, statut ETAM, au siège de la société à Lyon, pour 35 heures par semaine.</p>
   <p><b>Article 5 – Rémunération.</b> Salaire brut mensuel de 2 400 €. Le salarié étant jeune diplômé, aucune indemnité de fin de contrat ne lui sera due.</p>
   <p><b>Article 6 – Rupture.</b> L'employeur pourra mettre fin au contrat à tout moment, sous réserve d'un préavis de quinze jours.</p>
   <p><b>Article 7 – Formation.</b> L'employeur finance une certification cloud d'un coût de 3 000 €. Si le salarié quitte l'entreprise de sa propre initiative dans les 24 mois suivant la certification, il remboursera l'intégralité de ce montant.</p>
   <p><b>Article 8 – Propriété intellectuelle.</b> Les logiciels et documentations développés par le salarié dans l'exercice de ses fonctions appartiennent à l'employeur.</p>
   <p><b>Article 9 – Convention collective.</b> Le contrat est soumis à la convention collective Syntec.</p>
-  <p>Fait à Reims, en deux exemplaires, le 25 septembre N.</p>
+  <p>Fait à Lyon, en deux exemplaires, le 25 septembre N.</p>
   <p class="c-sign"><span>L'employeur<br>P. Aubry</span><span>Le salarié<br>T. Leroy</span></p>`,
   grille: {
     denomination: "<strong>Contrat de travail à durée déterminée</strong> pour accroissement temporaire d'activité : M. Leroy est engagé comme développeur back-end pour 20 mois, contre 2 400 € bruts mensuels.",
-    conclusion: "À Reims, le 25 septembre N ; début le 1er octobre N.",
+    conclusion: "À Lyon, le 25 septembre N ; début le 1er octobre N.",
     forme: "<strong>Écrit sous signature privée</strong> en deux exemplaires : l'écrit est <strong>obligatoire</strong> pour un CDD (sinon requalification en CDI) et doit indiquer le motif précis.",
-    parties: "<strong>Employeur</strong> : DATAFORGE SAS, 40 rue de Vesle à Reims, représentée par M. Aubry, DRH.<br><strong>Salarié</strong> : M. Thomas Leroy, 23 ans, 9 rue Hincmar à Reims.",
+    parties: "<strong>Employeur</strong> : DATAFORGE SAS, 40 rue de la Gare à Lyon, représentée par M. Aubry, DRH.<br><strong>Salarié</strong> : M. Thomas Leroy, 23 ans, 9 rue Victor-Hugo à Lyon.",
     capacite: "Employeur : <strong>personne morale</strong> représentée par son DRH (qui doit avoir délégation pour embaucher). Salarié : <strong>personne physique majeure capable</strong>.",
     consentement: "Consentement libre et éclairé, signatures.<br>Vices possibles : <strong>erreur</strong> (sur la nature du poste ou la durée) ; <strong>dol</strong> (fausse promesse d'embauche en CDI, faux diplôme du salarié) ; <strong>violence</strong> morale (jeune diplômé pressé d'accepter des clauses illicites).",
     objet: "Salarié : développer pour le projet de migration. Employeur : verser 2 400 € bruts et fournir le travail. Objet licite, sauf l'affectation au remplacement de grévistes.",
@@ -396,7 +396,7 @@ const CONTRATS = [
   niveau: 3,
   texte: `
   <p class="c-title">Contrat de développement d'une application mobile</p>
-  <p>Entre :<br>M. Karim BENALI, développeur indépendant (entrepreneur individuel), exerçant sous le nom commercial « PixelNord », 3 rue de Talleyrand, 51100 Reims, ci-après « le Prestataire »,<br>Et :<br>L'association REIMS GRIMPE (loi 1901), 17 rue du Barbâtre, 51100 Reims, représentée par Mme Léa FONTAINE, présidente, ci-après « le Club ».</p>
+  <p>Entre :<br>M. Karim BENALI, développeur indépendant (entrepreneur individuel), exerçant sous le nom commercial « PixelNord », 3 rue de la Liberté, 69003 Lyon, ci-après « le Prestataire »,<br>Et :<br>L'association LYON GRIMPE (loi 1901), 17 rue des Écoles, 69003 Lyon, représentée par Mme Léa FONTAINE, présidente, ci-après « le Club ».</p>
   <p><b>Article 1 – Objet.</b> Le Prestataire développe pour le Club une application mobile Android et iOS permettant aux adhérents de s'inscrire, de réserver des créneaux et de déposer leur certificat médical.</p>
   <p><b>Article 2 – Cahier des charges et conseil.</b> Le Prestataire a analysé les besoins du Club, décrits en annexe. Il s'engage à conseiller le Club sur les choix techniques et à l'alerter de toute difficulté prévisible.</p>
   <p><b>Article 3 – Livraison.</b> L'application sera livrée au plus tard le 15 décembre N. Le Prestataire garantit une application exempte de tout bug.</p>
@@ -405,13 +405,13 @@ const CONTRATS = [
   <p><b>Article 6 – Données des adhérents.</b> Les données (nom, prénom, date de naissance, téléphone, certificat médical) seront hébergées sur le serveur personnel du Prestataire, sans limitation de durée. Le Prestataire pourra les utiliser pour présenter ses réalisations à d'autres clients.</p>
   <p><b>Article 7 – Maintenance.</b> Six mois de maintenance corrective sont inclus à compter de la recette.</p>
   <p><b>Article 8 – Litiges.</b> Seuls les tribunaux de Paris seront compétents.</p>
-  <p>Fait à Reims, le 2 septembre N, en deux exemplaires.</p>
+  <p>Fait à Lyon, le 2 septembre N, en deux exemplaires.</p>
   <p class="c-sign"><span>Le Prestataire<br>K. Benali</span><span>Pour le Club<br>L. Fontaine</span></p>`,
   grille: {
     denomination: "<strong>Contrat de conception (développement) de logiciel</strong>, contrat d'entreprise : un développeur indépendant réalise une application mobile pour un club, contre 4 500 € TTC, avec 6 mois de maintenance et une simple licence d'usage.",
-    conclusion: "À Reims, le 2 septembre N ; livraison au plus tard le 15 décembre N.",
+    conclusion: "À Lyon, le 2 septembre N ; livraison au plus tard le 15 décembre N.",
     forme: "Écrit <strong>sous signature privée</strong> en deux exemplaires, avec annexe (cahier des charges).",
-    parties: "<strong>Prestataire</strong> : M. Karim Benali, entrepreneur individuel (nom commercial PixelNord), 3 rue de Talleyrand à Reims.<br><strong>Client</strong> : association Reims Grimpe, 17 rue du Barbâtre à Reims, représentée par sa présidente Mme Fontaine.",
+    parties: "<strong>Prestataire</strong> : M. Karim Benali, entrepreneur individuel (nom commercial PixelNord), 3 rue de la Liberté à Lyon.<br><strong>Client</strong> : association Lyon Grimpe, 17 rue des Écoles à Lyon, représentée par sa présidente Mme Fontaine.",
     capacite: "M. Benali : <strong>personne physique</strong> majeure capable (un entrepreneur individuel n'est pas une personne morale). Le club : <strong>personne morale</strong> (association loi 1901), capacité limitée à son objet, représentée par sa présidente.",
     consentement: "Consentement libre et éclairé, signatures.<br>Vices possibles : <strong>erreur</strong> du club qui croit devenir propriétaire de l'application ; <strong>dol</strong> si le prestataire cache qu'il réutilisera les données ; <strong>violence</strong> peu probable.",
     objet: "Prestataire : développer et livrer l'application conforme au cahier des charges, conseiller, maintenir 6 mois. Club : payer 4 500 € en trois fois. Objet déterminé (annexe) ; l'art. 6 est illicite.",
@@ -485,18 +485,18 @@ const CONTRATS = [
   niveau: 1,
   texte: `
   <p class="c-title">Convention de prêt de matériel</p>
-  <p>Le Bureau des étudiants informatique de l'IUT de Reims, association loi 1901, rue des Crayères, 51100 Reims, représenté par son président M. Nathan GIRARD, ci-après « le prêteur »,</p>
-  <p>prête gratuitement à M. Hugo LEFÈVRE, étudiant, 21 ans, 30 rue de Cernay, 51100 Reims, ci-après « l'emprunteur »,</p>
+  <p>Le Bureau des étudiants informatique de l'IUT, association loi 1901, rue des Lilas, 69003 Lyon, représenté par son président M. Nathan GIRARD, ci-après « le prêteur »,</p>
+  <p>prête gratuitement à M. Hugo LEFÈVRE, étudiant, 21 ans, 30 rue des Peupliers, 69003 Lyon, ci-après « l'emprunteur »,</p>
   <p>un vidéoprojecteur de marque Lumio, modèle X300, n° de série LX300-5521, avec sa télécommande et son câble HDMI, remis ce jour à l'emprunteur.</p>
   <p>L'emprunteur s'engage à utiliser le matériel pour la soirée jeux de son association de quartier uniquement, à ne pas le prêter à un tiers, à en prendre soin et à le restituer en bon état au local du BDE le lundi 18 novembre N à 9 h au plus tard.</p>
   <p>Toute dégradation ou perte sera à la charge de l'emprunteur, qui remboursera la réparation ou la valeur à neuf du matériel (650 €).</p>
-  <p>Fait à Reims, le vendredi 15 novembre N.</p>
+  <p>Fait à Lyon, le vendredi 15 novembre N.</p>
   <p class="c-sign"><span>Le prêteur<br>N. Girard</span><span>L'emprunteur<br>H. Lefèvre</span></p>`,
   grille: {
     denomination: "<strong>Contrat de prêt à usage</strong> (commodat) : le BDE remet gratuitement un vidéoprojecteur à M. Lefèvre, qui doit s'en servir pour l'usage prévu et le rendre le lundi.",
-    conclusion: "À Reims, le vendredi 15 novembre N ; restitution le lundi 18 novembre N à 9 h.",
+    conclusion: "À Lyon, le vendredi 15 novembre N ; restitution le lundi 18 novembre N à 9 h.",
     forme: "Écrit <strong>sous signature privée</strong>, qui sert de preuve (description précise du matériel).",
-    parties: "<strong>Prêteur</strong> : BDE informatique de l'IUT de Reims (association), représenté par son président M. Girard.<br><strong>Emprunteur</strong> : M. Hugo Lefèvre, 21 ans, 30 rue de Cernay à Reims.",
+    parties: "<strong>Prêteur</strong> : BDE informatique de l'IUT (association), représenté par son président M. Girard.<br><strong>Emprunteur</strong> : M. Hugo Lefèvre, 21 ans, 30 rue des Peupliers à Lyon.",
     capacite: "BDE : <strong>personne morale</strong> (association), représentée par son président ; le prêt doit entrer dans son objet. M. Lefèvre : <strong>majeur capable</strong>.",
     consentement: "Consentement libre et éclairé, signatures.<br>Vices possibles : <strong>erreur</strong> sur l'état du matériel ; <strong>dol</strong> si l'emprunteur ment sur l'usage prévu ; violence improbable.",
     objet: "Prêteur : remettre l'usage du vidéoprojecteur (corps certain identifié). Emprunteur : l'utiliser conformément à l'usage convenu, le conserver et le <strong>restituer</strong>. Objet déterminé et licite.",
@@ -555,8 +555,7 @@ const CAS = [
   <tr><td>2. Téléopératrice</td><td>Pas de faute grave, pas de cause réelle et sérieuse</td><td>Réaction « ferme mais modérée », justifiée par l'attitude agressive du client</td></tr>
   <tr><td>3. Hôtesse d'accueil</td><td><strong>Faute lourde</strong></td><td>Détournement délibéré de la clientèle au profit de sa propre société pendant son contrat : intention de nuire</td></tr>
   <tr><td>4. Assistante comptable</td><td>Pas de cause réelle et sérieuse</td><td>Formation insuffisante pour les fonctions réellement confiées : l'insuffisance n'est pas imputable à la salariée</td></tr>
-  <tr><td>5. Technicienne</td><td><strong>Faute grave</strong> (insubordination)</td><td>Refus d'une affectation correspondant à ses fonctions et interruption d'une formation mise en place par l'employeur</td></tr></table>
-  <p>Le poly écrivait « fraude lourde » pour le cas 3 : il s'agit d'une <strong>faute lourde</strong>.</p>`
+  <tr><td>5. Technicienne</td><td><strong>Faute grave</strong> (insubordination)</td><td>Refus d'une affectation correspondant à ses fonctions et interruption d'une formation mise en place par l'employeur</td></tr></table>`
 },
 {
   id: "nonconc",
@@ -579,8 +578,7 @@ const CAS = [
   correction: `<p><b>1. Démarches.</b> Exercer son <strong>droit d'accès</strong> (loi de 1978, RGPD) pour connaître les informations inscrites : le FICP est tenu par la <strong>Banque de France</strong>, consultable sur place ou par courrier avec une pièce d'identité. Puis exercer son <strong>droit de rectification / d'effacement</strong> auprès de l'<strong>établissement qui a déclaré l'incident</strong> : après remboursement intégral, il doit demander la radiation. Garder une copie de la demande (lettre recommandée).</p>
   <p><b>2. Recours.</b> Sans réponse ou en cas de refus, elle peut <strong>saisir la CNIL</strong> (plainte en ligne, rubrique « Banque et crédit »), qui interviendra auprès de la banque, pourra la mettre en demeure et prononcer une <strong>sanction</strong>. Elle peut enfin saisir le <strong>tribunal</strong> pour obtenir la radiation et des dommages-intérêts pour le préjudice (crédit refusé).</p>
   <p>Arguments : principe de <strong>conservation limitée</strong> et d'<strong>exactitude</strong> des données ; une inscription maintenue après régularisation, six ans après l'incident, est abusive.</p>
-  <div class="callout complement"><span class="label">Complément</span>L'inscription au FICP dure au maximum <strong>5 ans</strong> et doit être radiée dès le remboursement intégral déclaré par l'établissement.</div>
-  <p>Le poly parle de « Mme Dupont » dans la correction : il s'agit de Mme Durand.</p>`
+  <div class="callout complement"><span class="label">Complément</span>L'inscription au FICP dure au maximum <strong>5 ans</strong> et doit être radiée dès le remboursement intégral déclaré par l'établissement.</div>`
 },
 {
   id: "applis",
@@ -613,13 +611,13 @@ const CAS = [
 {
   id: "dailymotion",
   titre: "Omar et Fred c. Dailymotion : hébergeur ou éditeur ?",
-  source: "Poly · Exemple de thème et analyse (TGI Paris, 15 avril 2008)",
+  source: "Cours · Exemple de thème et analyse (TGI Paris, 15 avril 2008)",
   ch: "ch3a",
   enonce: `<p>Des vidéos du spectacle d'Omar et Fred (DVD produit par Korokoro et Cocojet) sont mises en ligne sans autorisation par des internautes sur Dailymotion. Les artistes, leur coauteur et les producteurs assignent Dailymotion pour contrefaçon et atteinte au droit à l'image et au nom, en la présentant comme <strong>éditeur</strong> (réencodage, taille imposée des fichiers, architecture du site, publicité). Dailymotion revendique la qualité d'<strong>hébergeur</strong>.</p>
   <p><b>Questions</b> : Quel est le texte applicable ? Quelle différence entre éditeur et hébergeur ? Quelle décision ?</p>`,
   correction: `<p><b>Texte</b> : la <strong>LCEN du 21 juin 2004</strong>, art. 6.</p>
   <p><b>Éditeur</b> : « la personne qui détermine les contenus qui doivent être mis à la disposition du public » : responsable des contenus. <b>Hébergeur</b> : assure le stockage des contenus fournis par les utilisateurs ; pas d'obligation générale de surveillance ; responsable seulement s'il avait connaissance du caractère manifestement illicite et n'a pas agi promptement.</p>
   <p><b>Décision</b> : le TGI de Paris juge que Dailymotion est <strong>hébergeur</strong> (les choix techniques ne font pas de lui un éditeur) et n'a pas engagé sa responsabilité : les demandes, mal dirigées, sont rejetées. Il lui enjoint toutefois de cesser toute rediffusion des contenus du DVD qui lui ont été communiqués. Les atteintes au droit à l'image et au nom sont le fait des internautes.</p>
-  <p>Autres droits invoqués : droits patrimoniaux d'auteur (vie + 70 ans), droit de reproduction, droits voisins des artistes-interprètes (50 ans selon le poly), droits de la personnalité. L'adhésion à la Sacem ne prive pas les auteurs de leur droit d'agir si la Sacem n'agit pas, ni de leur droit moral.</p>`
+  <p>Autres droits invoqués : droits patrimoniaux d'auteur (vie + 70 ans), droit de reproduction, droits voisins des artistes-interprètes (50 ans selon le cours), droits de la personnalité. L'adhésion à la Sacem ne prive pas les auteurs de leur droit d'agir si la Sacem n'agit pas, ni de leur droit moral.</p>`
 }
 ];

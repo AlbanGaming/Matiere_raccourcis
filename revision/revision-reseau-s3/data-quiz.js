@@ -47,6 +47,10 @@ const QCM = [
 ["ospf", "Faut-il une table de routage pour échanger entre deux réseaux directement connectés au même routeur ?", ["Non", "Oui, une route statique par réseau", "Oui, OSPF obligatoire", "Seulement en IPv6"], "Les réseaux directement connectés sont connus sans apprentissage."],
 ["ospf", "Lesquels sont des protocoles sans classe (classless) ?", ["RIPv2, EIGRP, OSPF", "RIPv1, IGRP", "ARP, ICMP", "HTTP, DNS"], "Par classe : RIPv1, IGRP."],
 ["ospf", "Sur une liaison série point à point, quel état affiche <code>show ip ospf neighbor</code> ?", ["FULL/ -", "FULL/DR", "2WAY/DROTHER", "DOWN"], "Pas d'élection de DR sur un lien point à point."],
+["linux", "Dans Wireshark, quelles couches voit-on pour un ping (TP1) ?", ["Ethernet II, IPv4, ICMP", "Ethernet II, IPv4, TCP, ICMP", "IPv4, UDP, ICMP", "Ethernet II, ARP, TCP"], "ICMP est porté directement par IP : pas de couche transport."],
+["linux", "Quel type ICMP correspond à la requête d'un ping ?", ["Echo request (type 8)", "Echo reply (type 0)", "Destination unreachable (type 3)", "Time exceeded (type 11)"], "La réponse est un Echo reply, type 0."],
+["linux", "Que peut-on voir dans Wireshark juste avant le premier ping vers une machine du réseau local ?", ["Une requête ARP pour trouver son adresse MAC", "Une requête DNS", "Une poignée de main TCP", "Un paquet OSPF Hello"], "Il faut l'adresse MAC de la destination pour construire la trame Ethernet."],
+["linux", "Pourquoi faut-il noter toutes ses commandes pendant les TP Docker ?", ["Les machines sont réinitialisées à chaque lancement de la simulation", "Docker efface l'historique bash toutes les minutes", "Le compte rendu doit être manuscrit", "Les commandes ne s'affichent pas"], "bin/start tpX recrée des machines vierges."],
 // ---- Linux
 ["linux", "Sur Routeur 1 (TP2), quelle commande ajoute la route vers 172.16.3.0/24 ?", ["ip route add 172.16.3.0/24 via 172.16.2.128", "ip route add 172.16.3.0/24 via 172.16.2.254", "route add 172.16.3.0 gw 172.16.3.254", "ip route 172.16.3.0 255.255.255.0 172.16.2.128"], "Le prochain routeur est Routeur 2, sur le réseau commun 172.16.2.0/24 : 172.16.2.128."],
 ["linux", "Sur PC 1, quelle passerelle par défaut faut-il mettre ?", ["172.16.1.254", "172.16.1.1", "172.16.2.254", "172.16.2.128"], "Le routeur directement relié au réseau du PC."],
@@ -81,6 +85,12 @@ const QCM = [
 ["firewall", "Quel port utilise IMAPS ?", ["993", "143", "465", "53"], "465 = SMTP sécurisé, 53 = DNS."],
 ["firewall", "Quelles attaques sont les plus fréquentes selon le cours ?", ["Les attaques internes", "Les attaques externes", "Les attaques physiques", "Les attaques par honeypot"], "Le facteur humain est souvent prépondérant."],
 ["firewall", "Dans quel fichier trouve-t-on la correspondance nom de service ↔ port ?", ["/etc/services", "/etc/hosts", "/etc/ufw.conf", "/etc/ports"], "C'est ce qui permet d'écrire sudo ufw allow http."],
+["firewall", "Dans une connexion FTP capturée, dans quel ordre voit-on les échanges ?", ["ARP, puis TCP SYN / SYN-ACK / ACK, puis USER et PASS", "TCP SYN, puis ARP, puis USER", "USER et PASS, puis TCP SYN", "DNS, puis SSH, puis FTP"], "ARP pour la MAC, poignée de main TCP, puis les commandes FTP en clair."],
+["firewall", "Quel code FTP indique une connexion réussie après PASS ?", ["230", "331", "220", "404"], "220 = bannière d'accueil, 331 = mot de passe demandé, 230 = connecté."],
+["firewall", "Pour utiliser sous PuTTY la clé créée avec ssh-keygen, il faut…", ["la convertir en .ppk avec PuTTYgen (Conversions → Import key)", "la renommer en .pem", "la copier dans authorized_keys", "rien, PuTTY lit le format OpenSSH"], "Ensuite : Connection → SSH → Auth → Credentials."],
+["firewall", "À quoi sert <code>setfacl -Rb ~/.ssh</code> dans le TP5 ?", ["Supprimer les ACL du dossier .ssh et de son contenu", "Créer une paire de clés", "Donner les droits à iutinfo", "Bloquer le port 22"], "Option -R récursif, -b supprime toutes les entrées ACL étendues."],
+["firewall", "Quelle commande donne à iutinfo la propriété de son dossier .ssh ?", ["chown -R iutinfo:iutinfo ~iutinfo/.ssh", "chmod -R iutinfo ~iutinfo/.ssh", "adduser iutinfo .ssh", "setfacl -R iutinfo ~/.ssh"], "chmod -R go-rwx retire ensuite les droits au groupe et aux autres."],
+["firewall", "Quels services ont été installés sur la VM pour les tests du TP5 ?", ["vsftpd (FTP) et lighttpd (web)", "Apache et MySQL", "slapd et ldap-utils", "Squid et Snort"], "Ports 21 et 80, plus 22 pour ssh."],
 // ---- LDAP
 ["ldap", "Que signifie LDAP ?", ["Lightweight Directory Access Protocol", "Local Data Access Protocol", "Linked Directory Application Protocol", "Lightweight Domain Authentication Process"], "Protocole d'accès à un annuaire."],
 ["ldap", "Qu'est-ce que le DN ?", ["L'identifiant unique d'une entrée : son chemin dans l'arbre", "Le nom du serveur DNS", "Le mot de passe admin", "Le nom de la classe d'objet"], "Ex. cn=Harold Henson,ou=Product Testing,dc=iutinfo,dc=test."],
@@ -101,6 +111,10 @@ const QCM = [
 ["ldap", "Quel fichier configure le <b>client</b> LDAP ?", ["/etc/ldap/ldap.conf", "/etc/ldap/slapd.conf", "/etc/services", "/var/lib/ldap"], "slapd.conf = serveur. ldap.conf contient BASE, BINDDN, URI."],
 ["ldap", "Quelle commande vérifie le DN de connexion de l'admin ?", ["ldapwhoami -x -D cn=admin,dc=iut-info,dc=test -W", "ldapsearch -whoami", "slapd -t", "ldapadd -x -W"], "Réponse attendue : dn:cn=admin,dc=iut-info,dc=test."],
 ["ldap", "Utilisation la plus répandue de LDAP ?", ["L'authentification (Active Directory, SSO…)", "Le routage", "Le stockage de vidéos", "La messagerie instantanée"], "Aussi : annuaires d'organismes, gestion de parcs de VM."],
+["ldap", "Pourquoi désactiver ufw au début du TP6 ?", ["Il bloquerait l'accès au serveur LDAP (port 389) depuis l'extérieur", "slapd ne s'installe pas si ufw est actif", "Thunderbird refuse les pare-feu", "Pour libérer de la mémoire"], "Commande : sudo ufw disable."],
+["ldap", "Dans Thunderbird, que met-on comme « nom distinct de la base » ?", ["dc=iut-info,dc=test", "cn=admin,dc=iut-info,dc=test", "l'adresse IP de la VM", "iut-info.ldif"], "Nom d'hôte = IP de la VM, utilisateur laissé vide."],
+["ldap", "Dans Apache Directory Studio (TP4), quelle adresse a souvent le serveur Docker ?", ["172.18.0.2:389", "127.0.0.1:22", "172.16.1.254:80", "10.1.1.1:389"], "À vérifier avec ip addr show dans le conteneur."],
+["ldap", "Quelle classe choisir pour créer un compte utilisateur dans Apache Directory Studio ?", ["inetOrgPerson", "organizationalUnit", "dcObject", "top uniquement"], "Puis bien sélectionner le parent dc=example,dc=org."],
 ["ldap", "Caractéristique d'un annuaire ?", ["Accès rapide mais mises à jour plus lentes", "Mises à jour rapides, lecture lente", "Stockage non hiérarchique", "Données très souvent modifiées"], "Fait pour des données pérennes."]
 ];
 

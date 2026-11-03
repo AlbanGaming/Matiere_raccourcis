@@ -538,7 +538,7 @@ ALTER TABLE vol DROP CONSTRAINT ck_heures;`),
     ]},
     { h: "INSERT, UPDATE, DELETE, TRUNCATE", items: [
       C(`INSERT INTO pilote (nopilote, nom, pnom, ville, sal)
-VALUES ('2500', 'DUPONT', 'Jean', 'Reims', 2500);
+VALUES ('2500', 'DUPONT', 'Jean', 'Lyon', 2500);
 
 INSERT INTO pilote_parisiens
 SELECT * FROM pilote WHERE ville = 'PARIS';   -- pas d'ORDER BY ici
@@ -861,11 +861,11 @@ PRINT g_compteur`),
       C(`DECLARE
   v_nom emp.nom%TYPE;
 BEGIN
-  SELECT nom INTO v_nom FROM emp WHERE ville = 'REIMS';
-  DBMS_OUTPUT.PUT_LINE('Le pilote ' || v_nom || ' habite REIMS'); -- sautée si erreur
+  SELECT nom INTO v_nom FROM emp WHERE ville = 'LYON';
+  DBMS_OUTPUT.PUT_LINE('Le pilote ' || v_nom || ' habite LYON'); -- sautée si erreur
 EXCEPTION
-  WHEN NO_DATA_FOUND THEN DBMS_OUTPUT.PUT_LINE('Pas de pilote à REIMS');
-  WHEN TOO_MANY_ROWS THEN DBMS_OUTPUT.PUT_LINE('Plusieurs pilotes à REIMS');
+  WHEN NO_DATA_FOUND THEN DBMS_OUTPUT.PUT_LINE('Pas de pilote à LYON');
+  WHEN TOO_MANY_ROWS THEN DBMS_OUTPUT.PUT_LINE('Plusieurs pilotes à LYON');
 END;`),
       TB(["Code", "Nom"], [
         ["ORA-01403 (SQLCODE +100)", "NO_DATA_FOUND"], ["ORA-01422", "TOO_MANY_ROWS"], ["ORA-00001", "DUP_VAL_ON_INDEX"],
@@ -925,7 +925,7 @@ END;`),
   blocks: [
     { h: "Curseur explicite complet", items: [
       C(`DECLARE
-  CURSOR emp_cur IS SELECT num, nom FROM emp WHERE UPPER(ville) = 'REIMS';
+  CURSOR emp_cur IS SELECT num, nom FROM emp WHERE UPPER(ville) = 'LYON';
   v_num emp.num%TYPE;
   v_nom emp.nom%TYPE;
 BEGIN
@@ -956,7 +956,7 @@ FOR rec IN emp_cur LOOP
 END LOOP;
 
 -- Curseur déclaré dans le FOR (temporaire, non réutilisable)
-FOR emp IN (SELECT num, nom FROM emp WHERE UPPER(ville) = 'REIMS') LOOP
+FOR emp IN (SELECT num, nom FROM emp WHERE UPPER(ville) = 'LYON') LOOP
   DBMS_OUTPUT.PUT_LINE(emp.nom);
 END LOOP;`),
       T("Avec FOR, <code>%ROWCOUNT</code> n'est plus accessible après la boucle : compter soi-même avec un compteur."),
