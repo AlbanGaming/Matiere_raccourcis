@@ -2,430 +2,835 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Révisions BDD — Contraintes, privilèges & triggers</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Figtree:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="../styles/tokens.css">
 <link rel="icon" type="image/png" href="../styles/favicon.png">
 <script src="../scripts/theme.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Révisions BDD — Requêtes</title>
 <style>
+/* Layout : bandeau collant (titre + puces de navigation) puis colonne de lecture unique ; QCM interactifs en bas */
 :root{
   --bg:var(--r-bg); --panel:var(--r-surface); --panel2:var(--r-surface-2); --border:var(--r-border);
-  --text:var(--r-text); --muted:var(--r-text-2); --teal:var(--r-teal); --teal-dim:var(--r-teal);
-  --amber:var(--r-orange); --amber-dim:var(--r-orange); --red:var(--r-red);
-  --code-bg:var(--r-bg);
+  --text:var(--r-text); --muted:var(--r-text-2); --teal:var(--r-teal); --teal-dim:var(--r-teal-soft);
+  --amber:var(--r-amber); --amber-dim:var(--r-amber-soft); --red:var(--r-red); --red-dim:var(--r-red-soft);
+  --code-bg:var(--r-surface-2); --on-teal:var(--r-on-accent);
+  --f-body:var(--r-font-body); --f-mono:var(--r-font-mono);
   padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
-  box-sizing:border-box;
 }
-html{scroll-padding-top:calc(64px + env(safe-area-inset-top,0px));}
 *{box-sizing:border-box;}
-body{
-  margin:0; background:var(--bg); color:var(--text);
-  font-family:var(--r-font-body); line-height:1.55;
-  -webkit-font-smoothing:antialiased;
-}
-h1,h2,h3,code,pre,.mono{font-family:var(--r-font-mono);}
+html{scroll-padding-top:150px;}
+body{margin:0; background:var(--bg); color:var(--text); font-family:var(--f-body); font-size:16px; line-height:1.55; -webkit-font-smoothing:antialiased;}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:10; background:var(--bg);}
+h1,h2,h3,code,pre,.mono{font-family:var(--f-mono);}
+h1,h2,h3{text-wrap:balance;}
+a{color:var(--teal);}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important;}}
 
-header{
-  position:sticky; top:0; z-index:20;
-  padding:calc(14px + env(safe-area-inset-top,0px)) 20px 14px;
-  background:var(--bg); border-bottom:1px solid var(--border);
-  display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap;
-}
-header h1{margin:0; font-size:1.05rem; font-weight:700; letter-spacing:.01em;}
+.top{position:sticky; top:env(safe-area-inset-top,0px); z-index:20; background:var(--bg); border-bottom:1px solid var(--border);}
+.top-in{padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px)); padding-block:12px 10px; display:flex; align-items:baseline; justify-content:space-between; gap:6px 14px; flex-wrap:wrap;}
+.top h1{margin:0; font-size:1rem; font-weight:700;}
+.exam-tag{color:var(--red); font-size:.85rem; font-weight:600;}
+nav.chips{display:flex; gap:8px; overflow-x:auto; padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px)); padding-block:0 12px; scrollbar-width:thin;}
+nav.chips a{flex:0 0 auto; text-decoration:none; color:var(--muted); font-size:.82rem; padding:5px 11px; border:1px solid var(--border); border-radius:20px; white-space:nowrap;}
+nav.chips a:hover,nav.chips a:focus-visible{color:var(--text); border-color:var(--teal);}
+nav.chips a.hot{color:var(--amber); border-color:var(--amber-dim);}
 
-nav.chips{
-  display:flex; gap:8px; overflow-x:auto; padding:12px 20px;
-  border-bottom:1px solid var(--border); background:var(--panel);
-  position:sticky; top:56px; z-index:19; scrollbar-width:thin;
-}
-nav.chips a{
-  flex:0 0 auto; text-decoration:none; color:var(--muted); font-size:.82rem;
-  padding:6px 12px; border:1px solid var(--border); border-radius:20px; white-space:nowrap;
-}
-nav.chips a:hover, nav.chips a:focus-visible{color:var(--text); border-color:var(--teal);}
+main{max-width:780px; margin:0 auto; padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px)); padding-block:28px 80px;}
+.section{margin-bottom:56px;}
+.num{color:var(--teal); font-size:.8rem; font-weight:700; font-family:var(--f-mono);}
+.section h2{font-size:1.35rem; margin:4px 0 14px; font-weight:700;}
+.section h3{font-size:1rem; margin:22px 0 8px;}
+.section p{margin:0 0 14px;}
+.lead{color:var(--muted);}
+.small{font-size:.88rem; color:var(--muted);}
 
-main{max-width:760px; margin:0 auto; padding:28px 20px 80px;}
-
-.section{margin-bottom:52px; scroll-margin-top:120px;}
-.section .num{color:var(--teal); font-size:.8rem; font-weight:700;}
-.section h2{font-size:1.4rem; margin:4px 0 14px; font-weight:700;}
-.section p{margin:0 0 14px; color:var(--text);}
-.section p.lead{color:var(--muted);}
-
-.card{
-  background:var(--panel); border:1px solid var(--border); border-radius:10px;
-  padding:16px 18px; margin:14px 0;
-}
+.card{background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:14px 16px; margin:14px 0; min-width:0;}
 .card.pitfall{border-left:3px solid var(--red);}
-.card.pitfall .tag{color:var(--red);}
 .card.rule{border-left:3px solid var(--teal);}
-.card.rule .tag{color:var(--teal);}
-.tag{font-size:.75rem; font-weight:700; letter-spacing:.02em; display:block; margin-bottom:6px;}
+.card.out{border-left:3px solid var(--amber);}
+.tag{font-size:.74rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; display:block; margin-bottom:6px; font-family:var(--f-mono);}
+.pitfall .tag{color:var(--red);} .rule .tag{color:var(--teal);} .out .tag{color:var(--amber);}
+.card ul{margin:4px 0 0; padding-left:20px;} .card li{margin:3px 0;}
 
-pre{
-  background:var(--code-bg); border:1px solid var(--border); border-radius:8px;
-  padding:14px 16px; overflow-x:auto; margin:10px 0; font-size:.83rem; line-height:1.5;
-}
-code{font-size:.83rem;}
-.kw{color:var(--teal); font-weight:700;}
+pre{background:var(--code-bg); border:1px solid var(--border); border-radius:8px; padding:12px 14px; overflow-x:auto; margin:10px 0; font-size:.8rem; line-height:1.5; color:var(--text);}
+code{font-size:.84em;}
+:not(pre)>code{background:var(--panel2); padding:1px 5px; border-radius:4px;}
 .cm{color:var(--muted); font-style:italic;}
+.kw{color:var(--teal); font-weight:700;}
+.bad-l{color:var(--red); font-weight:700;}
 
-.compare{display:grid; grid-template-columns:1fr; gap:12px; margin:10px 0;}
-@media(min-width:640px){.compare{grid-template-columns:1fr 1fr;}}
-.compare .bad{border-left:3px solid var(--red);}
-.compare .good{border-left:3px solid var(--teal);}
-.compare .label{font-size:.75rem; font-weight:700; margin-bottom:6px; display:block;}
-.compare .bad .label{color:var(--red);}
-.compare .good .label{color:var(--teal);}
+.compare{display:grid; grid-template-columns:minmax(0,1fr); gap:12px; margin:10px 0;}
+@media(min-width:640px){.compare{grid-template-columns:minmax(0,1fr) minmax(0,1fr);}}
+.compare .card{margin:0;}
+.compare .bad{border-left:3px solid var(--red);} .compare .good{border-left:3px solid var(--teal);}
+.label{font-size:.74rem; font-weight:700; margin-bottom:4px; display:block; font-family:var(--f-mono);}
+.bad .label{color:var(--red);} .good .label{color:var(--teal);}
+
+.tbl{overflow-x:auto; margin:12px 0; border:1px solid var(--border); border-radius:8px;}
+table{border-collapse:collapse; width:100%; font-size:.9rem;}
+th,td{padding:8px 10px; text-align:left; vertical-align:top; border-bottom:1px solid var(--border);}
+tr:last-child td{border-bottom:0;}
+th{font-family:var(--f-mono); font-size:.72rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); background:var(--panel2);}
+td code{white-space:nowrap;}
+td.yes{color:var(--teal); font-weight:600;} td.no{color:var(--red); font-weight:600;}
+
+.errs{display:grid; grid-template-columns:auto minmax(0,1fr); gap:4px 12px; font-size:.9rem;}
+.errs code{color:var(--red); background:none; padding:0;}
+
+/* QCM */
+.quiz-tools{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:12px;}
+.opt{display:block; width:100%; text-align:left; background:var(--panel); color:var(--text); border:1px solid var(--border); border-radius:8px; padding:10px 14px; margin:8px 0; font:inherit; cursor:pointer;}
+.opt:hover:not(:disabled){border-color:var(--teal);}
+.opt.sel{border-color:var(--amber); background:var(--amber-dim);}
+.opt.ok{border-color:var(--teal); background:var(--teal-dim);}
+.opt.ko{border-color:var(--red); background:var(--red-dim);}
+.opt:disabled{cursor:default;}
+.opt:focus-visible,.btn:focus-visible,summary:focus-visible,.check input:focus-visible{outline:2px solid var(--teal); outline-offset:2px;}
+.btn{background:var(--teal); color:var(--on-teal); border:0; border-radius:8px; padding:9px 16px; font:inherit; font-weight:600; cursor:pointer; margin:8px 8px 0 0;}
+.btn.alt{background:transparent; color:var(--text); border:1px solid var(--border);}
+.btn:disabled{opacity:.45; cursor:default;}
+.qmeta{display:flex; justify-content:space-between; gap:10px; color:var(--muted); font-size:.85rem; margin-bottom:8px; font-variant-numeric:tabular-nums;}
+.timer{font-family:var(--f-mono); color:var(--amber);}
+.bar{height:4px; background:var(--border); border-radius:2px; margin-bottom:14px;} .bar i{display:block; height:100%; background:var(--teal); border-radius:2px;}
+.qtext{font-size:1.02rem; font-family:var(--f-body); font-weight:600; margin:0 0 6px;}
+.multi{display:inline-block; font-size:.75rem; color:var(--amber); font-family:var(--f-mono); margin-bottom:4px;}
+.expl{margin-top:12px; padding:12px 14px; border-radius:8px; background:var(--panel2); font-size:.93rem;}
+.review{margin-top:14px; display:grid; gap:10px;}
+.review div{border-left:3px solid var(--red); background:var(--panel); padding:8px 12px; border-radius:0 8px 8px 0; font-size:.9rem;}
+.score{font-family:var(--f-mono); font-size:2.4rem; font-weight:700; margin:6px 0;}
 
 .checklist{list-style:none; padding:0; margin:0;}
-.checklist li{
-  display:flex; gap:10px; padding:10px 0; border-bottom:1px solid var(--border);
-}
-.checklist li:last-child{border-bottom:none;}
-.checklist .box{
-  flex:0 0 18px; height:18px; border:1.5px solid var(--muted); border-radius:4px; margin-top:2px;
-}
+.check{display:flex; gap:10px; padding:9px 0; border-bottom:1px solid var(--border); cursor:pointer; align-items:flex-start;}
+.check input{margin-top:5px; accent-color:var(--teal); flex:0 0 auto;}
 
-
-.opt{display:block;width:100%;text-align:left;background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:11px 14px;margin:8px 0;font:inherit;cursor:pointer}
-.opt:hover:not(:disabled){border-color:var(--teal)}
-.opt:focus-visible,.btn:focus-visible,.frag:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
-.opt.ok{border-color:var(--teal);background:var(--teal-dim);color:var(--text)}
-.opt.ko{border-color:var(--red)}
-.opt code{font-size:.8rem}
-.btn{background:var(--teal);color:var(--r-text-3);border:0;border-radius:8px;padding:10px 18px;font:inherit;font-weight:600;cursor:pointer;margin:8px 8px 0 0}
-.btn.alt{background:transparent;color:var(--text);border:1px solid var(--border)}
-.qmeta{display:flex;justify-content:space-between;color:var(--muted);font-size:.85rem;margin-bottom:8px}
-.bar{height:4px;background:var(--border);border-radius:2px;margin-bottom:16px}.bar i{display:block;height:100%;background:var(--teal);border-radius:2px}
-.expl{margin-top:12px;padding:12px 14px;border-radius:8px;background:var(--panel2);font-size:.92rem}
-.frags{display:flex;flex-direction:column;gap:6px;margin:8px 0;min-height:44px;padding:8px;border:1px dashed var(--border);border-radius:8px}
-.frag{text-align:left;background:var(--code-bg);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-family:var(--r-font-mono);font-size:.78rem;cursor:pointer}
-footer{max-width:760px; margin:0 auto; padding:0 20px 40px; color:var(--muted); font-size:.85rem;}
-a{color:var(--teal);}
-/* Téléphone : les cartes et le code restent dans la largeur de l.écran */
-.card, .compare > * { min-width: 0; }
+details.archive{border:1px solid var(--border); border-radius:10px; background:var(--panel); padding:0 16px;}
+details.archive>summary{cursor:pointer; padding:14px 0; font-weight:600; font-family:var(--f-mono); font-size:.95rem;}
+details.archive[open]{padding-bottom:16px;}
+details.archive .card{background:var(--panel2);}
+footer{max-width:780px; margin:0 auto; padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px)); padding-block:0 40px; color:var(--muted); font-size:.85rem;}
 </style>
 <link rel="stylesheet" href="../styles/revision.css">
 </head>
 <body>
-
-<header>
-  <h1>Révisions — Requêtes BDD</h1>
-</header>
-
-<nav class="chips">
-  <a href="#jointures">1. Jointures</a>
-  <a href="#externes">2. Jointures externes</a>
-  <a href="#priorite">3. Priorité des conditions</a>
-  <a href="#regroupement">4. Regroupement</a>
-  <a href="#cte">5. CTE</a>
-  <a href="#null">6. Pièges NULL</a>
-  <a href="#complements">Compléments</a>
-  <a href="#qcm">QCM</a>
-  <a href="#checklist">Checklist</a>
-</nav>
+<div class="top">
+  <div class="top-in">
+    <h1>Révisions BDD — Contraintes, privilèges &amp; triggers</h1>
+  </div>
+  <nav class="chips" aria-label="Sections">
+    <a href="#programme">Contenu</a>
+    <a href="#contraintes">1. Contraintes</a>
+    <a href="#alter">2. Données &amp; ALTER</a>
+    <a href="#privileges">3. Privilèges</a>
+    <a href="#triggers">4. Triggers LMD</a>
+    <a href="#newold">5. :NEW / :OLD</a>
+    <a href="#choix">6. Trigger ou contrainte ?</a>
+    <a href="#mutation">7. Tables mutantes</a>
+    <a href="#tp04">8. TP04 pas à pas</a>
+    <a href="#type" class="hot">Questions type</a>
+    <a href="#blanc" class="hot">QCM blanc</a>
+    <a href="#checklist">Checklist</a>
+    <a href="#rappels">Rappels QCM 1</a>
+  </nav>
+</div>
 
 <main>
 
-<section class="section" id="jointures">
-  <span class="num">01</span>
-  <h2>Jointures (TP01)</h2>
-  <p class="lead">Deux syntaxes existent pour joindre des tables — ne jamais les mélanger dans une même requête.</p>
+<section class="section" id="programme">
+  <span class="num">00</span>
+  <h2>Contenu</h2>
+  <div class="card rule">
+    <span class="tag">Couvert ici</span>
+    <ul>
+      <li><b>TP03</b> : création des tables et contraintes (base hôtel), insertions depuis un autre schéma, <code>ALTER TABLE</code>, <code>ON DELETE CASCADE</code>, privilèges, vues et rôles.</li>
+      <li><b>TP04</b> : triggers LMD d'état et ligne, <code>:NEW</code> / <code>:OLD</code>, <code>RAISE_APPLICATION_ERROR</code>, tables mutantes, trigger composé.</li>
+      <li>Cours : support n°2 à partir de la diapo 69 (rappels et compléments), support n°4 jusqu'à la diapo 40 (déclencheurs LMD).</li>
+    </ul>
+  </div>
+  <div class="card out">
+    <span class="tag">Non traité ici</span>
+    Index et dictionnaire des données (support n°2), triggers LDD / système / <code>INSTEAD OF</code> (TP05). Les index du TP03 (exo 4) ne sont donc pas détaillés ici.
+  </div>
+</section>
 
+<!-- ============ 1. CONTRAINTES ============ -->
+<section class="section" id="contraintes">
+  <span class="num">01</span>
+  <h2>Contraintes d'intégrité</h2>
+  <p class="lead">Une contrainte est une règle déclarée dans la table : Oracle la vérifie à chaque INSERT / UPDATE / DELETE, sans code à écrire.</p>
+
+  <div class="tbl"><table>
+    <tr><th>Contrainte</th><th>Rôle</th><th>Exemple (TP03)</th></tr>
+    <tr><td><code>PRIMARY KEY</code></td><td>Unique + non NULL. Une seule par table. Crée un index automatiquement.</td><td><code>CONSTRAINT pk_agt PRIMARY KEY</code></td></tr>
+    <tr><td><code>FOREIGN KEY / REFERENCES</code></td><td>La valeur doit exister dans la table référencée (ou être NULL).</td><td><code>REFERENCES agent_entretien(agt_id)</code></td></tr>
+    <tr><td><code>UNIQUE</code></td><td>Pas de doublon (les NULL sont autorisés).</td><td>—</td></tr>
+    <tr><td><code>CHECK</code></td><td>Condition sur la ligne elle-même.</td><td><code>CHECK (chb_etage IN ('RDC','1er','2e'))</code></td></tr>
+    <tr><td><code>NOT NULL</code></td><td>Valeur obligatoire.</td><td><code>cli_id INTEGER NOT NULL</code></td></tr>
+    <tr><td><code>DEFAULT</code></td><td>Valeur par défaut (ce n'est pas une contrainte qui refuse quoi que ce soit).</td><td><code>agt_emb DATE DEFAULT SYSDATE</code></td></tr>
+  </table></div>
+
+  <h3>Contrainte de colonne ou contrainte de table</h3>
   <div class="compare">
-    <div class="card bad">
-      <span class="label">Ancienne syntaxe (virgules)</span>
-      <pre>SELECT ...
-FROM chambre c, agent_entretien a
-WHERE a.agt_id = c.agt_id
-AND UPPER(a.agt_nom) IN ('BOUSSEL','FECHOL')
-AND chb_communique IS NOT NULL;</pre>
+    <div class="card good">
+      <span class="label">De colonne : écrite juste après la colonne</span>
+<pre>chb_id INTEGER
+  CONSTRAINT pk_chambre PRIMARY KEY,
+agt_id CHAR(3)
+  CONSTRAINT fk_agt_id
+  REFERENCES agent_entretien(agt_id),
+cli_id INTEGER NOT NULL
+  CONSTRAINT fk_tel_client
+  REFERENCES client(cli_id),</pre>
     </div>
     <div class="card good">
-      <span class="label">Syntaxe ANSI (JOIN)</span>
-      <pre>SELECT ...
-FROM chambre c
-  JOIN agent_entretien a ON a.agt_id = c.agt_id
-WHERE UPPER(a.agt_nom) IN ('BOUSSEL','FECHOL')
-AND chb_communique IS NOT NULL;</pre>
+      <span class="label">De table : après toutes les colonnes</span>
+<pre>CONSTRAINT pk_planning
+  PRIMARY KEY (chb_id, pln_jour),
+CONSTRAINT fk_facture_adresse
+  FOREIGN KEY (cli_id, adr_id)
+  REFERENCES adresse(cli_id, adr_id),
+CONSTRAINT pk_dates
+  CHECK (fac_date &lt;= fac_dat_pmt)</pre>
     </div>
   </div>
+  <div class="card rule">
+    <span class="tag">La règle</span>
+    Dès qu'une contrainte porte sur <b>2 colonnes ou plus</b> (clé primaire composée, clé étrangère composée, CHECK qui compare deux colonnes), elle s'écrit en contrainte de <b>table</b>. Tout le reste peut s'écrire en contrainte de colonne.
+    <ul>
+      <li><code>NOT NULL</code> ne s'écrit <b>qu'en</b> contrainte de colonne.</li>
+      <li>En contrainte de colonne, une clé étrangère s'écrit avec <code>REFERENCES</code> seul ; en contrainte de table il faut <code>FOREIGN KEY (col) REFERENCES …</code>.</li>
+      <li>Une colonne peut porter plusieurs contraintes de colonne (ex. <code>NOT NULL</code> + <code>REFERENCES</code> sur <code>cli_id</code> de TELEPHONE).</li>
+      <li><code>CONSTRAINT nom</code> est facultatif : sans nom, Oracle génère <code>SYS_C00xxxx</code>. Nommer aide à lire les erreurs et à faire un <code>DROP CONSTRAINT</code>.</li>
+    </ul>
+  </div>
 
-  <p>Une jointure classique peut aussi passer par plusieurs <code>INNER JOIN</code> successifs (ex. client → titre → adresse → planning → chambre), ou être remplacée par des sous-requêtes corrélées avec <code>IN</code> :</p>
-  <pre>SELECT t.tit_lib ||' '|| c.cli_nom ||' '|| c.cli_prenom
-FROM client c
-  JOIN titre t ON t.tit_code = c.tit_code
-WHERE cli_id IN (SELECT cli_id FROM adresse WHERE UPPER(adr_ville)='LYON')
-AND cli_id IN (SELECT cli_id FROM planning WHERE pln_jour BETWEEN ...);</pre>
+  <h3>Les erreurs corrigées dans le script de création</h3>
+  <div class="card pitfall">
+    <span class="tag">Ordre de création</span>
+    <ul>
+      <li>Une table référencée doit exister <b>avant</b> la table qui la référence : TYPE avant TELEPHONE, CLIENT avant EMAIL.</li>
+      <li>Une clé étrangère doit pointer vers une <b>clé primaire ou UNIQUE</b>. TITRE sans clé primaire faisait échouer la création de CLIENT.</li>
+      <li>À la suppression, c'est l'inverse : les tables filles d'abord, ou <code>DROP TABLE … CASCADE CONSTRAINTS</code> qui supprime aussi les FK qui pointent vers la table.</li>
+      <li><code>"TYPE"</code> entre guillemets : TYPE est un mot réservé.</li>
+    </ul>
+  </div>
+  <p>Clé étrangère <b>réflexive</b> : une chambre communique avec une autre chambre de la même table.</p>
+<pre>chb_communique INTEGER CONSTRAINT fk_chambre REFERENCES chambre(chb_id)</pre>
 
+  <h3>CHECK : ce qu'il peut faire et ce qu'il ne peut pas</h3>
+<pre>CHECK (chb_numero != 13)
+CHECK (chb_bain IN (0,1))
+CHECK (SUBSTR(chb_poste_tel,1,1) BETWEEN '0' AND '9')
+CHECK (eml_adresse LIKE '%@%.%')
+CHECK (agt_sx IN ('1','2'))</pre>
+  <div class="card pitfall">
+    <span class="tag">Pièges CHECK</span>
+    <ul>
+      <li>Un CHECK n'est violé que si la condition est <b>FAUSSE</b>. Si elle vaut NULL (inconnu), la ligne passe : <code>fac_dat_pmt</code> NULL est accepté par <code>fac_date &lt;= fac_dat_pmt</code>.</li>
+      <li>Un CHECK ne lit que <b>la ligne en cours</b> : pas d'autre table, pas d'autre ligne, pas de sous-requête.</li>
+      <li>Un CHECK n'accepte pas <code>SYSDATE</code> (fonction non déterministe). « Date de réservation ≥ aujourd'hui » demande donc un trigger.</li>
+    </ul>
+  </div>
+
+  <h3>Erreurs à reconnaître</h3>
+  <div class="card"><div class="errs">
+    <code>ORA-00001</code><span>clé primaire / UNIQUE violée (doublon)</span>
+    <code>ORA-01400</code><span>insertion de NULL dans une colonne NOT NULL</span>
+    <code>ORA-02290</code><span>contrainte CHECK violée</span>
+    <code>ORA-02291</code><span>clé parent introuvable (on insère un fils sans père)</span>
+    <code>ORA-02292</code><span>enregistrement fils existant (on supprime un père qui a des fils)</span>
+  </div></div>
+</section>
+
+<!-- ============ 2. ALTER ============ -->
+<section class="section" id="alter">
+  <span class="num">02</span>
+  <h2>Remplir et modifier les tables</h2>
+
+  <h3>INSERT … SELECT depuis un autre schéma</h3>
+<pre>INSERT INTO titre SELECT * FROM hotel.titre;
+
+<span class="cm">-- colonnes dans un ordre différent : on les liste dans l'ordre de la table cible</span>
+INSERT INTO chambre
+  SELECT chb_id, chb_communique, agt_id, chb_numero, chb_etage,
+         chb_bain, chb_douche, chb_wc, chb_poste_tel, chb_couchage
+  FROM hotel.chambre;
+
+<span class="cm">-- pas le même nombre de colonnes + filtre sur 2007</span>
+INSERT INTO planning
+  SELECT chb_id, pln_jour, cli_id, nb_pers FROM hotel.planning
+  WHERE EXTRACT(YEAR FROM pln_jour) = 2007;</pre>
   <div class="card rule">
     <span class="tag">À retenir</span>
-    Jointure = combiner des tables sur une clé commune (<code>ON</code>). Sous-requête <code>IN</code> = filtrer une table par rapport à une liste issue d'une autre table. Les deux donnent souvent le même résultat mais ne sont pas interchangeables si on veut afficher des colonnes de la table filtrée.
-  </div>
-</section>
-
-<section class="section" id="externes">
-  <span class="num">02</span>
-  <h2>Jointures externes</h2>
-  <p class="lead">Une jointure externe garde les lignes d'une table même quand il n'y a pas de correspondance dans l'autre.</p>
-
-  <div class="compare">
-    <div class="card">
-      <span class="label mono" style="color:var(--muted)">Syntaxe Oracle (+)</span>
-      <pre>FROM agent_entretien a, chambre c
-WHERE a.agt_id = c.agt_id(+)</pre>
-      <p style="margin:6px 0 0; font-size:.85rem; color:var(--muted);">le <code>(+)</code> se met du côté de la table qui peut manquer (ici chambre) : LEFT JOIN.</p>
-    </div>
-    <div class="card">
-      <span class="label mono" style="color:var(--muted)">Syntaxe ANSI</span>
-      <pre>FROM agent_entretien a
-  LEFT JOIN chambre c ON a.agt_id = c.agt_id</pre>
-      <p style="margin:6px 0 0; font-size:.85rem; color:var(--muted);">agent_entretien = table maître, chambre = table esclave.</p>
-    </div>
+    <ul>
+      <li>On insère dans l'ordre de l'intégrité référentielle : les pères (TITRE, CLIENT, TYPE…) avant les fils (TELEPHONE, ADRESSE…).</li>
+      <li><code>SELECT *</code> ne marche que si les deux tables ont les mêmes colonnes, dans le même ordre.</li>
+      <li>Pour accéder à la table d'un autre utilisateur : <code>schema.table</code> (<code>hotel.client</code>), à condition d'avoir le privilège.</li>
+    </ul>
   </div>
 
-  <p>Cas typique : agents entre 50 et 60 ans même sans chambre affectée. On utilise <code>NVL</code>/<code>NVL2</code> pour gérer l'affichage des colonnes NULL côté esclave :</p>
-  <pre>SELECT DECODE(agt_sx,1,'M. ','Mme ')||agt_prenom||' '||agt_nom "Agent",
-       NVL2(chb_numero, 'N°'||chb_numero, 'AUCUNE CHAMBRE') "Chambre",
-       NVL(chb_etage,'--') "Etage"
-FROM agent_entretien a
-  LEFT JOIN chambre c ON a.agt_id = c.agt_id
-WHERE TRUNC(MONTHS_BETWEEN(SYSDATE,a.agt_dnais)/12) BETWEEN 50 AND 60;</pre>
+  <h3>CREATE TABLE … AS SELECT</h3>
+<pre>CREATE TABLE tarif AS
+  (SELECT * FROM hotel.tarif WHERE EXTRACT(YEAR FROM trf_date_debut) = 2007);
+ALTER TABLE tarif ADD CONSTRAINT pk_tarif PRIMARY KEY (trf_date_debut);
 
+<span class="cm">-- copie vide d'une table : condition toujours fausse</span>
+CREATE TABLE old_fact AS (SELECT * FROM facture WHERE fac_id IS NULL);</pre>
+  <div class="card pitfall">
+    <span class="tag">Piège</span>
+    Un <code>CREATE TABLE AS SELECT</code> copie la structure (colonnes, types) et les données, et seulement les contraintes <code>NOT NULL</code>. Clé primaire, clés étrangères et CHECK ne sont <b>pas</b> copiées : il faut les rajouter avec <code>ALTER TABLE</code>.
+  </div>
+
+  <h3>ALTER TABLE</h3>
+<pre>ALTER TABLE telephone
+  ADD CONSTRAINT chk_localisation
+      CHECK (tel_localisation IN ('domicile','portable','bureau'))
+  MODIFY tel_localisation DEFAULT 'domicile';
+
+ALTER TABLE facture ADD total NUMBER;              <span class="cm">-- nouvelle colonne</span>
+ALTER TABLE telephone DROP CONSTRAINT fk_tel_client;</pre>
+  <div class="card pitfall">
+    <span class="tag">DEFAULT et NULL</span>
+    <ul>
+      <li>La valeur par défaut n'est utilisée que si la colonne est <b>absente</b> de l'INSERT : <code>INSERT INTO telephone (tel_id, cli_id, typ_code, tel_numero) VALUES (…)</code> → 'domicile'.</li>
+      <li>Si on écrit <code>NULL</code> explicitement dans le VALUES, la colonne vaut NULL, pas la valeur par défaut.</li>
+      <li>Ajouter une contrainte à une table remplie échoue si des lignes existantes ne la respectent pas.</li>
+    </ul>
+  </div>
+
+  <h3>ON DELETE CASCADE</h3>
+  <p>Supprimer DUPONT Alain échoue (<code>ORA-02292</code>) tant qu'il a des téléphones. On ne peut pas modifier une contrainte existante : on la supprime puis on la recrée.</p>
+<pre>ALTER TABLE telephone DROP CONSTRAINT fk_tel_client;
+ALTER TABLE telephone ADD CONSTRAINT fk_tel_client
+  FOREIGN KEY (cli_id) REFERENCES client(cli_id) ON DELETE CASCADE;
+<span class="cm">-- idem pour EMAIL, ADRESSE, PLANNING (toutes les filles de CLIENT)</span></pre>
   <div class="card rule">
-    <span class="tag">Clients / agents "orphelins"</span>
-    Pour trouver ce qui n'a <em>aucune</em> correspondance (clients sans réservation, agents sans chambre) : jointure externe + <code>IS NULL</code> sur la clé de la table esclave.
-    <pre>FROM agent_entretien a
-  LEFT JOIN chambre c ON a.agt_id = c.agt_id
-WHERE c.agt_id IS NULL   <span class="cm">-- pas chb_numero au hasard : la clé de jointure</span></pre>
+    <span class="tag">Options d'une clé étrangère</span>
+    <ul>
+      <li>Sans option : on ne peut pas supprimer un père qui a des fils.</li>
+      <li><code>ON DELETE CASCADE</code> : supprimer le père supprime ses fils.</li>
+      <li><code>ON DELETE SET NULL</code> : les fils restent, leur clé étrangère passe à NULL.</li>
+      <li>Oracle n'a pas de <code>ON UPDATE CASCADE</code>.</li>
+      <li>La cascade s'enchaîne : supprimer un client supprime ses adresses, ce qui bloque si une FACTURE référence ces adresses sans cascade.</li>
+    </ul>
   </div>
 </section>
 
-<section class="section" id="priorite">
+<!-- ============ 3. PRIVILEGES ============ -->
+<section class="section" id="privileges">
   <span class="num">03</span>
-  <h2>Priorité des conditions — le piège central</h2>
-  <p class="lead">C'est un point clé, et un piège classique : où placer une condition qui porte sur la table esclave d'une jointure externe.</p>
+  <h2>Privilèges, vues et rôles</h2>
+<pre>GRANT privilèges ON table TO utilisateur | rôle | PUBLIC [WITH GRANT OPTION];
+REVOKE privilèges ON table FROM utilisateur | rôle | PUBLIC;</pre>
+  <p>Privilèges objet : <code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>, <code>ALTER</code>, <code>INDEX</code>, <code>REFERENCES</code>, ou <code>ALL [PRIVILEGES]</code>. Le propriétaire de la table a tous les droits dessus et peut les donner.</p>
 
-  <div class="card pitfall">
-    <span class="tag">Le piège</span>
-    Si la condition sur la table esclave est mise dans le <code>WHERE</code>, elle s'applique <strong>après</strong> la jointure externe : les lignes où la table esclave était NULL (justement ce qu'on voulait garder) se retrouvent éliminées. Résultat : on perd l'effet du LEFT JOIN, la requête se comporte comme un INNER JOIN.
-  </div>
+<pre>GRANT SELECT ON client TO PUBLIC;                         <span class="cm">-- tout le monde</span>
+GRANT SELECT, INSERT, DELETE, UPDATE(nb_pers) ON planning TO tests2;
+GRANT UPDATE(tit_code, cli_nom, cli_prenom, cli_enseigne) ON client TO tests2;
+GRANT SELECT ON client TO tests2 WITH GRANT OPTION;       <span class="cm">-- peut redistribuer</span>
+REVOKE ALL PRIVILEGES ON client FROM PUBLIC, tests2;
 
-  <div class="compare">
-    <div class="card bad">
-      <span class="label">Faux (perd les lignes sans FAX)</span>
-      <pre>FROM client c
-  LEFT JOIN telephone t ON c.cli_id=t.cli_id
-WHERE t.typ_code = 'FAX'</pre>
-    </div>
-    <div class="card good">
-      <span class="label">Correct — condition dans le ON</span>
-      <pre>FROM client c
-  LEFT JOIN telephone t
-    ON c.cli_id = t.cli_id AND t.typ_code = 'FAX'</pre>
-    </div>
-  </div>
-
-  <p>Même logique pour une condition de date sur la table esclave (planning) :</p>
-  <pre>-- Correct : toutes les chambres, réservées ou non, ce jour-là
-FROM chambre c
-  LEFT JOIN planning p
-    ON c.chb_id = p.chb_id
-    AND pln_jour = TO_DATE('26/12/2007','DD/MM/YYYY')</pre>
+<span class="cm">-- côté voisin : préfixer par le propriétaire</span>
+SELECT cli_nom, adr_ville
+FROM tests3.client c JOIN tests3.adresse a ON a.cli_id = c.cli_id;</pre>
 
   <div class="card rule">
-    <span class="tag">Règle générale</span>
-    Condition sur la table <strong>maître</strong> → dans le <code>WHERE</code> (filtre normal).<br>
-    Condition sur la table <strong>esclave</strong> d'une jointure externe → dans le <code>ON</code>, sinon elle annule l'effet du LEFT/RIGHT JOIN.
+    <span class="tag">Restreindre colonnes et lignes</span>
+    <code>UPDATE</code>, <code>INSERT</code> et <code>REFERENCES</code> acceptent une liste de colonnes. <b><code>SELECT</code> non</b> : pour cacher une colonne (le salaire) ou des lignes (agents partis), on passe par une <b>vue</b> et on donne le droit sur la vue.
+<pre>CREATE OR REPLACE VIEW agt_vue AS
+  (SELECT agt_id, agt_nom, agt_prenom, agt_sx, agt_dnais, agt_emb, agt_dpt
+   FROM agent_entretien
+   WHERE agt_dpt IS NULL);
+GRANT SELECT ON agt_vue TO tests2;</pre>
   </div>
 
-  <p style="font-size:.85rem; color:var(--muted);">Avec l'ancienne syntaxe <code>(+)</code>, ce piège n'existe pas de la même façon : la condition peut rester dans le WHERE tant qu'elle porte sur une sous-requête déjà filtrée en amont (cf. exemples avec sous-requête dans le FROM).</p>
+  <div class="card pitfall">
+    <span class="tag">Pièges REVOKE</span>
+    <ul>
+      <li>Si le droit a été donné à <code>PUBLIC</code> <b>et</b> à tests2, <code>REVOKE … FROM tests2</code> ne l'empêche pas de lire : il garde le droit via PUBLIC.</li>
+      <li>Un droit reçu <code>WITH GRANT OPTION</code> puis redistribué : quand on le retire au premier, ceux à qui il l'a donné le perdent aussi (révocation en cascade).</li>
+    </ul>
+  </div>
+
+  <h3>Rôles</h3>
+  <p>Un rôle regroupe des privilèges qu'on attribue en une fois à plusieurs utilisateurs.</p>
+<pre>CREATE ROLE ro_hotel_tests3;
+GRANT UPDATE(agt_id) ON chambre TO ro_hotel_tests3;
+GRANT SELECT, UPDATE, INSERT, DELETE ON tarif    TO ro_hotel_tests3;
+GRANT SELECT, UPDATE, INSERT, DELETE ON planning TO ro_hotel_tests3;
+GRANT ro_hotel_tests3 TO sandron, estelle;     <span class="cm">-- on donne le rôle aux personnes</span>
+DROP ROLE ro_hotel_tests3;                     <span class="cm">-- tous perdent les droits du rôle</span></pre>
+  <p class="small">Ordre : créer le rôle → lui donner les privilèges → donner le rôle aux utilisateurs. Un rôle reçu devient actif à la connexion suivante de l'utilisateur.</p>
 </section>
 
-<section class="section" id="regroupement">
+<!-- ============ 4. TRIGGERS ============ -->
+<section class="section" id="triggers">
   <span class="num">04</span>
-  <h2>Regroupement</h2>
-  <p class="lead"><code>GROUP BY</code> résume des lignes ; <code>HAVING</code> filtre des groupes (jamais des lignes individuelles).</p>
+  <h2>Triggers LMD : syntaxe et fonctionnement</h2>
+<pre>CREATE [OR REPLACE] TRIGGER nom
+{BEFORE | AFTER} {INSERT | UPDATE [OF col] | DELETE} [OR …]
+ON table
+[FOR EACH ROW [WHEN (condition)]]     <span class="cm">-- présent = trigger ligne, absent = trigger d'état</span>
+[DECLARE
+   variables ;]
+BEGIN
+   instructions ;
+END;
+/</pre>
 
-  <pre>SELECT e.cli_id, cli_nom||' '||cli_prenom AS CLIENT,
-       COUNT(EML_ID)||' emails' AS "PLUSIEURS ADR"
-FROM CLIENT c JOIN EMAIL e ON c.cli_id=e.cli_id
-GROUP BY e.cli_id, cli_nom, cli_prenom
-HAVING COUNT(EML_ID) > 1;</pre>
+  <h3>Trigger d'état (par ordre) ou trigger ligne</h3>
+  <div class="tbl"><table>
+    <tr><th></th><th>Trigger d'état</th><th>Trigger ligne</th></tr>
+    <tr><td>Écriture</td><td>sans <code>FOR EACH ROW</code></td><td>avec <code>FOR EACH ROW</code></td></tr>
+    <tr><td>Exécutions</td><td>1 fois par ordre SQL, <b>même si 0 ligne</b> est touchée</td><td>1 fois par ligne touchée (0 si aucune)</td></tr>
+    <tr><td><code>:NEW</code> / <code>:OLD</code></td><td class="no">interdits (erreur de compilation)</td><td class="yes">disponibles</td></tr>
+    <tr><td>Usage type</td><td>autoriser / refuser l'ordre entier (jour, heure, utilisateur)</td><td>contrôler ou modifier chaque ligne, mettre à jour une autre table</td></tr>
+  </table></div>
+  <p class="small">Ce qui les différencie, c'est uniquement la directive <code>FOR EACH ROW</code> : les deux peuvent être BEFORE ou AFTER, sur INSERT, UPDATE ou DELETE.</p>
 
+  <h3>Ordre de déclenchement</h3>
+  <p>Pour un ordre qui touche plusieurs lignes : <b>BEFORE état</b> → pour chaque ligne (<b>BEFORE ligne</b> → modification + vérification des contraintes → <b>AFTER ligne</b>) → <b>AFTER état</b>.</p>
+
+  <h3>Outils dans le corps du trigger</h3>
+<pre>IF INSERTING THEN …  ELSIF UPDATING THEN …  ELSIF DELETING THEN … END IF;
+
+RAISE_APPLICATION_ERROR(-20120, 'Désolé pas de modifs aujourd''hui !');
+
+SELECT chb_couchage INTO nbc FROM chambre WHERE chb_id = :NEW.chb_id;
+
+DBMS_OUTPUT.PUT_LINE('Résa effectuée');   <span class="cm">-- visible après SET SERVEROUTPUT ON</span></pre>
   <div class="card rule">
-    <span class="tag">Le mieux du meilleur</span>
-    Pour "le max par groupe" (ex. chambre avec le plus de couchages par étage) : sous-requête corrélée comparant chaque ligne au <code>MAX()</code> de son propre groupe.
-    <pre>WHERE chb_couchage = (SELECT MAX(cm.chb_couchage)
-                       FROM chambre cm
-                       WHERE cm.chb_etage = c.chb_etage)</pre>
+    <span class="tag">RAISE_APPLICATION_ERROR</span>
+    Code entre <b>-20000 et -20999</b>. L'erreur annule <b>l'ordre SQL entier</b> qui a déclenché le trigger : si elle survient sur la 3e ligne d'un UPDATE de 5 lignes, aucune des 5 n'est modifiée. Les ordres précédents de la transaction ne sont pas annulés.
   </div>
-
-  <p>Combiner <code>GROUP BY</code> avec une jointure externe : la condition sur la table esclave va toujours dans le <code>ON</code>, même quand on compte ensuite avec <code>COUNT()</code>.</p>
-  <pre>FROM agent_entretien a
-  LEFT JOIN chambre c ON (c.agt_id=a.agt_id AND chb_couchage > 2)
-WHERE agt_sx = 2
-GROUP BY agt_nom;   <span class="cm">-- COUNT(chb_id) vaut 0 si aucune ligne rattachée</span></pre>
-
-  <p style="font-size:.85rem; color:var(--muted);"><code>HAVING COUNT(x) = (SELECT MAX(COUNT(y)) FROM ... GROUP BY ...)</code> est le patron classique pour "le client qui a le plus de X" — sous-requête qui refait le même GROUP BY pour calculer le maximum.</p>
-</section>
-
-<section class="section" id="cte">
-  <span class="num">05</span>
-  <h2>CTE — Common Table Expression</h2>
-  <p class="lead">Le <code>WITH</code> nomme une sous-requête réutilisable, plus lisible qu'une sous-requête imbriquée dans le FROM.</p>
-
-  <pre><span class="kw">WITH</span> agt_actifs AS (
-  SELECT DISTINCT agt_nom, agt_prenom, agt_emb
-  FROM agent_entretien a
-    INNER JOIN chambre c ON a.agt_id = c.agt_id
-  ORDER BY agt_emb
-)
-SELECT agt_nom||' '||agt_prenom AGENT, EXTRACT(YEAR FROM agt_emb) embauche
-FROM agt_actifs
-WHERE rownum <= 2;</pre>
-
-  <div class="card rule">
-    <span class="tag">Où elle remplace quoi</span>
-    Une CTE remplace typiquement une sous-requête placée après le <code>FROM</code> (ex. <code>(SELECT cli_id, tel_numero FROM telephone WHERE typ_code='FAX') t</code>) : on la déclare une fois en haut avec <code>WITH</code>, puis on la joint comme une table normale — souvent en <code>LEFT JOIN</code> si elle joue le rôle de table esclave.
-  </div>
-
-  <pre><span class="kw">WITH</span> planning_noel AS (
-  SELECT cli_id, pln_jour, chb_id FROM planning
-  WHERE pln_jour = TO_DATE('26/12/2007','DD/MM/YYYY')
-)
-SELECT chb_numero, cli_id
-FROM chambre c LEFT JOIN planning_noel p ON c.chb_id = p.chb_id
-ORDER BY 1;</pre>
-
-  <p style="font-size:.85rem; color:var(--muted);">La condition de filtrage (date, type) est faite <em>à l'intérieur</em> de la CTE — donc le piège de priorité du point 3 ne se pose plus une fois la CTE jointe en LEFT JOIN simple sur la clé.</p>
-</section>
-
-<section class="section" id="null">
-  <span class="num">06</span>
-  <h2>Pièges liés à NULL</h2>
-
   <div class="card pitfall">
-    <span class="tag">NOT IN + NULL = danger</span>
-    Si la colonne testée par <code>NOT IN (sous-requête)</code> peut contenir NULL, la sous-requête entière renvoie un résultat indéterminé et <strong>zéro ligne</strong> n'est retournée — même si intuitivement des lignes devraient matcher.
+    <span class="tag">Pièges</span>
+    <ul>
+      <li><code>SELECT … INTO</code> doit ramener <b>exactement une ligne</b> : 0 ligne → <code>NO_DATA_FOUND</code>, plusieurs → <code>TOO_MANY_ROWS</code>. D'où le <code>WHERE chb_id = :NEW.chb_id</code>.</li>
+      <li>Pas de <code>COMMIT</code> ni de <code>ROLLBACK</code> dans un trigger LMD : il compile, mais échoue à l'exécution (<code>ORA-04092</code>).</li>
+      <li>Un trigger créé « avec erreurs de compilation » est invalide : <b>tout</b> INSERT/UPDATE/DELETE sur la table échoue ensuite (<code>ORA-04098</code>) tant qu'il n'est pas corrigé ou désactivé.</li>
+      <li>Dans la clause <code>WHEN</code>, on écrit <code>NEW.col</code> <b>sans les deux-points</b> ; dans le corps, <code>:NEW.col</code>.</li>
+    </ul>
   </div>
 
-  <div class="compare">
-    <div class="card bad">
-      <span class="label">Risqué si agt_id peut être NULL dans chambre</span>
-      <pre>WHERE agt_id NOT IN (SELECT agt_id FROM chambre)</pre>
-    </div>
-    <div class="card good">
-      <span class="label">Sûr : NOT EXISTS ou filtrer les NULL</span>
-      <pre>WHERE NOT EXISTS (SELECT NULL FROM chambre c
-                   WHERE a.agt_id = c.agt_id)</pre>
-    </div>
-  </div>
+  <h3>Gérer un trigger</h3>
+<pre>ALTER TRIGGER jourok DISABLE;            <span class="cm">-- ENABLE pour réactiver</span>
+ALTER TABLE agent_entretien DISABLE ALL TRIGGERS;
+DROP TRIGGER jourok;
+SHOW ERRORS                              <span class="cm">-- détail des erreurs de compilation</span></pre>
+</section>
 
-  <p><code>NOT EXISTS</code> est la méthode la plus fiable et la plus performante pour "n'a jamais / n'a aucun" — à privilégier par réflexe dès que la colonne de la sous-requête n'est pas garantie NON NULL.</p>
+<!-- ============ 5. NEW OLD ============ -->
+<section class="section" id="newold">
+  <span class="num">05</span>
+  <h2>:NEW et :OLD</h2>
+  <div class="tbl"><table>
+    <tr><th>Ordre</th><th>:OLD</th><th>:NEW</th></tr>
+    <tr><td><code>INSERT</code></td><td class="no">NULL (pas d'ancienne ligne)</td><td>valeurs insérées</td></tr>
+    <tr><td><code>UPDATE</code></td><td>valeurs avant</td><td>valeurs après</td></tr>
+    <tr><td><code>DELETE</code></td><td>valeurs supprimées</td><td class="no">NULL (pas de nouvelle ligne)</td></tr>
+  </table></div>
+  <p class="small">Vrai en BEFORE comme en AFTER : en INSERT, :OLD est toujours NULL ; en DELETE, :NEW est toujours NULL.</p>
+
+  <div class="tbl"><table>
+    <tr><th>Action</th><th>BEFORE ligne</th><th>AFTER ligne</th><th>Trigger d'état</th></tr>
+    <tr><td>Lire <code>:NEW</code> / <code>:OLD</code></td><td class="yes">oui</td><td class="yes">oui</td><td class="no">non (compilation)</td></tr>
+    <tr><td>Modifier <code>:NEW.col := …</code></td><td class="yes">oui</td><td class="no">non (compilation)</td><td class="no">non</td></tr>
+    <tr><td>Modifier <code>:OLD</code></td><td class="no">jamais</td><td class="no">jamais</td><td class="no">non</td></tr>
+  </table></div>
 
   <div class="card rule">
-    <span class="tag">Fonctions utiles pour NULL</span>
-    <code>NVL(col, valeur_defaut)</code> — remplace NULL par une valeur.<br>
-    <code>NVL2(col, si_non_null, si_null)</code> — teste la présence avant de choisir quoi afficher.<br>
-    <code>col IS NULL</code> / <code>IS NOT NULL</code> — jamais <code>= NULL</code>.
+    <span class="tag">Le réflexe</span>
+    Pour changer une valeur de la ligne qu'on insère ou modifie, on <b>affecte :NEW</b> dans un trigger <b>BEFORE … FOR EACH ROW</b>. On ne fait jamais d'UPDATE sur la table du trigger.
+<pre>:NEW.pln_jour := TRUNC(SYSDATE);
+:NEW.num_clt  := v_nb;
+:NEW.remise_mnt := NVL(:NEW.mnt * :NEW.qte * :NEW.remise_pourcent / 100, 0);</pre>
   </div>
-
-  <p style="font-size:.85rem; color:var(--muted);">Repère rapide : si l'énoncé garantit "colonne obligatoire" (NOT NULL) dans la table de la sous-requête, <code>NOT IN</code> est safe. Sinon, réflexe <code>NOT EXISTS</code>.</p>
+  <div class="card pitfall">
+    <span class="tag">Tester la ligne insérée</span>
+    En BEFORE INSERT, la ligne n'est pas encore dans la table : pour savoir si le client inséré est de Reims, on teste <code>:NEW.ville_clt = 'REIMS'</code>, pas un <code>SELECT … FROM client</code> (sans WHERE il ramène toutes les lignes) et pas <code>:OLD</code> (NULL en INSERT).
+  </div>
 </section>
 
-
-<section class="section" id="complements">
-  <span class="num">+</span>
-  <h2>Compléments issus des énoncés</h2>
-  <div class="card rule"><span class="tag">GROUP BY : les règles</span>
-    Toute colonne du <code>SELECT</code> doit figurer dans le <code>GROUP BY</code>, sauf les fonctions d'agrégat (<code>SUM</code>, <code>COUNT</code>…). Les <strong>alias</strong> de colonnes ne peuvent pas être utilisés dans le <code>GROUP BY</code>.</div>
-  <div class="card rule"><span class="tag">Les 2 premiers après un tri : ROWNUM</span>
-    <code>ROWNUM</code> est attribué <em>avant</em> le <code>ORDER BY</code>. Pour prendre les N premiers d'un classement, on trie d'abord dans une sous-requête du <code>FROM</code> (ou une CTE), puis on filtre <code>WHERE ROWNUM &lt;= N</code> dans la requête principale.</div>
-  <div class="card rule"><span class="tag">CASE … WHEN</span>
-    Le "si / sinon" du SQL, utilisable dans SELECT, WHERE, ORDER BY, HAVING…
-    <pre>CASE COUNT(chb_id)
-  WHEN 0 THEN 'Pas de chambre de plus de 2 couchages'
-  ELSE COUNT(chb_id) || ' chambres'
-END</pre></div>
-  <div class="card rule"><span class="tag">NVL / NVL2 / EXTRACT</span>
-    <code>NVL(chp, val)</code> : les 2 paramètres doivent être du <strong>même type</strong> (d'où <code>TO_CHAR</code> pour un numéro). <code>NVL2(chp, val1, val2)</code> : val1 si non nul, val2 sinon. <code>EXTRACT(YEAR|MONTH FROM col_date)</code> renvoie un nombre.</div>
-  <div class="card rule"><span class="tag">Une même question, plusieurs méthodes</span>
-    "Jamais réservé" / "aucune chambre" se répond de 4 façons : jointure externe + <code>IS NULL</code>, <code>NOT IN</code>, <code>NOT EXISTS</code>, ensembliste (<code>MINUS</code>). La meilleure : <code>NOT EXISTS</code> (fiable avec NULL, performant). <code>UNION</code> (req 9b) supprime les doublons entre les deux blocs : un client qui a plusieurs mails <em>et</em> plusieurs adresses apparaît deux fois car la colonne "PLUSIEURS ADR" diffère.</div>
+<!-- ============ 6. CHOIX ============ -->
+<section class="section" id="choix">
+  <span class="num">06</span>
+  <h2>Trigger ou contrainte ?</h2>
+  <p class="lead">Si une contrainte déclarative suffit, on la préfère : plus simple, plus rapide, impossible à oublier. Le trigger sert quand la règle dépasse la ligne en cours.</p>
+  <div class="tbl"><table>
+    <tr><th>Règle</th><th>Solution</th></tr>
+    <tr><td>sexe ∈ {1, 2} ; étage ∈ {RDC, 1er, 2e}</td><td><code>CHECK</code></td></tr>
+    <tr><td>date d'arrivée &lt; date de départ (même ligne)</td><td><code>CHECK</code> de table</td></tr>
+    <tr><td>le NumPat d'un séjour existe dans PATIENT</td><td><code>FOREIGN KEY</code></td></tr>
+    <tr><td>supprimer un patient supprime ses séjours</td><td>FK <code>ON DELETE CASCADE</code></td></tr>
+    <tr><td>date d'intervention entre l'arrivée et le départ du <b>séjour</b></td><td><b>Trigger</b> (autre table)</td></tr>
+    <tr><td>nb de personnes ≤ couchages de la <b>chambre</b></td><td><b>Trigger</b> (autre table)</td></tr>
+    <tr><td>date de réservation ≥ aujourd'hui</td><td><b>Trigger</b> (<code>SYSDATE</code> interdit dans un CHECK)</td></tr>
+    <tr><td>pas de modification le samedi</td><td><b>Trigger d'état</b></td></tr>
+    <tr><td>tenir à jour le TOTAL d'une facture</td><td><b>Trigger</b> sur LIGNE_FACTURE</td></tr>
+    <tr><td>archiver les factures supprimées</td><td><b>Trigger</b> BEFORE DELETE</td></tr>
+  </table></div>
+  <p class="small">Supprimer les lignes de facture avec la facture : le trigger du TP04 marche, mais la clé étrangère <code>ON DELETE CASCADE</code> est la meilleure solution.</p>
 </section>
 
-<section class="section" id="qcm">
+<!-- ============ 7. MUTATION ============ -->
+<section class="section" id="mutation">
+  <span class="num">07</span>
+  <h2>Tables mutantes et trigger composé</h2>
+  <div class="card pitfall">
+    <span class="tag">ORA-04091 : table en mutation</span>
+    Un trigger <b>ligne</b> ne peut pas lire ni modifier la table sur laquelle il est posé. Il <b>compile</b>, mais l'erreur arrive <b>à l'exécution</b>. Exemple : contrôler le nouveau salaire par rapport à <code>AVG(agt_salaire)</code> de AGENT_ENTRETIEN dans un trigger <code>BEFORE UPDATE … FOR EACH ROW</code> sur AGENT_ENTRETIEN.
+  </div>
+  <ul>
+    <li>Les triggers <b>d'état</b> ne sont pas concernés : ils peuvent interroger leur table.</li>
+    <li>Lire ou modifier une <b>autre</b> table dans un trigger ligne est permis (CHAMBRE depuis PLANNING, FACTURE depuis LIGNE_FACTURE).</li>
+    <li>Cas toléré par Oracle : un <code>INSERT … VALUES</code> d'une seule ligne avec un trigger <code>BEFORE INSERT</code> ligne qui lit sa table (ex. <code>SELECT MAX(num_clt)+1</code>). Avec un <code>INSERT … SELECT</code>, l'erreur revient.</li>
+  </ul>
+  <h3>La solution : le trigger composé</h3>
+  <p>Une seule unité avec des variables partagées et 4 sections. On fait la requête sur la table dans la partie état, puis on contrôle chaque ligne.</p>
+<pre>CREATE OR REPLACE TRIGGER mut_comp_trigger
+FOR UPDATE ON agent_entretien
+COMPOUND TRIGGER
+  g_avg_salaire INTEGER;                 <span class="cm">-- partagé entre les sections</span>
+
+  BEFORE STATEMENT IS
+  BEGIN
+    SELECT ROUND(AVG(agt_salaire)) INTO g_avg_salaire FROM agent_entretien;
+  END BEFORE STATEMENT;
+
+  AFTER EACH ROW IS
+  BEGIN
+    IF :NEW.agt_salaire &lt;= g_avg_salaire THEN
+      RAISE_APPLICATION_ERROR(-20001, 'Salaire inférieur à la moyenne');
+    END IF;
+  END AFTER EACH ROW;
+
+  AFTER STATEMENT IS
+  BEGIN
+    DBMS_OUTPUT.PUT_LINE('Fin de la mise à jour');
+  END AFTER STATEMENT;
+END mut_comp_trigger;
+/</pre>
+  <p class="small">Sections possibles : <code>BEFORE STATEMENT</code>, <code>BEFORE EACH ROW</code>, <code>AFTER EACH ROW</code>, <code>AFTER STATEMENT</code>. On écrit <code>FOR UPDATE ON table COMPOUND TRIGGER</code>, sans BEFORE/AFTER en tête.</p>
+</section>
+
+<!-- ============ 8. TP04 ============ -->
+<section class="section" id="tp04">
+  <span class="num">08</span>
+  <h2>TP04 pas à pas</h2>
+
+  <h3>Exo 1 : trigger d'état, pas de modification le samedi</h3>
+<pre>CREATE OR REPLACE TRIGGER jourok
+BEFORE DELETE OR UPDATE OR INSERT ON agent_entretien
+BEGIN
+  IF TO_CHAR(SYSDATE,'fmDAY') = 'SAMEDI' THEN
+    RAISE_APPLICATION_ERROR(-20120, 'Désolé pas de modifs de la table aujourd''hui !');
+  END IF;
+END;
+/</pre>
+  <p class="small">Pas de <code>FOR EACH ROW</code> : la décision porte sur l'ordre entier. <code>fm</code> retire les espaces de remplissage de <code>DAY</code> (sinon 'SAMEDI  '). Le nom du jour dépend de la langue de la session. Pour le désactiver : <code>ALTER TRIGGER jourok DISABLE</code>, avec le nom du trigger.</p>
+
+  <h3>Exo 2 : archiver une facture et ses lignes avant suppression</h3>
+<pre>CREATE OR REPLACE TRIGGER tr_facture
+BEFORE DELETE ON facture
+FOR EACH ROW
+BEGIN
+  INSERT INTO old_fact VALUES (:OLD.fac_id, :OLD.pmt_code, :OLD.cli_id,
+                               :OLD.adr_id, :OLD.fac_date, :OLD.fac_dat_pmt);
+  INSERT INTO old_lg (SELECT * FROM ligne_facture WHERE fac_id = :OLD.fac_id);
+  DELETE FROM ligne_facture WHERE fac_id = :OLD.fac_id;
+END;
+/</pre>
+  <p class="small">En DELETE on n'a que <code>:OLD</code>. <b>BEFORE</b> : les lignes filles sont supprimées avant que la suppression de la facture vérifie la clé étrangère, sinon <code>ORA-02292</code>. Un <code>ROLLBACK</code> (hors trigger) annule tout.</p>
+
+  <h3>Exo 3 : corriger la date et contrôler la capacité</h3>
+<pre>CREATE OR REPLACE TRIGGER tr_planning
+BEFORE INSERT OR UPDATE ON planning
+FOR EACH ROW
+DECLARE
+  nbc INTEGER;
+BEGIN
+  IF :NEW.pln_jour &lt; SYSDATE OR :NEW.pln_jour IS NULL THEN
+    :NEW.pln_jour := TRUNC(SYSDATE);        <span class="cm">-- modifier :NEW → BEFORE obligatoire</span>
+  END IF;
+  SELECT chb_couchage INTO nbc FROM chambre WHERE chb_id = :NEW.chb_id;
+  IF :NEW.nb_pers > nbc THEN
+    RAISE_APPLICATION_ERROR(-20222, 'Pas assez de place dans cette chambre !');
+  END IF;
+END;
+/</pre>
+  <p class="small">Le trigger remplace une date passée ou NULL : un <code>NOT NULL</code> sur pln_jour n'empêche pas l'insertion de <code>NULL</code> ici, car le BEFORE corrige la valeur avant la vérification des contraintes. Lire CHAMBRE est permis (autre table).</p>
+
+  <h3>Exo 4 : maintenir le total de la facture</h3>
+<pre>CREATE OR REPLACE TRIGGER tr_total_facture
+BEFORE INSERT OR UPDATE OR DELETE ON ligne_facture
+FOR EACH ROW
+DECLARE
+  new_mnt facture.total%TYPE;
+  old_mnt facture.total%TYPE;
+BEGIN
+  old_mnt := (:OLD.mnt*:OLD.qte - :OLD.remise_mnt) * (1 + :OLD.taux_tva/100);
+  IF DELETING THEN
+    UPDATE facture SET total = ROUND(total - old_mnt, 2) WHERE fac_id = :OLD.fac_id;
+  ELSE
+    :NEW.remise_mnt := NVL(:NEW.mnt*:NEW.qte*:NEW.remise_pourcent/100, 0);
+    new_mnt := (:NEW.mnt*:NEW.qte - :NEW.remise_mnt) * (1 + :NEW.taux_tva/100);
+    IF INSERTING THEN
+      UPDATE facture SET total = ROUND(total + new_mnt, 2) WHERE fac_id = :NEW.fac_id;
+    ELSE
+      UPDATE facture SET total = ROUND(total - old_mnt + new_mnt, 2) WHERE fac_id = :NEW.fac_id;
+    END IF;
+  END IF;
+END;
+/</pre>
+  <p class="small">Un seul trigger pour les 3 ordres, aiguillé par <code>INSERTING / UPDATING / DELETING</code>. INSERT → ajoute :NEW ; DELETE → retire :OLD ; UPDATE → retire :OLD et ajoute :NEW. <code>%TYPE</code> reprend le type d'une colonne. UPDATE sur FACTURE autorisé (autre table).</p>
+
+  <h3>Exo 5 : mutation puis trigger composé</h3>
+  <p class="small">Le trigger ligne qui calcule <code>AVG(agt_salaire)</code> sur AGENT_ENTRETIEN compile mais lève <code>ORA-04091</code> à l'UPDATE. On le désactive et on le remplace par le trigger composé de la section 7.</p>
+</section>
+
+<!-- ============ QUESTIONS TYPE ============ -->
+<section class="section" id="type">
   <span class="num">?</span>
-  <h2>QCM d'auto-évaluation</h2>
-  <p class="lead">20 questions comme le test : 17 QCM + 3 requêtes à reconstruire. Vise 30 minutes.</p>
-  <div id="quiz"></div>
+  <h2>Questions type corrigées</h2>
+  <p class="lead">8 questions d'exemple, avec la correction expliquée.</p>
+  <div id="quizType"></div>
 </section>
 
+<!-- ============ QCM BLANC ============ -->
+<section class="section" id="blanc">
+  <span class="num">⏱</span>
+  <h2>QCM blanc</h2>
+  <p class="lead">30 questions tirées au hasard dans une banque de 48, en 45 minutes. Les questions à plusieurs réponses sont signalées.</p>
+  <div id="quizBlanc"></div>
+</section>
+
+<!-- ============ CHECKLIST ============ -->
 <section class="section" id="checklist">
   <span class="num">✓</span>
-  <h2>Checklist avant l'examen</h2>
-  <ul class="checklist">
-    <li><span class="box"></span> Je ne mélange jamais virgules et JOIN dans une même requête.</li>
-    <li><span class="box"></span> Je sais repérer la table maître / table esclave d'un LEFT ou RIGHT JOIN.</li>
-    <li><span class="box"></span> Condition sur la table esclave → dans le ON, jamais dans le WHERE (sinon ça annule le LEFT JOIN).</li>
-    <li><span class="box"></span> "N'a jamais / aucun" → LEFT JOIN + IS NULL sur la clé, ou NOT EXISTS.</li>
-    <li><span class="box"></span> NOT IN est dangereux si la colonne peut être NULL → je préfère NOT EXISTS.</li>
-    <li><span class="box"></span> HAVING filtre des groupes, WHERE filtre des lignes avant regroupement.</li>
-    <li><span class="box"></span> Une CTE (WITH ... AS) remplace une sous-requête du FROM pour plus de lisibilité.</li>
-    <li><span class="box"></span> NVL / NVL2 pour afficher proprement les colonnes NULL issues d'une jointure externe.</li>
+  <h2>Checklist</h2>
+  <ul class="checklist" id="checks">
+    <li><label class="check"><input type="checkbox" id="c1"> Contrainte sur 2 colonnes → contrainte de table. NOT NULL → colonne uniquement.</label></li>
+    <li><label class="check"><input type="checkbox" id="c2"> Une FK pointe vers une PK ou UNIQUE ; la table mère est créée avant la fille.</label></li>
+    <li><label class="check"><input type="checkbox" id="c3"> Un CHECK ne lit que la ligne en cours, refuse SYSDATE, et laisse passer NULL.</label></li>
+    <li><label class="check"><input type="checkbox" id="c4"> CREATE TABLE AS SELECT ne copie que les NOT NULL ; DEFAULT ne sert que si la colonne est omise.</label></li>
+    <li><label class="check"><input type="checkbox" id="c5"> Modifier une FK = DROP CONSTRAINT puis ADD CONSTRAINT … ON DELETE CASCADE.</label></li>
+    <li><label class="check"><input type="checkbox" id="c6"> Pas de SELECT par colonne : vue + GRANT SELECT sur la vue. PUBLIC garde le droit après un REVOKE individuel.</label></li>
+    <li><label class="check"><input type="checkbox" id="c7"> Rôle : CREATE ROLE → GRANT privilèges TO rôle → GRANT rôle TO utilisateurs.</label></li>
+    <li><label class="check"><input type="checkbox" id="c8"> État = 1 fois par ordre (même 0 ligne) ; ligne = FOR EACH ROW, 1 fois par ligne.</label></li>
+    <li><label class="check"><input type="checkbox" id="c9"> :OLD NULL en INSERT, :NEW NULL en DELETE ; :NEW modifiable seulement en BEFORE ligne.</label></li>
+    <li><label class="check"><input type="checkbox" id="c10"> RAISE_APPLICATION_ERROR (-20000 à -20999) annule l'ordre entier.</label></li>
+    <li><label class="check"><input type="checkbox" id="c11"> Trigger ligne qui lit sa propre table → ORA-04091 à l'exécution → trigger composé.</label></li>
+    <li><label class="check"><input type="checkbox" id="c12"> Règle qui touche une autre table ou SYSDATE → trigger ; sinon contrainte.</label></li>
   </ul>
+</section>
+
+<!-- ============ ARCHIVE QCM 1 ============ -->
+<section class="section" id="rappels">
+  <details class="archive">
+    <summary>Rappels du QCM 1 : jointures, NULL, GROUP BY, CTE</summary>
+
+    <div class="card rule"><span class="tag">Jointures</span>
+      On ne mélange pas <code>FROM t1, t2 WHERE …</code> et <code>JOIN … ON</code> dans une même requête. Une sous-requête <code>IN</code> filtre une table sans pouvoir afficher les colonnes de l'autre.</div>
+
+    <div class="card rule"><span class="tag">Jointure externe</span>
+      <code>(+)</code> du côté de la table qui peut manquer : <code>a.agt_id = c.agt_id(+)</code> ≡ <code>agent_entretien a LEFT JOIN chambre c</code>. « Ceux qui n'ont aucun… » : LEFT JOIN + <code>IS NULL</code> sur la clé de la table esclave.</div>
+
+    <div class="compare">
+      <div class="card bad"><span class="label">Faux : perd les clients sans FAX</span>
+<pre>FROM client c
+  LEFT JOIN telephone t ON c.cli_id=t.cli_id
+WHERE t.typ_code = 'FAX'</pre></div>
+      <div class="card good"><span class="label">Juste : condition dans le ON</span>
+<pre>FROM client c
+  LEFT JOIN telephone t
+    ON c.cli_id = t.cli_id AND t.typ_code = 'FAX'</pre></div>
+    </div>
+    <p class="small">Condition sur la table maître → WHERE. Condition sur la table esclave d'une jointure externe → ON (ou filtrée avant dans une sous-requête du FROM / une CTE).</p>
+
+    <div class="card rule"><span class="tag">GROUP BY / HAVING</span>
+      Toute colonne du SELECT hors agrégat va dans le GROUP BY ; pas d'alias dans le GROUP BY. WHERE filtre les lignes avant regroupement, HAVING filtre les groupes. <code>COUNT(col)</code> ignore les NULL, <code>COUNT(*)</code> non.</div>
+
+    <div class="card rule"><span class="tag">CTE et ROWNUM</span>
+<pre>WITH agt_actifs AS (
+  SELECT DISTINCT agt_nom, agt_emb FROM agent_entretien a
+  JOIN chambre c ON a.agt_id = c.agt_id ORDER BY agt_emb)
+SELECT agt_nom FROM agt_actifs WHERE ROWNUM &lt;= 2;</pre>
+      ROWNUM est attribué avant le ORDER BY : on trie dans la CTE ou la sous-requête, puis on filtre.</div>
+
+    <div class="card pitfall"><span class="tag">NULL</span>
+      <code>NOT IN (sous-requête)</code> qui contient un NULL ne renvoie aucune ligne → <code>NOT EXISTS</code>. Tester avec <code>IS NULL</code>, jamais <code>= NULL</code>. <code>NVL(x, y)</code> : x et y du même type.</div>
+
+    <h3>Mini QCM 1</h3>
+    <div id="quizOld"></div>
+  </details>
 </section>
 
 </main>
 
-<footer>Basé sur le corrigé TP01/TP02 (hôtel).</footer>
-
+<footer>Basé sur les corrigés TP03 et TP04 (base hôtel, Oracle).</footer>
 
 <script>
 (function(){
-var Q=[
+/* ---------- Banques de questions ---------- */
+var TYPE = [
+{t:"Dans quel cas ne peut-on pas définir une contrainte en contrainte de colonne ?",o:["Lorsqu'elle porte sur une clé primaire","Lorsqu'elle porte sur deux champs de la table","Lorsqu'il s'agit d'une contrainte CHECK","Lorsqu'il y a déjà une autre contrainte sur la colonne","Lorsqu'on peut faire un déclencheur"],a:1,e:"Une contrainte de colonne ne voit que sa colonne. Dès qu'elle porte sur deux colonnes (PK composée, FK composée, CHECK qui compare deux colonnes), elle s'écrit en contrainte de table. Une colonne peut porter plusieurs contraintes de colonne."},
+{t:"Dans un trigger LMD, qu'est-ce qui différencie un trigger par ordre (déclencheur d'état) d'un trigger par ligne ?",o:["Le séquencement (BEFORE ou AFTER)","La nature de l'ordre qui déclenche le trigger (INSERT, UPDATE…)","La directive FOR EACH ROW","Le type d'objet associé au trigger (TABLE, INDEX…)"],a:2,e:"Les deux peuvent être BEFORE ou AFTER, sur INSERT, UPDATE ou DELETE, et portent sur une table. Seule la présence de FOR EACH ROW en fait un trigger ligne."},
+{t:"Dans quel type de trigger la variable OLD contiendra forcément la valeur nulle ?",o:["BEFORE UPDATE","AFTER UPDATE","BEFORE DELETE","AFTER INSERT"],a:3,e:"En INSERT il n'existe pas d'ancienne ligne : :OLD est NULL, en BEFORE comme en AFTER. En UPDATE et DELETE, :OLD contient l'ancienne ligne."},
+{t:"Base hôpital : PATIENT(NumPat, …, SexePat), SEJOUR(NumSéjour, NumPat, DateArrivée, DateDépart), INTERVENTION(NumInt, NumSéjour, DateInt, …). Quelle contrainte nécessite un déclencheur ?",o:["La date d'arrivée d'un séjour est antérieure à la date de départ","La suppression d'un patient entraîne la suppression de ses séjours","Les valeurs autorisées pour sexePat sont 1 et 2","La date d'intervention est comprise entre la date d'arrivée et la date de départ du séjour","Le NumPat d'un séjour correspond à un NumPat de la table PATIENT"],a:3,e:"1 et 3 : CHECK (même ligne). 2 : FK ON DELETE CASCADE. 5 : FOREIGN KEY. 4 compare une colonne d'INTERVENTION à des colonnes de SEJOUR : un CHECK ne peut pas lire une autre table, il faut un trigger."},
+{t:"Quels sont le(s) déclencheur(s) qui ne peuvent pas être compilés ?",code:"A. CREATE OR REPLACE TRIGGER T1\n   BEFORE UPDATE ON CATEGORIE\n   BEGIN\n     :new.DESCRIPTION := 'DESCRIPTION';\n   END;\n\nB. CREATE OR REPLACE TRIGGER T2\n   BEFORE UPDATE ON CATEGORIE\n   FOR EACH ROW\n   BEGIN\n     :new.DESCRIPTION := 'DESCRIPTION';\n   END;\n\nC. CREATE OR REPLACE TRIGGER T3\n   AFTER UPDATE ON CATEGORIE\n   FOR EACH ROW\n   BEGIN\n     :new.DESCRIPTION := 'DESCRIPTION';\n   END;",o:["A (T1)","B (T2)","C (T3)"],a:[0,2],e:"A : :new dans un trigger d'état (pas de FOR EACH ROW), interdit. C : on ne peut pas affecter :new dans un trigger AFTER, la ligne est déjà écrite. B compile : BEFORE + FOR EACH ROW."},
+{t:"CLIENT(Num_clt, Nom_clt, …, Ville_clt). Trigger T1 BEFORE INSERT ON CLIENT FOR EACH ROW. Quelle instruction teste si le client que l'on insère est de REIMS ?",o:["SELECT ville_clt INTO v_villecl FROM CLIENT; IF v_villecl = 'REIMS' THEN …","IF (SELECT ville_clt FROM CLIENT) = 'REIMS' THEN …","IF :NEW.ville_clt = 'REIMS' THEN …","IF :OLD.ville_clt = 'REIMS' THEN …"],a:2,e:"La ligne en cours d'insertion se lit dans :NEW. :OLD est NULL en INSERT. Le SELECT sans WHERE ramène toutes les lignes (TOO_MANY_ROWS), et un SELECT ne s'écrit pas directement dans un IF en PL/SQL."},
+{t:"Trigger T1 BEFORE INSERT ON CLIENT FOR EACH ROW, avec SELECT MAX(num_clt) + 1 INTO v_nb FROM client; Quelle instruction utilise v_nb comme numéro du client inséré ?",o:[":old.num_clt := v_nb","UPDATE client SET num_clt = v_nb WHERE num_clt = :old.num_clt;",":new.num_clt := v_nb","UPDATE client SET num_clt = v_nb WHERE num_clt = :new.num_clt;","num_clt := v_nb"],a:2,e:"On modifie la ligne en cours en affectant :NEW, possible en BEFORE ligne. :OLD n'est jamais modifiable, num_clt seul n'est pas une variable déclarée, et un UPDATE viserait une ligne pas encore insérée."},
+{t:"Trigger d'état actif : BEFORE INSERT ON CLIENT, qui fait SELECT COUNT(*) INTO v_nb FROM CLIENT; IF v_nb > 100 THEN DBMS_OUTPUT.PUT_LINE('Plus de 100'); END IF; Que se passe-t-il quand on insère le 101e client ?",o:["L'insertion ne se fait pas et un message s'affiche","L'insertion se fait et un message s'affiche","L'insertion ne se fait pas et rien ne s'affiche","L'insertion se fait et rien ne s'affiche"],a:3,e:"BEFORE : le COUNT est fait avant l'insertion, il y a 100 clients et 100 > 100 est faux. Aucun RAISE_APPLICATION_ERROR : l'insertion a lieu. Le message n'apparaîtra qu'à partir du 102e."}
+];
+
+var BANK = [
+{t:"La clé primaire de PLANNING porte sur (chb_id, pln_jour). Où la déclarer ?",o:["En contrainte de colonne sur chb_id","En contrainte de colonne sur chacune des deux colonnes","En contrainte de table","Avec un trigger"],a:2,e:"Deux colonnes → contrainte de table : CONSTRAINT pk_planning PRIMARY KEY (chb_id, pln_jour). Deux PRIMARY KEY de colonne feraient deux clés primaires, ce qui est interdit."},
+{t:"Quelle contrainte ne peut s'écrire qu'en contrainte de colonne ?",o:["PRIMARY KEY","CHECK","NOT NULL","FOREIGN KEY"],a:2,e:"NOT NULL se déclare uniquement au niveau de la colonne."},
+{t:"FACTURE a la contrainte CHECK (fac_date <= fac_dat_pmt). On insère une facture avec fac_dat_pmt NULL. Résultat ?",o:["ORA-02290 : contrainte CHECK violée","La ligne est insérée","fac_dat_pmt prend la valeur de fac_date","ORA-01400"],a:1,e:"Comparer à NULL donne UNKNOWN. Un CHECK n'est violé que si la condition est FAUSSE : la ligne passe."},
+{t:"La création de CLIENT échoue sur REFERENCES titre(tit_code). Pourquoi ?",o:["TIT_CODE est de type CHAR","TITRE n'a pas de clé primaire (ni UNIQUE) sur tit_code","Une FK doit s'écrire en contrainte de table","CLIENT doit être créée avant TITRE"],a:1,e:"Une clé étrangère doit référencer une clé primaire ou une colonne UNIQUE de la table mère."},
+{t:"CREATE TABLE tarif AS SELECT * FROM hotel.tarif; Qu'est-ce qui est copié ?",o:["Les colonnes, les données et toutes les contraintes","Les colonnes, les données et seulement les contraintes NOT NULL","Seulement les colonnes","Les colonnes et la clé primaire"],a:1,e:"D'où le ALTER TABLE tarif ADD CONSTRAINT pk_tarif PRIMARY KEY (…) du TP03."},
+{t:"Les colonnes de hotel.chambre ne sont pas dans le même ordre que celles de votre table CHAMBRE. Comment copier les données ?",o:["INSERT INTO chambre SELECT * FROM hotel.chambre;","INSERT INTO chambre SELECT col1, col2, … FROM hotel.chambre; en listant les colonnes dans l'ordre de la table cible","CREATE TABLE chambre AS SELECT * FROM hotel.chambre;","Ce n'est pas possible"],a:1,e:"SELECT * associe les colonnes par position : il faut les lister dans l'ordre de la table qui reçoit."},
+{t:"On supprime un client qui a des téléphones ; la FK de TELEPHONE n'a aucune option. Résultat ?",o:["Le client et ses téléphones sont supprimés","Le client est supprimé, ses téléphones gardent un cli_id orphelin","ORA-02292 : rien n'est supprimé","Les téléphones passent à cli_id NULL"],a:2,e:"Enregistrement fils existant : il faut supprimer les fils d'abord ou recréer la FK avec ON DELETE CASCADE."},
+{t:"Comment ajouter ON DELETE CASCADE à la clé étrangère fk_tel_client qui existe déjà ?",o:["ALTER TABLE telephone MODIFY CONSTRAINT fk_tel_client ON DELETE CASCADE;","DROP CONSTRAINT puis ADD CONSTRAINT … FOREIGN KEY (cli_id) REFERENCES client(cli_id) ON DELETE CASCADE","Avec un trigger uniquement","ALTER TABLE client ADD ON DELETE CASCADE;"],a:1,e:"On ne modifie pas la définition d'une contrainte : on la supprime et on la recrée."},
+{t:"tel_localisation a DEFAULT 'domicile'. INSERT INTO telephone (tel_id, cli_id, typ_code, tel_numero) VALUES (300, 1, 'GSM', '07-12-58-96-00'); Valeur de tel_localisation ?",o:["NULL","'domicile'","Erreur : colonne manquante","'portable'"],a:1,e:"La colonne est absente de l'INSERT : la valeur par défaut s'applique."},
+{t:"Même table : INSERT INTO telephone VALUES (301, 1, 'GSM', '06-11-22-33-44', NULL); Valeur de tel_localisation ?",o:["'domicile'","NULL","Erreur ORA-02290","'GSM'"],a:1,e:"NULL explicite = NULL. Le DEFAULT ne joue que si la colonne est omise. Le CHECK IN (…) laisse passer NULL."},
+{t:"Le voisin doit lire AGENT_ENTRETIEN sans la colonne AGT_SALAIRE, et seulement les agents encore en poste. Comment ?",o:["GRANT SELECT(agt_id, agt_nom, …) ON agent_entretien TO voisin;","Créer une vue sans le salaire avec WHERE agt_dpt IS NULL, puis GRANT SELECT sur la vue","GRANT SELECT ON agent_entretien TO voisin WHERE agt_dpt IS NULL;","Avec un rôle"],a:1,e:"SELECT ne se restreint pas par colonne et GRANT n'a pas de WHERE : la vue fait les deux."},
+{t:"GRANT SELECT, INSERT, DELETE, UPDATE(nb_pers) ON planning TO tests2; Que peut faire tests2 ?",o:["Modifier toutes les colonnes","Lire, insérer, supprimer, et modifier seulement NB_PERS","Seulement modifier NB_PERS","Rien sans rôle"],a:1,e:"UPDATE(col) limite la modification aux colonnes listées."},
+{t:"GRANT SELECT ON client TO PUBLIC; GRANT SELECT ON client TO tests2; REVOKE SELECT ON client FROM tests2; tests2 peut-il encore lire CLIENT ?",o:["Non","Oui, via PUBLIC","Oui, jusqu'à sa déconnexion","Erreur au REVOKE"],a:1,e:"Le droit donné à PUBLIC s'applique à tout le monde, tests2 compris."},
+{t:"A donne SELECT à B WITH GRANT OPTION, B le donne à C. A révoque le droit de B. Et C ?",o:["C garde le droit","C perd aussi le droit","C doit le rendre lui-même","Le REVOKE échoue"],a:1,e:"Pour les privilèges objet, la révocation se propage aux droits redistribués."},
+{t:"Comment tests2 lit-il votre table CLIENT (vous êtes tests3) ?",o:["SELECT * FROM client;","SELECT * FROM tests3.client;","SELECT * FROM client@tests3;","SELECT * FROM tests3:client;"],a:1,e:"Préfixe propriétaire.table (sans synonyme)."},
+{t:"Ordre correct pour mettre en place un rôle ?",o:["GRANT rôle TO users → CREATE ROLE → GRANT privilèges TO rôle","CREATE ROLE → GRANT privilèges TO rôle → GRANT rôle TO users","CREATE ROLE → GRANT rôle TO users uniquement","CREATE USER → CREATE ROLE"],a:1,e:"On crée le rôle, on le remplit de privilèges, puis on l'attribue aux personnes. L'ordre des deux derniers GRANT peut s'inverser, mais le rôle doit exister d'abord."},
+{t:"Quel privilège objet ne peut PAS être restreint à certaines colonnes dans un GRANT ?",o:["UPDATE","INSERT","REFERENCES","SELECT"],a:3,e:"Pour SELECT, on passe par une vue."},
+{t:"Un UPDATE ne touche aucune ligne (WHERE jamais vrai). Combien de fois s'exécutent un trigger d'état et un trigger ligne BEFORE UPDATE ?",o:["0 et 0","1 et 0","1 et 1","0 et 1"],a:1,e:"Le trigger d'état s'exécute une fois par ordre, même sans ligne. Le trigger ligne s'exécute une fois par ligne touchée."},
+{t:"Un UPDATE modifie 5 lignes. Combien d'exécutions pour un trigger ligne et un trigger d'état ?",o:["5 et 5","1 et 1","5 et 1","1 et 5"],a:2,e:"Ligne : 5 fois. État : 1 fois."},
+{t:"Ordre de déclenchement pour un ordre qui modifie plusieurs lignes ?",o:["BEFORE ligne, BEFORE état, AFTER état, AFTER ligne","BEFORE état, puis pour chaque ligne BEFORE ligne / AFTER ligne, puis AFTER état","Tous les BEFORE ligne, puis BEFORE état","L'ordre est aléatoire"],a:1,e:"BEFORE état → (BEFORE ligne → modification → AFTER ligne) × n → AFTER état."},
+{t:"Dans un trigger AFTER DELETE FOR EACH ROW, que contient :NEW ?",o:["La ligne supprimée","NULL","La ligne suivante","Erreur de compilation"],a:1,e:"En DELETE il n'y a pas de nouvelle ligne. La ligne supprimée est dans :OLD."},
+{t:"Un trigger ligne lève RAISE_APPLICATION_ERROR sur la 3e ligne d'un UPDATE de 5 lignes. Combien de lignes sont modifiées ?",o:["2","3","0","5"],a:2,e:"L'erreur annule l'ordre SQL entier."},
+{t:"Quels codes accepte RAISE_APPLICATION_ERROR ?",o:["De 0 à 999","De -20000 à -20999","De -1 à -999","N'importe quel nombre négatif"],a:1,e:"Plage réservée aux erreurs applicatives : -20000 à -20999."},
+{t:"Un trigger sans FOR EACH ROW utilise :NEW.cli_nom. Que se passe-t-il ?",o:["Il compile et marche","Erreur de compilation","Erreur à l'exécution seulement",":NEW vaut NULL"],a:1,e:":NEW et :OLD n'existent que dans les triggers ligne (ORA-04082)."},
+{t:"On veut remplacer une date de réservation passée par la date du jour. Quel trigger ?",o:["AFTER INSERT OR UPDATE FOR EACH ROW avec :NEW.pln_jour := TRUNC(SYSDATE)","BEFORE INSERT OR UPDATE FOR EACH ROW avec :NEW.pln_jour := TRUNC(SYSDATE)","BEFORE INSERT (état) avec UPDATE planning SET pln_jour = SYSDATE","Un CHECK (pln_jour >= SYSDATE)"],a:1,e:"Modifier :NEW exige BEFORE + FOR EACH ROW. Un CHECK ne peut pas utiliser SYSDATE et ne corrige rien."},
+{t:"Peut-on écrire CHECK (pln_jour >= SYSDATE) ?",o:["Oui","Non, SYSDATE est interdit dans un CHECK","Oui, en contrainte de table seulement","Oui avec TRUNC(SYSDATE)"],a:1,e:"Un CHECK ne peut pas utiliser de fonction non déterministe comme SYSDATE (ORA-02436). Il faut un trigger."},
+{t:"Trigger BEFORE UPDATE FOR EACH ROW sur AGENT_ENTRETIEN qui fait SELECT AVG(agt_salaire) FROM agent_entretien. Que se passe-t-il ?",o:["Erreur de compilation","Il compile, puis ORA-04091 (table en mutation) à l'UPDATE","Il marche normalement","La moyenne est NULL"],a:1,e:"Un trigger ligne ne peut pas lire sa propre table pendant la modification. L'erreur n'apparaît qu'à l'exécution."},
+{t:"Solution du TP04 au problème de table mutante ?",o:["Ajouter un COMMIT dans le trigger","Un trigger composé (COMPOUND TRIGGER) qui calcule la moyenne dans BEFORE STATEMENT","Passer le trigger en AFTER","Un index sur agt_salaire"],a:1,e:"La partie état peut lire la table ; la valeur est partagée avec les sections ligne."},
+{t:"Dans un trigger sur INSERT OR UPDATE OR DELETE, comment savoir quel ordre l'a déclenché ?",o:["IF :NEW IS NULL","IF INSERTING / UPDATING / DELETING","IF ORA_SYSEVENT = 'INSERT'","Ce n'est pas possible : il faut 3 triggers"],a:1,e:"Les prédicats INSERTING, UPDATING et DELETING. ORA_SYSEVENT sert aux triggers LDD/système."},
+{t:"Un trigger LMD contient COMMIT. Que se passe-t-il ?",o:["Il compile, puis échoue à l'exécution (ORA-04092)","Erreur de compilation","La transaction est validée","Le COMMIT est ignoré"],a:0,e:"COMMIT et ROLLBACK sont interdits dans un trigger LMD, mais l'erreur n'apparaît qu'à l'exécution."},
+{t:"Base hôtel : quelle règle demande un trigger ?",o:["chb_etage vaut RDC, 1er ou 2e","chb_numero différent de 13","nb_pers d'une réservation ≤ chb_couchage de la chambre","cli_id d'un téléphone existe dans CLIENT"],a:2,e:"nb_pers est dans PLANNING, chb_couchage dans CHAMBRE : autre table, donc trigger. Les autres sont des CHECK et une FK."},
+{t:"Comment désactiver le trigger jourok sans le supprimer ?",o:["DROP TRIGGER jourok;","ALTER TRIGGER jourok DISABLE;","ALTER TABLE jourok DISABLE;","DISABLE TRIGGER jourok;"],a:1,e:"ALTER TRIGGER nom DISABLE / ENABLE. ALTER TABLE t DISABLE ALL TRIGGERS les désactive tous."},
+{t:"Pourquoi tr_facture (archive + suppression des lignes) est-il BEFORE DELETE et pas AFTER DELETE ?",o:["Parce que :OLD n'existe pas en AFTER","Pour supprimer les lignes de facture avant que la suppression de la facture vérifie la clé étrangère","Parce qu'un AFTER ne peut pas faire d'INSERT","Pour pouvoir modifier :NEW"],a:1,e:"En AFTER ligne, la contrainte a déjà été vérifiée sur la facture : ORA-02292. :OLD existe pourtant bien en AFTER."},
+{t:"Quelle écriture de la clause WHEN est correcte ?",o:["FOR EACH ROW WHEN (:NEW.nb_pers > 4)","FOR EACH ROW WHEN (NEW.nb_pers > 4)","WHEN NEW.nb_pers > 4 FOR EACH ROW","WHEN (nb_pers > 4) sans FOR EACH ROW"],a:1,e:"Dans WHEN, NEW et OLD s'écrivent sans les deux-points, entre parenthèses, et la clause n'existe que pour les triggers ligne."},
+{t:"Un samedi, avec le trigger d'état jourok actif, on fait un INSERT … SELECT de 10 agents. Résultat ?",o:["10 erreurs, 0 insertion","1 erreur, 0 insertion","1 erreur, 9 insertions","10 insertions"],a:1,e:"Trigger d'état : exécuté une fois, il lève l'erreur et annule tout l'ordre."},
+{t:"Trigger d'état AFTER INSERT ON client : SELECT COUNT(*) INTO v_nb FROM client; IF v_nb > 100 THEN PUT_LINE('Plus de 100'). On insère le 101e client.",o:["L'insertion se fait et le message s'affiche","L'insertion se fait et rien ne s'affiche","L'insertion ne se fait pas","ORA-04091"],a:0,e:"En AFTER, le COUNT voit la ligne insérée : 101 > 100. Un trigger d'état peut lire sa table sans mutation."},
+{t:"Qu'est-ce qui est vrai pour une vue ? (plusieurs réponses)",o:["Elle peut cacher des colonnes","Elle peut filtrer des lignes avec un WHERE","On peut donner GRANT SELECT sur une vue","Elle stocke une copie des données"],a:[0,1,2],e:"Une vue est une requête stockée : elle ne contient pas de données, elle les lit dans les tables à chaque appel."},
+{t:"Quelles règles peut-on poser avec une contrainte déclarative ? (plusieurs réponses)",o:["agt_sx vaut '1' ou '2'","fac_date ≤ fac_dat_pmt","la date d'intervention est dans les dates du séjour","supprimer un client supprime ses e-mails"],a:[0,1,3],e:"CHECK, CHECK de table, FK ON DELETE CASCADE. La 3e touche une autre table : trigger."},
+{t:"Dans quels triggers peut-on écrire :NEW.col := valeur ? (plusieurs réponses)",o:["BEFORE INSERT FOR EACH ROW","BEFORE UPDATE FOR EACH ROW","AFTER INSERT FOR EACH ROW","BEFORE INSERT (sans FOR EACH ROW)"],a:[0,1],e:"Seulement en BEFORE ligne, sur INSERT ou UPDATE (en DELETE, :NEW est NULL)."},
+{t:"Quelles affirmations sur ON DELETE CASCADE sont vraies ? (plusieurs réponses)",o:["Elle se déclare sur la clé étrangère de la table fille","Supprimer le père supprime les fils","Elle se déclare sur la clé primaire du père","Elle remplace avantageusement un trigger qui supprime les fils"],a:[0,1,3],e:"L'option fait partie de la FK (table fille). Une contrainte déclarative est préférable à un trigger quand elle suffit."}
+];
+
+var OLD = [
 {t:"Table esclave d'un LEFT JOIN : on met sa condition dans le WHERE. Effet ?",o:["Les lignes sans correspondance sont éliminées : on retombe sur un INNER JOIN","Erreur de syntaxe","La condition est ignorée","Le résultat ne change pas"],a:0,e:"Le WHERE s'exécute après la jointure : les lignes où l'esclave est NULL sont rejetées."},
-{t:"Pour afficher tous les clients de Paris, avec leur FAX s'ils en ont un, où placer typ_code = 'FAX' ?",o:["Dans le WHERE","Dans le ON de la jointure externe","Dans le GROUP BY","Peu importe"],a:1,e:"Dans le ON, la condition est appliquée avant la jointure."},
 {t:"Syntaxe Oracle : agent a, chambre c. On veut tous les agents. Quelle écriture ?",o:["a.agt_id(+) = c.agt_id","a.agt_id = c.agt_id(+)","a.agt_id = c.agt_id","(+)a.agt_id = c.agt_id"],a:1,e:"Le (+) se met du côté de la table qui peut manquer (chambre)."},
-{t:"Avec la syntaxe (+), comment garder la main sur l'ordre des conditions ?",o:["Une sous-requête dans le FROM","Un HAVING","Un DISTINCT","Un ORDER BY"],a:0,e:"La sous-requête filtre d'abord, puis la jointure externe s'applique."},
 {t:"Meilleure méthode pour les clients n'ayant jamais réservé ?",o:["NOT IN","MINUS","NOT EXISTS","INNER JOIN"],a:2,e:"NOT EXISTS est fiable avec les NULL et performant."},
 {t:"agt_id peut être NULL dans chambre. Que renvoie WHERE agt_id NOT IN (SELECT agt_id FROM chambre) ?",o:["Les agents sans chambre","Aucune ligne","Tous les agents","Une erreur"],a:1,e:"Comparer à NULL donne UNKNOWN : aucune ligne n'est retournée."},
-{t:"Quelle condition est correcte pour tester un NULL ?",o:["col = NULL","col == NULL","col IS NULL","col LIKE NULL"],a:2,e:"Seul IS [NOT] NULL teste un NULL ; = NULL n'est jamais vrai."},
-{t:"Différence WHERE / HAVING ?",o:["Aucune","WHERE filtre les lignes avant regroupement, HAVING filtre les groupes","HAVING est plus rapide","WHERE filtre les groupes"],a:1,e:"HAVING porte sur les résultats d'agrégat (COUNT, SUM…)."},
-{t:"SELECT etage, COUNT(*) FROM chambre; (sans GROUP BY). Résultat ?",o:["Une ligne par étage","Erreur : etage doit être dans le GROUP BY","Le total seulement","Le premier étage"],a:1,e:"Toute colonne non agrégée du SELECT doit figurer dans le GROUP BY (ORA-00979)."},
-{t:"Peut-on utiliser un alias de colonne dans le GROUP BY ?",o:["Oui toujours","Non, il faut répéter l'expression","Oui si entre guillemets","Seulement avec HAVING"],a:1,e:"Les alias ne sont pas utilisables dans le GROUP BY."},
-{t:"Après un LEFT JOIN, un agent n'a aucune chambre. COUNT(chb_id) vaut ?",o:["NULL","1","0","Erreur"],a:2,e:"COUNT(col) ignore les NULL : il vaut 0. COUNT(*) vaudrait 1."},
-{t:"Pourquoi COUNT(DISTINCT pln_jour) pour le nombre de jours d'un client ?",o:["Pour aller plus vite","Pour ne pas compter deux fois un jour où il a réservé plusieurs chambres","Pour trier","Pour éviter les NULL"],a:1,e:"Un client peut avoir plusieurs chambres le même jour."},
-{t:"Les 2 premiers agents embauchés : que faut-il faire ?",o:["WHERE ROWNUM <= 2 avec ORDER BY dans la même requête","Trier dans une sous-requête (FROM ou CTE), puis WHERE ROWNUM <= 2","HAVING ROWNUM <= 2","GROUP BY ROWNUM"],a:1,e:"ROWNUM est attribué avant le tri : il faut trier avant, dans une sous-requête."},
-{t:"Quelle est la syntaxe d'une CTE ?",o:["WITH nom AS (SELECT …) SELECT … FROM nom","CREATE nom AS (SELECT …)","SELECT … FROM (WITH nom …)","DEFINE nom = SELECT …"],a:0,e:"WITH nom_cte AS (…) puis la requête principale."},
-{t:"Avantages d'une CTE selon le cours ?",o:["Lisibilité, réutilisation dans la même instruction, récursivité possible","Elle stocke définitivement les données","Elle remplace les index","Elle est toujours plus rapide"],a:0,e:"C'est un résultat temporaire nommé, valable pour l'instruction."},
-{t:"NVL(chb_numero, 'Aucune') pose problème car…",o:["NVL n'existe pas","les deux paramètres doivent être du même type (TO_CHAR)","chb_numero ne peut pas être NULL","NVL n'accepte pas de texte"],a:1,e:"Il faut NVL(TO_CHAR(chb_numero), 'Aucune')."},
-{t:"Jours où l'hôtel est complet : quelle clause ?",o:["WHERE COUNT(chb_id) = (SELECT COUNT(chb_id) FROM chambre)","GROUP BY pln_jour HAVING COUNT(chb_id) = (SELECT COUNT(chb_id) FROM chambre)","ORDER BY COUNT(chb_id)","GROUP BY chb_id"],a:1,e:"On regroupe par jour, puis HAVING compare au nombre total de chambres."}
+{t:"Différence WHERE / HAVING ?",o:["Aucune","WHERE filtre les lignes avant regroupement, HAVING filtre les groupes","HAVING est plus rapide","WHERE filtre les groupes"],a:1,e:"HAVING porte sur les résultats d'agrégat."},
+{t:"Après un LEFT JOIN, un agent n'a aucune chambre. COUNT(chb_id) vaut ?",o:["NULL","1","0","Erreur"],a:2,e:"COUNT(col) ignore les NULL. COUNT(*) vaudrait 1."},
+{t:"Les 2 premiers agents embauchés : que faut-il faire ?",o:["WHERE ROWNUM <= 2 avec ORDER BY dans la même requête","Trier dans une sous-requête (FROM ou CTE), puis WHERE ROWNUM <= 2","HAVING ROWNUM <= 2","GROUP BY ROWNUM"],a:1,e:"ROWNUM est attribué avant le tri."},
+{t:"NVL(chb_numero, 'Aucune') pose problème car…",o:["NVL n'existe pas","les deux paramètres doivent être du même type (TO_CHAR)","chb_numero ne peut pas être NULL","NVL n'accepte pas de texte"],a:1,e:"Il faut NVL(TO_CHAR(chb_numero), 'Aucune')."}
 ];
-var R=[
-{t:"Reconstruis : agents d'entretien sans aucune chambre (jointure externe).",f:["SELECT agt_nom, agt_prenom","FROM agent_entretien a","LEFT JOIN chambre c ON a.agt_id = c.agt_id","WHERE c.agt_id IS NULL;"],e:"LEFT JOIN puis IS NULL sur la clé de la table esclave."},
-{t:"Reconstruis : toutes les chambres avec leur client du 26/12/2007 (condition dans le ON).",f:["SELECT chb_numero, cli_id","FROM chambre c","LEFT JOIN planning p ON c.chb_id = p.chb_id","AND p.pln_jour = TO_DATE('26/12/2007','DD/MM/YYYY)","ORDER BY 1;"],e:"La date porte sur la table esclave : elle va dans le ON."},
-{t:"Reconstruis avec une CTE : clients de Paris et leur FAX éventuel.",f:["WITH tel_fax AS (SELECT cli_id, tel_numero FROM telephone WHERE typ_code = 'FAX')","SELECT cli_nom, tel_numero","FROM client c","LEFT JOIN tel_fax t ON c.cli_id = t.cli_id;"],e:"Le filtre FAX est fait dans la CTE, puis LEFT JOIN simple."}
-];
-R[1].f[3]="AND p.pln_jour = TO_DATE('26/12/2007','DD/MM/YYYY')";
-var items=Q.map(function(q){return {k:"q",d:q}}).concat(R.map(function(r){return {k:"r",d:r}}));
-var i=0,score=0,root=document.getElementById("quiz");
-function el(t,c,x){var n=document.createElement(t);if(c)n.className=c;if(x!=null)n.textContent=x;return n}
-function shuffle(a){a=a.slice();for(var j=a.length-1;j>0;j--){var k=Math.floor(Math.random()*(j+1));var t=a[j];a[j]=a[k];a[k]=t}return a}
-function head(){var m=el("div","qmeta");m.appendChild(el("span",null,"Question "+(i+1)+" / "+items.length));m.appendChild(el("span",null,"Score : "+score));root.appendChild(m);var b=el("div","bar"),f=el("i");f.style.width=(i/items.length*100)+"%";b.appendChild(f);root.appendChild(b)}
-function next(box){var b=el("button","btn","Suivant");b.onclick=function(){i++;render()};box.appendChild(b)}
-function render(){root.textContent="";if(i>=items.length)return end();head();var it=items[i];root.appendChild(el("h3",null,it.d.t)).style.fontSize="1rem";
-if(it.k==="q"){var box=el("div");it.d.o.forEach(function(x,idx){var b=el("button","opt",x);b.onclick=function(){var all=box.querySelectorAll(".opt");all.forEach(function(n){n.disabled=true});all[it.d.a].classList.add("ok");if(idx===it.d.a){score++}else{b.classList.add("ko")}box.appendChild(el("div","expl",(idx===it.d.a?"Correct. ":"Faux. ")+it.d.e));next(box)};box.appendChild(b)});root.appendChild(box)}
-else{var pool=el("div","frags"),ans=el("div","frags"),cor=it.d.f,items2=shuffle(cor),box=el("div");
-root.appendChild(el("div","qmeta",null)).textContent="Clique les lignes dans l'ordre (re-clique pour retirer).";root.appendChild(pool);root.appendChild(ans);
-function draw(){pool.textContent="";ans.textContent="";items2.forEach(function(f){var b=el("button","frag",f);b.onclick=function(){items2=items2.filter(function(x){return x!==f});sel.push(f);draw()};pool.appendChild(b)});sel.forEach(function(f){var b=el("button","frag",f);b.onclick=function(){sel=sel.filter(function(x){return x!==f});items2.push(f);draw()};ans.appendChild(b)})}
-var sel=[];draw();var v=el("button","btn","Valider");v.onclick=function(){if(sel.length!==cor.length){return}v.disabled=true;var ok=sel.every(function(x,n){return x===cor[n]});if(ok)score++;var e=el("div","expl",(ok?"Correct. ":"Faux. ")+it.d.e);if(!ok){var p=el("pre",null,cor.join("\n"));e.appendChild(p)}box.appendChild(e);next(box)};box.appendChild(v);root.appendChild(box)}}
-function end(){root.appendChild(el("h3",null,"Score final : "+score+" / "+items.length));var msg=score>=16?"Solide. Relis juste les pièges NULL et la priorité des conditions.":score>=11?"Correct, mais refais les questions ratées, surtout ON vs WHERE et NOT IN vs NOT EXISTS.":"Reprends les sections 3 et 6 (priorité des conditions, NULL), puis refais le QCM.";root.appendChild(el("p",null,msg));var b=el("button","btn","Recommencer");b.onclick=function(){i=0;score=0;items=shuffle(items);render()};root.appendChild(b)}
-render();
+
+/* ---------- Moteur de QCM ---------- */
+function el(t,c,x){var n=document.createElement(t);if(c)n.className=c;if(x!=null)n.textContent=x;return n;}
+function shuffle(a){a=a.slice();for(var j=a.length-1;j>0;j--){var k=Math.floor(Math.random()*(j+1));var t=a[j];a[j]=a[k];a[k]=t;}return a;}
+function isMulti(q){return Array.isArray(q.a);}
+function same(a,b){if(a.length!==b.length)return false;a=a.slice().sort();b=b.slice().sort();for(var i=0;i<a.length;i++)if(a[i]!==b[i])return false;return true;}
+
+function Quiz(root, bank, opts){
+  opts=opts||{};
+  var items,i,score,missed,timerId,left;
+  function start(){
+    items=opts.random?shuffle(bank):bank.slice();
+    if(opts.count)items=items.slice(0,opts.count);
+    i=0;score=0;missed=[];
+    clearInterval(timerId);
+    if(opts.minutes){left=opts.minutes*60;timerId=setInterval(tick,1000);}
+    render();
+  }
+  function fmt(s){var m=Math.floor(s/60),r=s%60;return m+":"+(r<10?"0":"")+r;}
+  function tick(){left--;var t=root.querySelector(".timer");if(t)t.textContent=fmt(Math.max(left,0));if(left<=0){clearInterval(timerId);i=items.length;render(true);}}
+  function head(){
+    var m=el("div","qmeta");
+    m.appendChild(el("span",null,"Question "+(i+1)+" / "+items.length+" · score "+score));
+    if(opts.minutes)m.appendChild(el("span","timer",fmt(left)));
+    root.appendChild(m);
+    var b=el("div","bar"),f=el("i");f.style.width=(i/items.length*100)+"%";b.appendChild(f);root.appendChild(b);
+  }
+  function next(box){var b=el("button","btn",i+1<items.length?"Question suivante":"Voir le résultat");b.type="button";b.onclick=function(){i++;render();};box.appendChild(b);b.focus({preventScroll:true});}
+  function reveal(q,box,ok,btns){
+    var good=isMulti(q)?q.a:[q.a];
+    btns.forEach(function(b,idx){b.disabled=true;if(good.indexOf(idx)>=0)b.classList.add("ok");else if(b.classList.contains("sel"))b.classList.add("ko");b.classList.remove("sel");});
+    if(ok)score++;else missed.push(q);
+    box.appendChild(el("div","expl",(ok?"Correct. ":"Faux. ")+q.e));
+    next(box);
+  }
+  function render(timeout){
+    root.textContent="";
+    if(i>=items.length)return end(timeout);
+    head();
+    var q=items[i];
+    if(isMulti(q))root.appendChild(el("span","multi","Plusieurs réponses possibles"));
+    root.appendChild(el("p","qtext",q.t));
+    if(q.code)root.appendChild(el("pre",null,q.code));
+    var box=el("div"),btns=[];
+    q.o.forEach(function(x,idx){
+      var b=el("button","opt",x);b.type="button";
+      b.onclick=function(){
+        if(isMulti(q)){b.classList.toggle("sel");return;}
+        b.classList.add("sel");reveal(q,box,idx===q.a,btns);
+      };
+      btns.push(b);box.appendChild(b);
+    });
+    if(isMulti(q)){
+      var v=el("button","btn","Valider");v.type="button";
+      v.onclick=function(){var s=[];btns.forEach(function(b,idx){if(b.classList.contains("sel"))s.push(idx);});if(!s.length)return;v.remove();reveal(q,box,same(s,q.a),btns);};
+      box.appendChild(v);
+    }
+    root.appendChild(box);
+  }
+  function end(timeout){
+    clearInterval(timerId);
+    if(timeout)root.appendChild(el("p","small","Temps écoulé."));
+    root.appendChild(el("div","score",score+" / "+items.length));
+    var r=score/items.length;
+    root.appendChild(el("p",null,r>=.8?"Bon niveau. Relis seulement les questions ratées ci-dessous.":r>=.55?"Correct. Reprends les sections liées aux questions ratées, puis relance.":"Relis les sections 4 à 7 (triggers) et 1 (contraintes), puis recommence."));
+    if(missed.length){
+      root.appendChild(el("h3",null,"À revoir"));
+      var rv=el("div","review");
+      missed.forEach(function(q){var d=el("div");d.appendChild(el("b",null,q.t));d.appendChild(document.createElement("br"));d.appendChild(document.createTextNode(q.e));rv.appendChild(d);});
+      root.appendChild(rv);
+    }
+    var b=el("button","btn",opts.count?"Nouveau tirage":"Recommencer");b.type="button";b.onclick=start;root.appendChild(b);
+  }
+  if(opts.lazy){
+    var p=el("div","quiz-tools");
+    var s=el("button","btn","Lancer le QCM blanc (45 min)");s.type="button";s.onclick=start;
+    var s2=el("button","btn alt","Entraînement sans chrono");s2.type="button";s2.onclick=function(){opts.minutes=0;start();};
+    p.appendChild(s);p.appendChild(s2);root.appendChild(p);
+  } else start();
+}
+
+Quiz(document.getElementById("quizType"), TYPE, {});
+Quiz(document.getElementById("quizBlanc"), BANK.concat(TYPE), {random:true, count:30, minutes:45, lazy:true});
+Quiz(document.getElementById("quizOld"), OLD, {random:true});
+
+/* Checklist : mémorisée dans ce navigateur */
+var KEY="bdd-qcm2-checks";
+var saved={};try{saved=JSON.parse(localStorage.getItem(KEY)||"{}");}catch(e){}
+document.querySelectorAll("#checks input").forEach(function(c){
+  c.checked=!!saved[c.id];
+  c.addEventListener("change",function(){saved[c.id]=c.checked;try{localStorage.setItem(KEY,JSON.stringify(saved));}catch(e){}});
+});
 })();
 </script>
 <script src="../scripts/revision.js"></script>
