@@ -69,16 +69,20 @@ let done = store.get("done", {});
 function setDone(id, v) { done[id] = v; store.set("done", done); renderBoard(); renderToc(); }
 
 /* ---------- navigation ---------- */
+const QUIZ_LINKS = { "quiz-type": "type", "quiz-tp": "tpexam", "quiz-exam": "exam" };
 const VIEWS = ["accueil", "fiches", "flashcards", "quiz", "exercices", "memento"];
 function route() {
   let h = (location.hash || "#accueil").slice(1);
   let view = h, fiche = null;
   if (h.startsWith("fiche-")) { view = "fiches"; fiche = h.slice(6); }
+  const qmode = QUIZ_LINKS[h];
+  if (qmode) view = "quiz";
   if (!VIEWS.includes(view)) view = "accueil";
   VIEWS.forEach((v) => ($("#view-" + v).hidden = v !== view));
   $$(".nav a").forEach((a) => { if (a.dataset.view === view) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
   if (view === "fiches") openFiche(fiche && modById[fiche] ? fiche : store.get("lastFiche", MODULES[0].id), !!fiche);
   if (view === "flashcards") renderCard();
+  if (qmode) startQuiz(qmode);
   window.scrollTo(0, 0);
 }
 window.addEventListener("hashchange", route);
@@ -105,7 +109,6 @@ $("#schemaTP").innerHTML = schemaHTML(SCHEMA_TP);
 $("#statCards").textContent = CARDS.length + " cartes";
 $("#statQuiz").textContent = QUIZ.length + " questions";
 $("#statExos").textContent = (EXOS.length + GAPS.length + ORDERS.length) + " exercices";
-$("#examBtn").addEventListener("click", () => setTimeout(() => startQuiz("exam"), 0));
 
 /* ---------- options de module (selects) ---------- */
 function moduleOptions(withAll) {
@@ -268,7 +271,7 @@ function startQuiz(mode) {
   else if (mode === "tpexam") pool = shuffle(QUIZ.filter((q) => TP_EXAM.includes(q.m))).slice(0, 30);
   else if (mode === "type") pool = QUIZ.filter((q) => q.t);
   else { const mod = mode || $("#quizModule").value; pool = shuffle(QUIZ.filter((q) => mod === "all" || q.m === mod)); mode = undefined; }
-  qz = { mode, exam: mode === "exam" || mode === "tpexam", list: pool.map((q) => ({ q, order: q.keep ? q.o.map((_, i) => i) : shuffle(q.o.map((_, i) => i)) })), i: 0, score: 0, wrong: [], left: null };
+  qz = { label: MODE_LABELS[mode] || ("Quiz · " + (modById[$("#quizModule").value] ? modById[$("#quizModule").value].code + " · " + modById[$("#quizModule").value].title : "tous les thèmes")), mode, exam: mode === "exam" || mode === "tpexam", list: pool.map((q) => ({ q, order: q.keep ? q.o.map((_, i) => i) : shuffle(q.o.map((_, i) => i)) })), i: 0, score: 0, wrong: [], left: null };
   if (mode === "tpexam") {
     qz.left = 45 * 60;
     qTimer = setInterval(() => {
@@ -278,15 +281,21 @@ function startQuiz(mode) {
     }, 1000);
   }
   renderQ();
+  window.scrollTo(0, 0);
 }
 $("#quizStart").addEventListener("click", () => startQuiz());
-$("#quizExam").addEventListener("click", () => startQuiz("exam"));
-$("#quizTP").addEventListener("click", () => startQuiz("tpexam"));
-$("#quizType").addEventListener("click", () => startQuiz("type"));
+$$("[data-mode]").forEach((b) => b.addEventListener("click", () => startQuiz(b.dataset.mode)));
+$("#quizQuit").addEventListener("click", () => {
+  clearInterval(qTimer); qz = null; renderQ();
+  if (location.hash !== "#quiz") location.hash = "quiz"; else window.scrollTo(0, 0);
+});
+const MODE_LABELS = { exam: "Examen blanc · 20 questions", tpexam: "QCM blanc TP03 + TP04 · 30 questions · 45 min", type: "Questions type · 8 questions" };
 function optHTML(txt) { return /SELECT|WHERE|FROM|CONNECT|PRAGMA|RAISE|:new|:old|new\.|GRANT|REVOKE|INSERT INTO|ALTER |CHECK \(/i.test(txt) ? "<code>" + esc(txt) + "</code>" : esc(txt); }
 function renderQ() {
   const box = $("#quizBox");
-  if (!qz) { box.innerHTML = '<div class="panel"><h3>Choisissez un thème puis « Commencer »</h3><p style="margin:0;color:var(--muted)">Les réponses sont mélangées à chaque tentative et chaque correction est expliquée. L\'examen blanc tire 20 questions sur tous les thèmes. Le QCM blanc TP tire 30 questions sur les TP03 et TP04, en 45 minutes. Les questions type sont les 8 questions d\'exemple corrigées.</p></div>'; return; }
+  $("#quizPicker").hidden = !!qz; $("#quizRun").hidden = !qz;
+  if (!qz) { box.innerHTML = ""; return; }
+  $("#quizModeLabel").textContent = qz.label;
   if (qz.i >= qz.list.length) return renderScore();
   const { q, order } = qz.list[qz.i], m = modById[q.m], multi = isMulti(q);
   box.innerHTML = '<div class="q-progress"><span>Question ' + (qz.i + 1) + " / " + qz.list.length + "</span><span>" + m.code + " · " + m.title + "</span><span>" +

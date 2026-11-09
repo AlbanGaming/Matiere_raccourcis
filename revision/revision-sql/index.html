@@ -6,7 +6,7 @@
 <title>Carnet de vol SQL</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=IBM+Plex+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=3">
 </head>
 <body>
 <header class="topbar">
@@ -36,8 +36,17 @@
       <p class="lead">Les 7 CM résumés en 17 fiches avec la base du cours (PILOTE, AVION, VOL, AFFECTATION), et les TP corrigés sur la base hôtel (requêtes, contraintes, privilèges, triggers). Puis des flashcards, un quiz et des exercices corrigés pour vérifier ce qui est acquis. Le memento autorisé à l'examen est téléchargeable.</p>
       <div class="hero-actions">
         <a class="btn primary" href="#fiches" id="resumeBtn">Ouvrir les fiches</a>
-        <a class="btn signal" href="#quiz" id="examBtn">Lancer un examen blanc</a>
+        <a class="btn signal" href="#quiz-exam" id="examBtn">Lancer un examen blanc</a>
         <a class="btn" href="#memento">Télécharger le memento</a>
+      </div>
+      <div class="panel tp-panel">
+        <div class="eyebrow">TP03 + TP04 · base hôtel</div>
+        <h2>Réviser les TP</h2>
+        <div class="mode-grid">
+          <a class="tool-card" href="#fiche-tp-contraintes"><span class="n">1 · Lire</span><b>Fiches TP</b><span>Contraintes, ALTER, privilèges, triggers et corrigé du TP04 (TP-01 à TP-06).</span></a>
+          <a class="tool-card" href="#quiz-type"><span class="n">2 · 8 questions</span><b>Questions type</b><span>Les questions d'exemple, corrigées et expliquées.</span></a>
+          <a class="tool-card" href="#quiz-tp"><span class="n">3 · 30 questions · 45 min</span><b>QCM blanc TP</b><span>Tirage au hasard sur les TP03 et TP04, chronométré.</span></a>
+        </div>
       </div>
     </div>
     <div class="board" aria-label="Avancement par fiche">
@@ -126,15 +135,49 @@
     <h2 class="h-display">Quiz</h2>
     <span class="chip" id="quizBest"></span>
   </div>
-  <div class="toolbar">
-    <label for="quizModule" class="eyebrow">Thème</label>
-    <select id="quizModule"></select>
-    <button class="btn primary small" id="quizStart" type="button">Commencer</button>
-    <button class="btn signal small" id="quizExam" type="button">Examen blanc (20 questions)</button>
-    <button class="btn signal small" id="quizTP" type="button">QCM blanc TP03 + TP04 (30 questions, 45 min)</button>
-    <button class="btn small" id="quizType" type="button">Questions type (8)</button>
+
+  <div id="quizPicker">
+    <div class="eyebrow mode-head">Réviser les TP03 + TP04 · base hôtel</div>
+    <div class="mode-grid">
+      <button class="mode-card featured" type="button" data-mode="type">
+        <span class="n">Étape 1 · 8 questions</span>
+        <b>Questions type</b>
+        <span class="d">Les questions d'exemple dans le style du test, corrigées et expliquées. À faire en premier.</span>
+        <span class="go">Commencer →</span>
+      </button>
+      <button class="mode-card featured" type="button" data-mode="tpexam">
+        <span class="n">Étape 2 · 30 questions · 45 min</span>
+        <b>QCM blanc TP03 + TP04</b>
+        <span class="d">Tirage au hasard parmi les questions des TP03 et TP04, avec chrono. Le tirage change à chaque essai.</span>
+        <span class="go">Lancer le chrono →</span>
+      </button>
+    </div>
+
+    <div class="eyebrow mode-head">Tout le module</div>
+    <div class="mode-grid">
+      <button class="mode-card" type="button" data-mode="exam">
+        <span class="n">20 questions</span>
+        <b>Examen blanc</b>
+        <span class="d">Questions tirées sur tous les thèmes, cours et TP.</span>
+        <span class="go">Commencer →</span>
+      </button>
+      <div class="mode-card">
+        <span class="n">Au choix</span>
+        <b>Par thème</b>
+        <label for="quizModule" class="d">Choisissez une fiche :</label>
+        <select id="quizModule"></select>
+        <button class="btn primary small" id="quizStart" type="button" style="align-self:flex-start">Commencer →</button>
+      </div>
+    </div>
   </div>
-  <div class="quiz-box" id="quizBox"></div>
+
+  <div id="quizRun" hidden>
+    <div class="run-head">
+      <button class="btn small" id="quizQuit" type="button">← Changer de mode</button>
+      <span class="eyebrow" id="quizModeLabel"></span>
+    </div>
+    <div class="quiz-box" id="quizBox"></div>
+  </div>
 </section>
 
 <!-- ================= EXERCICES ================= -->
@@ -186,9 +229,9 @@
 </main>
 <div class="toast" id="toast" hidden></div>
 
-<script src="js/data-cours.js"></script>
-<script src="js/data-pratique.js"></script>
-<script src="js/data-tp.js"></script>
-<script src="js/app.js"></script>
+<script src="js/data-cours.js?v=3"></script>
+<script src="js/data-pratique.js?v=3"></script>
+<script src="js/data-tp.js?v=3"></script>
+<script src="js/app.js?v=3"></script>
 </body>
 </html>
