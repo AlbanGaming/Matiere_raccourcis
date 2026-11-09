@@ -254,6 +254,8 @@ pre.sql .bd { color: #ff9e7a; }
 .opt .l { font-family: var(--f-mono); font-size: 12px; font-weight: 700; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; text-align: center; line-height: 22px; }
 .opt.good { border-color: var(--ok); background: var(--ok-soft); }
 .opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.opt.picked { border-color: var(--signal); background: var(--signal-soft); }
+.q-timer { color: var(--signal); font-weight: 700; font-variant-numeric: tabular-nums; }
 .opt[disabled] { cursor: default; }
 .explain { margin-top: var(--s4); padding: var(--s4); border-radius: var(--r); background: var(--surface-2); font-size: 14.5px; }
 .explain b { font-family: var(--f-mono); font-size: 12px; letter-spacing: .06em; }

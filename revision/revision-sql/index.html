@@ -33,7 +33,7 @@
     <div>
       <div class="eyebrow">BUT Informatique · Bases de données avancées</div>
       <h1>Réviser SQL <em>&amp;</em> PL/SQL avant l'examen</h1>
-      <p class="lead">Les 7 CM résumés en 17 fiches, avec le code d'exemple du cours (la base PILOTE, AVION, VOL, AFFECTATION), puis des flashcards, un quiz et des exercices corrigés pour vérifier ce qui est acquis. Le memento autorisé à l'examen est téléchargeable.</p>
+      <p class="lead">Les 7 CM résumés en 17 fiches avec la base du cours (PILOTE, AVION, VOL, AFFECTATION), et les TP corrigés sur la base hôtel (requêtes, contraintes, privilèges, triggers). Puis des flashcards, un quiz et des exercices corrigés pour vérifier ce qui est acquis. Le memento autorisé à l'examen est téléchargeable.</p>
       <div class="hero-actions">
         <a class="btn primary" href="#fiches" id="resumeBtn">Ouvrir les fiches</a>
         <a class="btn signal" href="#quiz" id="examBtn">Lancer un examen blanc</a>
@@ -49,7 +49,7 @@
 
   <div class="grid-3" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
     <a class="tool-card" href="#flashcards"><span class="n" id="statCards">— cartes</span><b>Flashcards</b><span>Question au recto, réponse au verso. Triez ce que vous savez de ce qui reste à revoir.</span></a>
-    <a class="tool-card" href="#quiz"><span class="n" id="statQuiz">— questions</span><b>Quiz</b><span>QCM corrigés et expliqués, par thème ou en examen blanc de 20 questions.</span></a>
+    <a class="tool-card" href="#quiz"><span class="n" id="statQuiz">— questions</span><b>Quiz</b><span>QCM corrigés et expliqués, par thème, en examen blanc de 20 questions ou en QCM blanc TP03 + TP04 de 30 questions.</span></a>
     <a class="tool-card" href="#exercices"><span class="n" id="statExos">— exercices</span><b>Exercices</b><span>Requêtes à écrire, code PL/SQL à trous, clauses à remettre dans l'ordre.</span></a>
     <a class="tool-card" href="#memento"><span class="n">PDF · 2 pages</span><b>Memento</b><span>La fiche fournie à l'examen : à télécharger et à connaître par cœur.</span></a>
   </div>
@@ -64,6 +64,12 @@
       <p class="lead" style="margin:0 0 12px;font-size:14px">Tous les exemples et exercices utilisent ce schéma de compagnie aérienne.</p>
       <div class="schema" id="schemaHome"></div>
     </div>
+  </div>
+
+  <div class="panel" style="margin-top:var(--s5)">
+    <h2>La base des TP</h2>
+    <p class="lead" style="margin:0 0 12px;font-size:14px">Les fiches TP-01 à TP-06 utilisent la base de l'hôtel : clients, chambres, réservations et factures.</p>
+    <div class="schema" id="schemaTP"></div>
   </div>
 </section>
 
@@ -125,6 +131,8 @@
     <select id="quizModule"></select>
     <button class="btn primary small" id="quizStart" type="button">Commencer</button>
     <button class="btn signal small" id="quizExam" type="button">Examen blanc (20 questions)</button>
+    <button class="btn signal small" id="quizTP" type="button">QCM blanc TP03 + TP04 (30 questions, 45 min)</button>
+    <button class="btn small" id="quizType" type="button">Questions type (8)</button>
   </div>
   <div class="quiz-box" id="quizBox"></div>
 </section>
@@ -180,6 +188,7 @@
 
 <script src="js/data-cours.js"></script>
 <script src="js/data-pratique.js"></script>
+<script src="js/data-tp.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

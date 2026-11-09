@@ -95,12 +95,13 @@ function renderBoard() {
 $("#boardRows").addEventListener("click", (e) => { const r = e.target.closest("[data-go]"); if (r) location.hash = "fiche-" + r.dataset.go; });
 $("#boardRows").addEventListener("keydown", (e) => { const r = e.target.closest("[data-go]"); if (r && e.key === "Enter") location.hash = "fiche-" + r.dataset.go; });
 $("#trapList").innerHTML = TRAPS.map((t) => "<li><span>" + t + "</span></li>").join("");
-function schemaHTML() {
-  return SCHEMA.map(([t, cols]) => '<div class="tbl"><b>' + t + "</b><ul>" + cols.map(([c, k]) =>
+function schemaHTML(list) {
+  return (list || SCHEMA).map(([t, cols]) => '<div class="tbl"><b>' + t + "</b><ul>" + cols.map(([c, k]) =>
     "<li><span>" + c + '</span><span class="k">' + k + "</span></li>").join("") + "</ul></div>").join("");
 }
 $("#schemaHome").innerHTML = schemaHTML();
 $("#schemaEx").innerHTML = schemaHTML();
+$("#schemaTP").innerHTML = schemaHTML(SCHEMA_TP);
 $("#statCards").textContent = CARDS.length + " cartes";
 $("#statQuiz").textContent = QUIZ.length + " questions";
 $("#statExos").textContent = (EXOS.length + GAPS.length + ORDERS.length) + " exercices";
@@ -251,50 +252,88 @@ document.addEventListener("keydown", (e) => {
 
 /* ---------- quiz ---------- */
 $("#quizModule").innerHTML = moduleOptions(true);
-let qz = null;
-function bestLabel() { const b = store.get("bestExam", null); $("#quizBest").textContent = b === null ? "Pas encore d'examen blanc" : "Meilleur examen blanc : " + b + " / 20"; }
+let qz = null, qTimer = null;
+const LET = "ABCDEFGH";
+const isMulti = (q) => Array.isArray(q.a);
+const fmtTime = (s) => Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+function bestLabel() {
+  const b = store.get("bestExam", null), t = store.get("bestExamTP", null);
+  $("#quizBest").textContent = "Examen blanc : " + (b === null ? "—" : b + " / 20") + " · QCM blanc TP : " + (t === null ? "—" : t + " / 30");
+}
 bestLabel();
 function startQuiz(mode) {
+  clearInterval(qTimer);
   let pool;
   if (mode === "exam") pool = shuffle(QUIZ).slice(0, 20);
-  else { const mod = mode || $("#quizModule").value; pool = shuffle(QUIZ.filter((q) => mod === "all" || q.m === mod)); }
-  qz = { exam: mode === "exam", list: pool.map((q) => { const order = shuffle(q.o.map((_, i) => i)); return { q, order }; }), i: 0, score: 0, wrong: [] };
+  else if (mode === "tpexam") pool = shuffle(QUIZ.filter((q) => TP_EXAM.includes(q.m))).slice(0, 30);
+  else if (mode === "type") pool = QUIZ.filter((q) => q.t);
+  else { const mod = mode || $("#quizModule").value; pool = shuffle(QUIZ.filter((q) => mod === "all" || q.m === mod)); mode = undefined; }
+  qz = { mode, exam: mode === "exam" || mode === "tpexam", list: pool.map((q) => ({ q, order: q.keep ? q.o.map((_, i) => i) : shuffle(q.o.map((_, i) => i)) })), i: 0, score: 0, wrong: [], left: null };
+  if (mode === "tpexam") {
+    qz.left = 45 * 60;
+    qTimer = setInterval(() => {
+      qz.left--;
+      const t = $("#qTimer"); if (t) t.textContent = fmtTime(Math.max(qz.left, 0));
+      if (qz.left <= 0) { clearInterval(qTimer); qz.timeout = true; qz.i = qz.list.length; renderQ(); }
+    }, 1000);
+  }
   renderQ();
 }
 $("#quizStart").addEventListener("click", () => startQuiz());
 $("#quizExam").addEventListener("click", () => startQuiz("exam"));
+$("#quizTP").addEventListener("click", () => startQuiz("tpexam"));
+$("#quizType").addEventListener("click", () => startQuiz("type"));
+function optHTML(txt) { return /SELECT|WHERE|FROM|CONNECT|PRAGMA|RAISE|:new|:old|new\.|GRANT|REVOKE|INSERT INTO|ALTER |CHECK \(/i.test(txt) ? "<code>" + esc(txt) + "</code>" : esc(txt); }
 function renderQ() {
   const box = $("#quizBox");
-  if (!qz) { box.innerHTML = '<div class="panel"><h3>Choisissez un thème puis « Commencer »</h3><p style="margin:0;color:var(--muted)">Les réponses sont mélangées à chaque tentative. Chaque correction est expliquée. L\'examen blanc tire 20 questions sur tous les thèmes.</p></div>'; return; }
+  if (!qz) { box.innerHTML = '<div class="panel"><h3>Choisissez un thème puis « Commencer »</h3><p style="margin:0;color:var(--muted)">Les réponses sont mélangées à chaque tentative et chaque correction est expliquée. L\'examen blanc tire 20 questions sur tous les thèmes. Le QCM blanc TP tire 30 questions sur les TP03 et TP04, en 45 minutes. Les questions type sont les 8 questions d\'exemple corrigées.</p></div>'; return; }
   if (qz.i >= qz.list.length) return renderScore();
-  const { q, order } = qz.list[qz.i], m = modById[q.m];
-  box.innerHTML = '<div class="q-progress"><span>Question ' + (qz.i + 1) + " / " + qz.list.length + "</span><span>" + m.code + " · " + m.title + "</span><span>Score " + qz.score + "</span></div>" +
+  const { q, order } = qz.list[qz.i], m = modById[q.m], multi = isMulti(q);
+  box.innerHTML = '<div class="q-progress"><span>Question ' + (qz.i + 1) + " / " + qz.list.length + "</span><span>" + m.code + " · " + m.title + "</span><span>" +
+    (qz.left !== null ? '<span class="q-timer" id="qTimer">' + fmtTime(qz.left) + "</span> · " : "") + "Score " + qz.score + "</span></div>" +
     '<div class="q-bar"><i style="width:' + (100 * qz.i / qz.list.length) + '%"></i></div>' +
-    '<div class="q-text">' + esc(q.q) + '</div><div class="opts">' +
-    order.map((oi, k) => '<button class="opt" type="button" data-o="' + oi + '"><span class="l">' + "ABCD"[k] + "</span><span>" + (/SELECT|WHERE|FROM|CONNECT|PRAGMA|RAISE|:new|new\./i.test(q.o[oi]) ? "<code>" + esc(q.o[oi]) + "</code>" : esc(q.o[oi])) + "</span></button>").join("") +
-    '</div><div id="qFeedback"></div>';
-  $$(".opt", box).forEach((b) => b.addEventListener("click", () => answer(+b.dataset.o)));
+    (multi ? '<div class="eyebrow" style="margin-bottom:6px">Plusieurs réponses possibles</div>' : "") +
+    '<div class="q-text">' + esc(q.q) + "</div>" + (q.c ? codeBox(q.c) : "") + '<div class="opts">' +
+    order.map((oi, k) => '<button class="opt" type="button" data-o="' + oi + '"><span class="l">' + LET[k] + "</span><span>" + optHTML(q.o[oi]) + "</span></button>").join("") +
+    "</div>" + (multi ? '<div class="card-ctrl" style="justify-content:flex-end" id="qValidRow"><button class="btn primary" type="button" id="qValid">Valider</button></div>' : "") +
+    '<div id="qFeedback"></div>';
+  if (multi) {
+    $$(".opt", box).forEach((b) => b.addEventListener("click", () => b.classList.toggle("picked")));
+    $("#qValid").addEventListener("click", () => {
+      const sel = $$(".opt.picked", box).map((b) => +b.dataset.o);
+      if (sel.length) answer(sel);
+    });
+  } else $$(".opt", box).forEach((b) => b.addEventListener("click", () => answer(+b.dataset.o)));
 }
-function answer(oi) {
-  const { q } = qz.list[qz.i], ok = oi === q.a;
+function goodList(q) { return isMulti(q) ? q.a : [q.a]; }
+function answer(sel) {
+  const { q } = qz.list[qz.i], good = goodList(q), picked = Array.isArray(sel) ? sel : [sel];
+  const ok = picked.length === good.length && picked.every((v) => good.includes(v));
   if (ok) qz.score++; else qz.wrong.push(q);
-  $$(".opt").forEach((b) => { b.disabled = true; const v = +b.dataset.o; if (v === q.a) b.classList.add("good"); else if (v === oi) b.classList.add("wrong"); });
+  $$(".opt").forEach((b) => { b.disabled = true; b.classList.remove("picked"); const v = +b.dataset.o; if (good.includes(v)) b.classList.add("good"); else if (picked.includes(v)) b.classList.add("wrong"); });
+  const row = $("#qValidRow"); if (row) row.remove();
   $("#qFeedback").innerHTML = '<div class="explain"><b style="color:' + (ok ? "var(--ok)" : "var(--bad)") + '">' + (ok ? "BONNE RÉPONSE" : "RÉPONSE INCORRECTE") + "</b><br>" + esc(q.e) +
     ' <a href="#fiche-' + q.m + '">Revoir la fiche</a></div><div class="card-ctrl" style="justify-content:flex-end"><button class="btn primary" type="button" id="qNext">' + (qz.i + 1 < qz.list.length ? "Question suivante →" : "Voir le résultat") + "</button></div>";
   $("#qNext").addEventListener("click", () => { qz.i++; renderQ(); });
   $("#qNext").focus();
 }
 function renderScore() {
+  clearInterval(qTimer);
   const n = qz.list.length, pct = Math.round(100 * qz.score / n), note = Math.round(20 * qz.score / n * 10) / 10;
-  if (qz.exam) { const b = store.get("bestExam", null); if (b === null || qz.score > b) store.set("bestExam", qz.score); bestLabel(); }
-  const msg = pct >= 85 ? "Très solide. Passez aux exercices de requêtes pour vérifier l'écriture." : pct >= 60 ? "Bonne base. Relisez les fiches des questions ratées." : "Reprenez les fiches concernées puis les flashcards avant de retenter.";
-  $("#quizBox").innerHTML = '<div class="panel"><div class="eyebrow">' + (qz.exam ? "Examen blanc" : "Résultat") + '</div><div class="score-big">' + qz.score + "<span style=\"font-size:.4em;color:var(--muted)\"> / " + n + "</span></div>" +
+  if (qz.mode === "exam") { const b = store.get("bestExam", null); if (b === null || qz.score > b) store.set("bestExam", qz.score); }
+  if (qz.mode === "tpexam") { const b = store.get("bestExamTP", null); if (b === null || qz.score > b) store.set("bestExamTP", qz.score); }
+  bestLabel();
+  const label = { exam: "Examen blanc", tpexam: "QCM blanc TP03 + TP04", type: "Questions type" }[qz.mode] || "Résultat";
+  const msg = pct >= 85 ? "Très solide. Passez aux exercices pour vérifier l'écriture." : pct >= 60 ? "Bonne base. Relisez les fiches des questions ratées." : "Reprenez les fiches concernées puis les flashcards avant de retenter.";
+  $("#quizBox").innerHTML = '<div class="panel"><div class="eyebrow">' + label + (qz.timeout ? " · temps écoulé" : "") + '</div><div class="score-big">' + qz.score + "<span style=\"font-size:.4em;color:var(--muted)\"> / " + n + "</span></div>" +
     "<p>Soit <b>" + note + " / 20</b> (" + pct + " %). " + msg + "</p>" +
-    '<div class="card-ctrl" style="justify-content:flex-start"><button class="btn primary" type="button" id="qAgain">Recommencer</button><button class="btn" type="button" id="qExam2">Nouvel examen blanc</button></div>' +
+    '<div class="card-ctrl" style="justify-content:flex-start"><button class="btn primary" type="button" id="qAgain">Recommencer</button><button class="btn" type="button" id="qExam2">Nouvel examen blanc</button><button class="btn" type="button" id="qTP2">Nouveau QCM blanc TP</button></div>' +
     (qz.wrong.length ? '<h3 style="margin-top:var(--s5)">Questions à revoir</h3><div class="review-list">' + qz.wrong.map((q) =>
-      '<div class="review-item"><b>' + esc(q.q) + "</b><br>Réponse : <code>" + esc(q.o[q.a]) + "</code><br><span style=\"color:var(--muted)\">" + esc(q.e) + '</span> <a href="#fiche-' + q.m + '">Fiche</a></div>').join("") + "</div>" : "") + "</div>";
-  $("#qAgain").addEventListener("click", () => startQuiz(qz.exam ? "exam" : undefined));
+      '<div class="review-item"><b>' + esc(q.q) + "</b><br>Réponse : <code>" + esc(goodList(q).map((i) => q.o[i]).join(" + ")) + "</code><br><span style=\"color:var(--muted)\">" + esc(q.e) + '</span> <a href="#fiche-' + q.m + '">Fiche</a></div>').join("") + "</div>" : "") + "</div>";
+  const again = qz.mode;
+  $("#qAgain").addEventListener("click", () => startQuiz(again));
   $("#qExam2").addEventListener("click", () => startQuiz("exam"));
+  $("#qTP2").addEventListener("click", () => startQuiz("tpexam"));
 }
 renderQ();
 
