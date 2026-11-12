@@ -657,53 +657,61 @@ input:checked + .slider-location::before {
 .validated-icon {
   cursor: help;
 }
-/* ==========================================
-   Liens vers l'index des révisions
-========================================== */
-
-/* En tête du menu 📚 */
-.revision-all {
+/* Titre « Révisions » du menu 📚 : lien vers revision/index.html
+   L'icône flèche (toujours visible, y compris sur mobile sans survol)
+   signale que le titre est cliquable ; au survol toute la ligne réagit. */
+.revision-title-link {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: -6px 0 18px;
-  padding: 10px 14px;
-  border-radius: 6px;
-  background-color: var(--input-bg-color);
-  border: 1px solid var(--input-border-color);
-  color: var(--secondary-color);
-  font-weight: 600;
-  font-size: 0.95em;
+  gap: 10px;
+  margin: -6px -8px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  color: inherit;
   text-decoration: none;
-  transition: border-color 0.2s ease, transform 0.2s ease;
+  transition: background-color 0.2s ease;
 }
 
-.revision-all:hover {
-  border-color: var(--accent-color);
+.revision-title-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(33, 150, 243, 0.55);
+  color: #2196F3;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.revision-title-arrow svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.revision-title-link:hover {
+  background-color: var(--input-bg-color);
+}
+
+.revision-title-link:hover .revision-title-arrow {
+  background-color: #2196F3;
+  border-color: #2196F3;
+  color: #ffffff;
   transform: translateX(3px);
 }
 
-/* Sous le sélecteur de matière */
-.revision-index-link {
-  display: block;
-  margin-top: 22px;
-  padding-top: 18px;
-  border-top: 1px solid var(--input-border-color);
-  color: var(--secondary-color);
-  font-weight: 600;
-  text-decoration: none;
+.revision-title-link:active {
+  transform: scale(0.98);
 }
 
-.revision-index-link span {
-  display: inline-block;
-  transition: transform 0.2s ease;
-}
-
-.revision-index-link:hover {
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-
-.revision-index-link:hover span {
-  transform: translateX(4px);
+.revision-title-link:focus-visible {
+  outline: 2px solid #2196F3;
+  outline-offset: 2px;
 }

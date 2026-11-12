@@ -6,7 +6,7 @@ Ce document explique comment utiliser les différentes fonctionnalités du site,
 
 ## 0. Ajouter une fiche à l'index des révisions
 
-La page `revision/index.html` liste toutes les fiches avec une recherche et des filtres (semestre, domaine, activités). Elle est accessible depuis le lien « Toutes les révisions » en tête du menu 📚 et sous le sélecteur de matière.
+La page `revision/index.html` liste toutes les fiches avec une recherche et des filtres (semestre, domaine, activités). On y accède en cliquant sur le titre « Révisions » du menu 📚.
 
 Les fiches sont décrites dans `revision/fiches.js` (pas besoin de toucher au HTML). Pour en ajouter une, copie un bloc :
 
