@@ -657,3 +657,53 @@ input:checked + .slider-location::before {
 .validated-icon {
   cursor: help;
 }
+/* ==========================================
+   Liens vers l'index des révisions
+========================================== */
+
+/* En tête du menu 📚 */
+.revision-all {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: -6px 0 18px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  background-color: var(--input-bg-color);
+  border: 1px solid var(--input-border-color);
+  color: var(--secondary-color);
+  font-weight: 600;
+  font-size: 0.95em;
+  text-decoration: none;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.revision-all:hover {
+  border-color: var(--accent-color);
+  transform: translateX(3px);
+}
+
+/* Sous le sélecteur de matière */
+.revision-index-link {
+  display: block;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--input-border-color);
+  color: var(--secondary-color);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.revision-index-link span {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.revision-index-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.revision-index-link:hover span {
+  transform: translateX(4px);
+}

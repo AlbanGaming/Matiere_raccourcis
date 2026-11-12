@@ -4,6 +4,33 @@ Ce document explique comment utiliser les différentes fonctionnalités du site,
 
 ---
 
+## 0. Ajouter une fiche à l'index des révisions
+
+La page `revision/index.html` liste toutes les fiches avec une recherche et des filtres (semestre, domaine, activités). Elle est accessible depuis le lien « Toutes les révisions » en tête du menu 📚 et sous le sélecteur de matière.
+
+Les fiches sont décrites dans `revision/fiches.js` (pas besoin de toucher au HTML). Pour en ajouter une, copie un bloc :
+
+```js
+{
+  titre: "Nom de la fiche",
+  code: "R3.06",                  // facultatif
+  href: "revision_XXX.html",      // chemin depuis le dossier revision/
+  semestres: ["S3"],              // un ou plusieurs
+  domaine: "reseau",              // une clé de REVISION_DOMAINES
+  nouveau: true,                  // facultatif : badge « Nouveau »
+  valide: true,                   // facultatif : badge « Validé »
+  description: "Une ou deux phrases sur le contenu.",
+  notions: ["Notion 1", "Notion 2"],          // utilisées par la recherche
+  activites: ["cours", "quiz", "flash"]        // clés de REVISION_ACTIVITES
+}
+```
+
+Un nouveau domaine ou type d'activité s'ajoute dans `REVISION_DOMAINES` / `REVISION_ACTIVITES` en haut du même fichier ; les filtres se mettent à jour tout seuls. Les filtres actifs sont dans l'URL (`?q=ospf&s=S3`), donc une recherche peut se partager par lien.
+
+⚠️ Pense aussi à ajouter la fiche dans le menu 📚 de `index.html` (section 1).
+
+---
+
 ## 1. Ajouter un lien de révision dans un semestre
 
 Les liens sont organisés par semestre dans le menu de révision (`#revisionMenu`), à l'intérieur de `index.html`.
@@ -106,6 +133,8 @@ index.html       → structure de la page
 styles/styles.css → tous les styles (thème, menus, badges, tooltips)
 scripts/script.js → logique JS (thème, accordéon, localisation, ouverture des liens)
 revision/         → pages HTML de révision par matière
+revision/index.html → index de toutes les révisions (recherche + filtres)
+revision/fiches.js  → liste des fiches affichées dans l'index
 styles/tokens.css   → couleurs, polices et thème clair/sombre communs aux fiches
 styles/revision.css → base commune des fiches + barre d'outils flottante
 scripts/theme.js    → applique le thème (même réglage que l'accueil)
