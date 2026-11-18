@@ -5,7 +5,6 @@
 //   domaine   : une clé de DOMAINES ci-dessous
 //   activites : des clés d'ACTIVITES ci-dessous
 //   code      : code du module si connu (facultatif)
-//   nouveau / valide : badges facultatifs
 
 window.REVISION_DOMAINES = {
   bdd:        { label: "Base de données",   couleur: "teal" },
@@ -36,10 +35,9 @@ window.REVISION_FICHES = [
     href: "revision_COO_UML_S3.html",
     semestres: ["S3"],
     domaine: "conception",
-    nouveau: true,
-    description: "Du besoin au code : cas d'utilisation, scénarios, DSS, diagramme de classes et ses 8 relations, diagramme d'objets.",
-    notions: ["Cas d'utilisation", "Scénarios", "DSS", "Classes", "Associations", "Agrégation / composition", "Héritage", "Polymorphisme", "Énumérations", "Diagramme d'objets"],
-    activites: ["cours", "fiche", "flash", "exos", "quiz"]
+    description: "Du besoin au code : cas d'utilisation, scénarios, DSS, diagrammes de classes, d'objets et de séquence, avec 4 TPs guidés sur une étude de cas.",
+    notions: ["Cas d'utilisation", "Scénarios", "DSS", "Classes", "Agrégation / composition", "Héritage", "Polymorphisme", "Diagramme d'objets", "Diagramme de séquence", "Placer les savoir-faire"],
+    activites: ["cours", "tp", "fiche", "flash", "exos", "quiz"]
   },
   {
     titre: "Architecture réseau",
@@ -85,7 +83,6 @@ window.REVISION_FICHES = [
     href: "revision_SQL.html",
     semestres: ["S1", "S2"],
     domaine: "bdd",
-    valide: true,
     description: "Requêtes SQL sous Oracle, de la jointure aux requêtes hiérarchiques, plus DDL, DML et les pièges classiques.",
     notions: ["Jointures", "Agrégation", "Sous-requêtes", "Ensemblistes", "EXISTS", "Arborescences", "DDL", "DML", "Vues", "Séquences", "Droits", "Transactions"],
     activites: ["cours", "fiche"]

@@ -198,16 +198,6 @@
     font: 500 12px var(--r-font-mono); color: var(--r-text-3);
   }
   .code { padding: 2px 6px; border-radius: 4px; background: var(--r-surface-2); }
-  .badge {
-    margin-left: auto;
-    display: inline-flex; align-items: center; gap: 4px;
-    height: 22px; padding: 0 8px; border-radius: 999px;
-    font: 700 11px var(--r-font-body); letter-spacing: .03em; text-transform: uppercase;
-  }
-  .badge + .badge { margin-left: 0; }
-  .badge-new { background: var(--r-mark); color: #3d2f00; }
-  .badge-ok { background: var(--r-green-soft); color: var(--r-green); }
-
   .card-title {
     margin: 0;
     font-size: 1.2rem; font-weight: 700; line-height: 1.2;
@@ -258,7 +248,7 @@
     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
     <label for="q" class="sr">Rechercher une fiche ou une notion</label>
     <input id="q" type="search" autocomplete="off" spellcheck="false"
-           placeholder="Rechercher : jointure, OSPF, loi normale, RGPD…">
+           placeholder="Jointure, OSPF, loi normale, RGPD…">
     <div class="search-aside">
       <button type="button" class="clear" id="clear" hidden>Effacer</button>
       <span class="kbd" id="kbd" aria-hidden="true">/</span>
@@ -414,8 +404,6 @@
         '<span class="dom">' + hl(d.label, ts) + '</span>' +
         '<span class="sem">' + f.semestres.join(' · ') + '</span>' +
         (f.code ? '<span class="code">' + hl(f.code, ts) + '</span>' : '') +
-        (f.nouveau ? '<span class="badge badge-new">Nouveau</span>' : '') +
-        (f.valide ? '<span class="badge badge-ok" title="Contenu vérifié">✓ Validé</span>' : '') +
       '</div>' +
       '<h3 class="card-title">' + hl(f.titre, ts) + '</h3>' +
       '<p class="desc">' + hl(f.description, ts) + '</p>' +

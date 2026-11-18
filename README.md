@@ -17,8 +17,6 @@ Les fiches sont décrites dans `revision/fiches.js` (pas besoin de toucher au HT
   href: "revision_XXX.html",      // chemin depuis le dossier revision/
   semestres: ["S3"],              // un ou plusieurs
   domaine: "reseau",              // une clé de REVISION_DOMAINES
-  nouveau: true,                  // facultatif : badge « Nouveau »
-  valide: true,                   // facultatif : badge « Validé »
   description: "Une ou deux phrases sur le contenu.",
   notions: ["Notion 1", "Notion 2"],          // utilisées par la recherche
   activites: ["cours", "quiz", "flash"]        // clés de REVISION_ACTIVITES
