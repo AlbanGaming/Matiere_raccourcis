@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Révision — Management des Systèmes d'Information</title>
+<style>:root{
+  --paper:#f5f0e3; --paper2:#fbf8f0; --card:#fffdf8; --ink:#1f2a24; --muted:#5f6b63; --line:#d9cfb8; --rule:#e8dfca;
+  --green:#1f5c3f; --green-l:#e2efe5; --blue:#244a7a; --blue-l:#e1e9f4; --red:#a8322a; --red-l:#f6e1de;
+  --gold:#a8771f; --gold-l:#f5ead2; --violet:#5b3f8a; --violet-l:#ebe4f5;
+  --shadow:0 1px 0 rgba(0,0,0,.04),0 6px 18px -10px rgba(40,30,10,.25);
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono","SF Mono",Consolas,monospace;
+}
+[data-theme=dark]{
+  --paper:#15191a; --paper2:#1b2021; --card:#1f2526; --ink:#e7e2d6; --muted:#a3a99f; --line:#39413f; --rule:#2c3332;
+  --green:#7fc79c; --green-l:#1f3229; --blue:#8fb3e6; --blue-l:#1d2a3b; --red:#ef8a80; --red-l:#3a2220;
+  --gold:#e0b45e; --gold-l:#352c1a; --violet:#bba2ea; --violet-l:#2b2438;
+  --shadow:0 6px 18px -10px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 var(--sans);
+  background-image:linear-gradient(color-mix(in srgb,var(--rule) 35%,transparent) 1px,transparent 1px);background-size:100% 32px;background-attachment:fixed}
+h1,h2,h3,h4{font-family:var(--serif);line-height:1.2;margin:1.2em 0 .5em}
+h1{font-size:2.3rem;margin-top:.3em}
+h2{font-size:1.7rem;border-bottom:2px solid var(--ink);padding-bottom:.25em}
+h3{font-size:1.25rem;color:var(--green)}
+h4{font-size:1.05rem;margin:1em 0 .3em}
+p{margin:.5em 0}
+a{color:var(--blue)}
+.num,td.n,.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+code{font-family:var(--mono);background:var(--gold-l);padding:0 .3em;border-radius:3px;font-size:.92em}
+
+/* header */
+header.top{position:sticky;top:0;z-index:20;background:var(--paper2);border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
+.top-in{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:8px 16px}
+.brand{font-family:var(--serif);font-weight:700;font-size:1.15rem;white-space:nowrap;cursor:pointer}
+.brand b{color:var(--red)}
+nav.tabs{display:flex;gap:2px;overflow-x:auto;flex:1;scrollbar-width:thin}
+nav.tabs button{background:none;border:0;border-bottom:3px solid transparent;color:var(--muted);font:600 .9rem var(--sans);padding:8px 10px;cursor:pointer;white-space:nowrap}
+nav.tabs button:hover{color:var(--ink)}
+nav.tabs button.on{color:var(--ink);border-bottom-color:var(--red)}
+.iconbtn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 9px;cursor:pointer;color:var(--ink);font-size:1rem}
+
+main{max-width:1180px;margin:0 auto;padding:18px 16px 80px}
+section.page{display:none}
+section.page.on{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);margin:14px 0}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.lead{font-size:1.08rem;color:var(--muted);max-width:760px}
+.pill{display:inline-block;font:600 .72rem var(--sans);text-transform:uppercase;letter-spacing:.05em;padding:2px 8px;border-radius:99px;background:var(--gold-l);color:var(--gold)}
+.pill.g{background:var(--green-l);color:var(--green)} .pill.b{background:var(--blue-l);color:var(--blue)} .pill.r{background:var(--red-l);color:var(--red)} .pill.v{background:var(--violet-l);color:var(--violet)}
+.muted{color:var(--muted)}
+.small{font-size:.88rem}
+
+/* home tiles */
+.tile{cursor:pointer;transition:transform .15s,box-shadow .15s;position:relative;overflow:hidden}
+.tile:hover{transform:translateY(-3px);box-shadow:0 12px 26px -14px rgba(40,30,10,.45)}
+.tile .ic{font-size:1.8rem}
+.tile h3{margin:.3em 0 .2em;color:var(--ink)}
+.tile p{margin:0;color:var(--muted);font-size:.93rem}
+.bar{height:8px;background:var(--rule);border-radius:99px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--green);border-radius:99px;transition:width .4s}
+
+/* callouts */
+.box{border-left:4px solid var(--green);background:var(--green-l);padding:10px 14px;border-radius:0 8px 8px 0;margin:10px 0}
+.box.warn{border-color:var(--red);background:var(--red-l)}
+.box.info{border-color:var(--blue);background:var(--blue-l)}
+.box.tip{border-color:var(--gold);background:var(--gold-l)}
+.box b:first-child{font-family:var(--serif)}
+.formula{font-family:var(--mono);background:var(--card);border:1.5px dashed var(--ink);border-radius:8px;padding:10px 14px;margin:10px 0;text-align:center;font-size:1.02rem;font-weight:600}
+
+/* tables */
+.tw{overflow-x:auto;margin:10px 0}
+table{border-collapse:collapse;width:100%;font-size:.93rem;background:var(--card)}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:var(--paper2);font-family:var(--serif);font-weight:700}
+td.n{text-align:right;white-space:nowrap}
+tr.tot td{font-weight:700;background:var(--gold-l)}
+tr.sub td{font-style:italic;font-weight:600;background:var(--paper2)}
+tr.hl td{background:var(--green-l)}
+td.neg{color:var(--red)}
+td.ok{color:var(--green);font-weight:700}
+
+/* chapter tabs inside cours */
+.subtabs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 4px}
+.subtabs button{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:99px;cursor:pointer;font:600 .9rem var(--sans)}
+.subtabs button.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.toc{font-size:.92rem}
+.toc a{display:block;padding:2px 0;text-decoration:none}
+
+/* bilan diagram */
+.bilan-viz{display:grid;grid-template-columns:1fr 1fr;border:2px solid var(--ink);border-radius:6px;overflow:hidden;background:var(--card)}
+.bilan-viz .hd{font-family:var(--serif);font-weight:700;text-align:center;padding:6px;border-bottom:2px solid var(--ink)}
+.bilan-viz .col{display:flex;flex-direction:column}
+.bilan-viz .col+.col{border-left:2px solid var(--ink)}
+.blk{padding:10px 12px;border-bottom:1px solid var(--line);cursor:pointer;transition:filter .15s}
+.blk:hover{filter:brightness(.96)}
+.blk h5{margin:0 0 3px;font:700 .95rem var(--serif)}
+.blk ul{margin:0;padding-left:18px;font-size:.86rem}
+.blk.a1{background:var(--green-l)} .blk.a2{background:color-mix(in srgb,var(--green-l) 50%,var(--card))}
+.blk.p1{background:var(--blue-l)} .blk.p2{background:color-mix(in srgb,var(--blue-l) 50%,var(--card))}
+.blk .cls{float:right;font:600 .72rem var(--mono);color:var(--muted)}
+.blk .more{display:none;font-size:.85rem;margin-top:6px;color:var(--muted)}
+.blk.open .more{display:block}
+
+/* masses viz */
+.masses{display:flex;gap:0;align-items:stretch;height:360px;border:2px solid var(--ink);border-radius:6px;overflow:hidden;background:var(--card);position:relative}
+.masses .side{flex:1;display:flex;flex-direction:column}
+.masses .side+.side{border-left:2px solid var(--ink)}
+.masses .m{display:flex;align-items:center;justify-content:center;text-align:center;font-size:.82rem;font-weight:600;padding:2px 6px;border-bottom:1px solid rgba(0,0,0,.15);transition:flex-grow .4s;min-height:0;overflow:hidden;line-height:1.2}
+.m.es{background:#bfd9c6;color:#13321f} .m.ac{background:#d9e8dc;color:#13321f} .m.ta{background:#eef5ef;color:#13321f}
+.m.rs{background:#bdd0ea;color:#132a47} .m.dc{background:#d7e3f3;color:#132a47} .m.tp{background:#eef3fa;color:#132a47}
+.masses-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;font-size:.9rem}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0}
+.kpi div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.kpi small{display:block;color:var(--muted);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em}
+.kpi b{font:700 1.35rem var(--mono)}
+.kpi .pos{color:var(--green)} .kpi .neg{color:var(--red)}
+
+/* forms */
+label.f{display:block;font-size:.85rem;font-weight:600;color:var(--muted);margin:6px 0 2px}
+input[type=text],input[type=number],input[type=date],select{font:500 .95rem var(--mono);padding:7px 9px;border:1.5px solid var(--line);border-radius:7px;background:var(--paper2);color:var(--ink);width:100%}
+input:focus,select:focus{outline:2px solid var(--gold);border-color:var(--gold)}
+input.good{border-color:var(--green);background:var(--green-l)}
+input.bad{border-color:var(--red);background:var(--red-l)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--ink);background:var(--ink);color:var(--paper);font:600 .92rem var(--sans);padding:8px 14px;border-radius:8px;cursor:pointer;margin:4px 6px 4px 0}
+.btn:hover{filter:brightness(1.15)}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.red{background:var(--red);border-color:var(--red);color:#fff}
+.btn.green{background:var(--green);border-color:var(--green);color:#fff}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.row>div{flex:1;min-width:140px}
+
+/* checks */
+.checks{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px 14px;margin:8px 0}
+.chk label{font-size:.85rem;font-weight:600;color:var(--muted);display:block}
+.chk .fb{font-size:.8rem;min-height:1.1em}
+.chk .fb.g{color:var(--green)} .chk .fb.b{color:var(--red)}
+
+/* exercises */
+.exlist{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
+.exitem{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer;transition:border-color .15s}
+.exitem:hover{border-color:var(--ink)}
+.exitem.done{border-left:5px solid var(--green)}
+.exitem h4{margin:.35em 0 .1em}
+.steps .step{display:none;border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:10px 0;background:var(--paper2)}
+.steps .step.on{display:block;animation:fade .3s}
+.steps .step h4{margin-top:0;color:var(--red)}
+.enonce{background:var(--paper2);border:1px solid var(--line);border-radius:10px;padding:12px 16px}
+
+/* flashcards */
+.fc-wrap{perspective:1200px;max-width:620px;margin:16px auto}
+.fc{position:relative;height:290px;transform-style:preserve-3d;transition:transform .5s;cursor:pointer}
+.fc.flip{transform:rotateY(180deg)}
+.fc .face{position:absolute;inset:0;backface-visibility:hidden;border-radius:16px;border:1.5px solid var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;box-shadow:var(--shadow);background:var(--card);overflow:auto}
+.fc .face.back{transform:rotateY(180deg);background:var(--green-l)}
+.fc .face .q{font:600 1.3rem/1.35 var(--serif)}
+.fc .face .a{font-size:1.02rem}
+.fc .tag{position:absolute;top:12px;left:14px}
+.fc-ctl{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+
+/* quiz */
+.opt{display:block;width:100%;text-align:left;background:var(--card);border:1.5px solid var(--line);border-radius:9px;padding:10px 14px;margin:7px 0;cursor:pointer;font:500 .98rem var(--sans);color:var(--ink)}
+.opt:hover:not(:disabled){border-color:var(--ink)}
+.opt.right{border-color:var(--green);background:var(--green-l)}
+.opt.wrong{border-color:var(--red);background:var(--red-l)}
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.score{font:700 1.1rem var(--mono)}
+
+/* trieur */
+.sort-item{font:600 1.35rem var(--serif);text-align:center;padding:26px 16px;border:2px dashed var(--ink);border-radius:14px;background:var(--card);margin:12px 0}
+.bins{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px}
+.bin{border:1.5px solid var(--line);border-radius:10px;padding:10px;background:var(--card);cursor:pointer;font:600 .9rem var(--sans);color:var(--ink);text-align:center}
+.bin:hover{border-color:var(--ink)}
+.bin.right{background:var(--green-l);border-color:var(--green)}
+.bin.wrong{background:var(--red-l);border-color:var(--red)}
+.bin.cA{border-top:4px solid var(--green)} .bin.cP{border-top:4px solid var(--blue)} .bin.cC{border-top:4px solid var(--red)} .bin.cR{border-top:4px solid var(--gold)}
+
+/* SR chart */
+svg text{font-family:var(--sans)}
+.legend-dot{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:middle}
+
+.pcg td{font-size:.85rem}
+.pcg td.c{cursor:pointer}
+details{border:1px solid var(--line);border-radius:9px;padding:8px 12px;margin:8px 0;background:var(--card)}
+details summary{cursor:pointer;font-weight:600}
+.timeline{display:grid;grid-template-columns:repeat(12,1fr);gap:2px;margin:8px 0}
+.timeline div{height:26px;border-radius:3px;background:var(--rule);font:600 .65rem var(--mono);display:flex;align-items:center;justify-content:center;color:var(--muted)}
+.timeline div.on{background:var(--red);color:#fff}
+.timeline div.part{background:linear-gradient(90deg,var(--rule) 50%,var(--red) 50%);color:#fff}
+footer{text-align:center;color:var(--muted);font-size:.82rem;padding:30px}
+@media(max-width:640px){h1{font-size:1.7rem}.brand span{display:none}.masses{height:300px}}
+@media print{header.top,.btn{display:none}section.page{display:block!important}}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <div class="brand" data-go="accueil">📒 MSI <b>·</b> <span>Révision</span></div>
+  <nav class="tabs" id="tabs">
+    <button data-go="accueil">Accueil</button>
+    <button data-go="cours">Cours</button>
+    <button data-go="formules">Formules</button>
+    <button data-go="flash">Flashcards</button>
+    <button data-go="quiz">Quiz</button>
+    <button data-go="trieur">Trieur</button>
+    <button data-go="simu">Simulateurs</button>
+    <button data-go="exos">Exercices corrigés</button>
+    <button data-go="train">Entraînement ∞</button>
+  </nav>
+  <button class="iconbtn" id="theme" title="Thème clair / sombre">🌓</button>
+</div></header>
+
+<main>
+<!-- ============ ACCUEIL ============ -->
+<section class="page" id="p-accueil">
+  <span class="pill">Management des SI · S3</span>
+  <h1>Bilan, BFR, seuil de rentabilité : tout le module en un seul endroit</h1>
+  <p class="lead">Trois chapitres : les rappels comptables (bilan, compte de résultat, amortissements), l'analyse du bilan (bilan fonctionnel, FRNG, BFR, trésorerie, ratios) et l'analyse du compte de résultat (charges fixes/variables, seuil de rentabilité, point mort). Tous les exercices du poly sont corrigés pas à pas.</p>
+
+  <div class="grid g3" id="homeTiles"></div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h3>🎯 Ta progression</h3>
+      <div id="progressBox"></div>
+      <button class="btn ghost small" id="resetProg">Réinitialiser la progression</button>
+    </div>
+    <div class="card">
+      <h3>🧭 Méthode conseillée</h3>
+      <ol class="small">
+        <li><b>Cours</b> : lis un chapitre, clique sur les schémas.</li>
+        <li><b>Flashcards</b> + <b>Trieur</b> : automatise le vocabulaire et le classement des postes.</li>
+        <li><b>Exercices corrigés</b> : fais l'exercice sur papier, entre tes résultats, puis déroule la correction étape par étape.</li>
+        <li><b>Entraînement ∞</b> : refais les mêmes types d'exercices avec des chiffres différents jusqu'à ne plus te tromper.</li>
+        <li><b>Quiz</b> en mode examen pour finir.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⚠️ Les 8 pièges qui coûtent le plus de points</h3>
+    <div class="grid g2 small">
+      <div class="box warn"><b>Amortir sur le HT.</b> Prix TTC ÷ 1,20 avant tout calcul d'amortissement.</div>
+      <div class="box warn"><b>Mise en service, pas date d'achat.</b> Le prorata démarre à la mise en service.</div>
+      <div class="box warn"><b>Année de 360 jours.</b> 12 mois de 30 jours (année lombarde).</div>
+      <div class="box warn"><b>Concours bancaires ≠ ressources stables.</b> Ils sortent des emprunts et vont en trésorerie passif.</div>
+      <div class="box warn"><b>Amortissements → ressources stables</b> dans le bilan fonctionnel (et l'actif est pris en brut).</div>
+      <div class="box warn"><b>Variation de stock :</b> SI − SF pour les achats (charges), SF − SI pour les produits finis (production stockée).</div>
+      <div class="box warn"><b>Marge de sécurité ≠ bénéfice.</b> MS = CA − SR, c'est du chiffre d'affaires.</div>
+      <div class="box warn"><b>SR : formule précise.</b> Préférer SR = CA × CF / M/CV (pas d'arrondi du taux).</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ COURS ============ -->
+<section class="page" id="p-cours">
+  <h1>Cours</h1>
+  <div class="subtabs" id="chapTabs">
+    <button data-ch="c1" class="on">I · Rappels de gestion comptable</button>
+    <button data-ch="c2">II · Analyse du bilan</button>
+    <button data-ch="c3">III · Analyse du compte de résultat</button>
+  </div>
+
+  <!-- ===== CHAPITRE 1 ===== -->
+  <div class="chap" id="c1">
+    <h2>Chapitre I — Bilan, compte de résultat, amortissements</h2>
+    <div class="box info"><b>Obligation légale :</b> une fois par an, l'entreprise établit ses <b>documents de synthèse</b> : le <b>bilan</b>, le <b>compte de résultat</b> et l'<b>annexe</b> (infos complémentaires : amortissements, provisions…).</div>
+    <div class="grid g2">
+      <div class="card"><h4>📸 Le bilan = une photographie</h4><p>Situation <b>patrimoniale</b> de l'entreprise <b>à un moment donné</b> (souvent le 31/12) : ce qu'elle possède, ce qu'elle doit.</p></div>
+      <div class="card"><h4>🎬 Le compte de résultat = un film</h4><p>Retrace l'<b>activité de l'exercice</b> (achats, ventes, salaires…) et la formation du <b>résultat</b> (bénéfice ou perte).</p></div>
+    </div>
+
+    <h3>1. Le bilan</h3>
+    <p>Document comptable normalisé décrivant le patrimoine. <b>Actif = emplois</b> (ce que l'entreprise a fait de ses ressources). <b>Passif = ressources</b> (d'où vient l'argent). Toujours : <b>Total Actif = Total Passif</b>.</p>
+    <p class="small muted">👉 Clique sur chaque bloc pour voir les détails.</p>
+    <div class="bilan-viz" id="bilanViz">
+      <div class="col">
+        <div class="hd">ACTIF · emplois</div>
+        <div class="blk a1"><span class="cls">classe 2</span><h5>Actif immobilisé (&gt; 1 an)</h5>
+          <ul><li>Immobilisations incorporelles</li><li>Immobilisations corporelles</li><li>Immobilisations financières</li></ul>
+          <div class="more"><b>Incorporelles</b> : éléments immatériels possédés : brevets, licences, logiciels, marques, fonds commercial.<br><b>Corporelles</b> : biens matériels : terrains, constructions, matériel et outillage, mobilier, ordinateurs, véhicules.<br><b>Financières</b> : participations au capital d'autres entreprises, titres détenus durablement.</div></div>
+        <div class="blk a2"><span class="cls">classes 3, 4, 5</span><h5>Actif circulant (&lt; 1 an)</h5>
+          <ul><li>Stocks et en-cours <span class="muted">(cl. 3)</span></li><li>Créances <span class="muted">(cl. 4 au débit)</span></li><li>Disponibilités <span class="muted">(cl. 5)</span></li></ul>
+          <div class="more"><b>Stocks</b> : matières premières (à consommer), marchandises et produits finis (à vendre).<br><b>Créances clients</b> : ventes pas encore encaissées (délais de paiement accordés = crédit client).<br><b>Disponibilités</b> : banque, caisse, et VMP (valeurs mobilières de placement : titres achetés pour un placement à court terme).</div></div>
+      </div>
+      <div class="col">
+        <div class="hd">PASSIF · ressources</div>
+        <div class="blk p1"><span class="cls">classe 1</span><h5>Capitaux propres (passif interne)</h5>
+          <ul><li>Capital</li><li>Réserves</li><li>Résultat de l'exercice</li></ul>
+          <div class="more">Ressources qui appartiennent aux propriétaires. Deux origines : <b>apports</b> des associés (capital) et ressources <b>générées par l'activité</b> (bénéfices mis en réserve + résultat de l'année). Un bénéfice peut être <b>distribué</b> (dividendes) ou <b>mis en réserve</b>.</div></div>
+        <div class="blk p2"><span class="cls">classes 1 (16), 4, 5 (519)</span><h5>Dettes (passif externe)</h5>
+          <ul><li>Emprunts et dettes assimilées <span class="muted">(LT &gt; 1 an)</span></li><li>Dettes fournisseurs <span class="muted">(CT)</span></li><li>Dettes fiscales et sociales <span class="muted">(CT)</span></li></ul>
+          <div class="more">Ressources prêtées par des tiers, à rembourser. <b>Emprunts</b> auprès des banques (compte 16). <b>Fournisseurs</b> : achats pas encore réglés. <b>Fiscales et sociales</b> : sommes dues à l'État et aux organismes sociaux. Un <b>découvert</b> (519 concours bancaires) est une dette, même si c'est un compte de classe 5.</div></div>
+      </div>
+    </div>
+
+    <h4>Le Plan Comptable Général (PCG)</h4>
+    <div class="tw"><table class="pcg">
+      <tr><th>Classe</th><th>Contenu</th><th>Où ?</th><th>Exemples</th></tr>
+      <tr><td><b>1</b></td><td>Comptes de capitaux</td><td>Passif</td><td>101 Capital · 106 Réserves · 12 Résultat · 15 Provisions pour risques · <b>16 Emprunts</b></td></tr>
+      <tr><td><b>2</b></td><td>Comptes d'immobilisations</td><td>Actif immobilisé</td><td>20 Incorporelles (203 R&amp;D, 207 Fonds commercial) · 21 Corporelles (211 Terrains, 213 Constructions, 215 Install. techniques, 218x Matériel) · 26 Participations · 28 Amortissements</td></tr>
+      <tr><td><b>3</b></td><td>Stocks et en-cours</td><td>Actif circulant</td><td>31 Matières premières · 35 Produits finis · 37 Marchandises</td></tr>
+      <tr><td><b>4</b></td><td>Comptes de tiers</td><td>Débit → actif / Crédit → passif</td><td>411 Clients (actif) · 401 Fournisseurs, 404 Fournisseurs d'immo, 42/43/44 Dettes sociales et fiscales (passif)</td></tr>
+      <tr><td><b>5</b></td><td>Comptes financiers</td><td>Actif (sauf 519)</td><td>50 VMP · 512 Banque · 53 Caisse · <b>519 Concours bancaires → passif</b></td></tr>
+      <tr><td><b>6</b></td><td>Charges</td><td>Compte de résultat</td><td>60–65 + 68 exploitation · 66 financières · 67 exceptionnelles · 69 impôt sur les bénéfices</td></tr>
+      <tr><td><b>7</b></td><td>Produits</td><td>Compte de résultat</td><td>70–75 + 78 exploitation · 76 financiers · 77 exceptionnels</td></tr>
+    </table></div>
+    <div class="box tip"><b>Astuce :</b> classes 1 à 5 = comptes de <b>bilan</b> (patrimoine). Classes 6 et 7 = comptes de <b>gestion</b> (résultat). Le 2<sup>e</sup> chiffre d'un compte de charge/produit donne la catégorie : 6<b>6</b>/7<b>6</b> financier, 6<b>7</b>/7<b>7</b> exceptionnel, le reste exploitation.</div>
+
+    <h3>2. Le compte de résultat</h3>
+    <p>Document normalisé qui détermine, pour une période donnée, la formation du résultat. <b>Résultat = Produits − Charges.</b></p>
+    <div class="grid g2">
+      <div class="card">
+        <h4 style="color:var(--red)">Charges (classe 6) — consommations, emplois définitifs</h4>
+        <p><b>Exploitation</b> (activité courante) : achats de marchandises et MP ± variation de stocks, publicité, loyer, électricité, téléphone, assurances, impôts et taxes (<i>sauf l'IS</i>), salaires bruts + charges sociales patronales, redevances (brevets, licences), dotations aux amortissements.</p>
+        <p><b>Financières</b> : intérêts d'emprunt, agios (découvert), escompte <i>accordé</i> aux clients.</p>
+        <p><b>Exceptionnelles</b> : hors activité courante, non cycliques : amendes et pénalités, pertes sur cession d'actif (ex. véhicule revendu sous sa valeur comptable).</p>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--green)">Produits (classe 7) — valeur des biens et services vendus</h4>
+        <p><b>Exploitation</b> : ventes (CA, montant net HT après rabais, remises, ristournes) ± variation de stocks de produits finis (production stockée), prestations de services, production immobilisée (travaux faits pour soi-même), subventions d'exploitation, redevances perçues.</p>
+        <p><b>Financiers</b> : dividendes et intérêts perçus sur placements, escompte <i>obtenu</i> des fournisseurs.</p>
+        <p><b>Exceptionnels</b> : plus-values de cession d'immobilisations, indemnités obtenues (ex. arrhes conservées après annulation d'une commande).</p>
+      </div>
+    </div>
+    <h4>Les variations de stocks : le point qui piège</h4>
+    <div class="tw"><table>
+      <tr><th>Stock de…</th><th>Formule</th><th>Côté</th><th>Lecture</th></tr>
+      <tr><td>Marchandises / Matières premières</td><td class="mono">Δ = SI − SF</td><td>Charges (603x)</td><td>Si le stock augmente (SF &gt; SI), Δ négatif → on a acheté plus que consommé, la charge diminue.</td></tr>
+      <tr><td>Produits finis</td><td class="mono">Δ = SF − SI</td><td>Produits (71)</td><td>SF &gt; SI → <b>production stockée</b> (produit). SF &lt; SI → déstockage (produit négatif).</td></tr>
+    </table></div>
+    <div class="formula">Coût d'achat des marchandises vendues = Achats ± Variation de stocks (SI − SF)</div>
+    <div class="box"><b>Le résultat apparaît deux fois :</b> au compte de résultat (bénéfice côté <b>charges</b> pour équilibrer, perte côté <b>produits</b>) et au bilan dans les <b>capitaux propres</b> (négatif si perte). Même montant aux deux endroits : c'est ta vérification.</div>
+
+    <h3>3. Les amortissements</h3>
+    <p>L'amortissement est la <b>constatation comptable de la dépréciation</b> des éléments de l'actif immobilisé. Chaque année :</p>
+    <ul>
+      <li>au bilan, la valeur diminue : <span class="mono"><b>Valeur brute − Amortissements cumulés = Valeur nette comptable (VNC)</b></span></li>
+      <li>au compte de résultat, on passe une <b>dotation aux amortissements (DAP, compte 68)</b> en charge d'exploitation.</li>
+    </ul>
+    <div class="box tip"><b>Pourquoi c'est malin :</b> la DAP est une charge <b>calculée, non décaissable</b> (aucun argent ne sort). Elle réduit le résultat, donc l'impôt sur les bénéfices.</div>
+    <div class="box warn"><b>Non amortissables :</b> petits matériels (&lt; 500 € HT, passés en charges), terrains, œuvres d'art, éléments incorporels du fonds de commerce, titres (actions, obligations).</div>
+
+    <h4>a) Amortissement linéaire</h4>
+    <div class="grid g2">
+      <div>
+        <ul>
+          <li><b>Base</b> = coût d'achat <b>HT</b> (prix HT + frais d'installation…) [− valeur résiduelle éventuelle]</li>
+          <li><b>Taux</b> = 100 / durée (5 ans → 20 %)</li>
+          <li><b>Annuité</b> = Base × Taux, au <b>prorata temporis</b> en jours</li>
+          <li>Année <b>lombarde</b> : 12 mois × 30 j = <b>360 jours</b></li>
+          <li>Départ : <b>date de mise en service</b> (pas d'achat)</li>
+          <li>La 1<sup>re</sup> année est incomplète → il y a une année de plus (N+durée) qui complète le reste.</li>
+        </ul>
+      </div>
+      <div class="card" style="margin:0">
+        <div class="formula" style="margin-top:0">Annuité N = Base × Taux × jours / 360</div>
+        <label class="f">Teste : date de mise en service (jour / mois)</label>
+        <div class="row"><div><input type="number" id="tlD" value="20" min="1" max="31"></div><div><input type="number" id="tlM" value="8" min="1" max="12"></div></div>
+        <div class="timeline" id="tlBar"></div>
+        <div id="tlTxt" class="small"></div>
+      </div>
+    </div>
+    <div class="box info small"><b>Comptage des jours (convention du cours) :</b> jours restants dans le mois de mise en service = 30 − jour (20/08 → 10 j), puis 30 j par mois complet jusqu'au 31/12 (sept → déc = 120 j) → <b>130 jours</b>. Une mise en service le 1<sup>er</sup> du mois compte le mois entier (30 j).</div>
+
+    <details><summary>Exemple du cours : Hoth, matériel 62 400 € TTC, 5 ans, mis en service le 20/08/N</summary>
+      <p>Base HT = 62 400 / 1,20 = <b>52 000 €</b> · Taux = 20 % · Annuité pleine = <b>10 400 €</b><br>
+      N : 52 000 × 20 % × 130/360 = <b>3 755,56 €</b> · N+1 à N+4 : 10 400 € · N+5 : 10 400 × 230/360 = <b>6 644,44 €</b>.<br><span class="muted small">Détail complet dans « Exercices corrigés ».</span></p>
+    </details>
+
+    <h4>b) Amortissement selon les avantages économiques attendus</h4>
+    <p>Utilisé quand l'usure n'est pas constante (ex. au nombre de pièces fabriquées, de kilomètres…).</p>
+    <div class="formula">Annuité = (Coût HT − Valeur résiduelle) × Unités de l'année / Unités totales</div>
+    <p class="small muted">Pas de prorata temporis ici : le nombre d'unités de l'année tient déjà compte de la période.</p>
+
+    <h3>4. Bonus : tableau de remboursement d'emprunt (amortissement constant)</h3>
+    <p>Utile pour le passif (capital restant dû = dette au bilan) et les charges financières (intérêts).</p>
+    <ul class="small">
+      <li>Amortissement (remboursement du capital) = Montant emprunté / Nombre d'années <b>(constant)</b></li>
+      <li>Intérêts = Capital restant dû en début de période × Taux</li>
+      <li>Annuité = Intérêts + Amortissement · CRD fin = CRD début − Amortissement</li>
+    </ul>
+    <div class="tw"><table>
+      <tr><th>Année</th><th>CRD début</th><th>Intérêts (4 %)</th><th>Amortissement</th><th>Annuité</th><th>CRD fin</th></tr>
+      <tr><td>1</td><td class="n">100 000</td><td class="n">4 000</td><td class="n">25 000</td><td class="n">29 000</td><td class="n">75 000</td></tr>
+      <tr><td>2</td><td class="n">75 000</td><td class="n">3 000</td><td class="n">25 000</td><td class="n">28 000</td><td class="n">50 000</td></tr>
+      <tr><td>3</td><td class="n">50 000</td><td class="n">2 000</td><td class="n">25 000</td><td class="n">27 000</td><td class="n">25 000</td></tr>
+      <tr><td>4</td><td class="n">25 000</td><td class="n">1 000</td><td class="n">25 000</td><td class="n">26 000</td><td class="n">0</td></tr>
+    </table></div>
+    <div class="box"><b>Au bilan :</b> l'emprunt vaut le capital restant dû. <b>Au compte de résultat :</b> seuls les <b>intérêts</b> sont une charge (financière). Le remboursement du capital n'est pas une charge, c'est une sortie de trésorerie.</div>
+  </div>
+
+  <!-- ===== CHAPITRE 2 ===== -->
+  <div class="chap" id="c2" hidden>
+    <h2>Chapitre II — Bilan fonctionnel, FRNG, BFR, trésorerie, ratios</h2>
+    <h3>1. Bilan comptable vs bilan fonctionnel</h3>
+    <div class="grid g2">
+      <div class="card"><h4>Bilan comptable</h4><p>Optique <b>patrimoniale</b> : on évalue ce que vaut l'entreprise <b>immédiatement</b>, comme si elle allait être liquidée. Valeurs <b>nettes</b>.</p></div>
+      <div class="card"><h4>Bilan fonctionnel</h4><p>Optique de <b>continuité de l'activité</b>. Présenté en <b>grandes masses</b>, plus lisible, utilisé pour une étude financière (prêt bancaire), suivre l'évolution sur plusieurs années, comparer à d'autres entreprises (<b>benchmarking</b>). Valeurs <b>brutes</b>.</p></div>
+    </div>
+    <p>Il compare deux cycles :</p>
+    <ul><li><b>Haut du bilan — cycle long</b> : emplois stables ↔ ressources stables</li><li><b>Bas du bilan — cycle court</b> : emplois circulants ↔ ressources circulantes, + la trésorerie</li></ul>
+
+    <h3>2. Les retraitements (à connaître par cœur)</h3>
+    <div class="tw"><table>
+      <tr><th style="width:50%">Actif</th><th>Passif</th></tr>
+      <tr><td><b>Emplois stables</b><br>= Actif immobilisé <b>brut</b></td>
+          <td><b>Ressources stables</b> (capitaux permanents)<br>= Capitaux propres (capital + réserves + résultat)<br>+ <b>tous les amortissements et provisions de l'actif</b><br>+ provisions pour risques et charges<br>+ dettes à long terme (emprunts) <b>sans les concours bancaires</b></td></tr>
+      <tr><td><b>Actif circulant hors trésorerie</b> (emplois circulants)<br>= Actif circulant brut − disponibilités</td>
+          <td><b>Dettes à CT hors trésorerie</b> (passif circulant)<br>= fournisseurs + fournisseurs d'immobilisations + dettes fiscales et sociales + autres dettes &lt; 1 an<br><i>sans les concours bancaires</i></td></tr>
+      <tr><td><b>Trésorerie actif</b> = disponibilités (banque, caisse)</td><td><b>Trésorerie passif</b> = concours bancaires, soldes créditeurs de banque, découverts</td></tr>
+      <tr class="tot"><td>Total actif fonctionnel = total actif BRUT</td><td>= Total passif fonctionnel</td></tr>
+    </table></div>
+    <div class="box warn"><b>Le piège n°1 :</b> une ligne « Emprunts (1) dont concours bancaires : 2 000 » → les 2 000 vont en <b>trésorerie passif</b>, seul le reste (emprunt − 2 000) va en ressources stables.</div>
+    <div class="box info"><b>Pourquoi les amortissements au passif ?</b> Comme l'actif est pris en <b>brut</b>, il faut ajouter les amortissements au passif pour que le bilan reste équilibré. Économiquement, c'est de l'autofinancement (charge non décaissée, l'argent est resté dans l'entreprise).</div>
+
+    <h3>3. Les trois indicateurs</h3>
+    <p class="small muted">👉 Joue avec les curseurs : les grandes masses se redessinent et FRNG / BFR / Trésorerie se recalculent.</p>
+    <div class="grid g2">
+      <div>
+        <div class="masses" id="mvMasses"></div>
+        <div class="masses-legend small"><span><span class="legend-dot" style="background:#bfd9c6"></span>Actif</span><span><span class="legend-dot" style="background:#bdd0ea"></span>Passif</span></div>
+      </div>
+      <div>
+        <div id="mvSliders"></div>
+        <div class="kpi" id="mvKpi"></div>
+        <div id="mvTxt" class="small"></div>
+      </div>
+    </div>
+
+    <h4>a) Fonds de roulement net global (FRNG)</h4>
+    <p>L'équilibre financier est respecté si les emplois stables sont financés en totalité par des ressources stables : <b>« le long finance le long »</b>. Le FRNG est l'excédent des ressources stables sur les emplois stables.</p>
+    <div class="formula">FRNG = Ressources stables − Emplois stables<br><span class="small">= (Actif circulant HT + Trésorerie actif) − (Dettes CT HT + Trésorerie passif)</span></div>
+    <ul><li><b>FRNG &gt; 0</b> : marge de sécurité, les ressources stables financent aussi une partie du cycle court.</li><li><b>FRNG &lt; 0</b> : une partie des immobilisations est financée par des dettes à court terme → dangereux à terme.</li></ul>
+    <p class="small">Il varie avec : achat/cession d'immobilisations, augmentation de capital, nouvel emprunt ou remboursement.</p>
+
+    <h4>b) Besoin en fonds de roulement (BFR)</h4>
+    <p>L'entreprise paie ses achats, ses salaires… <b>avant</b> d'encaisser ses ventes. Ce décalage entre dépenses et recettes crée un besoin de financement : le BFR.</p>
+    <div class="formula">BFR = Actif circulant hors trésorerie − Dettes CT hors trésorerie<br><span class="small">= (Stocks + Créances) − Dettes à court terme</span></div>
+    <div class="box tip"><b>BFR négatif ?</b> C'est possible : la grande distribution encaisse au comptant et paie ses fournisseurs bien plus tard. On parle d'<b>excédent (ou ressource) en fonds de roulement</b>, qui peut être placé.</div>
+    <p><b>Pour réduire le BFR</b>, le manager agit sur 3 leviers : <b>stocks</b> (mieux les gérer), <b>créances clients</b> (raccourcir les délais clients), <b>dettes fournisseurs</b> (obtenir des délais plus longs).</p>
+
+    <h4>c) Trésorerie nette</h4>
+    <div class="formula">Trésorerie = FRNG − BFR = Trésorerie actif − Trésorerie passif</div>
+    <p>Les deux calculs doivent donner le même résultat : c'est ta vérification. Trésorerie &gt; 0 : le FRNG couvre le BFR, équilibre satisfaisant. Trésorerie &lt; 0 : l'entreprise ne finance pas seule son cycle d'exploitation, elle dépend de la banque (découverts).</p>
+
+    <h3>4. Les ratios</h3>
+    <p>Un ratio = rapport entre deux masses du bilan et/ou du compte de résultat, en % ou en coefficient. Ils servent à juger la situation, suivre son évolution et se comparer au secteur.</p>
+    <div class="tw"><table>
+      <tr><th>Ratio</th><th>Formule</th><th>Lecture</th></tr>
+      <tr class="sub"><td colspan="3">Équilibre (structure)</td></tr>
+      <tr><td>Couverture des emplois stables</td><td class="mono">Ressources stables / Emplois stables</td><td>&gt; 1 : la règle « le long finance le long » est respectée (⇔ FRNG &gt; 0)</td></tr>
+      <tr><td>Couverture des capitaux investis</td><td class="mono">Ressources stables / (Emplois stables + BFR)</td><td>&gt; 1 : les ressources stables couvrent aussi le BFR (⇔ trésorerie ≥ 0)</td></tr>
+      <tr><td>Autonomie financière (taux d'endettement)</td><td class="mono">Dettes LT / Capitaux propres</td><td>Plus il est faible, plus l'entreprise est indépendante des banques</td></tr>
+      <tr class="sub"><td colspan="3">Rentabilité et productivité</td></tr>
+      <tr><td>Rentabilité financière</td><td class="mono">Résultat / Capitaux propres</td><td>Ce que rapporte 1 € investi par les associés</td></tr>
+      <tr><td>Marge nette</td><td class="mono">Résultat / Chiffre d'affaires</td><td>Bénéfice dégagé pour 1 € de ventes</td></tr>
+      <tr><td>Productivité du travail</td><td class="mono">Valeur ajoutée / Nombre d'employés</td><td>Richesse créée par salarié</td></tr>
+      <tr><td>Productivité du capital</td><td class="mono">Valeur ajoutée / Total du bilan</td><td>Richesse créée par € de capital</td></tr>
+    </table></div>
+  </div>
+
+  <!-- ===== CHAPITRE 3 ===== -->
+  <div class="chap" id="c3" hidden>
+    <h2>Chapitre III — Compte de résultat différentiel, seuil de rentabilité, point mort</h2>
+    <h3>1. Charges fixes et charges variables</h3>
+    <div class="grid g2">
+      <div class="card"><h4>Charges fixes (CF, frais fixes, charges de structure)</h4><p>Constantes quel que soit le volume produit ou le CA.</p><p class="small">Loyers, partie fixe de la main-d'œuvre, remboursements de crédits, abonnements, assurances, <b>dotations aux amortissements</b>, frais administratifs…</p></div>
+      <div class="card"><h4>Charges variables (CV, charges opérationnelles)</h4><p>Évoluent <b>proportionnellement</b> aux quantités produites ou au CA.</p><p class="small">Achats de marchandises et MP (± variation de stocks), partie variable de la main-d'œuvre (commissions), frais de livraison proportionnels…</p></div>
+    </div>
+    <p class="small">Une même charge peut être <b>mixte</b> : on la répartit entre partie variable et partie fixe (c'est ce que donnent les annexes de « répartition des charges »).</p>
+
+    <h3>2. Le compte de résultat différentiel</h3>
+    <div class="tw"><table style="max-width:640px">
+      <tr><th>#</th><th>Éléments</th><th>Montant</th><th>%</th></tr>
+      <tr><td>1</td><td>Chiffre d'affaires (HT)</td><td class="n">CA</td><td class="n">100 %</td></tr>
+      <tr><td>2</td><td>− Charges variables</td><td class="n">CV</td><td class="n">CV/CA</td></tr>
+      <tr class="hl"><td>3</td><td><b>= Marge sur coût variable</b></td><td class="n">M/CV</td><td class="n">taux de M/CV</td></tr>
+      <tr><td>4</td><td>− Charges fixes</td><td class="n">CF</td><td class="n"></td></tr>
+      <tr class="tot"><td>5</td><td>= Résultat</td><td class="n">R</td><td class="n"></td></tr>
+    </table></div>
+    <div class="formula">M/CV = CA − CV &nbsp;·&nbsp; Résultat = M/CV − CF &nbsp;·&nbsp; Taux de M/CV = M/CV ÷ CA × 100</div>
+    <p>La M/CV sert d'abord à <b>couvrir les charges fixes</b> ; ce qui dépasse est du bénéfice. Comme les CV, elle est proportionnelle à l'activité (le taux reste constant).</p>
+
+    <h3>3. Seuil de rentabilité, point mort, sécurité</h3>
+    <p class="small muted">👉 Bouge les curseurs : le graphique montre le point où la droite de M/CV croise les charges fixes.</p>
+    <div class="grid g2">
+      <div class="card" style="margin:0"><svg id="srSvg" viewBox="0 0 520 330" width="100%"></svg></div>
+      <div>
+        <div id="srSliders"></div>
+        <div class="kpi" id="srKpi"></div>
+      </div>
+    </div>
+
+    <h4>Seuil de rentabilité (SR) = chiffre d'affaires critique</h4>
+    <p>CA à partir duquel l'entreprise couvre toutes ses charges : <b>Résultat = 0</b>. Au-dessus → bénéfice, en dessous → perte. On peut aussi l'exprimer en <b>quantités</b> (SR ÷ prix de vente unitaire). Si un produit reste trop longtemps sous son SR, il est généralement retiré du marché.</p>
+    <div class="formula">SR = (CA × CF) / M/CV &nbsp; ou &nbsp; SR = CF / Taux de M/CV</div>
+    <div class="box tip">Les deux formules donnent un écart à cause de l'<b>arrondi du taux</b>. La première (CA × CF / M/CV) est plus précise : utilise-la de préférence.</div>
+    <h4>Point mort (PM)</h4>
+    <p>Date à laquelle le SR est atteint (activité supposée régulière sur l'année).</p>
+    <div class="formula">PM = (SR / CA) × 360 jours</div>
+    <p class="small">Conversion en date (mois de 30 j) : 267,5 j = 8 mois (240 j) + 27,5 j → vers le <b>28 septembre</b>.</p>
+    <h4>Marge et indice de sécurité</h4>
+    <div class="formula">MS = CA − SR &nbsp;·&nbsp; IS = (CA − SR) / CA × 100 = MS / CA × 100</div>
+    <p>La MS est la part de CA qui a généré du bénéfice (et <b>pas</b> le bénéfice lui-même). L'IS indique de combien (en %) le CA peut baisser avant d'arriver en perte.</p>
+    <div class="box"><b>Vérification rapide :</b> MS × Taux de M/CV = Résultat. Pratique pour contrôler tes calculs.</div>
+  </div>
+</section>
+
+<!-- ============ FORMULES ============ -->
+<section class="page" id="p-formules">
+  <h1>Toutes les formules</h1>
+  <p class="lead">La fiche à relire juste avant l'épreuve.</p>
+  <div class="grid g3" id="formGrid"></div>
+</section>
+
+<!-- ============ FLASH ============ -->
+<section class="page" id="p-flash">
+  <h1>Flashcards</h1>
+  <div class="subtabs" id="fcFilter"></div>
+  <div class="fc-wrap"><div class="fc" id="fc"><div class="face front"><span class="tag pill" id="fcTag"></span><div class="q" id="fcQ"></div><p class="small muted" style="margin-top:14px">Clique ou Espace pour retourner</p></div><div class="face back"><div class="a" id="fcA"></div></div></div></div>
+  <div class="fc-ctl">
+    <button class="btn ghost" id="fcPrev">← Précédente</button>
+    <button class="btn red" id="fcNo">À revoir</button>
+    <button class="btn green" id="fcYes">Je savais ✓</button>
+    <button class="btn ghost" id="fcNext">Suivante →</button>
+    <button class="btn ghost" id="fcShuf">🔀 Mélanger</button>
+  </div>
+  <p class="small muted" style="text-align:center" id="fcStat"></p>
+</section>
+
+<!-- ============ QUIZ ============ -->
+<section class="page" id="p-quiz">
+  <h1>Quiz</h1>
+  <div id="quizBox"></div>
+</section>
+
+<!-- ============ TRIEUR ============ -->
+<section class="page" id="p-trieur">
+  <h1>Le trieur</h1>
+  <p class="lead">Un élément apparaît, range-le dans la bonne case. Le meilleur moyen de ne plus hésiter en construisant un bilan ou un compte de résultat.</p>
+  <div class="subtabs" id="sortMode"></div>
+  <div class="card"><div class="qhead"><span class="score" id="sortScore"></span><span class="small muted" id="sortCount"></span></div>
+    <div class="sort-item" id="sortItem"></div>
+    <div class="bins" id="sortBins"></div>
+    <div id="sortFb" class="small" style="min-height:2.4em;margin-top:10px"></div>
+  </div>
+</section>
+
+<!-- ============ SIMULATEURS ============ -->
+<section class="page" id="p-simu">
+  <h1>Simulateurs</h1>
+  <p class="lead">Entre tes propres chiffres pour vérifier un calcul ou comprendre l'effet d'un paramètre.</p>
+  <div class="subtabs" id="simTabs">
+    <button data-s="s-amort" class="on">Tableau d'amortissement</button>
+    <button data-s="s-bf">Bilan fonctionnel</button>
+    <button data-s="s-sr">Seuil de rentabilité</button>
+    <button data-s="s-emp">Emprunt</button>
+  </div>
+  <div class="sim card" id="s-amort">
+    <h3 style="margin-top:0">Amortissement linéaire (prorata temporis, année de 360 j)</h3>
+    <div class="row">
+      <div><label class="f">Prix</label><input type="number" id="amP" value="62400"></div>
+      <div><label class="f">Le prix est…</label><select id="amT"><option value="ttc">TTC (TVA 20 %)</option><option value="ht">HT</option></select></div>
+      <div><label class="f">Durée (ans)</label><input type="number" id="amN" value="5" min="1"></div>
+      <div><label class="f">Mise en service (jour)</label><input type="number" id="amD" value="20" min="1" max="31"></div>
+      <div><label class="f">(mois)</label><input type="number" id="amM" value="8" min="1" max="12"></div>
+      <div><label class="f">Valeur résiduelle HT</label><input type="number" id="amV" value="0"></div>
+    </div>
+    <div id="amOut"></div>
+  </div>
+  <div class="sim card" id="s-bf" hidden>
+    <h3 style="margin-top:0">Du bilan comptable au bilan fonctionnel</h3>
+    <div class="row">
+      <div><label class="f">Actif immobilisé BRUT</label><input type="number" id="bfAI" value="318000"></div>
+      <div><label class="f">Amortissements et provisions de l'actif</label><input type="number" id="bfAm" value="102700"></div>
+      <div><label class="f">Stocks</label><input type="number" id="bfSt" value="111200"></div>
+      <div><label class="f">Créances</label><input type="number" id="bfCr" value="248000"></div>
+      <div><label class="f">Disponibilités</label><input type="number" id="bfDi" value="23900"></div>
+    </div>
+    <div class="row">
+      <div><label class="f">Capitaux propres (+ prov. pour risques)</label><input type="number" id="bfCP" value="344000"></div>
+      <div><label class="f">Emprunts (total, concours inclus)</label><input type="number" id="bfEm" value="89000"></div>
+      <div><label class="f">dont concours bancaires</label><input type="number" id="bfCb" value="2000"></div>
+      <div><label class="f">Dettes CT (fourn., fiscales…)</label><input type="number" id="bfDct" value="165400"></div>
+    </div>
+    <div id="bfOut"></div>
+  </div>
+  <div class="sim card" id="s-sr" hidden>
+    <h3 style="margin-top:0">Seuil de rentabilité, point mort, sécurité</h3>
+    <div class="row">
+      <div><label class="f">Chiffre d'affaires</label><input type="number" id="sCA" value="228000"></div>
+      <div><label class="f">Charges variables</label><input type="number" id="sCV" value="150145"></div>
+      <div><label class="f">Charges fixes</label><input type="number" id="sCF" value="57855"></div>
+    </div>
+    <div id="sOut"></div>
+  </div>
+  <div class="sim card" id="s-emp" hidden>
+    <h3 style="margin-top:0">Emprunt remboursable par amortissements constants</h3>
+    <div class="row">
+      <div><label class="f">Montant emprunté</label><input type="number" id="eM" value="100000"></div>
+      <div><label class="f">Durée (ans)</label><input type="number" id="eN" value="4"></div>
+      <div><label class="f">Taux annuel (%)</label><input type="number" id="eT" value="4" step="0.1"></div>
+    </div>
+    <div id="eOut"></div>
+  </div>
+</section>
+
+<!-- ============ EXOS ============ -->
+<section class="page" id="p-exos">
+  <h1>Exercices corrigés</h1>
+  <p class="lead">Tous les exercices du poly, avec la correction déroulée étape par étape. Fais-les d'abord sur papier, entre tes résultats pour les vérifier, puis affiche la correction.</p>
+  <div id="exList"></div>
+  <div id="exView" hidden></div>
+</section>
+
+<!-- ============ TRAIN ============ -->
+<section class="page" id="p-train">
+  <h1>Entraînement infini</h1>
+  <p class="lead">Les mêmes exercices que le poly, mêmes méthodes, mais avec des chiffres tirés au hasard. Un nouveau sujet à chaque clic.</p>
+  <div class="subtabs" id="trTabs"></div>
+  <div class="card" id="trBox"></div>
+</section>
+</main>
+<footer>Révision MSI · Bilan · FRNG/BFR · Seuil de rentabilité — progression enregistrée dans ce navigateur</footer>
+<script>
+/* ================= HELPERS ================= */
+const r2 = x => Math.round((x + Number.EPSILON) * 100) / 100;
+function fmt(x, dec) {
+  if (typeof x !== 'number') return x;
+  const r = r2(x);
+  const d = dec !== undefined ? dec : (Number.isInteger(r) ? 0 : 2);
+  return r.toLocaleString('fr-FR', { minimumFractionDigits: d, maximumFractionDigits: d });
+}
+const pc = (x, d = 2) => fmt(x, d) + ' %';
+/* table: rows = arrays; first cell may start with '!' (total), '~' (sub-heading), '+' (highlight) */
+function tb(head, rows, style) {
+  let h = '<div class="tw"><table' + (style ? ' style="' + style + '"' : '') + '>';
+  if (head) h += '<tr>' + head.map(c => '<th>' + c + '</th>').join('') + '</tr>';
+  for (const row of rows) {
+    let cls = '', cells = row.slice();
+    if (typeof cells[0] === 'string' && /^[!~+]/.test(cells[0])) {
+      cls = { '!': 'tot', '~': 'sub', '+': 'hl' }[cells[0][0]];
+      cells[0] = cells[0].slice(1);
+    }
+    h += '<tr' + (cls ? ' class="' + cls + '"' : '') + '>' + cells.map(c => {
+      if (c === null || c === undefined) return '<td></td>';
+      if (typeof c === 'number') return '<td class="n' + (c < 0 ? ' neg' : '') + '">' + fmt(c) + '</td>';
+      if (typeof c === 'object' && c.span) return '<td colspan="' + c.span + '">' + c.t + '</td>';
+      return '<td>' + c + '</td>';
+    }).join('') + '</tr>';
+  }
+  return h + '</table></div>';
+}
+/* two-sided statement: L and R are arrays of rows (each row an array) */
+function two(head, L, R) {
+  const n = Math.max(L.length, R.length), rows = [];
+  const wl = head.length - (R[0] ? R[0].length : 2);
+  for (let i = 0; i < n; i++) {
+    const l = L[i] || Array(wl).fill(''), r = R[i] || ['', ''];
+    let pre = '';
+    const lt = typeof l[0] === 'string' && /^[!~]/.test(l[0]) ? l[0][0] : '';
+    const rt = typeof r[0] === 'string' && /^[!~]/.test(r[0]) ? r[0][0] : '';
+    if (lt === '!' || rt === '!') pre = '!'; else if (lt === '~' || rt === '~') pre = '~';
+    const lc = l.slice(), rc = r.slice();
+    if (lt) lc[0] = lc[0].slice(1); if (rt) rc[0] = rc[0].slice(1);
+    const row = lc.concat(rc); if (pre) row[0] = pre + row[0];
+    rows.push(row);
+  }
+  return tb(head, rows);
+}
+const MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+function pmDate(d) {
+  const m = Math.floor(d / 30 + 1e-9), r = d - m * 30;
+  if (r < 1e-6) return '30 ' + MOIS[Math.max(0, m - 1)] + ' (≈ 1er ' + MOIS[Math.min(11, m)] + ')';
+  return Math.ceil(r - 1e-9) + ' ' + MOIS[Math.min(11, m)];
+}
+/* lombard day count from mise en service to 31/12 */
+function joursN(d, m) { return (d <= 1 ? 30 : 30 - Math.min(d, 30)) + (12 - m) * 30; }
+
+/* ================= FORMULES ================= */
+const FORMULES = [
+  ['I', 'Équilibre du bilan', 'Total Actif = Total Passif'],
+  ['I', 'Résultat', 'Résultat = Produits − Charges<br>(même montant au bilan dans les capitaux propres)'],
+  ['I', 'Variation de stocks (achats)', 'Δ stock march./MP = SI − SF (en charges)'],
+  ['I', 'Variation de stocks (produits finis)', 'Production stockée = SF − SI (en produits)'],
+  ['I', 'Valeur nette comptable', 'VNC = Valeur brute − Amortissements cumulés'],
+  ['I', 'Base amortissable', 'Base = Coût HT (+ frais d\'installation) − Valeur résiduelle<br>HT = TTC / 1,20'],
+  ['I', 'Taux linéaire', 'Taux = 100 / Durée'],
+  ['I', 'Annuité linéaire', 'Annuité = Base × Taux × jours / 360<br>départ = mise en service'],
+  ['I', 'Amort. avantages économiques', 'Annuité = Base × Unités de l\'année / Unités totales'],
+  ['I', 'Emprunt (amort. constant)', 'Amort. = Emprunt / n · Intérêts = CRD début × t<br>Annuité = Intérêts + Amort.'],
+  ['II', 'Emplois stables', 'ES = Actif immobilisé BRUT'],
+  ['II', 'Ressources stables', 'RS = Capitaux propres + Amortissements & provisions + Provisions R&C + Dettes LT (hors concours bancaires)'],
+  ['II', 'FRNG (haut de bilan)', 'FRNG = RS − ES'],
+  ['II', 'FRNG (bas de bilan)', 'FRNG = (ACHT + Tréso actif) − (Dettes CT HT + Tréso passif)'],
+  ['II', 'BFR', 'BFR = ACHT − Dettes CT HT<br>= (Stocks + Créances) − Dettes CT'],
+  ['II', 'Trésorerie', 'T = FRNG − BFR = Tréso actif − Tréso passif'],
+  ['II', 'Couverture des emplois stables', 'RS / ES (> 1 souhaité)'],
+  ['II', 'Couverture des capitaux investis', 'RS / (ES + BFR)'],
+  ['II', 'Autonomie financière', 'Dettes LT / Capitaux propres'],
+  ['II', 'Rentabilité financière', 'Résultat / Capitaux propres'],
+  ['II', 'Marge nette', 'Résultat / CA'],
+  ['II', 'Productivités', 'Travail : VA / Effectif · Capital : VA / Total bilan'],
+  ['III', 'Marge sur coût variable', 'M/CV = CA − CV'],
+  ['III', 'Résultat', 'R = M/CV − CF'],
+  ['III', 'Taux de M/CV', 'Taux = M/CV / CA × 100'],
+  ['III', 'Seuil de rentabilité', 'SR = CA × CF / M/CV<br>(ou CF / Taux de M/CV)'],
+  ['III', 'Point mort', 'PM = SR / CA × 360 jours'],
+  ['III', 'Marge de sécurité', 'MS = CA − SR'],
+  ['III', 'Indice de sécurité', 'IS = MS / CA × 100'],
+  ['III', 'Résultat visé', 'CA nécessaire = (CF + Résultat visé) / Taux de M/CV'],
+];
+
+/* ================= FLASHCARDS ================= */
+const FLASH = [
+  ['I', 'Quelle image associe-t-on au bilan ? Et au compte de résultat ?', 'Bilan = <b>photographie</b> du patrimoine à une date. Compte de résultat = <b>film</b> de l\'activité de l\'exercice.'],
+  ['I', 'Quels sont les 3 documents de synthèse annuels ?', 'Le <b>bilan</b>, le <b>compte de résultat</b> et l\'<b>annexe</b>.'],
+  ['I', 'Actif immobilisé : définition et durée ?', 'Biens et valeurs destinés à rester <b>durablement</b> dans l\'entreprise (&gt; 1 an). Classe 2.'],
+  ['I', 'Les 3 types d\'immobilisations ?', '<b>Incorporelles</b> (brevets, logiciels, fonds commercial), <b>corporelles</b> (terrains, matériel, véhicules), <b>financières</b> (participations, titres).'],
+  ['I', 'Les 3 composantes de l\'actif circulant ?', '<b>Stocks</b> et en-cours, <b>créances</b>, <b>disponibilités</b> (banque, caisse, VMP).'],
+  ['I', 'Que sont les VMP ?', 'Valeurs mobilières de placement : titres achetés pour un <b>placement à court terme</b>. Rangées dans les disponibilités.'],
+  ['I', 'Les 2 grandes rubriques du passif ?', '<b>Capitaux propres</b> (passif interne) et <b>dettes</b> (passif externe).'],
+  ['I', 'Les 2 affectations possibles d\'un bénéfice ?', '<b>Distribution</b> (dividendes) ou <b>mise en réserve</b>.'],
+  ['I', 'Le compte 16 Emprunts est de classe 1 : où va-t-il ?', 'Au passif, dans les <b>dettes</b> (à long terme), pas dans les capitaux propres.'],
+  ['I', 'Le compte 519 Concours bancaires est de classe 5 : où va-t-il ?', 'Au <b>passif</b> (dettes à court terme / trésorerie passif). C\'est un découvert.'],
+  ['I', 'Comptes de charges : exploitation, financières, exceptionnelles ?', 'Exploitation : <b>60 à 65 + 68</b> · Financières : <b>66</b> · Exceptionnelles : <b>67</b> · IS : 69.'],
+  ['I', 'Comptes de produits : exploitation, financiers, exceptionnels ?', 'Exploitation : <b>70 à 75 + 78</b> · Financiers : <b>76</b> · Exceptionnels : <b>77</b>.'],
+  ['I', 'Escompte accordé à un client / obtenu d\'un fournisseur ?', 'Accordé → <b>charge financière</b>. Obtenu → <b>produit financier</b>.'],
+  ['I', 'Pourquoi l\'IS n\'est-il pas une charge d\'exploitation ?', 'Parce qu\'il ne peut être calculé qu\'une fois le résultat connu. Il a sa ligne à part (compte 69).'],
+  ['I', 'Variation de stock de marchandises : formule ?', '<b>SI − SF</b>, côté charges. Si le stock augmente, la variation est négative.'],
+  ['I', 'Variation de stock de produits finis : formule ?', '<b>SF − SI</b>, côté produits. Positive = production stockée ; négative = déstockage.'],
+  ['I', 'Définition de l\'amortissement ?', 'Constatation comptable de la <b>dépréciation</b> des éléments de l\'actif immobilisé.'],
+  ['I', 'Pourquoi la DAP réduit-elle l\'impôt ?', 'C\'est une charge <b>non décaissable</b> : elle diminue le résultat (donc l\'IS) sans sortie d\'argent.'],
+  ['I', 'Citer 5 biens non amortissables', 'Petits matériels (&lt; 500 € HT), <b>terrains</b>, œuvres d\'art, éléments incorporels du fonds de commerce, titres.'],
+  ['I', 'Amortissement linéaire : point de départ ?', 'La date de <b>mise en service</b> (et non la date d\'achat).'],
+  ['I', 'Combien de jours dans l\'année comptable du cours ?', '<b>360 jours</b> : 12 mois de 30 jours (année lombarde).'],
+  ['I', 'Matériel 48 000 € TTC (TVA 20 %) : base amortissable ?', '48 000 / 1,20 = <b>40 000 € HT</b>.'],
+  ['I', 'Taux linéaire pour 8 ans ? 4 ans ? 10 ans ?', '12,5 % · 25 % · 10 %.'],
+  ['I', 'Emprunt : qu\'est-ce qui est une charge, qu\'est-ce qui ne l\'est pas ?', 'Les <b>intérêts</b> sont une charge financière. Le remboursement du capital n\'est <b>pas</b> une charge (il diminue la dette).'],
+  ['II', 'Différence d\'optique bilan comptable / fonctionnel ?', 'Comptable : <b>patrimoniale</b> (liquidation). Fonctionnel : <b>continuité</b> de l\'activité, grandes masses, valeurs brutes.'],
+  ['II', 'Emplois stables = ?', 'L\'<b>actif immobilisé brut</b>.'],
+  ['II', 'Que contiennent les ressources stables ?', 'Capitaux propres + <b>amortissements et provisions</b> de l\'actif + provisions pour risques et charges + dettes LT (<b>sans</b> concours bancaires).'],
+  ['II', 'Que fait-on des concours bancaires ?', 'On les sort des emprunts pour les mettre en <b>trésorerie passif</b>.'],
+  ['II', 'FRNG : deux formules ?', 'Haut : <b>RS − ES</b>. Bas : (ACHT + TA) − (Dettes CT HT + TP).'],
+  ['II', 'Que signifie un FRNG négatif ?', 'Une partie des emplois stables est financée par des <b>dettes à court terme</b> : dangereux à terme.'],
+  ['II', 'Qu\'est-ce que le BFR ?', 'Besoin de financement né du <b>décalage</b> entre les dépenses (payées avant) et les recettes (encaissées après).'],
+  ['II', 'BFR : formule simple ?', '<b>(Stocks + Créances) − Dettes à court terme</b> (hors trésorerie).'],
+  ['II', 'Les 3 leviers pour réduire le BFR ?', 'Réduire les <b>stocks</b>, réduire les <b>délais clients</b>, allonger les <b>délais fournisseurs</b>.'],
+  ['II', 'Quel type d\'entreprise a souvent un BFR négatif ?', 'La <b>grande distribution</b> : encaisse comptant, paie ses fournisseurs plus tard.'],
+  ['II', 'Trésorerie : deux formules ?', '<b>FRNG − BFR</b> = Trésorerie actif − Trésorerie passif.'],
+  ['II', 'Ratio de couverture des emplois stables ?', 'RS / ES. <b>&gt; 1</b> : la règle « le long finance le long » est respectée.'],
+  ['II', 'Ratio d\'autonomie financière ?', 'Dettes LT / Capitaux propres (taux d\'endettement).'],
+  ['II', 'Ratio de rentabilité financière ?', 'Résultat / Capitaux propres.'],
+  ['III', 'Charge fixe : définition + 3 exemples', 'Constante quel que soit le volume : <b>loyer</b>, <b>assurance</b>, <b>dotations aux amortissements</b> (aussi : partie fixe des salaires, abonnements).'],
+  ['III', 'Charge variable : définition + 3 exemples', 'Proportionnelle à l\'activité : <b>achats de marchandises</b>, <b>matières premières</b>, <b>commissions</b> des commerciaux.'],
+  ['III', 'Marge sur coût variable ?', 'M/CV = <b>CA − CV</b>. Elle couvre d\'abord les charges fixes.'],
+  ['III', 'Seuil de rentabilité : définition ?', 'CA à partir duquel l\'entreprise couvre toutes ses charges (<b>résultat = 0</b>). Aussi appelé <b>CA critique</b>.'],
+  ['III', 'Formule (précise) du SR ?', '<b>SR = CA × CF / M/CV</b> (ou CF / taux de M/CV, moins précis à cause de l\'arrondi).'],
+  ['III', 'Point mort ?', 'Date où le SR est atteint : <b>PM = SR / CA × 360</b> jours.'],
+  ['III', 'Marge de sécurité ?', '<b>MS = CA − SR</b>. Part de CA qui génère du bénéfice (ce n\'est pas le bénéfice).'],
+  ['III', 'Indice de sécurité ?', '<b>IS = MS / CA × 100</b> : baisse de CA possible avant la perte.'],
+  ['III', 'Si les charges fixes augmentent, le SR… ?', '<b>Augmente</b> (il faut plus de M/CV pour les couvrir).'],
+  ['III', 'Si le taux de M/CV augmente, le SR… ?', '<b>Diminue</b>.'],
+];
+
+/* ================= QUIZ ================= */
+const QUIZ = [
+  ['I', 'Un logiciel acheté par l\'entreprise est classé en…', ['Immobilisation incorporelle', 'Immobilisation corporelle', 'Charge d\'exploitation', 'Actif circulant'], 0, 'Élément immatériel dont l\'entreprise est propriétaire → incorporelle.'],
+  ['I', 'Des titres de participation dans une autre société sont…', ['Des disponibilités', 'Des immobilisations financières', 'Des VMP', 'Des capitaux propres'], 1, 'Détenus durablement → immobilisations financières. Les VMP sont un placement à court terme.'],
+  ['I', 'Les créances clients figurent…', ['À l\'actif circulant', 'Au passif (dettes)', 'À l\'actif immobilisé', 'Au compte de résultat'], 0, 'Ventes pas encore encaissées : compte 411, classe 4 au débit → actif circulant.'],
+  ['I', 'Un découvert bancaire (519) se place…', ['À l\'actif dans les disponibilités', 'Au passif dans les dettes', 'Dans les capitaux propres', 'Il ne figure pas au bilan'], 1, 'Exception de la classe 5 : c\'est une dette envers la banque.'],
+  ['I', 'Un emprunt bancaire remboursable sur 8 ans est…', ['Une dette à court terme', 'Une dette à long terme', 'Un produit financier', 'Une immobilisation financière'], 1, 'Compte 16, &gt; 1 an → dette à long terme.'],
+  ['I', 'Les intérêts d\'un emprunt sont…', ['Une charge d\'exploitation', 'Une charge financière', 'Une charge exceptionnelle', 'Une diminution de la dette'], 1, 'Compte 66 : charge financière.'],
+  ['I', 'Une amende fiscale est…', ['Une charge financière', 'Un impôt et taxe', 'Une charge exceptionnelle', 'Une charge de personnel'], 2, 'Amendes et pénalités : compte 67, hors activité courante.'],
+  ['I', 'L\'escompte accordé à un client qui paie comptant est…', ['Une charge financière', 'Un produit financier', 'Une réduction du CA', 'Une charge exceptionnelle'], 0, 'Réduction de prix pour paiement comptant → charge financière pour celui qui l\'accorde.'],
+  ['I', 'Un client annule sa commande et perd ses arrhes. Pour l\'entreprise c\'est…', ['Un produit d\'exploitation', 'Un produit financier', 'Un produit exceptionnel', 'Une dette'], 2, 'Exemple du cours : indemnité, non liée à l\'activité courante → produit exceptionnel.'],
+  ['I', 'L\'impôt sur les sociétés est…', ['Une charge d\'exploitation (impôts et taxes)', 'Hors des charges d\'exploitation (compte 69)', 'Une charge financière', 'Un produit'], 1, 'Il ne peut pas être calculé au niveau de l\'exploitation : ligne à part.'],
+  ['I', 'Stock initial de marchandises 20 000, stock final 25 000. La variation de stock (en charges) vaut…', ['+5 000', '−5 000', '+45 000', '0'], 1, 'SI − SF = 20 000 − 25 000 = −5 000 : on a stocké, la charge diminue.'],
+  ['I', 'Stock de produits finis : SI 10 000, SF 16 000. La production stockée vaut…', ['−6 000', '+6 000 (produit)', '+6 000 (charge)', '26 000'], 1, 'SF − SI = +6 000, côté produits.'],
+  ['I', 'Un bénéfice apparaît au compte de résultat…', ['Côté produits', 'Côté charges', 'Il n\'y apparaît pas', 'Dans l\'annexe uniquement'], 1, 'On l\'inscrit côté charges pour équilibrer (produits &gt; charges). Une perte va côté produits.'],
+  ['I', 'La dotation aux amortissements est une charge…', ['Décaissée chaque mois', 'Non décaissable', 'Financière', 'Exceptionnelle'], 1, 'Aucune sortie d\'argent : elle réduit le résultat et donc l\'impôt.'],
+  ['I', 'Lequel n\'est PAS amortissable ?', ['Un véhicule', 'Un ordinateur à 900 € HT', 'Un terrain', 'Une construction'], 2, 'Un terrain ne se déprécie pas avec le temps.'],
+  ['I', 'Le point de départ de l\'amortissement linéaire est…', ['La date de commande', 'La date d\'achat', 'La date de mise en service', 'Le 1er janvier'], 2, 'Toujours la mise en service.'],
+  ['I', 'Taux d\'amortissement linéaire pour une durée de 8 ans ?', ['8 %', '12,5 %', '15 %', '80 %'], 1, '100 / 8 = 12,5 %.'],
+  ['I', 'Machine à 36 000 € TTC (TVA 20 %). Base amortissable ?', ['36 000 €', '28 800 €', '30 000 €', '43 200 €'], 2, '36 000 / 1,20 = 30 000 € HT.'],
+  ['I', 'Mise en service le 20/08/N. Nombre de jours d\'amortissement en N ?', ['130', '133', '120', '140'], 0, '10 jours en août (30 − 20) + 4 mois × 30 = 130 jours.'],
+  ['I', 'Matériel 52 000 € HT, 5 ans, mise en service 20/08/N. Dernière annuité (N+5) ?', ['10 400', '3 755,56', '6 644,44', '0'], 2, '10 400 × (360 − 130) / 360 = 6 644,44 €.'],
+  ['I', 'Emprunt 100 000 € sur 4 ans à 4 %, amortissement constant. Intérêts de l\'année 2 ?', ['4 000', '3 000', '2 000', '1 000'], 1, 'CRD début année 2 = 75 000 → 75 000 × 4 % = 3 000.'],
+  ['II', 'Le bilan fonctionnel se place dans une optique…', ['De liquidation', 'De continuité de l\'activité', 'Fiscale', 'Juridique'], 1, 'Contrairement au bilan comptable (patrimonial).'],
+  ['II', 'Dans le bilan fonctionnel, les amortissements de l\'actif…', ['Sont supprimés', 'Sont ajoutés aux ressources stables', 'Sont ajoutés aux dettes CT', 'Sont soustraits des emplois stables'], 1, 'L\'actif étant pris en brut, on ajoute les amortissements au passif (ressources stables).'],
+  ['II', 'Les emplois stables correspondent à…', ['L\'actif immobilisé net', 'L\'actif immobilisé brut', 'Le total actif', 'Les capitaux propres'], 1, 'Actif immobilisé brut.'],
+  ['II', 'Emprunts 89 000 € dont concours bancaires 2 000 €. Dans les ressources stables on met…', ['89 000', '91 000', '87 000', '2 000'], 2, 'Les concours bancaires partent en trésorerie passif.'],
+  ['II', 'Les provisions pour risques et charges vont…', ['En dettes CT', 'En ressources stables', 'En trésorerie passif', 'À l\'actif'], 1, 'Retraitement : ajoutées aux ressources stables.'],
+  ['II', 'FRNG = …', ['Emplois stables − Ressources stables', 'Ressources stables − Emplois stables', 'BFR − Trésorerie', 'Stocks + Créances − Dettes CT'], 1, '« Le long finance le long ».'],
+  ['II', 'Un FRNG négatif signifie que…', ['L\'entreprise est très rentable', 'Des immobilisations sont financées par des dettes CT', 'Le BFR est nul', 'La trésorerie est forcément positive'], 1, 'Situation dangereuse à terme.'],
+  ['II', 'Pour réduire le BFR, l\'entreprise peut…', ['Allonger les délais accordés aux clients', 'Augmenter ses stocks', 'Obtenir des délais fournisseurs plus longs', 'Rembourser son emprunt'], 2, 'Les dettes fournisseurs diminuent le BFR.'],
+  ['II', 'FRNG = 50 000, BFR = 70 000. Trésorerie ?', ['+120 000', '+20 000', '−20 000', '−120 000'], 2, 'T = FRNG − BFR = −20 000 : besoin de découvert.'],
+  ['II', 'Une augmentation de capital…', ['Augmente le FRNG', 'Diminue le FRNG', 'Augmente le BFR', 'N\'a aucun effet'], 0, 'Elle augmente les ressources stables.'],
+  ['II', 'Un supermarché a typiquement…', ['Un BFR très élevé', 'Un BFR négatif (excédent)', 'Un FRNG nul', 'Aucune dette fournisseur'], 1, 'Ventes au comptant, fournisseurs payés plus tard.'],
+  ['II', 'Le ratio de couverture des capitaux investis est inférieur à 1. Cela implique…', ['FRNG < 0', 'BFR < 0', 'Trésorerie < 0', 'Résultat < 0'], 2, 'RS < ES + BFR ⇔ FRNG < BFR ⇔ T < 0.'],
+  ['II', 'Le ratio de rentabilité financière est…', ['Résultat / CA', 'Résultat / Capitaux propres', 'VA / Effectif', 'Dettes LT / CP'], 1, 'Retour sur les capitaux investis par les associés.'],
+  ['II', 'Dettes LT / Capitaux propres mesure…', ['La rentabilité', 'L\'autonomie financière (endettement)', 'La productivité', 'La liquidité'], 1, 'Ratio d\'autonomie financière.'],
+  ['III', 'Le loyer des locaux est une charge…', ['Variable', 'Fixe', 'Exceptionnelle', 'Financière variable'], 1, 'Indépendant du volume d\'activité.'],
+  ['III', 'Les commissions des commerciaux sont une charge…', ['Fixe', 'Variable', 'Non décaissable', 'Exceptionnelle'], 1, 'Partie variable de la main-d\'œuvre.'],
+  ['III', 'Les dotations aux amortissements sont classées en…', ['Charges variables', 'Charges fixes', 'Produits', 'M/CV'], 1, 'Charges de structure.'],
+  ['III', 'CA 200 000, CV 120 000, CF 60 000. SR ?', ['100 000', '150 000', '160 000', '180 000'], 1, 'M/CV = 80 000 → SR = 200 000 × 60 000 / 80 000 = 150 000.'],
+  ['III', 'Taux de M/CV 40 %, CF 100 000. SR ?', ['40 000', '140 000', '250 000', '400 000'], 2, '100 000 / 0,40 = 250 000.'],
+  ['III', 'SR 150 000 pour un CA annuel de 200 000 régulier. Point mort ?', ['Le 1er septembre', '30 septembre (270 j)', 'Le 15 octobre', 'Le 30 juin'], 1, '150/200 × 360 = 270 jours = 9 mois → fin septembre.'],
+  ['III', 'CA 200 000, SR 150 000. Indice de sécurité ?', ['25 %', '33 %', '75 %', '50 000'], 0, 'MS = 50 000 ; IS = 50 000 / 200 000 = 25 %.'],
+  ['III', 'Si CA < SR, alors…', ['Résultat = 0', 'Bénéfice', 'Perte', 'M/CV négative'], 2, 'Les charges fixes ne sont pas couvertes.'],
+  ['III', 'Pourquoi préférer SR = CA × CF / M/CV à CF / taux ?', ['C\'est plus rapide', 'Le taux est arrondi, l\'autre formule est exacte', 'L\'autre formule est fausse', 'Pour avoir un résultat en jours'], 1, 'L\'arrondi du taux crée un écart.'],
+  ['III', 'La marge de sécurité représente…', ['Le bénéfice', 'La part du CA au-delà du SR', 'Les charges fixes', 'La M/CV'], 1, 'MS = CA − SR, ce n\'est pas le bénéfice.'],
+  ['III', 'Les charges fixes augmentent, tout le reste égal. Le SR…', ['Diminue', 'Augmente', 'Ne bouge pas', 'Devient nul'], 1, 'Il faut plus de M/CV pour les couvrir.'],
+  ['III', 'Taux de M/CV 25 %, CF 90 000. CA nécessaire pour un bénéfice de 30 000 ?', ['360 000', '420 000', '480 000', '120 000'], 2, '(90 000 + 30 000) / 0,25 = 480 000.'],
+  ['III', 'Vérification utile : Résultat = …', ['MS × Taux de M/CV', 'SR × Taux de M/CV', 'CA − SR', 'CF − M/CV'], 0, 'Au-delà du SR, chaque € de CA rapporte « taux de M/CV » de bénéfice.'],
+];
+
+/* ================= TRIEUR ================= */
+const SORT_MODES = {
+  bilan: {
+    nom: 'Bilan & compte de résultat',
+    bins: [['AI', 'Actif immobilisé', 'cA'], ['AC', 'Actif circulant', 'cA'], ['CP', 'Capitaux propres', 'cP'], ['DE', 'Dettes', 'cP'],
+      ['CE', 'Charge d\'exploitation', 'cC'], ['CF', 'Charge financière', 'cC'], ['CX', 'Charge exceptionnelle', 'cC'],
+      ['PE', 'Produit d\'exploitation', 'cR'], ['PF', 'Produit financier', 'cR'], ['PX', 'Produit exceptionnel', 'cR']],
+    items: [
+      ['Fonds commercial (207)', 'AI', 'Immobilisation incorporelle.'], ['Brevet', 'AI', 'Immobilisation incorporelle.'], ['Logiciel acheté', 'AI', 'Immobilisation incorporelle.'],
+      ['Terrain', 'AI', 'Immobilisation corporelle (non amortissable).'], ['Ordinateurs', 'AI', 'Immobilisation corporelle.'], ['Véhicule de livraison', 'AI', 'Matériel de transport, immobilisation corporelle.'],
+      ['Titres de participation', 'AI', 'Immobilisation financière.'], ['Frais de R&D (203)', 'AI', 'Immobilisation incorporelle.'],
+      ['Stock de marchandises', 'AC', 'Classe 3, actif circulant.'], ['Créances clients (411)', 'AC', 'Classe 4 au débit.'], ['Banque (solde débiteur)', 'AC', 'Disponibilités.'],
+      ['Caisse', 'AC', 'Disponibilités.'], ['VMP', 'AC', 'Placement à court terme, dans les disponibilités.'], ['Stock de produits finis', 'AC', 'Classe 3.'],
+      ['Capital social', 'CP', 'Apports des associés.'], ['Réserves', 'CP', 'Bénéfices antérieurs non distribués.'], ['Résultat de l\'exercice', 'CP', 'Le résultat se place dans les capitaux propres.'],
+      ['Emprunt bancaire (164)', 'DE', 'Dette à long terme.'], ['Dettes fournisseurs (401)', 'DE', 'Dette à court terme.'], ['Dettes fiscales et sociales', 'DE', 'Dues à l\'État et aux organismes sociaux.'],
+      ['Concours bancaires (519)', 'DE', 'Découvert : dette (exception de la classe 5).'], ['Fournisseurs d\'immobilisations (404)', 'DE', 'Dette à court terme.'],
+      ['Achats de marchandises (607)', 'CE', 'Charge d\'exploitation.'], ['Loyer commercial', 'CE', 'Service extérieur.'], ['Salaires bruts', 'CE', 'Charges de personnel.'],
+      ['Charges sociales patronales', 'CE', 'Charges de personnel.'], ['Publicité', 'CE', 'Autres charges externes.'], ['Électricité', 'CE', 'Achat non stocké.'],
+      ['Dotations aux amortissements (68)', 'CE', '68 → exploitation.'], ['Impôts et taxes (63)', 'CE', 'Hors impôt sur les sociétés.'], ['Redevances pour licence (payées)', 'CE', 'Autres charges de gestion courante.'],
+      ['Intérêts d\'emprunt', 'CF', 'Compte 66.'], ['Agios sur découvert', 'CF', 'Compte 66.'], ['Escompte accordé à un client', 'CF', 'Réduction pour paiement comptant.'],
+      ['Amendes et pénalités', 'CX', 'Compte 67.'], ['Perte sur cession d\'un véhicule', 'CX', 'Cession d\'actif : exceptionnel.'],
+      ['Ventes de marchandises (707)', 'PE', 'Chiffre d\'affaires.'], ['Prestations de services', 'PE', 'Chiffre d\'affaires.'], ['Production stockée (71)', 'PE', 'Variation de stock de produits finis.'],
+      ['Production immobilisée (72)', 'PE', 'Travaux faits pour soi-même.'], ['Subvention d\'exploitation', 'PE', 'Compte 74.'], ['Redevances de brevets perçues', 'PE', 'Autres produits de gestion courante.'],
+      ['Dividendes perçus', 'PF', 'Compte 76.'], ['Intérêts de placements perçus', 'PF', 'Compte 76.'], ['Escompte obtenu d\'un fournisseur', 'PF', 'Paiement anticipé.'],
+      ['Plus-value de cession d\'immobilisation', 'PX', 'Compte 77.'], ['Arrhes conservées après annulation', 'PX', 'Indemnité, exceptionnel.'],
+    ]
+  },
+  cfcv: {
+    nom: 'Charges fixes ou variables',
+    bins: [['F', 'Charge fixe', 'cP'], ['V', 'Charge variable', 'cC']],
+    items: [
+      ['Loyer des locaux', 'F', 'Ne dépend pas du volume.'], ['Prime d\'assurance', 'F', 'Contrat annuel.'], ['Dotations aux amortissements', 'F', 'Charge de structure.'],
+      ['Abonnement téléphonique', 'F', 'Montant fixe.'], ['Salaire fixe du comptable', 'F', 'Partie fixe de la main-d\'œuvre.'], ['Frais administratifs', 'F', 'Structure.'],
+      ['Remboursement de crédit', 'F', 'Cité dans le cours comme charge fixe.'], ['Achats de marchandises', 'V', 'Proportionnels aux ventes.'], ['Matières premières consommées', 'V', 'Proportionnelles à la production.'],
+      ['Commissions des commerciaux', 'V', 'Partie variable de la main-d\'œuvre.'], ['Frais de livraison au colis', 'V', 'Proportionnels aux ventes.'], ['Emballages des produits', 'V', 'Un par produit vendu.'],
+      ['Sous-traitance payée à la pièce', 'V', 'Proportionnelle aux quantités.'], ['Énergie consommée par les machines', 'V', 'Dépend de la production.'], ['Campagne de pub annuelle forfaitaire', 'F', 'Montant fixé à l\'avance.'],
+      ['Variation de stock de marchandises', 'V', 'Suit les achats (dans les annexes du cours : 100 % variable).'], ['Salaire du gérant', 'F', 'Fixe.'],
+    ]
+  }
+};
+
+/* ================= EXERCICES DU POLY ================= */
+const EXOS = [];
+const ex = o => EXOS.push(o);
+
+/* ---------- CHAPITRE I ---------- */
+ex({ id: 'geonosis', ch: 'I', tag: 'Application 1', titre: 'Géonosis : construire bilan et compte de résultat',
+  enonce: `<p>L'entreprise Géonosis fournit les éléments suivants au 31/12/N (en €). Reconstituer le bilan (grandes masses) et le compte de résultat (par catégorie), et faire apparaître le résultat dans chacun.</p>` +
+    tb(['Compte', 'Montant', 'Compte', 'Montant', 'Compte', 'Montant'], [
+      ['207 Fonds commercial', 150000, '266 Titres de participation', 30000, '645 Charges sociales', 54500],
+      ['512 Banque', 32500, '67 Amendes et pénalités', 2000, '42 Dettes fiscales', 15000],
+      ['607 Achats de marchandises', 565200, '101 Capital social', 200000, '2183 Matériel de bureau', 26000],
+      ['2184 Mobilier', 14000, '613 Loyer commercial', 120000, '66 Intérêts de l\'emprunt', 7800],
+      ['64 Salaires', 108000, '164 Emprunt', 80000, '63 Impôts et taxes', 21000],
+      ['411 Créances clients', 55000, '707 Ventes de marchandises', 891000, '701 Ventes de produits finis', 20000],
+      ['401 Fournisseurs', 30000, '37 Stock de marchandises', 35000, '2182 Matériel de transport', 15000]]),
+  checks: [['Total actif immobilisé', 235000], ['Total des charges', 878500], ['Résultat', 32500], ['Total bilan', 357500]],
+  steps: [
+    ['Trier les comptes par classe', `<p>Classe 2 → actif immobilisé · 3, 4 au débit, 5 → actif circulant · 1 → capitaux propres (sauf <b>164 emprunt</b> → dettes) · 4 au crédit → dettes · 6 → charges · 7 → produits.</p><p>Charges : 60–65 exploitation, 66 financières, 67 exceptionnelles.</p>`],
+    ['Compte de résultat', two(['Charges', 'Montant', 'Produits', 'Montant'],
+      [['~Charges d\'exploitation', ''], ['Achats de marchandises', 565200], ['Loyer commercial', 120000], ['Impôts et taxes', 21000], ['Salaires', 108000], ['Charges sociales', 54500], ['!Total charges d\'exploitation', 868700], ['~Charges financières', ''], ['Intérêts de l\'emprunt', 7800], ['~Charges exceptionnelles', ''], ['Amendes et pénalités', 2000], ['!Total charges', 878500], ['Résultat (bénéfice)', 32500], ['!Total général', 911000]],
+      [['~Produits d\'exploitation', ''], ['Ventes de marchandises', 891000], ['Ventes de produits finis', 20000], ['', ''], ['', ''], ['', ''], ['!Total produits d\'exploitation', 911000], ['~Produits financiers', ''], ['—', 0], ['~Produits exceptionnels', ''], ['—', 0], ['!Total produits', 911000], ['Résultat (perte)', ''], ['!Total général', 911000]]) +
+      `<p>Résultat = 911 000 − 878 500 = <b>32 500 € de bénéfice</b> (inscrit côté charges pour équilibrer).</p>`],
+    ['Bilan', two(['Actif', 'Montant', 'Passif', 'Montant'],
+      [['~Actif immobilisé', ''], ['Fonds commercial (incorporelle)', 150000], ['Matériel de transport', 15000], ['Matériel de bureau', 26000], ['Mobilier', 14000], ['Titres de participation (financière)', 30000], ['!Total actif immobilisé', 235000], ['~Actif circulant', ''], ['Stock de marchandises', 35000], ['Créances clients', 55000], ['Banque', 32500], ['!Total actif circulant', 122500], ['!Total actif', 357500]],
+      [['~Capitaux propres', ''], ['Capital', 200000], ['Réserves', ''], ['Résultat (bénéfice)', 32500], ['', ''], ['', ''], ['!Total capitaux propres', 232500], ['~Dettes', ''], ['Emprunt', 80000], ['Fournisseurs', 30000], ['Dettes fiscales', 15000], ['!Total dettes', 125000], ['!Total passif', 357500]])],
+    ['Vérification', `<div class="box">Le bilan s'équilibre <b>uniquement</b> grâce au résultat : 357 500 − 125 000 − 200 000 = 32 500 €. C'est exactement le résultat du compte de résultat ✔</div>`]
+  ] });
+
+ex({ id: 'hoth', ch: 'I', tag: 'Application 2', titre: 'Hoth : amortissement linéaire avec prorata',
+  enonce: `<p>Le 2/7/N la société Hoth achète du matériel de transport <b>62 400 € TTC</b> (TVA 20 %). Durée de vie 5 ans, amortissement linéaire. Installation et mise en service le <b>20/8/N</b>.</p><ol><li>Présenter le tableau d'amortissement.</li><li>Présenter l'extrait de bilan au 31/12/N+3.</li></ol>`,
+  checks: [['Base amortissable HT', 52000], ['Annuité N', 3755.56, 0.02], ['Annuité N+5', 6644.44, 0.02], ['VNC fin N+3', 17044.44, 0.02]],
+  steps: [
+    ['Les données de base', `<ul><li>Base HT = 62 400 / 1,20 = <b>52 000 €</b> (on amortit toujours le HT)</li><li>Taux = 100 / 5 = <b>20 %</b> → annuité pleine = 52 000 × 20 % = <b>10 400 €</b></li><li>Départ : mise en service le 20/08 (pas le 2/7 !). Jours en N : 10 j en août (30 − 20) + 4 mois × 30 = <b>130 jours</b></li></ul>`],
+    ['Première et dernière annuité', `<p>N : 52 000 × 20 % × 130/360 = <b>3 755,56 €</b></p><p>N+1 à N+4 : années complètes → 10 400 €</p><p>N+5 : complète les 5 années : 10 400 × (360 − 130)/360 = 10 400 × 230/360 = <b>6 644,44 €</b></p><p class="small muted">Certains corrigés tronquent à 3 755,55 / 6 644,45 : l'essentiel est que le total fasse 52 000.</p>`],
+    ['Tableau d\'amortissement', tb(['Exercice', 'Base', 'Annuité', 'Amort. cumulés', 'VNC fin d\'exercice'], [
+      ['N', 52000, 3755.56, 3755.56, 48244.44], ['N+1', 52000, 10400, 14155.56, 37844.44], ['N+2', 52000, 10400, 24555.56, 27444.44],
+      ['N+3', 52000, 10400, 34955.56, 17044.44], ['N+4', 52000, 10400, 45355.56, 6644.44], ['N+5', 52000, 6644.44, 52000, 0], ['!Total', '', 52000, '', '']])],
+    ['Extrait de bilan au 31/12/N+3', tb(['Actif', 'Brut', 'Amortissements', 'Net'], [['~Immobilisations corporelles', '', '', ''], ['Matériel de transport', 52000, 34955.56, 17044.44]]) + `<p class="small">Brut = base HT · Amortissements = cumul fin N+3 · Net = VNC.</p>`]
+  ] });
+
+ex({ id: 'abafar', ch: 'I', tag: 'Application 3', titre: 'Abafar : amortissement selon les avantages économiques',
+  enonce: `<p>Le 1er août N la société Abafar renouvelle ses machines pour <b>300 000 € TTC</b> (TVA 20 %). Durée 6 ans, mise en service le 3/9/N. Amortissement selon le rythme des avantages économiques attendus (prorata des pièces fabriquées).</p>` +
+    tb(['', 'N', 'N+1', 'N+2', 'N+3', 'N+4', 'N+5'], [['Pièces fabriquées', 50000, 80000, 100000, 120000, 140000, 110000]]) + `<ol><li>Tableau d'amortissement.</li><li>Extrait de bilan au 31/12/N+4.</li></ol>`,
+  checks: [['Base HT', 250000], ['Annuité N', 20833.33, 0.02], ['Annuité N+4', 58333.33, 0.02], ['Net au 31/12/N+4', 45833.33, 0.02]],
+  steps: [
+    ['Base et total d\'unités', `<p>Base = 300 000 / 1,20 = <b>250 000 € HT</b> (pas de valeur résiduelle).</p><p>Total des pièces : 50 000 + 80 000 + 100 000 + 120 000 + 140 000 + 110 000 = <b>600 000</b>.</p><p>Annuité = 250 000 × pièces de l'année / 600 000. <b>Pas de prorata temporis</b> : les pièces de N reflètent déjà l'année partielle.</p>`],
+    ['Tableau', tb(['Exercice', 'Base', 'Annuité', 'Amort. cumulés', 'VNC'], [
+      ['N', 250000, 20833.33, 20833.33, 229166.67], ['N+1', 250000, 33333.33, 54166.67, 195833.33], ['N+2', 250000, 41666.67, 95833.33, 154166.67],
+      ['N+3', 250000, 50000, 145833.33, 104166.67], ['N+4', 250000, 58333.33, 204166.67, 45833.33], ['N+5', 250000, 45833.33, 250000, 0], ['!Total', '', 250000, '', '']]) +
+      `<p class="small">Ex. N : 250 000 × 50 000 / 600 000 = 20 833,33 €.</p>`],
+    ['Bilan au 31/12/N+4', tb(['Actif', 'Brut', 'Amortissements', 'Net'], [['Machines', 250000, 204166.67, 45833.33]])]
+  ] });
+
+ex({ id: 'bounty', ch: 'I', tag: 'TD1 · Ex 1', titre: 'Bounty Hunters : bilan de création',
+  enonce: `<p>Le 1er mars N, Fett (50 000 €), Greedo (30 000 €) et Dengar (20 000 €) créent Bounty Hunters. Avec leurs apports ils achètent : matériel de transport 55 000 €, matériel de bureau 25 000 €, licences de logiciels 5 000 €, matériel informatique 15 000 €.</p><p>La banque leur accorde un emprunt de 50 000 € (8 ans, 4 %) qui finance un stock de marchandises de 30 000 €, du mobilier 15 000 €, le reste alimentant le compte bancaire.</p><p>Présenter le bilan d'ouverture (ressources et emplois).</p>`,
+  checks: [['Capital', 100000], ['Total actif immobilisé', 115000], ['Banque', 5000], ['Total bilan', 150000]],
+  steps: [
+    ['Les ressources (passif)', `<p>Capital = 50 000 + 30 000 + 20 000 = <b>100 000 €</b>. Emprunt (dette LT) = <b>50 000 €</b>. Total ressources = <b>150 000 €</b>.</p>`],
+    ['Les emplois (actif)', `<p>Apports : 55 000 + 25 000 + 5 000 + 15 000 = 100 000 € dépensés.<br>Emprunt : 30 000 (stock) + 15 000 (mobilier) = 45 000 → il reste <b>5 000 € en banque</b>.</p>`],
+    ['Bilan d\'ouverture au 1/3/N', two(['Actif (emplois)', 'Montant', 'Passif (ressources)', 'Montant'],
+      [['~Actif immobilisé', ''], ['Licences de logiciels (incorporelle)', 5000], ['Matériel de transport', 55000], ['Matériel de bureau', 25000], ['Matériel informatique', 15000], ['Mobilier', 15000], ['!Total actif immobilisé', 115000], ['~Actif circulant', ''], ['Stock de marchandises', 30000], ['Banque', 5000], ['!Total actif circulant', 35000], ['!Total actif', 150000]],
+      [['~Capitaux propres', ''], ['Capital', 100000], ['', ''], ['', ''], ['', ''], ['', ''], ['!Total capitaux propres', 100000], ['~Dettes', ''], ['Emprunt (dette LT)', 50000], ['', ''], ['!Total dettes', 50000], ['!Total passif', 150000]])]
+  ] });
+
+ex({ id: 'ardenia', ch: 'I', tag: 'TD1 · Ex 2', titre: 'Ardenia : bilan et compte de résultat depuis une balance',
+  enonce: `<p>Balance après inventaire et avant résultat au 31/12/N (en M€). Présenter le bilan, le compte de résultat et commenter.</p>` +
+    tb(['N°', 'Libellé', 'Débit', 'Crédit'], [
+      ['101', 'Capital social', '', 4500], ['106', 'Réserves', '', 630], ['164', 'Emprunts LT', '', 4500], ['203', 'Frais de R&D', 420, ''], ['207', 'Fonds commercial', 600, ''],
+      ['211', 'Terrains', 2100, ''], ['213', 'Constructions', 3000, ''], ['215', 'Installations techniques', 1500, ''], ['261', 'Titres de participation', 300, ''],
+      ['2803', 'Amort. frais de R&D', '', 120], ['2813', 'Amort. constructions', '', 600], ['2815', 'Amort. install. tech.', '', 150],
+      ['31', 'Stocks de MP', 150, ''], ['355', 'Stocks de produits finis', 750, ''], ['37', 'Stocks de marchandises', 210, ''],
+      ['401', 'Fournisseurs', '', 330], ['404', 'Fournisseurs d\'immobilisations', '', 90], ['410', 'Clients', 2250, ''], ['43/44', 'Dettes sociales et fiscales', '', 450],
+      ['512', 'Banque', 1500, ''], ['53', 'Caisse', 45, ''], ['601', 'Achats de MP', 1650, ''], ['6031', 'Variation stocks MP', 120, ''], ['6037', 'Variation stocks march.', '', 60],
+      ['607', 'Achats de marchandises', 600, ''], ['61/62', 'Autres charges externes', 225, ''], ['63', 'Impôts et taxes', 270, ''], ['641', 'Rémunérations', 4500, ''],
+      ['645', 'Charges de sécurité sociale', 2250, ''], ['6611', 'Intérêts des emprunts', 510, ''], ['6616', 'Intérêts bancaires', 90, ''], ['6811', 'Dotations aux amortissements', 300, ''],
+      ['695', 'Impôts sur les bénéfices', 540, ''], ['701', 'Ventes de produits finis', '', 6000], ['707', 'Ventes de marchandises', '', 4500], ['71', 'Production stockée', '', 330],
+      ['72', 'Production immobilisée', '', 75], ['764', 'Revenus des VMP', '', 1545], ['!', 'Totaux', 23880, 23880]]),
+  checks: [['Total charges d\'exploitation', 9855], ['Total charges (avec IS)', 10995], ['Résultat', 1455], ['Total actif net', 11955]],
+  steps: [
+    ['Le piège : la variation de stock au crédit', `<p>6037 est au <b>crédit</b> (60) : c'est une variation <b>négative</b> (le stock de marchandises a augmenté). Elle se met en charges avec un signe moins : −60.</p><p>6031 au débit (120) : le stock de MP a diminué → +120.</p>`],
+    ['Compte de résultat', two(['Charges', 'M€', 'Produits', 'M€'],
+      [['~Charges d\'exploitation', ''], ['Achats de MP', 1650], ['Variation stocks MP', 120], ['Achats de marchandises', 600], ['Variation stocks march.', -60], ['Autres charges externes', 225], ['Impôts et taxes', 270], ['Rémunérations', 4500], ['Charges sociales', 2250], ['Dotations aux amortissements', 300], ['!Total exploitation', 9855], ['~Charges financières', ''], ['Intérêts des emprunts', 510], ['Intérêts bancaires', 90], ['!Total financières', 600], ['Impôts sur les bénéfices', 540], ['!Total charges', 10995], ['Résultat (bénéfice)', 1455], ['!Total général', 12450]],
+      [['~Produits d\'exploitation', ''], ['Ventes de produits finis', 6000], ['Ventes de marchandises', 4500], ['Production stockée', 330], ['Production immobilisée', 75], ['', ''], ['', ''], ['', ''], ['', ''], ['', ''], ['!Total exploitation', 10905], ['~Produits financiers', ''], ['Revenus des VMP', 1545], ['', ''], ['!Total financiers', 1545], ['', ''], ['!Total produits', 12450], ['', ''], ['!Total général', 12450]])],
+    ['Bilan (avec brut / amortissements / net)', tb(['Actif', 'Brut', 'Amort.', 'Net'], [
+      ['~Actif immobilisé', '', '', ''], ['Frais de R&D', 420, 120, 300], ['Fonds commercial', 600, '', 600], ['Terrains', 2100, '', 2100], ['Constructions', 3000, 600, 2400], ['Installations techniques', 1500, 150, 1350], ['Titres de participation', 300, '', 300], ['!Total actif immobilisé', 7920, 870, 7050],
+      ['~Actif circulant', '', '', ''], ['Stocks de MP', 150, '', 150], ['Stocks de produits finis', 750, '', 750], ['Stocks de marchandises', 210, '', 210], ['Clients', 2250, '', 2250], ['Banque', 1500, '', 1500], ['Caisse', 45, '', 45], ['!Total actif circulant', 4905, '', 4905], ['!Total actif', 12825, 870, 11955]]) +
+      tb(['Passif', 'Montant'], [['~Capitaux propres', ''], ['Capital', 4500], ['Réserves', 630], ['Résultat', 1455], ['!Total capitaux propres', 6585], ['~Dettes', ''], ['Emprunts LT (> 1 an)', 4500], ['Fournisseurs', 330], ['Fournisseurs d\'immobilisations', 90], ['Dettes sociales et fiscales', 450], ['!Total dettes', 5370], ['!Total passif', 11955]], 'max-width:520px')],
+    ['Commentaire', `<ul><li>Bénéfice de <b>1 455 M€</b>. Le résultat d'exploitation (10 905 − 9 855 = 1 050) est positif, mais le résultat financier (1 545 − 600 = +945) pèse presque autant : les placements contribuent fortement.</li><li>Les charges de personnel (6 750) représentent ≈ 62 % des produits d'exploitation : structure lourde.</li><li>Endettement LT : 4 500 / 6 585 ≈ 68 % des capitaux propres, raisonnable. Trésorerie confortable (1 545).</li><li>Production stockée (330) et stock de PF élevé (750) : vérifier que les ventes suivent la production.</li></ul>`]
+  ] });
+
+ex({ id: 'xwings', ch: 'I', tag: 'TD1 · Ex 3', titre: 'X-Wings : amortissement linéaire',
+  enonce: `<p>Le 15/03/N, X-Wings achète un véhicule de livraison <b>21 600 € TTC</b> (TVA 20 %). Durée 5 ans, linéaire. Mise en service le <b>15/04/N</b>.</p><ol><li>Tableau d'amortissement.</li><li>Extrait de bilan au 31/12/N+2.</li></ol>`,
+  checks: [['Base HT', 18000], ['Jours en N', 255], ['Annuité N', 2550], ['VNC fin N+2', 8250]],
+  steps: [
+    ['Données', `<ul><li>Base = 21 600 / 1,20 = <b>18 000 €</b>, taux 20 %, annuité pleine <b>3 600 €</b></li><li>Jours en N depuis le 15/04 : 15 j en avril (30 − 15) + 8 mois × 30 = <b>255 j</b></li><li>N : 3 600 × 255/360 = <b>2 550 €</b> · N+5 : 3 600 × 105/360 = <b>1 050 €</b></li></ul>`],
+    ['Tableau', tb(['Année', 'Base', 'Calcul', 'Dotation', 'Cumul', 'VNC'], [
+      ['N', 18000, '18 000 × 20 % × 255/360', 2550, 2550, 15450], ['N+1', 18000, '18 000 × 20 %', 3600, 6150, 11850], ['N+2', 18000, '18 000 × 20 %', 3600, 9750, 8250],
+      ['N+3', 18000, '18 000 × 20 %', 3600, 13350, 4650], ['N+4', 18000, '18 000 × 20 %', 3600, 16950, 1050], ['N+5', 18000, '18 000 × 20 % × 105/360', 1050, 18000, 0], ['!Total', '', '', 18000, '', '']])],
+    ['Bilan au 31/12/N+2', tb(['Actif', 'Brut', 'Amortissements', 'Net'], [['Matériel de transport', 18000, 9750, 8250]])]
+  ] });
+
+ex({ id: 'razor', ch: 'I', tag: 'TD1 · Ex 4', titre: 'Razor Crest : linéaire avec valeur résiduelle',
+  enonce: `<p>Le 10/2/N, Razor Crest achète un serveur <b>9 600 € TTC</b> (TVA 20 %). Durée 5 ans, linéaire, mise en service le <b>1/03/N</b>. Valeur résiduelle estimée au bout de 5 ans : <b>1 000 € HT</b>.</p><ol><li>Tableau d'amortissement.</li><li>Extrait de bilan au 31/12/N+3.</li></ol>`,
+  checks: [['Base amortissable', 7000], ['Annuité N', 1166.67, 0.02], ['Annuité pleine', 1400], ['Net au 31/12/N+3', 2633.33, 0.02]],
+  steps: [
+    ['Base amortissable', `<p>Prix HT = 9 600 / 1,20 = 8 000 €. Base = 8 000 − 1 000 (valeur résiduelle) = <b>7 000 €</b>. Annuité pleine = 7 000 × 20 % = <b>1 400 €</b>.</p>`],
+    ['Prorata', `<p>Mise en service le 1<sup>er</sup> mars : mars à décembre = <b>10 mois = 300 jours</b>.</p><p>N : 1 400 × 300/360 = <b>1 166,67 €</b> · N+5 : 1 400 × 60/360 = <b>233,33 €</b></p>`],
+    ['Tableau', tb(['Année', 'Base', 'Dotation', 'Cumul', 'VNC (sur 8 000)'], [
+      ['N', 7000, 1166.67, 1166.67, 6833.33], ['N+1', 7000, 1400, 2566.67, 5433.33], ['N+2', 7000, 1400, 3966.67, 4033.33], ['N+3', 7000, 1400, 5366.67, 2633.33],
+      ['N+4', 7000, 1400, 6766.67, 1233.33], ['N+5', 7000, 233.33, 7000, 1000], ['!Total', '', 7000, '', '']]) + `<p class="small">La VNC finit à <b>1 000 €</b> = valeur résiduelle : le bien n'est pas amorti en dessous.</p>`],
+    ['Bilan au 31/12/N+3', tb(['Actif', 'Brut', 'Amortissements', 'Net'], [['Matériel informatique', 8000, 5366.67, 2633.33]])]
+  ] });
+
+/* ---------- CHAPITRE II ---------- */
+ex({ id: 'gunther', ch: 'II', tag: 'Application 1', titre: 'Günther : du bilan comptable au bilan fonctionnel',
+  enonce: `<p>Société Günther (réparation d'ordinateurs), bilan au 31/12/N :</p>` +
+    tb(['Actif', 'Brut', 'Amts', 'Net', 'Passif', 'Montant'], [
+      ['Frais d\'établissement', 4000, 2400, 1600, 'Capital', 280000], ['Fonds commercial', 16000, '', 16000, 'Réserves', 21000], ['Terrains', 12000, '', 12000, 'Résultat (bénéfice)', 36000],
+      ['Constructions', 78000, 34200, 43800, 'Provisions pour risques et charges', 7000], ['Install. techn. mat. outil.', 159000, 60900, 98100, '!Total capitaux propres', 344000], ['Mobilier', 49000, 5200, 43800, '', ''],
+      ['!Total actif immobilisé', 318000, 102700, 215300, 'Emprunts (1)', 89000], ['Stocks de MP', 48000, '', 48000, 'Dettes fournisseurs', 119400], ['Stocks de produits finis', 61400, '', 61400, 'Dettes fiscales', 38900],
+      ['Stocks de marchandises', 1800, '', 1800, 'Autres dettes', 7100], ['Clients', 204000, '', 204000, '', ''], ['Autres créances', 44000, '', 44000, '', ''], ['Caisse', 23900, '', 23900, '!Total dettes', 254400],
+      ['!Total actif', 701100, 102700, 598400, 'Total passif', 598400]]) + `<p class="small">(1) dont concours bancaires : 2 000</p><ol><li>Retraitements et bilan fonctionnel.</li><li>Calculer FRNG, BFR, trésorerie et analyser.</li></ol>`,
+  checks: [['Emplois stables', 318000], ['Ressources stables', 533700], ['FRNG', 215700], ['BFR', 193800], ['Trésorerie', 21900]],
+  steps: [
+    ['Retraitements', `<ul><li><b>Emplois stables</b> = actif immobilisé brut = <b>318 000</b></li><li><b>Ressources stables</b> = capitaux propres 344 000 (provisions pour risques déjà incluses) + amortissements 102 700 + emprunts hors concours (89 000 − 2 000 = 87 000) = <b>533 700</b></li><li><b>ACHT</b> = actif circulant brut 383 100 − caisse 23 900 = <b>359 200</b></li><li><b>Trésorerie actif</b> = <b>23 900</b></li><li><b>Dettes CT HT</b> = 119 400 + 38 900 + 7 100 = <b>165 400</b></li><li><b>Trésorerie passif</b> = concours bancaires <b>2 000</b></li></ul>`],
+    ['Bilan fonctionnel', two(['Actif', 'Montant', '%', 'Passif', 'Montant', '%'],
+      [['Emplois stables', 318000, '45,36 %'], ['Actif circulant HT', 359200, '51,23 %'], ['Trésorerie actif', 23900, '3,41 %'], ['!Total', 701100, '100 %']],
+      [['Ressources stables', 533700, '76,12 %'], ['Dettes CT HT', 165400, '23,59 %'], ['Trésorerie passif', 2000, '0,29 %'], ['!Total', 701100, '100 %']]) +
+      `<p class="small">Total = total actif <b>brut</b> (701 100), pas le total net.</p>`],
+    ['FRNG', `<p>Par le haut : 533 700 − 318 000 = <b>215 700 €</b></p><p>Par le bas : (359 200 + 23 900) − (165 400 + 2 000) = 383 100 − 167 400 = <b>215 700 €</b> ✔</p>`],
+    ['BFR et trésorerie', `<p>BFR = 359 200 − 165 400 = <b>193 800 €</b></p><p>Trésorerie = FRNG − BFR = 215 700 − 193 800 = <b>+21 900 €</b> · Vérif : 23 900 − 2 000 = 21 900 ✔</p>`],
+    ['Analyse', `<div class="box">Le cycle d'exploitation crée un BFR de 193 800 € <b>largement couvert</b> par un FRNG de 215 700 €. La trésorerie positive traduit un équilibre financier satisfaisant. Les ressources stables (76 % du total) proviennent surtout des capitaux propres : très faible endettement à LT, financement surtout interne.</div>` +
+      tb(['Ratio', 'Calcul', 'Valeur'], [['Couverture des emplois stables', '533 700 / 318 000', '1,68'], ['Couverture des capitaux investis', '533 700 / (318 000 + 193 800)', '1,04'], ['Autonomie financière', '87 000 / 344 000', '25,3 %'], ['Rentabilité financière', '36 000 / 344 000', '10,5 %']])]
+  ] });
+
+ex({ id: 'tatooine', ch: 'II', tag: 'Application 2', titre: 'Tatooine : évolution sur deux ans',
+  enonce: tb(['Actif', 'N', 'N−1', 'Passif', 'N', 'N−1'], [
+      ['Emplois stables', 820000, 805000, 'Ressources stables', 910000, 792300], ['Actif circulant HT', 422000, 225000, 'Dettes CT HT', 342500, 219200],
+      ['Trésorerie actif', 10500, '/', 'Trésorerie passif', '/', 18500], ['!Total', 1252500, 1030000, 'Total', 1252500, 1030000]]) +
+    `<p class="small">(Le poly affiche 1 252 000 au passif N : coquille, le total vaut bien 1 252 500.)</p><ol><li>Calculer FRNG, BFR, trésorerie pour N et N−1, et les écarts.</li><li>Analyser la situation et l'évolution.</li></ol>`,
+  checks: [['FRNG N', 90000], ['FRNG N−1', -12700], ['BFR N', 79500], ['BFR N−1', 5800], ['Trésorerie N', 10500], ['Trésorerie N−1', -18500]],
+  steps: [
+    ['Calculs', tb(['', 'Année N', 'Année N−1', 'Écart'], [['FRNG = RS − ES', 90000, -12700, 102700], ['BFR = ACHT − DCT', 79500, 5800, 73700], ['Trésorerie = FRNG − BFR', 10500, -18500, 29000]]) +
+      `<p class="small">Vérif. trésorerie : N → 10 500 − 0 ; N−1 → 0 − 18 500 ✔</p>`],
+    ['Analyse', `<ul><li><b>FRNG</b> : négatif en N−1 (les immobilisations étaient en partie financées par du court terme, situation dangereuse), il devient positif en N (+102 700) grâce à une forte hausse des ressources stables (+117 700 : apport en capital ou nouvel emprunt) supérieure aux investissements (+15 000).</li><li><b>BFR</b> : explose (+73 700) car l'actif circulant augmente bien plus vite que les dettes CT (hausse des stocks et/ou des créances clients). À surveiller.</li><li><b>Trésorerie</b> : passe de −18 500 (découvert) à +10 500. Le nouveau FRNG couvre le BFR.</li></ul>`],
+    ['Ratios', tb(['Ratio', 'N', 'N−1'], [['Couverture des emplois stables (RS/ES)', '910 000 / 820 000 = 1,11', '792 300 / 805 000 = 0,98'], ['Couverture des capitaux investis RS/(ES+BFR)', '910 000 / 899 500 = 1,01', '792 300 / 810 800 = 0,98']]) +
+      `<p>En N les deux ratios repassent au-dessus de 1 : l'équilibre financier est rétabli, mais de justesse.</p>`]
+  ] });
+
+ex({ id: 'climat', ch: 'II', tag: 'TD2 · Ex 1', titre: 'Climat : bilan fonctionnel',
+  enonce: tb(['Actif', 'Brut', 'Amts', 'Net', 'Passif', 'Montant'], [
+      ['Immo. incorporelles', 2830, 0, 2830, 'Capital', 8000], ['Immo. corporelles', 19570, 7050, 12520, 'Réserves', 2400], ['Immo. financières', 1800, 590, 1210, 'Résultat', 1740],
+      ['!Total actif immobilisé', 24200, 7640, 16560, 'Provisions pour risques et charges', 1900], ['Stocks et en-cours', 4980, '', 4980, '!Total capitaux propres', 14040],
+      ['Créances', 7460, '', 7460, 'Emprunt', 7670], ['Disponibilités', 140, '', 140, 'Dettes fournisseurs', 4570], ['!Total actif circulant', 12580, 0, 12580, 'Dettes fiscales', 2860],
+      ['!Total actif', 36780, 7640, 29140, 'Total passif', 29140]]) + `<ol><li>Bilan fonctionnel.</li><li>FRNG, BFR, trésorerie et analyse.</li></ol>`,
+  checks: [['Ressources stables', 29350], ['FRNG', 5150], ['BFR', 5010], ['Trésorerie', 140]],
+  steps: [
+    ['Retraitements', `<ul><li>ES = <b>24 200</b> (brut)</li><li>RS = 14 040 (CP + provisions) + 7 640 (amortissements) + 7 670 (emprunt, pas de concours bancaires) = <b>29 350</b></li><li>ACHT = 4 980 + 7 460 = <b>12 440</b> · TA = <b>140</b></li><li>DCT HT = 4 570 + 2 860 = <b>7 430</b> · TP = <b>0</b></li></ul>`],
+    ['Bilan fonctionnel', two(['Actif', 'Montant', '%', 'Passif', 'Montant', '%'],
+      [['Emplois stables', 24200, '65,80 %'], ['Actif circulant HT', 12440, '33,82 %'], ['Trésorerie actif', 140, '0,38 %'], ['!Total', 36780, '100 %']],
+      [['Ressources stables', 29350, '79,80 %'], ['Dettes CT HT', 7430, '20,20 %'], ['Trésorerie passif', 0, '0 %'], ['!Total', 36780, '100 %']])],
+    ['Indicateurs et analyse', `<p>FRNG = 29 350 − 24 200 = <b>5 150</b> · BFR = 12 440 − 7 430 = <b>5 010</b> · T = 5 150 − 5 010 = <b>140</b> (= disponibilités ✔)</p><div class="box">Équilibre respecté mais <b>serré</b> : le FRNG couvre tout juste le BFR, la trésorerie est quasi nulle. Une hausse des stocks ou des délais clients ferait basculer la trésorerie en négatif.</div>`]
+  ] });
+
+ex({ id: 'ossa', ch: 'II', tag: 'TD2 · Ex 2', titre: 'Ossa : bilan fonctionnel et ratios (en k€)',
+  enonce: tb(['Actif', 'Brut', 'Amts', 'Net', 'Passif', 'Montant'], [
+      ['Terrains', 1200, '', 1200, 'Capital', 2000], ['Constructions', 700, 400, 300, 'Réserves', 400], ['Matériel de bureau', 100, 70, 30, 'Résultat net', 100],
+      ['Matériel de transport', 500, 50, 450, '!Total capitaux propres', 2500], ['Mobilier', 200, 80, 120, 'Emprunts (1)', 800], ['!Total actif immobilisé', 2700, 600, 2100, 'Dettes fournisseurs', 600],
+      ['Stock de marchandises', 450, '', 450, 'Dettes fiscales et sociales', 100], ['Stock de produits finis', 430, '', 430, '', ''], ['Clients', 840, '', 840, '', ''], ['Banque', 100, '', 100, '', ''], ['Caisse', 80, '', 80, '!Total dettes', 1500],
+      ['!Total actif', 4600, 600, 4000, 'Total passif', 4000]]) + `<p class="small">(1) dont concours bancaires 200</p><ol><li>Bilan fonctionnel.</li><li>FRNG, BFR, trésorerie.</li><li>Commenter avec quelques ratios.</li></ol>`,
+  checks: [['Ressources stables', 3700], ['FRNG', 1000], ['BFR', 1020], ['Trésorerie', -20]],
+  steps: [
+    ['Retraitements', `<ul><li>ES = <b>2 700</b></li><li>RS = 2 500 + 600 (amts) + (800 − 200) = <b>3 700</b></li><li>ACHT = 450 + 430 + 840 = <b>1 720</b> · TA = 100 + 80 = <b>180</b></li><li>DCT HT = 600 + 100 = <b>700</b> · TP = <b>200</b> (concours bancaires)</li></ul>`],
+    ['Bilan fonctionnel', two(['Actif', 'k€', '%', 'Passif', 'k€', '%'],
+      [['Emplois stables', 2700, '58,70 %'], ['Actif circulant HT', 1720, '37,39 %'], ['Trésorerie actif', 180, '3,91 %'], ['!Total', 4600, '100 %']],
+      [['Ressources stables', 3700, '80,43 %'], ['Dettes CT HT', 700, '15,22 %'], ['Trésorerie passif', 200, '4,35 %'], ['!Total', 4600, '100 %']])],
+    ['FRNG, BFR, trésorerie', `<p>FRNG = 3 700 − 2 700 = <b>1 000</b> · BFR = 1 720 − 700 = <b>1 020</b> · T = 1 000 − 1 020 = <b>−20</b> (vérif. 180 − 200 = −20 ✔)</p>`],
+    ['Ratios et commentaire', tb(['Ratio', 'Calcul', 'Valeur'], [['Couverture des emplois stables', '3 700 / 2 700', '1,37'], ['Couverture des capitaux investis', '3 700 / (2 700 + 1 020)', '0,995'], ['Autonomie financière (Dettes LT / CP)', '600 / 2 500', '24 %'], ['Rentabilité financière', '100 / 2 500', '4 %']]) +
+      `<div class="box">Structure saine (FRNG positif, faible endettement : 24 %) mais le FRNG ne couvre pas tout à fait le BFR : la trésorerie est légèrement négative (−20 k€), l'entreprise dépend un peu du découvert. Le BFR est lourd (stocks 880 + clients 840). Avant de se développer, Ossa devrait réduire ses stocks et ses délais clients, ou renforcer ses ressources stables (augmentation de capital, emprunt). La rentabilité financière (4 %) est faible.</div>`]
+  ] });
+
+/* ---------- CHAPITRE III ---------- */
+ex({ id: 'bulto', ch: 'III', tag: 'Application 1', titre: 'Bulto : compte de résultat différentiel et SR (k€)',
+  enonce: `<p>Compte de résultat de Bulto au 31/12/N (k€) : ventes de marchandises 228 000, bénéfice 20 000. Répartition des charges :</p>` +
+    tb(['Charges', 'Total', 'Variables', 'Fixes'], [['Achats de marchandises', 114000, 114000, ''], ['Variation de stocks de marchandises', 2800, 2800, ''], ['Autres achats et charges externes', 17100, 10260, 6840], ['Impôts et taxes', 14250, 4275, 9975], ['Salaires et traitements', 38475, 15390, 23085], ['Dotations aux amortissements', 12825, '', 12825], ['Charges financières', 8550, 3420, 5130], ['!Total', 208000, 150145, 57855]]) +
+    `<p>Établir le compte de résultat différentiel, calculer SR, point mort, marge et indice de sécurité.</p>`,
+  checks: [['M/CV', 77855], ['Taux de M/CV (%)', 34.15, 0.02], ['Seuil de rentabilité', 169429.58, 20], ['Point mort (jours)', 267.52, 0.1], ['Marge de sécurité', 58570.42, 20], ['Indice de sécurité (%)', 25.69, 0.05]],
+  steps: [
+    ['Compte de résultat différentiel', tb(['', 'Éléments', 'Calculs', 'Montant', '%'], [
+      ['1', 'Chiffre d\'affaires', '', 228000, '100 %'], ['2', '− Charges variables', '114 000 + 2 800 + 10 260 + 4 275 + 15 390 + 3 420', 150145, '65,85 %'],
+      ['+3', '= Marge sur coût variable', '228 000 − 150 145', 77855, '34,15 %'], ['4', '− Charges fixes', '6 840 + 9 975 + 23 085 + 12 825 + 5 130', 57855, '25,38 %'], ['!5', '= Résultat', '77 855 − 57 855', 20000, '8,77 %']]) +
+      `<p class="small">Le résultat retrouve bien le bénéfice du compte de résultat (20 000) ✔</p>`],
+    ['Seuil de rentabilité', `<p>SR = CA × CF / M/CV = 228 000 × 57 855 / 77 855 = <b>169 429,58 k€</b></p><p>Avec le taux arrondi : 57 855 / 0,3415 ≈ 169 414 k€ → petit écart dû à l'arrondi, on retient la première.</p>`],
+    ['Point mort', `<p>PM = 169 429,58 / 228 000 × 360 = <b>267,52 jours</b></p><p>267,52 = 8 mois (240 j) + 27,52 j → SR atteint vers le <b>28 septembre</b>.</p>`],
+    ['Sécurité', `<p>MS = 228 000 − 169 429,58 = <b>58 570,42 k€</b></p><p>IS = 58 570,42 / 228 000 × 100 = <b>25,69 %</b> : le CA peut baisser d'environ 25 % avant que Bulto ne soit en perte.</p><p class="small">Vérif : MS × taux de M/CV = 58 570,42 × 0,34147 ≈ 20 000 = résultat ✔</p>`]
+  ] });
+
+ex({ id: 'bowie', ch: 'III', tag: 'Application 2', titre: 'Bowie : SR, point mort, sécurité (k€)',
+  enonce: `<p>Bowie (vêtements pour hommes) : ventes 104 595 k€, bénéfice 11 764 k€.</p>` +
+    tb(['Charges', 'Total', 'Variables', 'Fixes'], [['Achats de marchandises', 61698, 61698, ''], ['Variation de stocks', -1776, -1776, ''], ['Autres achats et ch. externes', 19477, 9841, 9636], ['Impôts et taxes', 844, 133, 711], ['Salaires et traitements', 6597, 3452, 3145], ['Charges de sécurité sociale', 1595, 932, 663], ['Dotations aux amts', 2910, '', 2910], ['Charges financières', 1486, '', 1486], ['!Totaux', 92831, 74280, 18551]]) +
+    `<ol><li>Compte de résultat différentiel.</li><li>Seuil de rentabilité.</li><li>Date du point mort.</li><li>MS, IS et interprétation.</li></ol>`,
+  checks: [['M/CV', 30315], ['Seuil de rentabilité', 64006, 20], ['Point mort (jours)', 220.3, 0.1], ['Indice de sécurité (%)', 38.81, 0.05]],
+  steps: [
+    ['Compte de résultat différentiel', tb(['', 'Éléments', 'Montant', '%'], [['1', 'Chiffre d\'affaires', 104595, '100 %'], ['2', '− Charges variables', 74280, '71,02 %'], ['+3', '= M/CV', 30315, '28,98 %'], ['4', '− Charges fixes', 18551, '17,74 %'], ['!5', '= Résultat', 11764, '11,25 %']]) +
+      `<p class="small">Attention à la variation de stock négative (−1 776) : elle <b>réduit</b> les charges variables.</p>`],
+    ['SR et point mort', `<p>SR = 104 595 × 18 551 / 30 315 = <b>64 006 k€</b></p><p>PM = 64 006 / 104 595 × 360 = <b>220,3 jours</b> = 7 mois (210 j) + 10,3 j → vers le <b>11 août</b>.</p>`],
+    ['Sécurité', `<p>MS = 104 595 − 64 006 = <b>40 589 k€</b> · IS = 40 589 / 104 595 = <b>38,81 %</b></p><div class="box">Situation confortable : le SR est atteint mi-août et le CA pourrait baisser de près de 39 % avant la perte.</div>`]
+  ] });
+
+ex({ id: 'td3e1', ch: 'III', tag: 'TD3 · Ex 1', titre: 'Retrouver le CA à partir du résultat',
+  enonce: `<p>Une entreprise a un résultat d'exploitation de <b>70 000 €</b> avec des charges fixes de <b>200 000 €</b> et des charges variables représentant <b>60 % du CA</b>.</p><ol><li>Calculer le CA.</li><li>Calculer le SR et la marge de sécurité.</li></ol>`,
+  checks: [['Chiffre d\'affaires', 675000], ['Seuil de rentabilité', 500000], ['Marge de sécurité', 175000]],
+  steps: [
+    ['Le CA', `<p>CV = 60 % du CA → taux de M/CV = <b>40 %</b>.</p><p>Résultat = 0,40 × CA − 200 000 = 70 000 → CA = 270 000 / 0,40 = <b>675 000 €</b></p>`],
+    ['SR et MS', `<p>SR = CF / taux = 200 000 / 0,40 = <b>500 000 €</b> (ici le taux est exact, pas d'arrondi)</p><p>MS = 675 000 − 500 000 = <b>175 000 €</b> · IS = 25,93 % · PM = 266,67 j → vers le 27 septembre.</p><p class="small">Vérif : 175 000 × 40 % = 70 000 = résultat ✔</p>`]
+  ] });
+
+ex({ id: 'td3e2', ch: 'III', tag: 'TD3 · Ex 2', titre: 'Retrouver les charges fixes à partir du point mort',
+  enonce: `<p>Une entreprise vend un seul produit avec une M/CV de <b>25 % du CA</b>. Elle a atteint son SR le <b>1er octobre</b>. Jusqu'au 1er octobre, <b>6 000 articles</b> ont été vendus à <b>60 €</b>.</p><ol><li>Compte de résultat différentiel au 1er octobre.</li><li>Activité régulière : résultat au 31 décembre ?</li></ol>`,
+  checks: [['CA au 1er octobre (= SR)', 360000], ['Charges fixes annuelles', 90000], ['Résultat au 31/12', 30000]],
+  steps: [
+    ['L\'idée clé', `<p>Au 1er octobre, le SR est atteint : <b>le résultat est nul</b>, donc M/CV = CF.</p><p>CA au 1/10 = 6 000 × 60 = <b>360 000 € = SR</b>.</p>`],
+    ['CR différentiel au 1er octobre', tb(['Éléments', 'Montant', '%'], [['Chiffre d\'affaires', 360000, '100 %'], ['− Charges variables', 270000, '75 %'], ['+= M/CV', 90000, '25 %'], ['− Charges fixes', 90000, ''], ['!= Résultat', 0, '']]) + `<p>Les charges fixes (annuelles) valent donc <b>90 000 €</b>.</p>`],
+    ['Résultat au 31/12', `<p>Activité régulière : 360 000 en 9 mois → CA annuel = 360 000 × 12/9 = <b>480 000 €</b>.</p><p>M/CV = 25 % × 480 000 = 120 000 · Résultat = 120 000 − 90 000 = <b>30 000 €</b></p><p class="small">Autre méthode : MS = 480 000 − 360 000 = 120 000 → × 25 % = 30 000 ✔</p>`]
+  ] });
+
+ex({ id: 'td3e3', ch: 'III', tag: 'TD3 · Ex 3', titre: 'Les meubles du jardin : du SR au taux de marge',
+  enonce: `<p>Coûts fixes : <b>119 600 €</b> · Seuil de rentabilité : <b>1 495 000 €</b>.</p><ol><li>Compte d'exploitation différentiel au SR, puis pour un CA de 1 600 000 €.</li><li>CA à réaliser pour un résultat de 50 000 €.</li></ol>`,
+  checks: [['Taux de M/CV (%)', 8], ['Résultat pour CA = 1 600 000', 8400], ['CA pour un résultat de 50 000', 2120000]],
+  steps: [
+    ['Le taux de M/CV', `<p>Au SR, M/CV = CF → taux = 119 600 / 1 495 000 = <b>8 %</b>.</p>`],
+    ['Les deux comptes différentiels', tb(['Éléments', 'Au SR', 'CA = 1 600 000', '%'], [['Chiffre d\'affaires', 1495000, 1600000, '100 %'], ['− Charges variables', 1375400, 1472000, '92 %'], ['+= M/CV', 119600, 128000, '8 %'], ['− Charges fixes', 119600, 119600, ''], ['!= Résultat', 0, 8400, '']])],
+    ['CA pour un résultat de 50 000', `<p>Il faut M/CV = CF + résultat = 119 600 + 50 000 = 169 600.</p><p>CA = 169 600 / 0,08 = <b>2 120 000 €</b></p><div class="box tip">Formule à retenir : CA visé = (CF + résultat visé) / taux de M/CV.</div>`]
+  ] });
+
+ex({ id: 'gibson', ch: 'III', tag: 'TD3 · Ex 4', titre: 'Gibson : analyse par produit (k€)',
+  enonce: `<p>Fabricant de guitares (k€). Charges variables par produit : A 684 000 · B 391 400 · C 338 500 (total 1 413 900).</p><p>Charges fixes : production 760 000, distribution 90 500, autres 510 000. Ventes : A 2 770 000 · B 750 000 · C 990 000.</p><p>Les charges fixes sont réparties entre produits <b>au prorata de leur part dans le CA</b>.</p><ol><li>CR différentiel global et par produit.</li><li>SR, point mort, MS, IS global et par produit.</li><li>Commenter.</li></ol>`,
+  checks: [['Charges fixes totales', 1360500], ['Résultat global', 1735600], ['Résultat produit B', 132352.77, 1], ['SR global', 1981801.3, 50], ['Point mort global (jours)', 158.19, 0.1]],
+  steps: [
+    ['Répartition des charges fixes', `<p>CF totales = 760 000 + 90 500 + 510 000 = <b>1 360 500</b> · CA total = <b>4 510 000</b></p>` +
+      tb(['Produit', 'Part du CA', 'CF affectées'], [['A', '2 770 / 4 510 = 61,42 %', 835606.43], ['B', '750 / 4 510 = 16,63 %', 226247.23], ['C', '990 / 4 510 = 21,95 %', 298646.34], ['!Total', '100 %', 1360500]])],
+    ['Compte de résultat différentiel', tb(['', 'A', 'B', 'C', 'Total', '%'], [['Chiffre d\'affaires', 2770000, 750000, 990000, 4510000, '100 %'], ['− Charges variables', 684000, 391400, 338500, 1413900, '31,35 %'], ['+= M/CV', 2086000, 358600, 651500, 3096100, '68,65 %'], ['Taux de M/CV', '75,31 %', '47,81 %', '65,81 %', '68,65 %', ''], ['− Charges fixes', 835606.43, 226247.23, 298646.34, 1360500, '30,17 %'], ['!= Résultat', 1250393.57, 132352.77, 352853.66, 1735600, '38,48 %']])],
+    ['Indicateurs', tb(['', 'A', 'B', 'C', 'Global'], [['SR = CA × CF / M/CV', 1109602.02, 473188.57, 453814.09, 1981801.3], ['Point mort (jours)', 144.21, 227.13, 165.02, 158.19], ['Date', '25 mai', '18 août', '16 juin', '9 juin'], ['Marge de sécurité', 1660397.98, 276811.43, 536185.91, 2528198.7], ['Indice de sécurité', '59,94 %', '36,91 %', '54,16 %', '56,06 %']])],
+    ['Commentaire', `<div class="box">Gibson est très rentable globalement (SR atteint début juin, IS de 56 %). <b>Le produit A</b> porte l'entreprise : 2/3 de la M/CV, SR atteint fin mai. <b>Le produit B</b> est le maillon faible : taux de M/CV de 48 % seulement (charges variables lourdes), SR atteint mi-août, IS de 37 %. Il reste bénéficiaire, mais c'est sur lui qu'il faut travailler (prix de vente, coûts variables de production).</div><p class="small muted">Remarque : la répartition des CF au prorata du CA est une convention ; avec une autre clé, le résultat par produit changerait.</p>`]
+  ] });
+
+/* ---------- SYNTHÈSE ---------- */
+ex({ id: 'jardibois', ch: 'S', tag: 'Cas de synthèse', titre: 'Jardibois : de la création au résultat',
+  enonce: `<p>JARDIBOIS (parasols) est créée le 01/01/N avec un capital de <b>500 000 €</b> et un emprunt de <b>3 000 000 €</b> (8 amortissements constants au 31/12, intérêts 5 %).</p>
+  <ul class="small">
+    <li><b>Investissement</b> : machine le 15/01/N, 2 530 000 €, mise en service le même jour, payée 15 jours plus tard, amortie en linéaire sur 8 ans.</li>
+    <li><b>Achats</b> : bois 10 000 m³ à 15 €, toiles 100 000 à 10 €. Fournisseurs réglés aux 2/3 pendant l'année.</li>
+    <li><b>Ventes</b> : 55 000 parasols à 48 €. La moitié encaissée au 31/12.</li>
+    <li><b>Main-d'œuvre</b> : 15 minutes par parasol à 45 €/h.</li>
+    <li><b>Consommations</b> : 0,1 m³ de bois et 1 toile par parasol.</li>
+    <li><b>Publicité</b> 15 000 €, <b>impôts et taxes</b> 13 380 €, <b>transport sur ventes</b> 8 000 € (tous réglés en N).</li>
+    <li><b>Production</b> : 85 000 parasols en N.</li>
+  </ul>
+  <ol class="small"><li>Bilan d'ouverture</li><li>Tableau de trésorerie</li><li>Comptes de stocks bois et toiles</li><li>Coût de production des parasols</li><li>Compte de stock de parasols</li><li>Bilan au 31/12/N</li><li>Compte de résultat</li><li>Reconstituer le résultat</li></ol>`,
+  checks: [['Trésorerie au 31/12/N', 5703.33, 0.02], ['Coût de production unitaire', 22.75], ['Stock final de parasols (€)', 682500], ['Dotation aux amortissements', 303072.92, 0.05], ['Résultat', 899297.08, 0.05], ['Total bilan au 31/12', 4407630.41, 0.05]],
+  steps: [
+    ['1 · Bilan d\'ouverture au 1/1/N', `<p>La machine est achetée le 15/01 : elle n'existe pas encore au 1/1. Tout l'argent est en banque.</p>` +
+      two(['Actif', 'Montant', 'Passif', 'Montant'], [['Banque', 3500000], ['', ''], ['!Total actif', 3500000]], [['Capital', 500000], ['Emprunt', 3000000], ['!Total passif', 3500000]])],
+    ['2 · Tableau de trésorerie', tb(['Éléments', 'Recettes', 'Dépenses', 'Explications'], [
+      ['+Solde initial au 1/1/N', 3500000, '', 'Capital + emprunt'], ['Machine', '', 2530000, 'Payée 15 jours après l\'achat'], ['Fournisseurs bois et toiles', '', 766666.67, '(150 000 + 1 000 000) × 2/3'],
+      ['Ventes encaissées', 1320000, '', '55 000 × 48 / 2'], ['Main-d\'œuvre', '', 956250, '85 000 × 0,25 h × 45 €'], ['Remboursement emprunt', '', 375000, '3 000 000 / 8'],
+      ['Intérêts', '', 150000, '3 000 000 × 5 %'], ['Publicité', '', 15000, ''], ['Impôts et taxes', '', 13380, ''], ['Transport sur ventes', '', 8000, ''],
+      ['!Totaux', 4820000, 4814296.67, ''], ['+Solde final au 31/12/N', 5703.33, '', '4 820 000 − 4 814 296,67']])],
+    ['3 · Stocks de bois et de toiles', `<p>Méthode : SI + entrées − sorties (consommations) = SF.</p>` +
+      tb(['Stock de bois', 'Quantité (m³)', 'P.U.', 'Montant'], [['Stock initial', 0, 15, 0], ['Entrées', 10000, 15, 150000], ['!Total', 10000, 15, 150000], ['Sorties (85 000 × 0,1)', 8500, 15, 127500], ['Stock final', 1500, 15, 22500], ['!Total', 10000, 15, 150000]]) +
+      tb(['Stock de toiles', 'Quantité', 'P.U.', 'Montant'], [['Stock initial', 0, 10, 0], ['Entrées', 100000, 10, 1000000], ['!Total', 100000, 10, 1000000], ['Sorties (85 000 × 1)', 85000, 10, 850000], ['Stock final', 15000, 10, 150000], ['!Total', 100000, 10, 1000000]])],
+    ['4 · Coût de production des parasols', tb(['Éléments', 'Quantité', 'P.U.', 'Montant'], [['Bois consommé (m³)', 8500, 15, 127500], ['Toiles consommées', 85000, 10, 850000], ['Main-d\'œuvre (heures)', 21250, 45, 956250], ['!Coût de production (85 000 parasols)', 85000, 22.75, 1933750]]) +
+      `<p>Coût unitaire : 1,50 (bois) + 10 (toile) + 11,25 (MO) = <b>22,75 €</b>. L'amortissement de la machine et les autres charges sont traités à part (question 8).</p>`],
+    ['5 · Stock de parasols', tb(['Éléments', 'Quantité', 'P.U.', 'Montant'], [['Stock initial', 0, 22.75, 0], ['Entrées (production)', 85000, 22.75, 1933750], ['!Total', 85000, 22.75, 1933750], ['Sorties (ventes)', 55000, 22.75, 1251250], ['Stock final', 30000, 22.75, 682500], ['!Total', 85000, 22.75, 1933750]])],
+    ['6 · Amortissement de la machine', `<p>Annuité pleine = 2 530 000 / 8 = 316 250 € (taux 12,5 %).</p><p>Mise en service le 15/01 : 15 j en janvier (30 − 15) + 11 mois × 30 = <b>345 jours</b>.</p><p>DAP N = 316 250 × 345/360 = <b>303 072,92 €</b></p>`],
+    ['6 · Bilan au 31/12/N', tb(['Actif', 'Brut', 'Amts', 'Net'], [['Machine', 2530000, 303072.92, 2226927.08], ['!Total actif immobilisé', 2530000, 303072.92, 2226927.08], ['Stock de bois', 22500, '', 22500], ['Stock de toiles', 150000, '', 150000], ['Stock de parasols', 682500, '', 682500], ['Créances clients', 1320000, '', 1320000], ['Banque', 5703.33, '', 5703.33], ['!Total actif circulant', 2180703.33, '', 2180703.33], ['!Total actif', 4710703.33, 303072.92, 4407630.41]]) +
+      tb(['Passif', 'Montant'], [['Capital', 500000], ['Résultat (bénéfice)', 899297.08], ['!Total capitaux propres', 1399297.08], ['Emprunt (3 000 000 − 375 000)', 2625000], ['Dettes fournisseurs (1 150 000 × 1/3)', 383333.33], ['!Total dettes', 3008333.33], ['!Total passif', 4407630.41]], 'max-width:560px')],
+    ['7 · Compte de résultat', two(['Charges', 'Montant', 'Produits', 'Montant'],
+      [['~Charges d\'exploitation', ''], ['Achats de MP (bois + toiles)', 1150000], ['Variation de stock MP (SI − SF)', -172500], ['Publicité', 15000], ['Transport sur ventes', 8000], ['Impôts et taxes', 13380], ['Main-d\'œuvre', 956250], ['Dotation aux amortissements', 303072.92], ['!Total exploitation', 2273202.92], ['~Charges financières', ''], ['Intérêts', 150000], ['!Total charges', 2423202.92], ['Résultat (bénéfice)', 899297.08], ['!Total général', 3322500]],
+      [['~Produits d\'exploitation', ''], ['Ventes de parasols', 2640000], ['Production stockée (SF − SI)', 682500], ['', ''], ['', ''], ['', ''], ['', ''], ['', ''], ['!Total exploitation', 3322500], ['', ''], ['', ''], ['!Total produits', 3322500], ['', ''], ['!Total général', 3322500]]) +
+      `<p class="small">Variation de stock MP = 0 − (22 500 + 150 000) = −172 500 : on a acheté plus que consommé.</p>`],
+    ['8 · Reconstituer le résultat', tb(['', 'Quantité', 'P.U.', 'Montant'], [['L\'entreprise a vendu', 55000, 48, 2640000], ['qui lui ont coûté', 55000, 22.75, 1251250], ['+Marge sur coût de production', 55000, 25.25, 1388750], ['~Autres charges', '', '', ''], ['Dotation aux amortissements', '', '', 303072.92], ['Intérêts', '', '', 150000], ['Publicité', '', '', 15000], ['Impôts et taxes', '', '', 13380], ['Transport', '', '', 8000], ['!Résultat', '', '', 899297.08]]) +
+      `<div class="box">Même résultat par les deux méthodes ✔. Le remboursement de l'emprunt (375 000) n'apparaît pas : ce n'est pas une charge.</div>`]
+  ] });
+
+/* ================= STATE ================= */
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const KEY = 'msi-revision-v1';
+let ST = { exDone: {}, quizBest: {}, fcKnown: {}, sortBest: {}, theme: null };
+try { const s = JSON.parse(localStorage.getItem(KEY)); if (s) ST = Object.assign(ST, s); } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(ST)); } catch (e) {} };
+const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[a[i], a[j]] = [a[j], a[i]]; } return a; };
+function parseNum(s) { s = String(s).replace(/[\s  €%]/g, '').replace(',', '.'); return s === '' ? NaN : Number(s); }
+const CH = { I: 'Chapitre I', II: 'Chapitre II', III: 'Chapitre III', S: 'Synthèse' };
+
+/* ================= THEME ================= */
+function applyTheme() {
+  const t = ST.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.documentElement.dataset.theme = t;
+}
+applyTheme();
+$('#theme').onclick = () => { ST.theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'; save(); applyTheme(); if (window.drawSR) drawSR(); };
+
+/* ================= ROUTING ================= */
+function go(page, sub) {
+  $$('section.page').forEach(s => s.classList.toggle('on', s.id === 'p-' + page));
+  $$('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.go === page));
+  if (page === 'accueil') renderHome();
+  if (page === 'exos') { if (sub) openEx(sub); else closeEx(); }
+  const h = '#' + page + (sub ? '-' + sub : '');
+  if (location.hash !== h) history.replaceState(null, '', h);
+  window.scrollTo(0, 0);
+}
+document.addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) go(b.dataset.go, b.dataset.sub); });
+window.addEventListener('hashchange', () => { const [p, ...r] = location.hash.slice(1).split('-'); const s = r.join('-'); if (p) go(p, s); });
+
+/* ================= HOME ================= */
+const TILES = [
+  ['cours', '📖', 'Cours', 'Les 3 chapitres avec schémas interactifs'],
+  ['formules', '🧮', 'Formules', 'La fiche complète à relire avant l\'épreuve'],
+  ['flash', '🃏', 'Flashcards', FLASH.length + ' cartes recto / verso'],
+  ['quiz', '✅', 'Quiz', QUIZ.length + ' QCM corrigés + mode examen'],
+  ['trieur', '🗂️', 'Trieur', 'Classer les postes du bilan, du CR, CF / CV'],
+  ['simu', '🎛️', 'Simulateurs', 'Amortissement, bilan fonctionnel, SR, emprunt'],
+  ['exos', '📝', 'Exercices corrigés', EXOS.length + ' exercices du poly, correction pas à pas'],
+  ['train', '♾️', 'Entraînement', 'Sujets générés : mêmes méthodes, autres chiffres'],
+];
+function renderHome() {
+  $('#homeTiles').innerHTML = TILES.map(t => `<div class="card tile" data-go="${t[0]}"><div class="ic">${t[1]}</div><h3>${t[2]}</h3><p>${t[3]}</p></div>`).join('');
+  const ed = Object.keys(ST.exDone).filter(k => ST.exDone[k]).length;
+  const fk = Object.keys(ST.fcKnown).filter(k => ST.fcKnown[k]).length;
+  const qb = Math.max(0, ...Object.values(ST.quizBest));
+  const sb = Math.max(0, ...Object.values(ST.sortBest));
+  const line = (l, v, m, txt) => `<div style="margin:8px 0"><div class="small" style="display:flex;justify-content:space-between"><span>${l}</span><b>${txt}</b></div><div class="bar"><i style="width:${Math.min(100, v / m * 100)}%"></i></div></div>`;
+  $('#progressBox').innerHTML = line('Exercices corrigés faits', ed, EXOS.length, ed + ' / ' + EXOS.length) +
+    line('Flashcards maîtrisées', fk, FLASH.length, fk + ' / ' + FLASH.length) +
+    line('Meilleur score au quiz', qb, 100, qb + ' %') + line('Meilleure série au trieur', sb, 30, sb);
+}
+let armed = false; $('#resetProg').onclick = e => { const b = e.currentTarget; if (!armed) { armed = true; b.textContent = 'Clique encore pour confirmer'; setTimeout(() => { armed = false; b.textContent = 'Réinitialiser la progression'; }, 3000); return; } armed = false; b.textContent = 'Réinitialiser la progression'; ST.exDone = {}; ST.quizBest = {}; ST.fcKnown = {}; ST.sortBest = {}; save(); renderHome(); };
+
+/* ================= COURS ================= */
+$$('#chapTabs button').forEach(b => b.onclick = () => {
+  $$('#chapTabs button').forEach(x => x.classList.toggle('on', x === b));
+  $$('.chap').forEach(c => c.hidden = c.id !== b.dataset.ch);
+  if (b.dataset.ch === 'c3') drawSR();
+});
+$$('#bilanViz .blk').forEach(b => b.onclick = () => b.classList.toggle('open'));
+
+/* timeline (ch1) */
+function drawTL() {
+  let d = +$('#tlD').value || 1, m = +$('#tlM').value || 1;
+  d = Math.min(31, Math.max(1, d)); m = Math.min(12, Math.max(1, m));
+  const j = joursN(d, m), first = d <= 1 ? 30 : 30 - Math.min(d, 30);
+  $('#tlBar').innerHTML = MOIS.map((x, i) => `<div class="${i + 1 > m ? 'on' : (i + 1 === m ? (d <= 1 ? 'on' : 'part') : '')}">${x.slice(0, 3)}</div>`).join('');
+  $('#tlTxt').innerHTML = `${first} j en ${MOIS[m - 1]} + ${12 - m} mois × 30 = <b>${j} jours</b> → annuité N = annuité pleine × ${j}/360 · dernière année : × ${360 - j}/360`;
+}
+['tlD', 'tlM'].forEach(id => $('#' + id).oninput = drawTL); drawTL();
+
+/* masses (ch2) */
+const MV = { ES: 300, RS: 420, AC: 260, DC: 150 };
+function drawMV() {
+  const frng = MV.RS - MV.ES, bfr = MV.AC - MV.DC, t = frng - bfr;
+  const TA = Math.max(0, t), TP = Math.max(0, -t);
+  const act = [['es', 'Emplois stables', MV.ES], ['ac', 'Actif circ. HT', MV.AC], ['ta', 'Tréso. actif', TA]];
+  const pas = [['rs', 'Ressources stables', MV.RS], ['dc', 'Dettes CT HT', MV.DC], ['tp', 'Tréso. passif', TP]];
+  const side = arr => '<div class="side">' + arr.map(x => `<div class="m ${x[0]}" style="flex:${x[2]} 1 0">${x[2] > 25 ? x[1] + '<br>' + x[2] + ' k€' : (x[2] > 0 ? x[2] : '')}</div>`).join('') + '</div>';
+  $('#mvMasses').innerHTML = side(act) + side(pas);
+  const k = (l, v) => `<div><small>${l}</small><b class="${v >= 0 ? 'pos' : 'neg'}">${v > 0 ? '+' : ''}${v} k€</b></div>`;
+  $('#mvKpi').innerHTML = k('FRNG = RS − ES', frng) + k('BFR = ACHT − DCT', bfr) + k('Trésorerie', t);
+  let msg = frng < 0 ? '⚠️ <b>FRNG négatif</b> : des immobilisations sont financées par du court terme. ' : '✅ FRNG positif : le long finance le long. ';
+  msg += bfr < 0 ? 'BFR négatif : le cycle d\'exploitation <b>dégage</b> des ressources. ' : '';
+  msg += t >= 0 ? 'Le FRNG couvre le BFR → <b>trésorerie positive</b>.' : 'Le FRNG ne couvre pas le BFR → <b>trésorerie négative</b>, il faut un découvert (trésorerie passif).';
+  $('#mvTxt').innerHTML = msg;
+}
+$('#mvSliders').innerHTML = [['ES', 'Emplois stables'], ['RS', 'Ressources stables'], ['AC', 'Actif circulant hors tréso.'], ['DC', 'Dettes CT hors tréso.']].map(([k, l]) =>
+  `<label class="f">${l} : <span class="mono" id="mvv${k}">${MV[k]}</span> k€</label><input type="range" min="0" max="600" step="10" value="${MV[k]}" data-k="${k}">`).join('');
+$$('#mvSliders input').forEach(i => i.oninput = () => { MV[i.dataset.k] = +i.value; $('#mvv' + i.dataset.k).textContent = i.value; drawMV(); });
+drawMV();
+
+/* SR chart (ch3) */
+const SRV = { CA: 228, CF: 58, T: 34 };
+function srSvg(CA, CF, taux, el) {
+  const css = getComputedStyle(document.documentElement), ink = css.getPropertyValue('--ink').trim(), mut = css.getPropertyValue('--muted').trim(), red = css.getPropertyValue('--red').trim(), green = css.getPropertyValue('--green').trim(), blue = css.getPropertyValue('--blue').trim(), line = css.getPropertyValue('--line').trim();
+  const t = taux / 100, SR = t > 0 ? CF / t : Infinity;
+  const W = 520, H = 330, L = 56, B = 40, T0 = 16, R = 16;
+  const xmax = Math.max(CA * 1.25, isFinite(SR) ? SR * 1.35 : CA * 1.5, 1);
+  const ymax = Math.max(t * xmax, CF * 1.4, 1) * 1.08;
+  const X = v => L + v / xmax * (W - L - R), Y = v => H - B - v / ymax * (H - B - T0);
+  let s = `<rect x="${L}" y="${T0}" width="${W - L - R}" height="${H - B - T0}" fill="none" stroke="${line}"/>`;
+  if (isFinite(SR) && SR < xmax) {
+    s += `<polygon points="${X(0)},${Y(0)} ${X(SR)},${Y(CF)} ${X(0)},${Y(CF)}" fill="${red}" opacity=".18"/>`;
+    s += `<polygon points="${X(SR)},${Y(CF)} ${X(xmax)},${Y(t * xmax)} ${X(xmax)},${Y(CF)}" fill="${green}" opacity=".18"/>`;
+    s += `<text x="${X(SR * 0.25)}" y="${Y(CF) + 18}" fill="${red}" font-size="12" font-weight="700">Zone de perte</text>`;
+    s += `<text x="${X(SR + (xmax - SR) * 0.45)}" y="${Y(CF) - 8}" fill="${green}" font-size="12" font-weight="700">Zone de bénéfice</text>`;
+  }
+  s += `<line x1="${X(0)}" y1="${Y(CF)}" x2="${X(xmax)}" y2="${Y(CF)}" stroke="${blue}" stroke-width="2.5"/><text x="${X(xmax) - 4}" y="${Y(CF) + 15}" text-anchor="end" fill="${blue}" font-size="12" font-weight="700">Charges fixes</text>`;
+  s += `<line x1="${X(0)}" y1="${Y(0)}" x2="${X(xmax)}" y2="${Y(t * xmax)}" stroke="${ink}" stroke-width="2.5"/><text x="${X(xmax) - 4}" y="${Y(t * xmax) + 16}" text-anchor="end" fill="${ink}" font-size="12" font-weight="700">M/CV</text>`;
+  if (isFinite(SR) && SR < xmax) s += `<line x1="${X(SR)}" y1="${Y(CF)}" x2="${X(SR)}" y2="${Y(0)}" stroke="${red}" stroke-dasharray="4 3" stroke-width="1.5"/><circle cx="${X(SR)}" cy="${Y(CF)}" r="5" fill="${red}"/><text x="${X(SR)}" y="${H - B + 28}" text-anchor="middle" fill="${red}" font-size="12" font-weight="700">SR ${fmt(SR, 0)}</text>`;
+  s += `<line x1="${X(CA)}" y1="${Y(0)}" x2="${X(CA)}" y2="${Y(t * CA)}" stroke="${mut}" stroke-dasharray="2 3"/><circle cx="${X(CA)}" cy="${Y(t * CA)}" r="4" fill="${ink}"/><text x="${X(CA)}" y="${H - B + 14}" text-anchor="middle" fill="${mut}" font-size="11">CA ${fmt(CA, 0)}</text>`;
+  s += `<text x="${L - 6}" y="${Y(CF) + 4}" text-anchor="end" fill="${mut}" font-size="11">${fmt(CF, 0)}</text><text x="${W - R}" y="${H - 4}" text-anchor="end" fill="${mut}" font-size="11">Chiffre d'affaires →</text><text x="${L}" y="${T0 - 4}" fill="${mut}" font-size="11">Montants</text>`;
+  el.innerHTML = s;
+  return SR;
+}
+function drawSR() {
+  const SR = srSvg(SRV.CA, SRV.CF, SRV.T, $('#srSvg'));
+  const R = SRV.CA * SRV.T / 100 - SRV.CF, MS = SRV.CA - SR, PM = SR / SRV.CA * 360;
+  const k = (l, v, cls) => `<div><small>${l}</small><b class="${cls || ''}">${v}</b></div>`;
+  $('#srKpi').innerHTML = k('Seuil de rentabilité', fmt(SR, 1) + ' k€') + k('Point mort', PM <= 360 ? fmt(PM, 0) + ' j · ' + pmDate(PM) : 'non atteint', PM <= 360 ? 'pos' : 'neg') +
+    k('Marge de sécurité', fmt(MS, 1) + ' k€', MS >= 0 ? 'pos' : 'neg') + k('Indice de sécurité', fmt(MS / SRV.CA * 100, 1) + ' %', MS >= 0 ? 'pos' : 'neg') + k('Résultat', fmt(R, 1) + ' k€', R >= 0 ? 'pos' : 'neg');
+}
+window.drawSR = drawSR;
+$('#srSliders').innerHTML = [['CA', 'Chiffre d\'affaires (k€)', 20, 500, 1], ['CF', 'Charges fixes (k€)', 0, 200, 1], ['T', 'Taux de M/CV (%)', 5, 90, 1]].map(([k, l, a, b, st]) =>
+  `<label class="f">${l} : <span class="mono" id="srv${k}">${SRV[k]}</span></label><input type="range" min="${a}" max="${b}" step="${st}" value="${SRV[k]}" data-k="${k}">`).join('');
+$$('#srSliders input').forEach(i => i.oninput = () => { SRV[i.dataset.k] = +i.value; $('#srv' + i.dataset.k).textContent = i.value; drawSR(); });
+
+/* ================= FORMULES ================= */
+$('#formGrid').innerHTML = ['I', 'II', 'III'].map(c => `<div class="card"><span class="pill ${c === 'I' ? 'g' : c === 'II' ? 'b' : 'r'}">${CH[c]}</span>` +
+  FORMULES.filter(f => f[0] === c).map(f => `<h4>${f[1]}</h4><div class="mono small" style="background:var(--paper2);border:1px solid var(--line);border-radius:6px;padding:6px 9px">${f[2]}</div>`).join('') + '</div>').join('');
+
+/* ================= FLASHCARDS ================= */
+let fcFilter = 'all', fcDeck = [], fcI = 0;
+function fcBuild() {
+  fcDeck = FLASH.map((f, i) => i).filter(i => fcFilter === 'all' || (fcFilter === 'rev' ? !ST.fcKnown[i] : FLASH[i][0] === fcFilter));
+  fcI = 0; fcShow();
+}
+function fcShow() {
+  $('#fc').classList.remove('flip');
+  if (!fcDeck.length) { $('#fcQ').innerHTML = '🎉 Plus aucune carte ici !'; $('#fcA').innerHTML = ''; $('#fcTag').textContent = ''; $('#fcStat').textContent = ''; return; }
+  const f = FLASH[fcDeck[fcI]];
+  setTimeout(() => { $('#fcQ').innerHTML = f[1]; $('#fcA').innerHTML = f[2]; }, 150);
+  $('#fcTag').textContent = CH[f[0]];
+  const k = Object.keys(ST.fcKnown).filter(x => ST.fcKnown[x]).length;
+  $('#fcStat').textContent = `Carte ${fcI + 1} / ${fcDeck.length} · ${k} / ${FLASH.length} maîtrisées`;
+}
+$('#fcFilter').innerHTML = [['all', 'Toutes'], ['I', 'Chap. I'], ['II', 'Chap. II'], ['III', 'Chap. III'], ['rev', 'À revoir']].map((x, i) => `<button data-f="${x[0]}" class="${i ? '' : 'on'}">${x[1]}</button>`).join('');
+$$('#fcFilter button').forEach(b => b.onclick = () => { $$('#fcFilter button').forEach(x => x.classList.toggle('on', x === b)); fcFilter = b.dataset.f; fcBuild(); });
+$('#fc').onclick = () => $('#fc').classList.toggle('flip');
+const fcMove = d => { if (!fcDeck.length) return; fcI = (fcI + d + fcDeck.length) % fcDeck.length; fcShow(); };
+$('#fcNext').onclick = () => fcMove(1); $('#fcPrev').onclick = () => fcMove(-1);
+$('#fcYes').onclick = () => { if (!fcDeck.length) return; ST.fcKnown[fcDeck[fcI]] = true; save(); fcMove(1); };
+$('#fcNo').onclick = () => { if (!fcDeck.length) return; ST.fcKnown[fcDeck[fcI]] = false; save(); fcMove(1); };
+$('#fcShuf').onclick = () => { fcDeck = shuffle(fcDeck); fcI = 0; fcShow(); };
+document.addEventListener('keydown', e => {
+  if (!$('#p-flash').classList.contains('on') || /INPUT|SELECT/.test(document.activeElement.tagName)) return;
+  if (e.key === ' ') { e.preventDefault(); $('#fc').classList.toggle('flip'); }
+  if (e.key === 'ArrowRight') fcMove(1); if (e.key === 'ArrowLeft') fcMove(-1);
+});
+fcBuild();
+
+/* ================= QUIZ ================= */
+let QZ = null;
+function quizMenu() {
+  const best = k => ST.quizBest[k] !== undefined ? `<span class="pill g">Record ${ST.quizBest[k]} %</span>` : '';
+  const n = c => QUIZ.filter(q => q[0] === c).length;
+  $('#quizBox').innerHTML = `<div class="grid g2">
+    <div class="card tile" data-q="exam"><div class="ic">🎓</div><h3>Mode examen</h3><p>20 questions tirées au hasard dans tout le module.</p>${best('exam')}</div>
+    <div class="card tile" data-q="I"><div class="ic">📗</div><h3>Chapitre I</h3><p>${n('I')} questions · bilan, CR, amortissements</p>${best('I')}</div>
+    <div class="card tile" data-q="II"><div class="ic">📘</div><h3>Chapitre II</h3><p>${n('II')} questions · FRNG, BFR, trésorerie, ratios</p>${best('II')}</div>
+    <div class="card tile" data-q="III"><div class="ic">📕</div><h3>Chapitre III</h3><p>${n('III')} questions · CF/CV, SR, point mort</p>${best('III')}</div></div>`;
+  $$('#quizBox [data-q]').forEach(t => t.onclick = () => quizStart(t.dataset.q));
+}
+function quizStart(mode) {
+  let qs = QUIZ.map((q, i) => i).filter(i => mode === 'exam' || QUIZ[i][0] === mode);
+  qs = shuffle(qs); if (mode === 'exam') qs = qs.slice(0, 20);
+  QZ = { mode, qs, i: 0, ok: 0, wrong: [] }; quizShow();
+}
+function quizShow() {
+  if (QZ.i >= QZ.qs.length) return quizEnd();
+  const q = QUIZ[QZ.qs[QZ.i]], order = shuffle(q[2].map((o, i) => i));
+  $('#quizBox').innerHTML = `<div class="card"><div class="qhead"><span class="pill">${CH[q[0]]}</span><span class="score">${QZ.ok} / ${QZ.i} · question ${QZ.i + 1} / ${QZ.qs.length}</span></div>
+    <div class="bar"><i style="width:${QZ.i / QZ.qs.length * 100}%"></i></div>
+    <h3 style="color:var(--ink)">${q[1]}</h3>${order.map(i => `<button class="opt" data-i="${i}">${q[2][i]}</button>`).join('')}
+    <div id="qfb" style="min-height:3em"></div><button class="btn" id="qnext" hidden>Suivante →</button> <button class="btn ghost" id="qquit">Quitter</button></div>`;
+  $$('.opt').forEach(b => b.onclick = () => {
+    const i = +b.dataset.i, good = i === q[3];
+    $$('.opt').forEach(x => { x.disabled = true; if (+x.dataset.i === q[3]) x.classList.add('right'); });
+    if (!good) { b.classList.add('wrong'); QZ.wrong.push(QZ.qs[QZ.i]); } else QZ.ok++;
+    $('#qfb').innerHTML = `<div class="box ${good ? '' : 'warn'}"><b>${good ? 'Exact !' : 'Raté.'}</b> ${q[4]}</div>`;
+    $('#qnext').hidden = false; $('#qnext').focus();
+  });
+  $('#qnext').onclick = () => { QZ.i++; quizShow(); };
+  $('#qquit').onclick = quizMenu;
+}
+function quizEnd() {
+  const p = Math.round(QZ.ok / QZ.qs.length * 100);
+  if (ST.quizBest[QZ.mode] === undefined || p > ST.quizBest[QZ.mode]) { ST.quizBest[QZ.mode] = p; save(); }
+  $('#quizBox').innerHTML = `<div class="card" style="text-align:center"><h2 style="border:0">${p >= 80 ? '🏆' : p >= 50 ? '👍' : '💪'} ${QZ.ok} / ${QZ.qs.length} (${p} %)</h2>
+    ${QZ.wrong.length ? '<h3>À retravailler</h3><div style="text-align:left">' + QZ.wrong.map(i => `<div class="box warn small"><b>${QUIZ[i][1]}</b><br>→ ${QUIZ[i][2][QUIZ[i][3]]}. ${QUIZ[i][4]}</div>`).join('') + '</div>' : '<p>Sans faute !</p>'}
+    <button class="btn" id="qagain">Recommencer</button><button class="btn ghost" id="qmenu">Autre quiz</button></div>`;
+  $('#qagain').onclick = () => quizStart(QZ.mode); $('#qmenu').onclick = quizMenu;
+}
+quizMenu();
+
+/* ================= TRIEUR ================= */
+let SO = null;
+$('#sortMode').innerHTML = Object.entries(SORT_MODES).map(([k, m], i) => `<button data-m="${k}" class="${i ? '' : 'on'}">${m.nom}</button>`).join('');
+$$('#sortMode button').forEach(b => b.onclick = () => { $$('#sortMode button').forEach(x => x.classList.toggle('on', x === b)); sortStart(b.dataset.m); });
+function sortStart(mode) {
+  const M = SORT_MODES[mode];
+  SO = { mode, M, deck: shuffle(M.items), i: 0, ok: 0, streak: 0, best: 0 };
+  $('#sortBins').innerHTML = M.bins.map(b => `<button class="bin ${b[2]}" data-b="${b[0]}">${b[1]}</button>`).join('');
+  $$('#sortBins .bin').forEach(b => b.onclick = () => sortAnswer(b));
+  sortShow();
+}
+function sortShow() {
+  if (SO.i >= SO.deck.length) { SO.deck = shuffle(SO.M.items); SO.i = 0; }
+  $('#sortItem').textContent = SO.deck[SO.i][0];
+  $$('#sortBins .bin').forEach(b => { b.classList.remove('right', 'wrong'); b.disabled = false; });
+  $('#sortScore').textContent = `✔ ${SO.ok} · série ${SO.streak} (record ${ST.sortBest[SO.mode] || 0})`;
+  $('#sortCount').textContent = `${SO.i + 1} / ${SO.deck.length}`;
+}
+function sortAnswer(b) {
+  const it = SO.deck[SO.i], good = b.dataset.b === it[1];
+  $$('#sortBins .bin').forEach(x => { x.disabled = true; if (x.dataset.b === it[1]) x.classList.add('right'); });
+  if (good) { SO.ok++; SO.streak++; } else { b.classList.add('wrong'); SO.streak = 0; }
+  if (SO.streak > (ST.sortBest[SO.mode] || 0)) { ST.sortBest[SO.mode] = SO.streak; save(); }
+  $('#sortFb').innerHTML = `<b style="color:var(--${good ? 'green' : 'red'})">${good ? 'Bien vu.' : 'Non : ' + SO.M.bins.find(x => x[0] === it[1])[1] + '.'}</b> ${it[2]}`;
+  setTimeout(() => { SO.i++; sortShow(); }, good ? 700 : 1800);
+}
+sortStart('bilan');
+
+/* ================= SIMULATEURS ================= */
+$$('#simTabs button').forEach(b => b.onclick = () => { $$('#simTabs button').forEach(x => x.classList.toggle('on', x === b)); $$('.sim').forEach(s => s.hidden = s.id !== b.dataset.s); });
+function amortTable(ht, n, d, m, vr) {
+  const base = ht - vr, ann = base / n, j = joursN(d, m), rows = []; let cum = 0;
+  for (let k = 0; k <= n; k++) {
+    let a = k === 0 ? ann * j / 360 : (k === n ? ann * (360 - j) / 360 : ann);
+    if (k === n) a = base - cum; // complément exact
+    if (a < 0.005 && k === n) break;
+    cum += a; rows.push(['N' + (k ? '+' + k : ''), r2(base), r2(a), r2(cum), r2(ht - cum)]);
+  }
+  return { base, ann, j, rows };
+}
+function simAmort() {
+  const P = +$('#amP').value || 0, ht = $('#amT').value === 'ttc' ? P / 1.2 : P, n = Math.max(1, +$('#amN').value || 1);
+  const d = Math.min(31, Math.max(1, +$('#amD').value || 1)), m = Math.min(12, Math.max(1, +$('#amM').value || 1)), vr = +$('#amV').value || 0;
+  const A = amortTable(ht, n, d, m, vr);
+  $('#amOut').innerHTML = `<div class="kpi"><div><small>Coût HT</small><b>${fmt(ht)}</b></div><div><small>Base amortissable</small><b>${fmt(A.base)}</b></div><div><small>Taux</small><b>${fmt(100 / n)} %</b></div><div><small>Annuité pleine</small><b>${fmt(A.ann)}</b></div><div><small>Jours en N</small><b>${A.j}</b></div></div>` +
+    tb(['Exercice', 'Base', 'Annuité', 'Amort. cumulés', 'VNC'], A.rows.concat([['!Total', '', r2(A.base), '', '']]));
+}
+['amP', 'amT', 'amN', 'amD', 'amM', 'amV'].forEach(id => $('#' + id).oninput = simAmort); simAmort();
+function simBF() {
+  const v = id => +$('#' + id).value || 0;
+  const ES = v('bfAI'), RS = v('bfCP') + v('bfAm') + v('bfEm') - v('bfCb'), AC = v('bfSt') + v('bfCr'), TA = v('bfDi'), DC = v('bfDct'), TP = v('bfCb');
+  const FR = RS - ES, BF = AC - DC, T = FR - BF, totA = ES + AC + TA, totP = RS + DC + TP;
+  const p = x => totA ? fmt(x / totA * 100) + ' %' : '';
+  $('#bfOut').innerHTML = two(['Actif fonctionnel', 'Montant', '%', 'Passif fonctionnel', 'Montant', '%'],
+    [['Emplois stables', ES, p(ES)], ['Actif circulant HT', AC, p(AC)], ['Trésorerie actif', TA, p(TA)], ['!Total', totA, '100 %']],
+    [['Ressources stables', RS, p(RS)], ['Dettes CT HT', DC, p(DC)], ['Trésorerie passif', TP, p(TP)], ['!Total', totP, totA ? fmt(totP / totA * 100) + ' %' : '']]) +
+    (Math.abs(totA - totP) > 0.5 ? `<div class="box warn">Le bilan n'est pas équilibré (écart ${fmt(totA - totP)}) : vérifie tes montants.</div>` : '') +
+    `<div class="kpi"><div><small>FRNG</small><b class="${FR >= 0 ? 'pos' : 'neg'}">${fmt(FR)}</b></div><div><small>BFR</small><b>${fmt(BF)}</b></div><div><small>Trésorerie</small><b class="${T >= 0 ? 'pos' : 'neg'}">${fmt(T)}</b></div><div><small>Vérif. TA − TP</small><b>${fmt(TA - TP)}</b></div><div><small>RS / ES</small><b>${ES ? fmt(RS / ES) : '–'}</b></div></div>`;
+}
+['bfAI', 'bfAm', 'bfSt', 'bfCr', 'bfDi', 'bfCP', 'bfEm', 'bfCb', 'bfDct'].forEach(id => $('#' + id).oninput = simBF); simBF();
+function simSR() {
+  const CA = +$('#sCA').value || 0, CV = +$('#sCV').value || 0, CF = +$('#sCF').value || 0, M = CA - CV, t = CA ? M / CA : 0;
+  const SR = M > 0 ? CA * CF / M : Infinity, PM = SR / CA * 360, MS = CA - SR;
+  $('#sOut').innerHTML = tb(['Éléments', 'Montant', '%'], [['Chiffre d\'affaires', CA, '100 %'], ['− Charges variables', CV, CA ? fmt(CV / CA * 100) + ' %' : ''], ['+= Marge sur coût variable', M, fmt(t * 100) + ' %'], ['− Charges fixes', CF, ''], ['!= Résultat', M - CF, '']], 'max-width:560px') +
+    (isFinite(SR) ? `<div class="kpi"><div><small>SR = CA × CF / M/CV</small><b>${fmt(SR)}</b></div><div><small>Point mort</small><b>${fmt(PM)} j</b><span class="small muted">${PM <= 360 ? pmDate(PM) : 'non atteint dans l\'année'}</span></div><div><small>Marge de sécurité</small><b class="${MS >= 0 ? 'pos' : 'neg'}">${fmt(MS)}</b></div><div><small>Indice de sécurité</small><b class="${MS >= 0 ? 'pos' : 'neg'}">${fmt(MS / CA * 100)} %</b></div></div>` : '<div class="box warn">M/CV nulle ou négative : pas de seuil de rentabilité.</div>') +
+    `<svg id="sSvg" viewBox="0 0 520 330" width="100%" style="max-width:640px"></svg>`;
+  if (isFinite(SR)) srSvg(CA, CF, t * 100, $('#sSvg'));
+}
+['sCA', 'sCV', 'sCF'].forEach(id => $('#' + id).oninput = simSR); simSR();
+function empTable(M, n, t) {
+  const a = M / n, rows = []; let c = M;
+  for (let k = 1; k <= n; k++) { const i = c * t / 100; rows.push([k, r2(c), r2(i), r2(a), r2(i + a), r2(c - a)]); c -= a; }
+  return rows;
+}
+function simEmp() {
+  const M = +$('#eM').value || 0, n = Math.max(1, Math.min(40, +$('#eN').value || 1)), t = +$('#eT').value || 0, rows = empTable(M, n, t);
+  const ti = rows.reduce((s, r) => s + r[2], 0);
+  $('#eOut').innerHTML = tb(['Année', 'CRD début', 'Intérêts', 'Amortissement', 'Annuité', 'CRD fin'], rows.concat([['!Total', '', r2(ti), r2(M), r2(M + ti), '']]));
+}
+['eM', 'eN', 'eT'].forEach(id => $('#' + id).oninput = simEmp); simEmp();
+
+/* ================= CHECKS (shared) ================= */
+function checksHTML(list, pref) {
+  return '<div class="checks">' + list.map((c, i) => `<div class="chk"><label>${c[0]}</label><input type="text" inputmode="decimal" id="${pref}${i}" placeholder="ta réponse"><div class="fb" id="${pref}f${i}"></div></div>`).join('') + '</div>';
+}
+function runChecks(list, pref, reveal) {
+  let ok = 0;
+  list.forEach((c, i) => {
+    const inp = $('#' + pref + i), fb = $('#' + pref + 'f' + i), v = parseNum(inp.value);
+    const tol = c[2] !== undefined ? c[2] : Math.max(0.5, Math.abs(c[1]) * 0.0005);
+    inp.classList.remove('good', 'bad'); fb.className = 'fb';
+    if (isNaN(v)) { fb.textContent = reveal ? 'Réponse : ' + fmt(c[1]) : ''; return; }
+    if (Math.abs(v - c[1]) <= tol) { ok++; inp.classList.add('good'); fb.classList.add('g'); fb.textContent = '✔ juste'; }
+    else { inp.classList.add('bad'); fb.classList.add('b'); fb.textContent = reveal ? '✘ attendu : ' + fmt(c[1]) : '✘ pas encore'; }
+  });
+  return ok;
+}
+
+/* ================= EXERCICES ================= */
+function renderExList() {
+  $('#exList').innerHTML = ['I', 'II', 'III', 'S'].map(c => `<h2>${CH[c]}</h2><div class="exlist">` + EXOS.filter(e => e.ch === c).map(e =>
+    `<div class="exitem ${ST.exDone[e.id] ? 'done' : ''}" data-go="exos" data-sub="${e.id}"><span class="pill ${c === 'S' ? 'v' : ''}">${e.tag}</span>${ST.exDone[e.id] ? ' <span class="pill g">fait ✓</span>' : ''}<h4>${e.titre}</h4><span class="small muted">${e.steps.length} étapes · ${e.checks.length} résultats à vérifier</span></div>`).join('') + '</div>').join('');
+}
+function closeEx() { $('#exView').hidden = true; $('#exList').hidden = false; renderExList(); }
+function openEx(id) {
+  const e = EXOS.find(x => x.id === id); if (!e) return closeEx();
+  $('#exList').hidden = true; $('#exView').hidden = false;
+  const i = EXOS.indexOf(e), prev = EXOS[i - 1], next = EXOS[i + 1];
+  $('#exView').innerHTML = `<button class="btn ghost" data-go="exos">← Tous les exercices</button>
+    <div class="card"><span class="pill">${CH[e.ch]} · ${e.tag}</span><h2 style="margin-top:.4em">${e.titre}</h2>
+    <h3>Énoncé</h3><div class="enonce">${e.enonce}</div>
+    <h3>Tes résultats</h3><p class="small muted">Fais le calcul sur papier, puis entre tes réponses (espaces et virgules acceptés).</p>${checksHTML(e.checks, 'ck')}
+    <button class="btn" id="exCheck">Vérifier</button><button class="btn ghost" id="exReveal">Afficher les réponses</button>
+    <h3>Correction pas à pas</h3><div class="steps">${e.steps.map((s, k) => `<div class="step" data-k="${k}"><h4>Étape ${k + 1} · ${s[0]}</h4>${s[1]}</div>`).join('')}</div>
+    <button class="btn red" id="exNext">Afficher l'étape 1 →</button><button class="btn ghost" id="exAll">Tout afficher</button>
+    <div style="margin-top:16px;border-top:1px solid var(--line);padding-top:12px">
+      <button class="btn ${ST.exDone[e.id] ? 'ghost' : 'green'}" id="exDone">${ST.exDone[e.id] ? 'Marquer comme non fait' : 'Marquer comme fait ✓'}</button>
+      ${prev ? `<button class="btn ghost" data-go="exos" data-sub="${prev.id}">← ${prev.tag}</button>` : ''}${next ? `<button class="btn ghost" data-go="exos" data-sub="${next.id}">${next.tag} →</button>` : ''}
+    </div></div>`;
+  let shown = 0;
+  const upd = () => { $$('.step').forEach(s => s.classList.toggle('on', +s.dataset.k < shown)); const b = $('#exNext'); if (shown >= e.steps.length) { b.disabled = true; b.textContent = 'Correction complète'; } else b.textContent = `Afficher l'étape ${shown + 1} →`; };
+  $('#exNext').onclick = () => { shown++; upd(); const st = $$('.step')[shown - 1]; st && st.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); };
+  $('#exAll').onclick = () => { shown = e.steps.length; upd(); };
+  $('#exCheck').onclick = () => { const ok = runChecks(e.checks, 'ck'); if (ok === e.checks.length) { ST.exDone[e.id] = true; save(); $('#exDone').textContent = 'Marquer comme non fait'; $('#exDone').className = 'btn ghost'; } };
+  $('#exReveal').onclick = () => runChecks(e.checks, 'ck', true);
+  $('#exDone').onclick = () => { ST.exDone[e.id] = !ST.exDone[e.id]; save(); openEx(e.id); };
+}
+
+/* ================= ENTRAÎNEMENT (générateurs) ================= */
+const GEN = {
+  amort: { nom: 'Amortissement linéaire', make() {
+    const n = pick([4, 5, 8, 10]), ht = rnd(12, 400) * 250, ttc = ht * 1.2, m = rnd(1, 11), d = rnd(2, 28), dA = Math.max(1, d - rnd(1, 20));
+    const obj = pick(['un véhicule utilitaire', 'un serveur informatique', 'une machine-outil', 'du mobilier de bureau', 'un robot de conditionnement', 'une imprimante 3D industrielle']);
+    const A = amortTable(ht, n, d, m, 0), j = A.j;
+    const vnc2 = A.rows[2][4];
+    return { enonce: `<p>Le ${dA}/${String(Math.max(1, m - (dA > d ? 0 : 0))).padStart(2, '0')}/N, une entreprise achète ${obj} pour <b>${fmt(ttc)} € TTC</b> (TVA 20 %). Durée d'utilisation <b>${n} ans</b>, amortissement linéaire. Mise en service le <b>${d}/${String(m).padStart(2, '0')}/N</b>.</p><p>Calcule les éléments ci-dessous.</p>`,
+      checks: [['Base amortissable HT', ht], ['Nombre de jours en N', j, 0], ['Annuité N', r2(A.rows[0][2]), 0.02], ['Annuité d\'une année pleine', r2(A.ann), 0.02], ['Dernière annuité (N+' + n + ')', r2(A.rows[n][2]), 0.02], ['VNC au 31/12/N+2', vnc2, 0.02]],
+      corr: `<p>Base = ${fmt(ttc)} / 1,20 = <b>${fmt(ht)}</b> · taux = 100/${n} = ${fmt(100 / n)} % · annuité pleine = <b>${fmt(A.ann)}</b></p><p>Jours : ${30 - d} j en ${MOIS[m - 1]} + ${12 - m} × 30 = <b>${j} j</b> → N = ${fmt(A.ann)} × ${j}/360 = <b>${fmt(A.rows[0][2])}</b> · N+${n} = ${fmt(A.ann)} × ${360 - j}/360 = <b>${fmt(A.rows[n][2])}</b></p>` + tb(['Exercice', 'Base', 'Annuité', 'Cumul', 'VNC'], A.rows) };
+  } },
+  bf: { nom: 'Bilan fonctionnel / FRNG / BFR', make() {
+    const k = 100, AIb = rnd(30, 90) * k * 10, Am = Math.round(AIb * rnd(15, 45) / 100 / k) * k, St = rnd(5, 40) * k * 5, Cr = rnd(5, 50) * k * 5, Di = rnd(1, 30) * k;
+    const totN = AIb - Am + St + Cr + Di, Cb = pick([0, 0, rnd(1, 15) * k]), Em = rnd(10, 40) * k * 10 + Cb, Dct = rnd(10, 60) * k * 5;
+    let CP = totN - Em - Dct; if (CP < 5000) return this.make();
+    const RS = CP + Am + Em - Cb, FR = RS - AIb, BF = St + Cr - Dct, T = FR - BF;
+    return { enonce: `<p>Extrait du bilan comptable (en €) :</p>` + tb(['Actif', 'Brut', 'Amts', 'Net', 'Passif', 'Montant'], [['Actif immobilisé', AIb, Am, AIb - Am, 'Capitaux propres', CP], ['Stocks', St, '', St, 'Emprunts (1)', Em], ['Créances clients', Cr, '', Cr, 'Dettes fournisseurs, fiscales et sociales', Dct], ['Disponibilités', Di, '', Di, '', ''], ['!Total', AIb + St + Cr + Di, Am, totN, 'Total', totN]]) + `<p class="small">(1) dont concours bancaires : ${fmt(Cb)}</p>`,
+      checks: [['Emplois stables', AIb], ['Ressources stables', RS], ['FRNG', FR], ['BFR', BF], ['Trésorerie nette', T]],
+      corr: `<p>ES = actif immobilisé brut = <b>${fmt(AIb)}</b></p><p>RS = ${fmt(CP)} + ${fmt(Am)} (amortissements) + ${fmt(Em - Cb)} (emprunts hors concours) = <b>${fmt(RS)}</b></p><p>FRNG = ${fmt(RS)} − ${fmt(AIb)} = <b>${fmt(FR)}</b></p><p>BFR = (${fmt(St)} + ${fmt(Cr)}) − ${fmt(Dct)} = <b>${fmt(BF)}</b></p><p>Trésorerie = ${fmt(FR)} − ${fmt(BF)} = <b>${fmt(T)}</b> · vérif : ${fmt(Di)} − ${fmt(Cb)} = ${fmt(Di - Cb)} ✔</p><div class="box ${T < 0 ? 'warn' : ''}">${FR < 0 ? 'FRNG négatif : déséquilibre structurel. ' : 'FRNG positif. '}${T >= 0 ? 'Le FRNG couvre le BFR, trésorerie positive.' : 'Le FRNG ne couvre pas le BFR : trésorerie négative, dépendance au découvert.'}</div>` };
+  } },
+  sr: { nom: 'Seuil de rentabilité', make() {
+    const CA = rnd(20, 300) * 5000, tcv = rnd(35, 80), CV = Math.round(CA * tcv / 100 / 100) * 100, M = CA - CV, CF = Math.round(M * rnd(40, 92) / 100 / 100) * 100;
+    const SR = CA * CF / M, PM = SR / CA * 360, MS = CA - SR;
+    return { enonce: `<p>Une entreprise réalise un CA de <b>${fmt(CA)} €</b>. Ses charges variables s'élèvent à <b>${fmt(CV)} €</b> et ses charges fixes à <b>${fmt(CF)} €</b>. Activité régulière sur l'année.</p>`,
+      checks: [['Marge sur coût variable', M], ['Taux de M/CV (%)', r2(M / CA * 100), 0.02], ['Résultat', M - CF], ['Seuil de rentabilité', r2(SR), Math.max(1, SR * 0.0005)], ['Point mort (jours)', r2(PM), 0.1], ['Indice de sécurité (%)', r2(MS / CA * 100), 0.05]],
+      corr: tb(['Éléments', 'Montant', '%'], [['CA', CA, '100 %'], ['− CV', CV, pc(CV / CA * 100)], ['+= M/CV', M, pc(M / CA * 100)], ['− CF', CF, ''], ['!= Résultat', M - CF, '']], 'max-width:520px') + `<p>SR = ${fmt(CA)} × ${fmt(CF)} / ${fmt(M)} = <b>${fmt(SR)}</b></p><p>PM = ${fmt(SR)} / ${fmt(CA)} × 360 = <b>${fmt(PM)} j</b> → vers le ${pmDate(PM)}</p><p>MS = ${fmt(CA)} − ${fmt(SR)} = <b>${fmt(MS)}</b> · IS = <b>${pc(MS / CA * 100)}</b></p>` };
+  } },
+  inverse: { nom: 'SR « à l\'envers »', make() {
+    const v = pick([0, 1, 2]);
+    if (v === 0) { const t = pick([20, 25, 30, 40, 50]), CF = rnd(4, 40) * 10000, R = rnd(1, 20) * 5000, CA = (CF + R) / (t / 100), SR = CF / (t / 100);
+      return { enonce: `<p>Une entreprise a obtenu un résultat de <b>${fmt(R)} €</b> avec <b>${fmt(CF)} €</b> de charges fixes. Ses charges variables représentent <b>${100 - t} % du CA</b>.</p>`, checks: [['Chiffre d\'affaires', CA], ['Seuil de rentabilité', SR], ['Marge de sécurité', CA - SR]], corr: `<p>Taux de M/CV = ${t} %. ${t / 100} × CA − ${fmt(CF)} = ${fmt(R)} → CA = (${fmt(CF)} + ${fmt(R)}) / ${t / 100} = <b>${fmt(CA)}</b></p><p>SR = ${fmt(CF)} / ${t / 100} = <b>${fmt(SR)}</b> · MS = <b>${fmt(CA - SR)}</b> (vérif : MS × ${t} % = ${fmt((CA - SR) * t / 100)} = résultat ✔)</p>` }; }
+    if (v === 1) { const t = pick([20, 25, 30, 40]), mois = rnd(5, 10), q = rnd(2, 20) * 500, p = rnd(2, 30) * 5, SR = q * p, CF = SR * t / 100, CA = SR * 12 / mois, R = CA * t / 100 - CF;
+      return { enonce: `<p>Une entreprise vend un seul produit avec une M/CV de <b>${t} % du CA</b>. Elle a atteint son SR le <b>1er ${MOIS[mois]}</b>, après avoir vendu <b>${fmt(q)} articles à ${p} €</b>. Activité régulière.</p>`, checks: [['Seuil de rentabilité', SR], ['Charges fixes', CF], ['CA annuel', r2(CA), 0.5], ['Résultat annuel', r2(R), 0.5]], corr: `<p>SR = ${fmt(q)} × ${p} = <b>${fmt(SR)}</b>. Au SR, M/CV = CF → CF = ${t} % × ${fmt(SR)} = <b>${fmt(CF)}</b></p><p>SR atteint après ${mois} mois → CA annuel = ${fmt(SR)} × 12/${mois} = <b>${fmt(CA)}</b></p><p>Résultat = ${t} % × ${fmt(CA)} − ${fmt(CF)} = <b>${fmt(R)}</b></p>` }; }
+    const t = pick([5, 8, 10, 12, 15]), CF = rnd(5, 30) * 10000, SR = CF / (t / 100), CA2 = SR + rnd(1, 20) * 10000, Rv = rnd(1, 10) * 10000;
+    return { enonce: `<p>Charges fixes : <b>${fmt(CF)} €</b> · seuil de rentabilité : <b>${fmt(SR)} €</b>.</p><p>Calcule le taux de M/CV, le résultat pour un CA de ${fmt(CA2)} €, puis le CA nécessaire pour un résultat de ${fmt(Rv)} €.</p>`, checks: [['Taux de M/CV (%)', t], ['Résultat pour CA = ' + fmt(CA2), r2(CA2 * t / 100 - CF), 0.5], ['CA pour résultat = ' + fmt(Rv), (CF + Rv) / (t / 100)]], corr: `<p>Taux = ${fmt(CF)} / ${fmt(SR)} = <b>${t} %</b></p><p>Résultat = ${t} % × ${fmt(CA2)} − ${fmt(CF)} = <b>${fmt(CA2 * t / 100 - CF)}</b></p><p>CA = (${fmt(CF)} + ${fmt(Rv)}) / ${t / 100} = <b>${fmt((CF + Rv) / (t / 100))}</b></p>` };
+  } },
+  emp: { nom: 'Tableau d\'emprunt', make() {
+    const n = pick([4, 5, 6, 8, 10]), M = rnd(2, 60) * 10000 * n / 2, t = pick([2, 2.5, 3, 3.5, 4, 4.5, 5, 6]), rows = empTable(M, n, t);
+    return { enonce: `<p>Emprunt de <b>${fmt(M)} €</b> remboursable en <b>${n} ans</b> par amortissements constants, au taux de <b>${fmt(t)} %</b> l'an.</p>`,
+      checks: [['Amortissement annuel', r2(M / n)], ['Annuité de l\'année 1', rows[0][4], 0.02], ['Intérêts de l\'année 2', rows[1][2], 0.02], ['Capital restant dû fin d\'année 2 (au bilan)', rows[1][5]], ['Total des intérêts', r2(rows.reduce((s, r) => s + r[2], 0)), 0.05]],
+      corr: tb(['Année', 'CRD début', 'Intérêts', 'Amortissement', 'Annuité', 'CRD fin'], rows) + `<p class="small">Au compte de résultat : seuls les intérêts sont des charges financières. Au bilan : la dette = CRD fin.</p>` };
+  } },
+};
+let TR = null;
+$('#trTabs').innerHTML = Object.entries(GEN).map(([k, g], i) => `<button data-g="${k}" class="${i ? '' : 'on'}">${g.nom}</button>`).join('');
+$$('#trTabs button').forEach(b => b.onclick = () => { $$('#trTabs button').forEach(x => x.classList.toggle('on', x === b)); trNew(b.dataset.g); });
+function trNew(g) {
+  TR = { g, s: GEN[g].make(), n: (TR && TR.g === g ? TR.n : 0) + 1, ok: TR && TR.g === g ? TR.ok : 0 };
+  $('#trBox').innerHTML = `<div class="qhead"><span class="pill">${GEN[g].nom} · sujet n°${TR.n}</span><span class="score">${TR.ok} réussi${TR.ok > 1 ? 's' : ''}</span></div><div class="enonce" style="margin-top:10px">${TR.s.enonce}</div>${checksHTML(TR.s.checks, 'tr')}
+    <button class="btn" id="trCheck">Vérifier</button><button class="btn ghost" id="trCorr">Voir la correction</button><button class="btn red" id="trNext">Nouveau sujet ↻</button><div id="trOut" style="margin-top:10px"></div>`;
+  let counted = false;
+  $('#trCheck').onclick = () => { const ok = runChecks(TR.s.checks, 'tr'); if (ok === TR.s.checks.length && !counted) { counted = true; TR.ok++; $('.score').textContent = TR.ok + ' réussi' + (TR.ok > 1 ? 's' : ''); $('#trOut').innerHTML = '<div class="box">🎯 Tout juste ! Passe au sujet suivant.</div>'; } };
+  $('#trCorr').onclick = () => { runChecks(TR.s.checks, 'tr', true); $('#trOut').innerHTML = '<h3>Correction</h3>' + TR.s.corr; };
+  $('#trNext').onclick = () => trNew(g);
+}
+trNew('amort');
+
+/* ================= BOOT ================= */
+const [p0, ...r0] = location.hash.slice(1).split('-'); const s0 = r0.join('-');
+go(p0 && $('#p-' + p0) ? p0 : 'accueil', s0);
+
+</script>
+</body>
+</html>

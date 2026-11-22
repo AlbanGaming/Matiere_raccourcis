@@ -30,6 +30,16 @@ window.REVISION_ACTIVITES = {
 window.REVISION_FICHES = [
   /* ---------------- Semestre 3 ---------------- */
   {
+    titre: "Management des systèmes d'information",
+    code: "R3.10",
+    href: "revision_MSI_S3.html",
+    semestres: ["S3"],
+    domaine: "gestion",
+    description: "Bilan et compte de résultat, amortissements, bilan fonctionnel (FRNG, BFR, trésorerie, ratios), seuil de rentabilité et point mort, avec tous les exercices du poly corrigés pas à pas et des sujets générés à l'infini.",
+    notions: ["Bilan", "Compte de résultat", "PCG", "Amortissements", "Bilan fonctionnel", "FRNG", "BFR", "Trésorerie", "Ratios", "Charges fixes / variables", "Seuil de rentabilité", "Point mort", "Indice de sécurité"],
+    activites: ["cours", "fiche", "flash", "quiz", "exos", "outils"]
+  },
+  {
     titre: "Conception orientée objet & UML",
     code: "R3.03",
     href: "revision_COO_UML_S3.html",
