@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fiches A4 — S3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../../styles/tokens.css">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjNjM2NmYxIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMmM0ZmQwIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTUiIGZpbGw9InVybCgjZykiLz48dGV4dCB4PSIzMiIgeT0iNDIiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJTZWdvZSBVSSxBcmlhbCxzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iODAwIiBmb250LXNpemU9IjI2IiBmaWxsPSIjZmZmIj5BNDwvdGV4dD48L3N2Zz4=">
+<script src="../../scripts/theme.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; }
+.bar { max-width: 900px; margin: 0 auto; padding: 32px 20px 10px; }
+.back { font: 600 14px var(--r-font-body); color: var(--r-text-2); text-decoration: none; }
+.back:hover { color: var(--r-accent); }
+.bar h1 { font: 800 clamp(1.8rem, 4vw, 2.5rem)/1.1 var(--r-font-display); margin: 10px 0 6px; }
+.bar h1 mark { box-shadow: inset 0 -0.32em 0 var(--r-mark); background: none; color: inherit; }
+.bar p { color: var(--r-text-2); margin: 0 0 14px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 7px; }
+.tabs button { border: 1.5px solid var(--r-border-strong); background: var(--r-surface); color: var(--r-text); border-radius: 99px; padding: 6px 12px; font: 600 13.5px var(--r-font-body); cursor: pointer; }
+.tabs button.on { background: var(--r-accent-soft); border-color: var(--r-accent); box-shadow: inset 0 0 0 1px var(--r-accent); }
+.tools { display: flex; gap: 10px; align-items: center; margin: 14px 0 0; flex-wrap: wrap; }
+.btn { border: 1.5px solid var(--r-accent); background: var(--r-accent); color: var(--r-on-accent); font: 700 14px var(--r-font-body); padding: 8px 16px; border-radius: var(--r-radius); cursor: pointer; }
+.btn.ghost { background: transparent; color: var(--r-accent); }
+.hint { color: var(--r-text-3); font-size: .85rem; }
+
+/* La feuille : toujours claire, comme sur papier */
+.sheet { width: 210mm; min-height: 297mm; margin: 18px auto 60px; background: #fff; color: #141821; box-shadow: var(--r-shadow-lg); padding: 11mm 12mm; font: 10.6pt/1.42 "Figtree", "Segoe UI", sans-serif; }
+.sheet[hidden] { display: none; }
+.sheet header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2.5px solid #141821; padding-bottom: 4px; margin-bottom: 7px; }
+.sheet header h2 { font: 800 18pt/1 "Bricolage Grotesque", sans-serif; margin: 0; }
+.sheet header span { font: 600 8pt "JetBrains Mono", monospace; color: #555; text-transform: uppercase; }
+.cols { column-count: 2; column-gap: 7mm; }
+.sheet h3 { font: 700 11.5pt "Bricolage Grotesque", sans-serif; margin: 7px 0 3px; color: #2c4fd0; break-after: avoid; }
+.sheet h3:first-child { margin-top: 0; }
+.sheet p, .sheet ul, .sheet ol { margin: 2px 0 4px; }
+.sheet ul, .sheet ol { padding-left: 14px; }
+.sheet li { margin: 1px 0; }
+.sheet .f { font: 600 9.3pt "JetBrains Mono", monospace; background: #f3f5fa; border: 1px solid #dfe3ec; border-radius: 4px; padding: 3px 6px; margin: 3px 0; break-inside: avoid; }
+.sheet code { font: 9.1pt "JetBrains Mono", monospace; background: #f1f3f8; padding: 0 2px; border-radius: 2px; }
+.sheet pre { font: 8.9pt/1.35 "JetBrains Mono", monospace; background: #f3f5fa; border: 1px solid #dfe3ec; border-radius: 4px; padding: 4px 6px; margin: 3px 0; white-space: pre-wrap; break-inside: avoid; }
+.sheet table { border-collapse: collapse; width: 100%; font-size: 9pt; margin: 3px 0 5px; break-inside: avoid; }
+.sheet th, .sheet td { border: 1px solid #cfd5e1; padding: 1.5px 4px; text-align: left; vertical-align: top; }
+.sheet th { background: #eef1f7; }
+.sheet .warn { border-left: 3px solid #ab2f2b; background: #fbeeee; padding: 3px 6px; margin: 4px 0; break-inside: avoid; }
+.sheet .warn b:first-child { color: #ab2f2b; }
+.sheet mark { background: #fff1a8; color: inherit; padding: 0 1px; }
+.sheet footer { margin-top: 6px; border-top: 1px solid #ccc; padding-top: 3px; font-size: 7.5pt; color: #777; display: flex; justify-content: space-between; }
+@media screen and (max-width: 860px) { .sheet { width: auto; min-height: 0; margin: 14px 10px 40px; padding: 16px; } .cols { column-count: 1; } }
+@page { size: A4; margin: 0; }
+@media print {
+  html, body { background: #fff !important; }
+  .bar { display: none; }
+  .sheet { margin: 0; box-shadow: none; width: 210mm; height: 296mm; min-height: 0; overflow: hidden; break-after: auto; }
+  body.print-all .sheet:not(:last-of-type) { break-after: page; }
+  body.print-one .sheet:not(.cur) { display: none !important; }
+  body.print-all .sheet { display: block !important; }
+}
+</style>
+</head>
+<body>
+<div class="bar">
+  <a class="back" href="../index.html">← Toutes les révisions</a>
+  <h1>Fiches <mark>A4</mark> · S3</h1>
+  <p>Une page par matière : formules, définitions et pièges à relire la veille. À imprimer ou à enregistrer en PDF.</p>
+  <div class="tabs" id="tabs"></div>
+  <div class="tools"><button class="btn" id="p1">🖨️ Imprimer cette fiche</button><button class="btn ghost" id="pall">Imprimer toutes les fiches</button><span class="hint">Astuce : « Enregistrer au format PDF » dans la fenêtre d'impression, marges : aucune.</span></div>
+</div>
+<main id="sheets"></main>
+<script src="fiches-s3.js"></script>
+<script>
+(function () {
+  var F = window.FICHES_A4 || [], box = document.getElementById('sheets'), tabs = document.getElementById('tabs');
+  box.innerHTML = F.map(function (f) {
+    return '<article class="sheet" id="f-' + f.id + '" hidden><header><h2>' + f.titre + '</h2><span>' + f.sous + '</span></header><div class="cols">' + f.html + '</div>' +
+      '<footer><span>Fiche de révision · ' + f.titre + '</span><span>Matiere_raccourcis · révisions BUT Info</span></footer></article>';
+  }).join('');
+  tabs.innerHTML = F.map(function (f) { return '<button data-id="' + f.id + '">' + f.court + '</button>'; }).join('');
+  function show(id) {
+    if (!F.some(function (f) { return f.id === id; })) id = F[0].id;
+    document.querySelectorAll('.sheet').forEach(function (s) { var on = s.id === 'f-' + id; s.hidden = !on; s.classList.toggle('cur', on); });
+    tabs.querySelectorAll('button').forEach(function (b) { b.classList.toggle('on', b.dataset.id === id); });
+    history.replaceState(null, '', '#' + id);
+  }
+  tabs.addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) show(b.dataset.id); });
+  function print(all) { document.body.className = all ? 'print-all' : 'print-one'; window.print(); }
+  document.getElementById('p1').onclick = function () { print(false); };
+  document.getElementById('pall').onclick = function () { print(true); };
+  window.addEventListener('hashchange', function () { show(location.hash.slice(1)); });
+  show(location.hash.slice(1));
+})();
+</script>
+</body>
+</html>

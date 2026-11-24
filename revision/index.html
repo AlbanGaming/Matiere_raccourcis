@@ -233,6 +233,41 @@
   .btn:hover { background: var(--r-accent-hover); }
 
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  /* --- Tests de semestre --------------------------------------------------- */
+  .tests-band { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; margin: 0 0 26px; padding: 16px 18px;
+    background: var(--r-surface); border: 1px solid var(--r-border); border-left: 4px solid var(--r-accent); border-radius: var(--r-radius-lg); box-shadow: var(--r-shadow); }
+  .tests-band .tb-txt { flex: 1 1 260px; }
+  .tests-band .tb-txt b { font-family: var(--r-font-display); font-size: 1.1rem; display: block; }
+  .tests-band .tb-txt span { color: var(--r-text-2); font-size: .93rem; }
+  .tests-band .tb-links { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tests-band .tb-links a { text-decoration: none; font: 700 15px var(--r-font-body); padding: 9px 16px; border-radius: var(--r-radius); border: 1.5px solid var(--r-accent); color: var(--r-accent); }
+  .tests-band .tb-links a:hover { background: var(--r-accent); color: var(--r-on-accent); }
+  .tests-band .tb-links a.tb-alt { border-color: var(--r-border-strong); color: var(--r-text); }
+  /* --- Ma progression (lit les résultats des tests de semestre) ----------- */
+  .prog { margin: -10px 0 28px; }
+  .prog[hidden] { display: none; }
+  .prog-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+  .prog-head h2 { margin: 0; font-size: 1.25rem; }
+  .prog-head small { color: var(--r-text-3); }
+  .prog-sems { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 12px; }
+  .prog-sem { background: var(--r-surface); border: 1px solid var(--r-border); border-radius: var(--r-radius); padding: 12px 14px; text-decoration: none; color: inherit; display: block; }
+  .prog-sem:hover { border-color: var(--r-accent); }
+  .prog-sem b { font-family: var(--r-font-display); font-size: 1.05rem; }
+  .prog-sem .ps-big { font: 800 1.6rem/1.1 var(--r-font-display); margin: 4px 0; }
+  .prog-sem .ps-sub { font-size: .85rem; color: var(--r-text-2); }
+  .prog-sem .ps-due { display: inline-block; margin-top: 6px; font: 600 12px var(--r-font-mono); padding: 3px 8px; border-radius: 99px; background: var(--r-orange-soft); color: var(--r-orange); }
+  .prog-mats { background: var(--r-surface); border: 1px solid var(--r-border); border-radius: var(--r-radius-lg); padding: 6px 16px; }
+  .pm { display: grid; grid-template-columns: minmax(170px, 1.3fr) 2fr 52px 205px; gap: 12px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--r-border); font-size: .93rem; }
+  .pm:last-child { border-bottom: 0; }
+  .pm .pm-n small { color: var(--r-text-3); font: 500 11px var(--r-font-mono); margin-left: 4px; }
+  .pm .pm-bar { height: 8px; background: var(--r-surface-3); border-radius: 99px; overflow: hidden; }
+  .pm .pm-bar i { display: block; height: 100%; border-radius: 99px; }
+  .pm .pm-p { font: 700 13px var(--r-font-mono); text-align: right; }
+  .pm .pm-l { display: flex; gap: 10px; justify-content: flex-end; font-size: .82rem; white-space: nowrap; }
+  .pm .pm-l a { color: var(--r-accent); text-decoration: none; }
+  .pm .pm-l a:hover { text-decoration: underline; }
+  .prog-more { background: none; border: 0; color: var(--r-accent); font: 600 13px var(--r-font-body); cursor: pointer; padding: 8px 0; }
+  @media (max-width: 640px) { .pm { grid-template-columns: 1fr 52px; } .pm .pm-bar, .pm .pm-l { grid-column: 1 / -1; } }
 </style>
 <link rel="stylesheet" href="../styles/revision.css">
 </head>
@@ -243,6 +278,18 @@
     <h1>Toutes les <mark>révisions</mark></h1>
     <p class="lead" id="lead">Cherche une notion ou filtre par semestre, domaine ou type d'activité.</p>
   </header>
+
+  <section class="tests-band" aria-label="Tests de semestre">
+    <div class="tb-txt"><b>📝 Tests de semestre</b><span>Un grand test qui mélange toutes les matières d'un semestre. Les questions ratées reviennent les jours suivants.</span></div>
+    <nav class="tb-links">
+      <a href="tests-semestre/test.html#S1">Test S1</a>
+      <a href="tests-semestre/test.html#S2">Test S2</a>
+      <a href="tests-semestre/test.html#S3">Test S3</a>
+      <a href="fiches-a4/index.html" class="tb-alt">Fiches A4 · S3</a>
+    </nav>
+  </section>
+
+  <section class="prog" id="prog" hidden aria-label="Ma progression"></section>
 
   <div class="search" role="search">
     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
@@ -526,5 +573,49 @@
 })();
 </script>
 <script src="../scripts/revision.js"></script>
+<script>
+/* ---- Ma progression : lit les résultats enregistrés par les tests de semestre ---- */
+(function () {
+  var box = document.getElementById('prog'); if (!box) return;
+  var st; try { st = JSON.parse(localStorage.getItem('tests-semestre-v1')); } catch (e) {}
+  if (!st || !st.mat || !Object.keys(st.mat).length) return;
+  var FICHES = { S3: ['coo', 'res', 'proba', 'plsql', 'symfony', 'deveff', 'droit', 'msi', 'cpp'] };
+  var COL = { teal: '--r-teal', blue: '--r-blue', orange: '--r-orange', violet: '--r-violet', pink: '--r-pink', amber: '--r-amber', green: '--r-green', red: '--r-red', cyan: '--r-cyan' };
+  var esc = function (s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
+  var now = Date.now(), sems = Object.keys(st.mat).sort();
+  var cards = sems.map(function (s) {
+    var h = (st.hist && st.hist[s]) || [], due = Object.keys(st.carnet || {}).filter(function (id) { var c = st.carnet[id]; return c.sem === s && c.due <= now; }).length;
+    var last = h.length ? h[h.length - 1].p : null, best = h.length ? Math.max.apply(null, h.map(function (x) { return x.p; })) : null;
+    return '<a class="prog-sem" href="tests-semestre/test.html#' + s + '"><b>Test ' + s + '</b><div class="ps-big">' + (last === null ? '–' : last + ' %') + '</div><div class="ps-sub">' +
+      (h.length ? 'dernier test · record ' + best + ' % · ' + h.length + ' test' + (h.length > 1 ? 's' : '') : 'carnet d\'erreurs seulement') + '</div>' + (due ? '<span class="ps-due">📒 ' + due + ' à revoir</span>' : '') + '</a>';
+  }).join('');
+  var rows = [];
+  sems.forEach(function (s) {
+    Object.keys(st.mat[s]).forEach(function (k) {
+      var a = st.mat[s][k].slice(-3), n = 0, sc = 0; a.forEach(function (x) { n += x.n; sc += x.s; });
+      if (!n) return;
+      var m = (st.meta && st.meta[s] && st.meta[s][k]) || { nom: k };
+      rows.push({ s: s, k: k, m: m, p: Math.round(sc / n * 100), n: n });
+    });
+  });
+  rows.sort(function (a, b) { return a.p - b.p; });
+  var row = function (r) {
+    var c = 'var(' + (COL[r.m.couleur] || '--r-accent') + ')';
+    var links = [];
+    if (r.m.site) links.push('<a href="' + r.m.site + '">Réviser</a>');
+    if (FICHES[r.s] && FICHES[r.s].indexOf(r.k) >= 0) links.push('<a href="fiches-a4/index.html#' + r.k + '">Fiche A4</a>');
+    links.push('<a href="tests-semestre/test.html#' + r.s + '-' + r.k + '">S\'entraîner</a>');
+    return '<div class="pm"><span class="pm-n">' + esc(r.m.nom) + '<small>' + r.s + '</small></span><div class="pm-bar"><i style="width:' + r.p + '%;background:' + c + '"></i></div><span class="pm-p">' + r.p + ' %</span><span class="pm-l">' + links.join('') + '</span></div>';
+  };
+  var LIM = 6;
+  box.innerHTML = '<div class="prog-head"><h2>Ma progression</h2><small>Moyenne de tes 3 derniers passages par matière · enregistrée dans ce navigateur</small></div>' +
+    '<div class="prog-sems">' + cards + '</div>' +
+    '<div class="prog-mats" id="pm-list">' + rows.slice(0, LIM).map(row).join('') + '</div>' +
+    (rows.length > LIM ? '<button class="prog-more" id="pm-more">Voir les ' + rows.length + ' matières ↓</button>' : '');
+  var more = document.getElementById('pm-more');
+  if (more) more.onclick = function () { document.getElementById('pm-list').innerHTML = rows.map(row).join(''); more.remove(); };
+  box.hidden = false;
+})();
+</script>
 </body>
 </html>

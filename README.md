@@ -183,3 +183,15 @@ Dans le CSS de la fiche, utiliser les variables plutôt que des couleurs en dur,
 | Polices | `--r-font-display`, `--r-font-body`, `--r-font-mono` |
 
 Si un élément fixé en bas de la fiche gêne la barre d'outils, la remonter avec `--rv-dock-bottom` dans le `:root` de la fiche (exemple : la fiche Stats, à cause de sa barre de navigation du bas).
+
+## Tests de semestre et fiches A4
+
+`revision/tests-semestre/test.html` : un grand test par semestre (S1, S2, S3) qui mélange toutes les matières.
+
+- Les questions sont dans `data-s1.js`, `data-s2.js`, `data-s3.js`. Le format (QCM, plusieurs réponses, code à trous `[[réponse|variante]]`, calcul, ordre, questions à valeurs aléatoires avec `gen`) est décrit en haut de `engine.js`.
+- **Carnet d'erreurs** : une question ratée revient 1, 3, 7 puis 14 jours plus tard ; réussie 4 fois de suite, elle sort du carnet.
+- Chaque question a un lien « Signaler une erreur » qui ouvre une issue GitHub préremplie.
+- `test.html#S3-msi` ouvre le test S3 limité à une matière.
+- Les résultats sont enregistrés dans le `localStorage` (clé `tests-semestre-v1`) ; l'index des révisions les lit pour afficher « Ma progression ».
+
+`revision/fiches-a4/index.html` : une fiche A4 imprimable par matière du S3 (contenu dans `fiches-s3.js`, une page maximum par fiche). `index.html#msi` ouvre directement une fiche.
