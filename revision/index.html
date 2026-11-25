@@ -198,6 +198,7 @@
     font: 500 12px var(--r-font-mono); color: var(--r-text-3);
   }
   .code { padding: 2px 6px; border-radius: 4px; background: var(--r-surface-2); }
+  .new { margin-left: auto; font: 700 11px var(--r-font-mono); text-transform: uppercase; letter-spacing: .04em; padding: 3px 7px; border-radius: 999px; background: var(--r-mark); color: #151922; }
   .card-title {
     margin: 0;
     font-size: 1.2rem; font-weight: 700; line-height: 1.2;
@@ -451,6 +452,7 @@
         '<span class="dom">' + hl(d.label, ts) + '</span>' +
         '<span class="sem">' + f.semestres.join(' · ') + '</span>' +
         (f.code ? '<span class="code">' + hl(f.code, ts) + '</span>' : '') +
+        (f.nouveau ? '<span class="new">Nouveau</span>' : '') +
       '</div>' +
       '<h3 class="card-title">' + hl(f.titre, ts) + '</h3>' +
       '<p class="desc">' + hl(f.description, ts) + '</p>' +

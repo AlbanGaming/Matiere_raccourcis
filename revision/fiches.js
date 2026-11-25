@@ -5,6 +5,7 @@
 //   domaine   : une clé de DOMAINES ci-dessous
 //   activites : des clés d'ACTIVITES ci-dessous
 //   code      : code du module si connu (facultatif)
+//   nouveau   : true pour afficher le badge « Nouveau » (à retirer de l'ancienne fiche)
 
 window.REVISION_DOMAINES = {
   bdd:        { label: "Base de données",   couleur: "teal" },
@@ -13,7 +14,8 @@ window.REVISION_DOMAINES = {
   maths:      { label: "Maths",             couleur: "violet" },
   droit:      { label: "Droit",             couleur: "pink" },
   gestion:    { label: "Gestion & SI",      couleur: "amber" },
-  conception: { label: "Conception objet",  couleur: "green" }
+  conception: { label: "Conception objet",  couleur: "green" },
+  outils:     { label: "Outils du dev",     couleur: "cyan" }
 };
 
 window.REVISION_ACTIVITES = {
@@ -185,6 +187,16 @@ window.REVISION_FICHES = [
   },
 
   /* ---------------- Semestre 1 ---------------- */
+  {
+    titre: "Git : les bases",
+    href: "revision_git_S1.html",
+    nouveau: true,
+    semestres: ["S1"],
+    domaine: "outils",
+    description: "Cours illustré du premier commit au rebase, simulateur de branches avec missions, conventions de nommage (commits, branches, versions), fiche mémo, flashcards, exercices et quiz.",
+    notions: ["Commit", "Index", "Branches", "Merge", "Conflits", "Rebase", "Push / pull", "Pull request", "reset / revert", "stash", ".gitignore", "Conventional Commits", "Noms de branches", "SemVer"],
+    activites: ["cours", "outils", "fiche", "flash", "exos", "quiz"]
+  },
   {
     titre: "HTML & CSS",
     code: "R1.02",

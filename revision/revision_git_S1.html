@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Git — les bases · Révision</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Figtree:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../styles/tokens.css">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMzhiZGY4Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMGU3NDkwIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTUiIGZpbGw9InVybCgjZykiLz48ZyBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iNC41IiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiPjxwYXRoIGQ9Ik0yMiAxNCBWNTAiLz48cGF0aCBkPSJNNDIgMjIgQzQyIDM0IDIyIDMyIDIyIDQyIi8+PC9nPjxnIGZpbGw9IiNmZmYiPjxjaXJjbGUgY3g9IjIyIiBjeT0iMTQiIHI9IjYiLz48Y2lyY2xlIGN4PSIyMiIgY3k9IjUwIiByPSI2Ii8+PGNpcmNsZSBjeD0iNDIiIGN5PSIyMiIgcj0iNiIvPjwvZz48L3N2Zz4=">
+<script src="../scripts/theme.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; line-height: 1.6; font-size: 16.5px; }
+a { color: var(--r-accent); }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+/* en-tête */
+.hero { padding: 34px 0 22px; background: var(--r-surface); }
+.eyebrow { margin: 0 0 8px; font: 600 13px/1 var(--r-font-mono); letter-spacing: .04em; text-transform: uppercase; color: var(--r-text-3); }
+.hero h1 { margin: 0; font-size: clamp(2.1rem, 5vw, 3.1rem); font-weight: 800; line-height: 1.05; }
+.hero .lead { max-width: 64ch; color: var(--r-text-2); font-size: 1.07rem; margin: 12px 0 14px; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill { display: inline-flex; align-items: center; gap: 6px; font: 600 13px var(--r-font-body); padding: 4px 11px; border-radius: 99px; border: 1px solid var(--r-border); background: var(--r-surface); color: var(--c, var(--r-text-2)); }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--c, var(--r-accent)); display: inline-block; flex: none; }
+.c-base { --c: var(--r-blue); } .c-br { --c: var(--r-green); } .c-team { --c: var(--r-violet); } .c-undo { --c: var(--r-red); } .c-conv { --c: var(--r-amber); }
+/* onglets */
+.tabs { position: sticky; top: 0; z-index: 30; background: color-mix(in srgb, var(--r-surface) 94%, transparent); backdrop-filter: blur(8px); border-top: 1px solid var(--r-border); border-bottom: 1px solid var(--r-border); }
+.tabs .wrap { display: flex; gap: 4px; overflow-x: auto; }
+.tab { padding: 13px 14px; font: 600 15px var(--r-font-body); color: var(--r-text-2); text-decoration: none; border-bottom: 3px solid transparent; white-space: nowrap; }
+.tab:hover { color: var(--r-text); }
+.tab.on { color: var(--r-accent); border-bottom-color: var(--r-accent); }
+.pane { display: none; padding: 30px 0 100px; }
+.pane.on { display: block; }
+/* cours : sommaire + contenu */
+.layout { display: grid; grid-template-columns: 240px 1fr; gap: 44px; align-items: start; }
+.toc { position: sticky; top: 66px; max-height: calc(100vh - 80px); overflow: auto; font-size: .93rem; }
+.toc summary { display: none; }
+.toc .grp-t { margin: 16px 0 6px; font: 600 12px var(--r-font-mono); text-transform: uppercase; letter-spacing: .05em; color: var(--r-text-3); display: flex; align-items: center; gap: 7px; }
+.toc .grp-t:first-child { margin-top: 0; }
+.toc ul { list-style: none; margin: 0; padding: 0 0 0 10px; border-left: 2px solid var(--r-border); }
+.toc li a { display: block; padding: 4px 0 4px 10px; color: var(--r-text-2); text-decoration: none; line-height: 1.35; }
+.toc li a:hover, .toc li a.cur { color: var(--r-accent); }
+main.cours { min-width: 0; }
+.part-h { display: flex; align-items: center; gap: 8px; font: 600 13px var(--r-font-mono); text-transform: uppercase; letter-spacing: .05em; color: var(--r-text-3); margin: 46px 0 -4px; padding-top: 18px; border-top: 1px solid var(--r-border); }
+.part-h:first-child { margin-top: 0; }
+section.s { scroll-margin-top: 70px; }
+section.s h2 { font-size: 1.85rem; margin: 18px 0 12px; }
+section.s h3 { font-size: 1.2rem; margin: 26px 0 8px; }
+section.s p, section.s li { max-width: 76ch; }
+/* figures */
+.fig { margin: 18px 0 22px; border: 1px solid var(--r-border); border-radius: var(--r-radius-lg); overflow: hidden; background: var(--r-surface); }
+.fig .canvas { padding: 18px 12px; background-color: var(--r-surface-2); background-image: radial-gradient(var(--r-border) 1px, transparent 1px); background-size: 18px 18px; overflow-x: auto; display: flex; justify-content: center; gap: 26px; flex-wrap: wrap; }
+.fig .canvas svg { max-width: 100%; height: auto; }
+.fig .sub { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.fig .sub b { font: 600 12px var(--r-font-mono); text-transform: uppercase; letter-spacing: .05em; color: var(--r-text-3); }
+.fig figcaption { padding: 11px 16px; font-size: .92rem; color: var(--r-text-2); border-top: 1px solid var(--r-border); }
+svg text { font-family: var(--r-font-body); }
+/* code */
+pre { background: var(--r-surface-2); border: 1px solid var(--r-border); border-radius: var(--r-radius); padding: 13px 16px; overflow-x: auto; font: 14px/1.6 var(--r-font-mono); margin: 12px 0; }
+pre .c { color: var(--r-text-3); }
+pre .k { color: var(--r-accent); font-weight: 600; }
+pre .out { color: var(--r-green); }
+pre .del { color: var(--r-red); }
+:not(pre) > code { font-family: var(--r-font-mono); font-size: .9em; background: var(--r-surface-2); border: 1px solid var(--r-border); padding: 1px 5px; border-radius: 5px; }
+/* encadrés */
+.box { border-left: 4px solid var(--r-accent); background: var(--r-accent-soft); padding: 12px 16px; border-radius: 0 var(--r-radius) var(--r-radius) 0; margin: 14px 0; }
+.box.warn { border-color: var(--r-red); background: var(--r-red-soft); }
+.box.tip { border-color: var(--r-amber); background: var(--r-amber-soft); }
+.box.ok { border-color: var(--r-green); background: var(--r-green-soft); }
+.box > b:first-child { font-family: var(--r-font-display); }
+table.t { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: .95rem; background: var(--r-surface); }
+table.t th, table.t td { border: 1px solid var(--r-border); padding: 7px 10px; text-align: left; vertical-align: top; }
+table.t th { background: var(--r-surface-2); font-family: var(--r-font-display); }
+table.t td code { white-space: nowrap; }
+.cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.cmp > div { background: var(--r-surface); border: 1px solid var(--r-border); border-radius: var(--r-radius); padding: 12px 16px; }
+.cmp h4 { margin: 0 0 6px; font-family: var(--r-font-display); }
+.steps { counter-reset: st; list-style: none; padding: 0; }
+.steps li { counter-increment: st; position: relative; padding-left: 38px; margin: 10px 0; }
+.steps li::before { content: counter(st); position: absolute; left: 0; top: 0; width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--r-text); display: grid; place-items: center; font: 700 13px var(--r-font-mono); }
+/* simulateur */
+.sim { display: grid; grid-template-columns: 320px 1fr; gap: 20px; align-items: start; }
+.card { background: var(--r-surface); border: 1px solid var(--r-border); border-radius: var(--r-radius-lg); box-shadow: var(--r-shadow); padding: 18px 20px; }
+.missions { display: flex; flex-direction: column; gap: 8px; }
+.mission { text-align: left; border: 1.5px solid var(--r-border); background: var(--r-surface); border-radius: var(--r-radius); padding: 9px 12px; cursor: pointer; font: 600 14px var(--r-font-body); color: var(--r-text); display: flex; gap: 8px; align-items: center; }
+.mission.on { border-color: var(--r-accent); background: var(--r-accent-soft); }
+.mission .ok { margin-left: auto; color: var(--r-green); }
+.goal { font-size: .95rem; }
+.goal .hint { color: var(--r-text-3); font-size: .88rem; }
+.term { background: #11141b; color: #e6e9ef; border-radius: var(--r-radius); font: 14px/1.55 var(--r-font-mono); overflow: hidden; }
+.term .out { height: 160px; overflow-y: auto; padding: 10px 14px; white-space: pre-wrap; }
+.term .out .er { color: #f2807b; } .term .out .ok { color: #5ccb93; } .term .out .cmd { color: #8aa4ff; }
+.term .in { display: flex; align-items: center; gap: 8px; border-top: 1px solid #2a303c; padding: 8px 14px; }
+.term .in span { color: #5ccb93; }
+.term input { flex: 1; background: none; border: 0; color: #fff; font: inherit; outline: none; }
+.graph-box { background-color: var(--r-surface-2); background-image: radial-gradient(var(--r-border) 1px, transparent 1px); background-size: 18px 18px; border: 1px solid var(--r-border); border-radius: var(--r-radius); min-height: 230px; overflow-x: auto; padding: 8px; margin-bottom: 12px; }
+.qbtns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.qbtns button { font: 500 12.5px var(--r-font-mono); border: 1px solid var(--r-border-strong); background: var(--r-surface); color: var(--r-text); border-radius: 6px; padding: 4px 8px; cursor: pointer; }
+.qbtns button:hover { border-color: var(--r-accent); color: var(--r-accent); }
+.btn { display: inline-flex; align-items: center; gap: 7px; border: 1.5px solid var(--r-accent); background: var(--r-accent); color: var(--r-on-accent); font: 700 14px var(--r-font-body); padding: 8px 15px; border-radius: var(--r-radius); cursor: pointer; }
+.btn.ghost { background: transparent; color: var(--r-accent); }
+.btn:disabled { opacity: .45; cursor: default; }
+.cmds code { white-space: nowrap; }
+.success { background: var(--r-green-soft); border-left: 4px solid var(--r-green); padding: 10px 14px; border-radius: 0 8px 8px 0; margin-top: 10px; }
+/* mémo */
+.memo { columns: 2; column-gap: 26px; }
+.memo .card { break-inside: avoid; margin-bottom: 18px; }
+.memo h3 { margin: 0 0 8px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+.memo table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.memo td { padding: 4px 6px; border-bottom: 1px solid var(--r-border); vertical-align: top; }
+.memo td:first-child { font-family: var(--r-font-mono); white-space: nowrap; font-size: .85rem; }
+/* flashcards */
+.fc-filter { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 14px; }
+.chip { border: 1.5px solid var(--r-border-strong); background: var(--r-surface); color: var(--r-text); border-radius: 99px; padding: 6px 13px; font: 600 14px var(--r-font-body); cursor: pointer; }
+.chip.on { background: var(--r-accent-soft); border-color: var(--r-accent); }
+.fc-wrap { perspective: 1200px; max-width: 640px; margin: 0 auto; }
+.fc { position: relative; height: 270px; transform-style: preserve-3d; transition: transform .5s; cursor: pointer; }
+.fc.flip { transform: rotateY(180deg); }
+.fc .face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: var(--r-radius-lg); border: 1.5px solid var(--r-border-strong); background: var(--r-surface); box-shadow: var(--r-shadow); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; }
+.fc .back { transform: rotateY(180deg); background: var(--r-accent-soft); }
+.fc .q { font: 700 1.3rem/1.35 var(--r-font-display); }
+.fc-nav { display: flex; justify-content: center; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+.fc-stat { text-align: center; color: var(--r-text-3); font-size: .9rem; margin-top: 8px; }
+/* exercices & quiz */
+.exo { margin-bottom: 18px; }
+.exo h3 { margin: 4px 0 8px; }
+.exo .tag { font: 600 12px var(--r-font-mono); color: var(--r-text-3); text-transform: uppercase; }
+.sol { display: none; margin-top: 12px; border-top: 1px dashed var(--r-border-strong); padding-top: 10px; }
+.sol.on { display: block; }
+.ord li { display: flex; align-items: center; gap: 8px; background: var(--r-surface-2); border: 1px solid var(--r-border); border-radius: 8px; padding: 6px 10px; margin: 6px 0; font-family: var(--r-font-mono); font-size: .92rem; }
+.ord li .mv { margin-left: auto; display: flex; gap: 4px; }
+.ord li .mv button { border: 1px solid var(--r-border-strong); background: var(--r-surface); color: var(--r-text); border-radius: 5px; width: 28px; height: 26px; cursor: pointer; }
+.ord li.good { border-color: var(--r-green); background: var(--r-green-soft); } .ord li.bad { border-color: var(--r-red); background: var(--r-red-soft); }
+.fillc input { font: 600 14px var(--r-font-mono); border: 1.5px dashed var(--r-accent); border-radius: 5px; padding: 1px 6px; background: var(--r-surface); color: var(--r-text); }
+.fillc input.good { border: 1.5px solid var(--r-green); background: var(--r-green-soft); } .fillc input.bad { border: 1.5px solid var(--r-red); background: var(--r-red-soft); }
+.opt { display: block; width: 100%; text-align: left; background: var(--r-surface); border: 1.5px solid var(--r-border); border-radius: var(--r-radius); padding: 10px 14px; margin: 7px 0; cursor: pointer; font: 500 15.5px var(--r-font-body); color: var(--r-text); }
+.opt:hover:not(:disabled) { border-color: var(--r-accent); }
+.opt.right { border-color: var(--r-green); background: var(--r-green-soft); } .opt.wrong { border-color: var(--r-red); background: var(--r-red-soft); }
+.qhead { display: flex; justify-content: space-between; color: var(--r-text-3); font: 600 13px var(--r-font-mono); margin-bottom: 8px; }
+.qbar { height: 6px; background: var(--r-surface-3); border-radius: 99px; overflow: hidden; margin-bottom: 14px; } .qbar i { display: block; height: 100%; background: var(--r-accent); }
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; gap: 0; }
+  .toc { position: static; max-height: none; border: 1px solid var(--r-border); border-radius: var(--r-radius); padding: 10px 14px; margin-bottom: 18px; background: var(--r-surface); }
+  .toc summary { display: block; cursor: pointer; font-weight: 700; }
+  .sim { grid-template-columns: 1fr; } .memo { columns: 1; } .cmp { grid-template-columns: 1fr; }
+}
+</style>
+<link rel="stylesheet" href="../styles/revision.css">
+</head>
+<body>
+<header class="hero"><div class="wrap">
+  <p class="eyebrow">BUT Informatique · S1 · Outils du développeur</p>
+  <h1>Git : les bases</h1>
+  <p class="lead">Cours illustré, simulateur de branches, fiche mémo, flashcards, exercices et quiz. Du premier <code>git init</code> au rebase, avec les conventions de nommage à respecter en équipe.</p>
+  <div class="legend"><span class="pill c-base"><span class="dot"></span>Les bases</span><span class="pill c-br"><span class="dot"></span>Branches</span><span class="pill c-team"><span class="dot"></span>Travailler à plusieurs</span><span class="pill c-undo"><span class="dot"></span>Annuler</span><span class="pill c-conv"><span class="dot"></span>Conventions</span></div>
+</div></header>
+<nav class="tabs" aria-label="Outils de révision"><div class="wrap">
+  <a class="tab" href="#cours" data-tab="cours">Cours</a><a class="tab" href="#simulateur" data-tab="simulateur">Simulateur</a><a class="tab" href="#memo" data-tab="memo">Fiche mémo</a><a class="tab" href="#flashcards" data-tab="flashcards">Flashcards</a><a class="tab" href="#exercices" data-tab="exercices">Exercices</a><a class="tab" href="#quiz" data-tab="quiz">Quiz</a>
+</div></nav>
+
+<!-- ======================= COURS ======================= -->
+<div class="pane" id="pane-cours" data-pane="cours"><div class="wrap layout">
+<details class="toc" open><summary>Sommaire du cours</summary><nav aria-label="Sommaire">
+  <p class="grp-t c-base"><span class="dot"></span>Les bases</p><ul><li><a href="#pourquoi">Pourquoi Git ?</a></li><li><a href="#config">Installer et configurer</a></li><li><a href="#depot">Créer ou récupérer un dépôt</a></li><li><a href="#zones">Les trois zones</a></li><li><a href="#etats">Le cycle de vie d'un fichier</a></li><li><a href="#commit">Le commit</a></li><li><a href="#consulter">Consulter l'historique</a></li><li><a href="#ignore">Ignorer des fichiers</a></li></ul>
+  <p class="grp-t c-br"><span class="dot"></span>Branches</p><ul><li><a href="#branches">Une branche, c'est un pointeur</a></li><li><a href="#switch">Créer et changer de branche</a></li><li><a href="#merge">Fusionner (merge)</a></li><li><a href="#conflits">Résoudre un conflit</a></li></ul>
+  <p class="grp-t c-team"><span class="dot"></span>Travailler à plusieurs</p><ul><li><a href="#remote">Dépôts distants</a></li><li><a href="#rebase">Le rebase</a></li><li><a href="#workflow">Le workflow GitHub / GitLab</a></li></ul>
+  <p class="grp-t c-undo"><span class="dot"></span>Annuler</p><ul><li><a href="#annuler">Annuler sans paniquer</a></li><li><a href="#reset">reset, revert, restore</a></li><li><a href="#stash">Mettre de côté : stash</a></li></ul>
+  <p class="grp-t c-conv"><span class="dot"></span>Conventions</p><ul><li><a href="#conv-commit">Messages de commit</a></li><li><a href="#conv-branches">Noms de branches</a></li><li><a href="#conv-autres">Tags, dépôts, fichiers</a></li></ul>
+</nav></details>
+<main class="cours">
+
+<div class="part-h c-base"><span class="dot"></span>Les bases</div>
+<section class="s" id="pourquoi"><h2>Pourquoi Git ?</h2>
+<p>Git est un <b>gestionnaire de versions</b> : il enregistre l'historique d'un projet sous forme d'instantanés (les <b>commits</b>). On peut revenir à n'importe quelle version, voir qui a changé quoi, et travailler à plusieurs sur le même code sans s'écraser.</p>
+<p>Git est <b>distribué</b> : chaque développeur a une copie complète du dépôt et de son historique sur sa machine. On travaille hors ligne, et on synchronise avec un dépôt distant quand on veut.</p>
+<div class="fig" data-fig="distribue"><div class="canvas"></div><figcaption>Chaque poste a son dépôt complet. Le dépôt distant (sur GitHub, GitLab…) sert de point d'échange : on y envoie (<code>push</code>) et on y récupère (<code>pull</code>).</figcaption></div>
+<div class="box"><b>Git ≠ GitHub.</b> Git est le logiciel, installé sur ta machine. GitHub et GitLab sont des sites qui hébergent des dépôts Git et ajoutent des outils (pull requests, issues, intégration continue).</div>
+</section>
+
+<section class="s" id="config"><h2>Installer et configurer</h2>
+<p>Une fois Git installé, on se présente une fois pour toutes : ce nom et cet e-mail sont écrits dans chaque commit.</p>
+<pre><span class="k">git</span> --version
+<span class="k">git</span> config --global user.name "Prénom Nom"
+<span class="k">git</span> config --global user.email "prenom.nom@exemple.fr"
+<span class="k">git</span> config --global init.defaultBranch main   <span class="c"># branche par défaut : main</span>
+<span class="k">git</span> config --global core.editor "code --wait"  <span class="c"># éditeur pour les messages</span>
+<span class="k">git</span> config --list                              <span class="c"># vérifier</span></pre>
+<div class="box tip"><b>--global</b> s'applique à tous tes dépôts (fichier <code>~/.gitconfig</code>). Sans l'option, le réglage ne vaut que pour le dépôt courant.</div>
+</section>
+
+<section class="s" id="depot"><h2>Créer ou récupérer un dépôt</h2>
+<div class="cmp"><div><h4>Partir de zéro</h4><pre style="margin:0"><span class="k">cd</span> mon-projet
+<span class="k">git</span> init</pre><p>Crée un dossier caché <code>.git</code> : c'est lui, le dépôt. Le supprimer efface tout l'historique.</p></div>
+<div><h4>Copier un dépôt existant</h4><pre style="margin:0"><span class="k">git</span> clone https://github.com/user/projet.git</pre><p>Télécharge le projet <b>et tout son historique</b>, et mémorise l'adresse sous le nom <code>origin</code>.</p></div></div>
+</section>
+
+<section class="s" id="zones"><h2>Les trois zones</h2>
+<p>C'est LE schéma à comprendre. Un changement passe par trois endroits avant d'être enregistré, puis un quatrième pour être partagé.</p>
+<div class="fig" data-fig="zones"><div class="canvas"></div><figcaption><b>Répertoire de travail</b> : tes fichiers tels que tu les modifies. <b>Index</b> (staging area) : ce que tu as choisi de mettre dans le prochain commit. <b>Dépôt local</b> : l'historique des commits. <b>Dépôt distant</b> : la copie partagée.</figcaption></div>
+<pre><span class="k">git</span> add index.html          <span class="c"># un fichier vers l'index</span>
+<span class="k">git</span> add .                   <span class="c"># tous les changements du dossier</span>
+<span class="k">git</span> commit -m "feat: ajoute la page d'accueil"
+<span class="k">git</span> push                    <span class="c"># envoie les commits sur le distant</span></pre>
+<div class="box"><b>Pourquoi l'index ?</b> Pour choisir. Tu as modifié 5 fichiers mais seulement 2 concernent la correction d'un bug : tu n'ajoutes que ces 2-là, tu commits, puis tu fais un 2<sup>e</sup> commit pour le reste. Un commit = une modification cohérente.</div>
+</section>
+
+<section class="s" id="etats"><h2>Le cycle de vie d'un fichier</h2>
+<div class="fig" data-fig="etats"><div class="canvas"></div><figcaption>Un fichier nouveau est <b>non suivi</b> (untracked) tant qu'on ne l'a jamais ajouté. Ensuite il est <b>non modifié</b>, <b>modifié</b> ou <b>indexé</b> (staged).</figcaption></div>
+<pre><span class="k">$ git</span> status
+<span class="out">On branch main
+Changes to be committed:        ← dans l'index, partira au prochain commit
+        modified:   style.css
+Changes not staged for commit:  ← modifié mais pas encore ajouté
+        modified:   index.html
+Untracked files:                ← jamais suivi par Git
+        notes.txt</span></pre>
+</section>
+
+<section class="s" id="commit"><h2>Le commit</h2>
+<p>Un commit est un <b>instantané complet</b> du projet à un moment donné, avec un auteur, une date, un message et un lien vers son ou ses <b>parents</b>. Il est identifié par un <b>hash</b> (SHA-1) : <code>a3f9c2e…</code>, dont on utilise souvent les 7 premiers caractères.</p>
+<div class="fig" data-fig="chaine"><div class="canvas"></div><figcaption>Chaque commit pointe vers son parent : l'historique est une chaîne. <code>main</code> désigne le dernier commit de la branche, <code>HEAD</code> indique où tu te trouves.</figcaption></div>
+<div class="box tip"><b>Commits petits et fréquents.</b> Un commit doit pouvoir se résumer en une phrase. « Plein de trucs » n'est pas un message de commit (voir <a href="#conv-commit">les conventions</a>).</div>
+</section>
+
+<section class="s" id="consulter"><h2>Consulter l'historique</h2>
+<table class="t"><tr><th>Commande</th><th>Ce qu'elle montre</th></tr>
+<tr><td><code>git status</code></td><td>L'état des fichiers (modifiés, indexés, non suivis) et la branche courante</td></tr>
+<tr><td><code>git log</code></td><td>L'historique détaillé des commits</td></tr>
+<tr><td><code>git log --oneline --graph --all</code></td><td>L'historique compact, avec le dessin des branches</td></tr>
+<tr><td><code>git diff</code></td><td>Les modifications <b>pas encore indexées</b></td></tr>
+<tr><td><code>git diff --staged</code></td><td>Les modifications <b>indexées</b> (ce que contiendra le commit)</td></tr>
+<tr><td><code>git show a3f9c2e</code></td><td>Le détail d'un commit</td></tr>
+<tr><td><code>git blame fichier</code></td><td>Qui a modifié chaque ligne, et dans quel commit</td></tr></table>
+<pre><span class="k">$ git</span> log --oneline --graph --all
+<span class="out">* 9d1e4b7 (HEAD -> main) fix: corrige le menu mobile
+*   5c2a8f0 Merge branch 'feature/connexion'
+|\
+| * 71be3d2 (feature/connexion) feat: formulaire de connexion
+|/
+* 2f0c9aa feat: page d'accueil</span></pre>
+</section>
+
+<section class="s" id="ignore"><h2>Ignorer des fichiers : .gitignore</h2>
+<p>Certains fichiers ne doivent <b>jamais</b> être versionnés : dépendances téléchargées, fichiers compilés, mots de passe, réglages de ton IDE.</p>
+<pre><span class="c"># .gitignore</span>
+node_modules/        <span class="c"># un dossier entier</span>
+vendor/
+*.log                <span class="c"># tous les fichiers .log</span>
+.env                 <span class="c"># secrets !</span>
+.env.local
+.idea/
+.vscode/
+build/
+!build/README.md     <span class="c"># exception : celui-là est suivi</span></pre>
+<div class="box warn"><b>Trop tard ?</b> Un fichier déjà commité reste suivi même s'il est ajouté au .gitignore. Il faut d'abord le retirer de l'index : <code>git rm --cached .env</code>, puis commiter. Et si c'était un mot de passe, change-le : il est dans l'historique.</div>
+</section>
+
+<div class="part-h c-br"><span class="dot"></span>Branches</div>
+<section class="s" id="branches"><h2>Une branche, c'est un pointeur</h2>
+<p>Une branche n'est pas une copie du projet : c'est une simple <b>étiquette mobile</b> qui pointe vers un commit. Quand tu commits, l'étiquette de la branche courante avance toute seule. <code>HEAD</code> est l'étiquette spéciale qui indique la branche sur laquelle tu es.</p>
+<div class="fig" data-fig="pointeurs"><div class="canvas"></div><figcaption>Créer une branche coûte presque rien : Git ajoute juste une étiquette. Les deux branches pointent d'abord vers le même commit.</figcaption></div>
+<p>On crée une branche pour <b>chaque fonctionnalité ou correction</b> : on travaille dessus sans casser <code>main</code>, puis on la fusionne quand c'est prêt.</p>
+</section>
+
+<section class="s" id="switch"><h2>Créer et changer de branche</h2>
+<pre><span class="k">git</span> branch                       <span class="c"># liste (* = branche courante)</span>
+<span class="k">git</span> branch feature/connexion     <span class="c"># crée (sans y aller)</span>
+<span class="k">git</span> switch feature/connexion     <span class="c"># y aller  (ancien : git checkout)</span>
+<span class="k">git</span> switch -c feature/connexion  <span class="c"># créer ET y aller (ancien : git checkout -b)</span>
+<span class="k">git</span> branch -d feature/connexion  <span class="c"># supprimer (si fusionnée)</span></pre>
+<div class="fig" data-fig="divergence"><div class="canvas"></div><figcaption>On a commité C3 sur <code>feature</code> puis C4 sur <code>main</code> : les deux branches ont <b>divergé</b> à partir de C2.</figcaption></div>
+<div class="box tip"><b>Avant de changer de branche</b>, commite ou mets de côté (<a href="#stash">stash</a>) tes modifications : sinon Git refuse, ou les emporte avec toi.</div>
+</section>
+
+<section class="s" id="merge"><h2>Fusionner (merge)</h2>
+<p>On se place sur la branche qui <b>reçoit</b> les changements, puis on fusionne l'autre :</p>
+<pre><span class="k">git</span> switch main
+<span class="k">git</span> merge feature/connexion</pre>
+<h3>Cas 1 : avance rapide (fast-forward)</h3>
+<p><code>main</code> n'a pas bougé depuis la création de la branche : Git avance simplement l'étiquette. Aucun nouveau commit.</p>
+<div class="fig" data-fig="ff"><div class="canvas"></div><figcaption>Fast-forward : <code>main</code> rattrape <code>feature</code>. L'historique reste une ligne droite.</figcaption></div>
+<h3>Cas 2 : commit de fusion (merge à trois points)</h3>
+<p>Les deux branches ont avancé : Git crée un <b>commit de fusion</b> (ici M) qui a <b>deux parents</b>.</p>
+<div class="fig" data-fig="merge3"><div class="canvas"></div><figcaption>Git compare l'ancêtre commun (C2) et les deux bouts (C3 et C4) pour construire M.</figcaption></div>
+</section>
+
+<section class="s" id="conflits"><h2>Résoudre un conflit</h2>
+<p>Si les deux branches ont modifié <b>les mêmes lignes</b> d'un fichier, Git ne peut pas choisir : il s'arrête et marque le conflit dans le fichier.</p>
+<pre><span class="out">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</span>
+&lt;h1&gt;Bienvenue sur le site&lt;/h1&gt;
+<span class="out">=======</span>
+&lt;h1&gt;Bonjour et bienvenue&lt;/h1&gt;
+<span class="out">&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature/accueil</span></pre>
+<p>Au-dessus de <code>=======</code> : ta version (HEAD). En dessous : celle de la branche fusionnée.</p>
+<ol class="steps"><li><code>git status</code> liste les fichiers en conflit (« both modified »).</li><li>Ouvre chaque fichier, garde la bonne version (ou un mélange) et <b>supprime les marqueurs</b>.</li><li><code>git add fichier</code> pour signaler que le conflit est résolu.</li><li><code>git commit</code> pour terminer la fusion (ou <code>git rebase --continue</code> pendant un rebase).</li></ol>
+<div class="box tip"><b>Panique ?</b> <code>git merge --abort</code> annule la fusion en cours et revient à l'état d'avant.</div>
+</section>
+
+<div class="part-h c-team"><span class="dot"></span>Travailler à plusieurs</div>
+<section class="s" id="remote"><h2>Dépôts distants</h2>
+<pre><span class="k">git</span> remote -v                                  <span class="c"># liste des distants</span>
+<span class="k">git</span> remote add origin https://github.com/user/projet.git
+<span class="k">git</span> push -u origin main     <span class="c"># 1er envoi : -u lie main à origin/main</span>
+<span class="k">git</span> push                    <span class="c"># ensuite, simplement</span>
+<span class="k">git</span> fetch                   <span class="c"># récupère sans toucher à tes fichiers</span>
+<span class="k">git</span> pull                    <span class="c"># fetch + merge (ou rebase avec --rebase)</span></pre>
+<div class="fig" data-fig="fetch"><div class="canvas"></div><figcaption>Après un <code>fetch</code>, Git connaît <code>origin/main</code> (l'état du distant) sans modifier ta branche <code>main</code>. Le <code>pull</code> fusionne ensuite <code>origin/main</code> dans <code>main</code>.</figcaption></div>
+<div class="box warn"><b>« rejected (fetch first) »</b> au moment du push : quelqu'un a poussé avant toi. Fais <code>git pull</code>, règle les éventuels conflits, puis <code>git push</code>. Ne force jamais avec <code>--force</code> sur une branche partagée.</div>
+</section>
+
+<section class="s" id="rebase"><h2>Le rebase</h2>
+<p>Le rebase est l'autre façon d'intégrer des changements. Au lieu de créer un commit de fusion, il <b>rejoue tes commits</b> un par un au-dessus de l'autre branche, comme si tu avais commencé ton travail plus tard.</p>
+<pre><span class="k">git</span> switch feature
+<span class="k">git</span> rebase main</pre>
+<div class="fig" data-fig="rebase"><div class="canvas"></div><figcaption>Les commits C3 et C5 de <code>feature</code> sont recopiés en C3′ et C5′ au-dessus de C4. Les originaux (en pointillés) ne sont plus utilisés. Ce sont de <b>nouveaux commits</b>, avec de nouveaux hashs.</figcaption></div>
+<p>Ensuite, sur <code>main</code>, un <code>git merge feature</code> sera une simple avance rapide : historique parfaitement linéaire.</p>
+<div class="cmp"><div><h4>merge</h4><ul><li>Ne réécrit rien, sûr sur une branche partagée</li><li>Garde la trace exacte de ce qui s'est passé</li><li>Historique avec des « bulles » de fusion</li></ul></div><div><h4>rebase</h4><ul><li>Historique linéaire, plus lisible</li><li>Réécrit les commits (nouveaux hashs)</li><li>Conflits à régler commit par commit (<code>git rebase --continue</code>)</li></ul></div></div>
+<div class="box warn"><b>Règle d'or :</b> ne rebase jamais des commits <b>déjà poussés et utilisés par d'autres</b>. Tu réécrirais une histoire que tes coéquipiers ont déjà : leurs dépôts ne colleraient plus au tien. Rebase seulement ton travail local, avant de le partager.</div>
+<h3>Pratique : pull --rebase</h3>
+<p><code>git pull --rebase</code> récupère le travail des autres puis replace tes commits locaux par-dessus, au lieu de créer un commit de fusion inutile à chaque pull.</p>
+<h3>Le rebase interactif</h3>
+<p><code>git rebase -i HEAD~3</code> ouvre la liste des 3 derniers commits : on peut les réordonner, renommer (<code>reword</code>), fusionner (<code>squash</code>) ou supprimer (<code>drop</code>). Pratique pour nettoyer son travail avant une pull request, toujours sur des commits pas encore partagés.</p>
+<pre>pick   2f0c9aa feat: formulaire de connexion
+<span class="k">squash</span> 71be3d2 wip
+<span class="k">squash</span> 9d1e4b7 oubli d'un fichier
+<span class="c"># → un seul commit propre « feat: formulaire de connexion »</span></pre>
+</section>
+
+<section class="s" id="workflow"><h2>Le workflow GitHub / GitLab</h2>
+<div class="fig" data-fig="workflow"><div class="canvas"></div><figcaption>Une branche par tâche, une pull request (GitHub) ou merge request (GitLab) pour la faire relire, puis fusion dans <code>main</code>.</figcaption></div>
+<ol class="steps"><li><code>git switch main</code> puis <code>git pull</code> : partir d'une base à jour.</li><li><code>git switch -c feature/42-connexion</code> : une branche pour la tâche.</li><li>Commits réguliers, avec des messages clairs.</li><li><code>git push -u origin feature/42-connexion</code></li><li>Ouvrir une <b>pull request / merge request</b>, faire relire, corriger.</li><li>Fusion dans <code>main</code>, puis suppression de la branche.</li></ol>
+<div class="box"><b>Fork :</b> copie d'un dépôt sous ton propre compte, quand tu n'as pas le droit d'écrire sur l'original (projet open source). Tu proposes ensuite tes changements par pull request.</div>
+</section>
+
+<div class="part-h c-undo"><span class="dot"></span>Annuler</div>
+<section class="s" id="annuler"><h2>Annuler sans paniquer</h2>
+<table class="t"><tr><th>Je veux…</th><th>Commande</th></tr>
+<tr><td>Annuler mes modifs d'un fichier (pas encore ajouté)</td><td><code>git restore fichier</code></td></tr>
+<tr><td>Retirer un fichier de l'index (garder les modifs)</td><td><code>git restore --staged fichier</code></td></tr>
+<tr><td>Corriger le message ou ajouter un oubli au <b>dernier</b> commit</td><td><code>git add oubli.txt</code> puis <code>git commit --amend</code></td></tr>
+<tr><td>Annuler un commit <b>déjà poussé</b></td><td><code>git revert a3f9c2e</code></td></tr>
+<tr><td>Défaire les derniers commits <b>locaux</b></td><td><code>git reset</code> (voir ci-dessous)</td></tr>
+<tr><td>Annuler une fusion ou un rebase en cours</td><td><code>git merge --abort</code> · <code>git rebase --abort</code></td></tr>
+<tr><td>Retrouver un commit « perdu »</td><td><code>git reflog</code> (journal de tous les déplacements de HEAD)</td></tr></table>
+<div class="box warn"><b>Attention :</b> <code>git restore fichier</code> et <code>git reset --hard</code> effacent des modifications non commitées. Celles-là, Git ne peut pas les récupérer.</div>
+</section>
+
+<section class="s" id="reset"><h2>reset, revert, restore</h2>
+<h3>revert : annuler en ajoutant</h3>
+<p><code>git revert</code> crée un <b>nouveau commit</b> qui fait l'inverse d'un ancien. L'historique n'est pas réécrit : c'est la bonne méthode sur une branche partagée.</p>
+<div class="fig" data-fig="revert"><div class="canvas"></div><figcaption>C3 introduisait un bug : on ne l'efface pas, on ajoute R qui annule ses changements.</figcaption></div>
+<h3>reset : reculer la branche</h3>
+<p><code>git reset HEAD~1</code> fait reculer l'étiquette de la branche d'un commit. Les trois options disent ce qu'on garde :</p>
+<div class="fig" data-fig="resetmodes"><div class="canvas"></div><figcaption>Le commit annulé disparaît de la branche dans les trois cas ; seul le sort de ses modifications change.</figcaption></div>
+<table class="t"><tr><th>Option</th><th>Index</th><th>Répertoire de travail</th><th>Usage</th></tr>
+<tr><td><code>--soft</code></td><td>gardé (modifs indexées)</td><td>gardé</td><td>refaire le commit autrement</td></tr>
+<tr><td><code>--mixed</code> (défaut)</td><td>vidé</td><td>gardé</td><td>re-choisir ce qu'on indexe</td></tr>
+<tr><td><code>--hard</code></td><td>vidé</td><td><b>effacé</b></td><td>tout jeter (dangereux)</td></tr></table>
+<div class="box warn"><b>Comme le rebase :</b> <code>reset</code> réécrit l'historique. Seulement sur des commits pas encore poussés.</div>
+</section>
+
+<section class="s" id="stash"><h2>Mettre de côté : stash</h2>
+<p>Tu dois changer de branche en urgence mais ton travail n'est pas prêt à être commité :</p>
+<pre><span class="k">git</span> stash            <span class="c"># range les modifs en cours, le dossier redevient propre</span>
+<span class="k">git</span> switch main      <span class="c"># … correction urgente …</span>
+<span class="k">git</span> switch feature
+<span class="k">git</span> stash pop        <span class="c"># ressort les modifs</span>
+<span class="k">git</span> stash list       <span class="c"># voir ce qui est rangé</span></pre>
+</section>
+
+<div class="part-h c-conv"><span class="dot"></span>Conventions de nommage</div>
+<section class="s" id="conv-commit"><h2>Messages de commit</h2>
+<p>Un bon message permet de comprendre l'historique sans ouvrir le code. La convention la plus répandue est <b>Conventional Commits</b> :</p>
+<pre><span class="k">type</span>(portée optionnelle): description courte à l'impératif
+
+Corps facultatif : le pourquoi, pas le comment.
+
+Refs #42</pre>
+<table class="t"><tr><th>Type</th><th>Quand l'utiliser</th><th>Exemple</th></tr>
+<tr><td><code>feat</code></td><td>nouvelle fonctionnalité</td><td><code>feat: ajoute la connexion par e-mail</code></td></tr>
+<tr><td><code>fix</code></td><td>correction de bug</td><td><code>fix(panier): corrige le total avec remise</code></td></tr>
+<tr><td><code>docs</code></td><td>documentation uniquement</td><td><code>docs: complète le README</code></td></tr>
+<tr><td><code>style</code></td><td>mise en forme du code, sans changer son comportement</td><td><code>style: indentation du contrôleur</code></td></tr>
+<tr><td><code>refactor</code></td><td>restructuration sans nouvelle fonction ni correction</td><td><code>refactor: extrait la validation dans un service</code></td></tr>
+<tr><td><code>test</code></td><td>ajout ou correction de tests</td><td><code>test: couvre le calcul de TVA</code></td></tr>
+<tr><td><code>chore</code></td><td>maintenance (dépendances, config, build)</td><td><code>chore: met à jour composer.lock</code></td></tr>
+<tr><td><code>perf</code></td><td>amélioration de performance</td><td><code>perf: met en cache la liste des produits</code></td></tr></table>
+<div class="cmp"><div><h4>✅ À faire</h4><ul><li>Verbe à l'<b>impératif présent</b> (en français : « ajoute », « corrige »)</li><li>Première ligne courte : <b>50 caractères</b> environ, 72 maximum</li><li>Pas de point final sur la première ligne</li><li>Une ligne vide avant le corps</li><li>Une seule modification logique par commit</li></ul></div>
+<div><h4>❌ À éviter</h4><ul><li><code>update</code>, <code>modif</code>, <code>fix</code> tout seul</li><li><code>wip</code>, <code>test</code>, <code>aaa</code>, <code>ça marche enfin</code></li><li>Un message qui décrit le code au lieu du but</li><li>Mélanger français et anglais dans un même projet</li></ul></div></div>
+<div class="box tip"><b>Choisir une langue</b> et s'y tenir : l'anglais est la norme en entreprise et en open source, le français est accepté en projet scolaire. L'important est que toute l'équipe fasse pareil.</div>
+</section>
+
+<section class="s" id="conv-branches"><h2>Noms de branches</h2>
+<p>Un nom de branche dit <b>ce qu'on fait</b> et <b>pour quoi</b>. Format courant : <code>type/numero-description-courte</code>, en minuscules et avec des tirets (kebab-case).</p>
+<table class="t"><tr><th>Préfixe</th><th>Usage</th><th>Exemple</th></tr>
+<tr><td><code>main</code></td><td>branche principale, toujours stable</td><td><code>main</code> (anciennement <code>master</code>)</td></tr>
+<tr><td><code>develop</code></td><td>intégration en cours (Git Flow)</td><td><code>develop</code></td></tr>
+<tr><td><code>feature/</code> ou <code>feat/</code></td><td>nouvelle fonctionnalité</td><td><code>feature/42-connexion-google</code></td></tr>
+<tr><td><code>fix/</code> ou <code>bugfix/</code></td><td>correction de bug</td><td><code>fix/57-total-panier</code></td></tr>
+<tr><td><code>hotfix/</code></td><td>correction urgente en production</td><td><code>hotfix/faille-xss-recherche</code></td></tr>
+<tr><td><code>release/</code></td><td>préparation d'une version</td><td><code>release/1.2.0</code></td></tr>
+<tr><td><code>docs/</code>, <code>refactor/</code>, <code>test/</code></td><td>comme les types de commit</td><td><code>docs/guide-installation</code></td></tr></table>
+<div class="cmp"><div><h4>✅ Bon</h4><pre style="margin:0">feature/12-page-profil
+fix/mot-de-passe-oublie
+hotfix/1.2.1</pre></div><div><h4>❌ Mauvais</h4><pre style="margin:0">alban
+test2
+Ma Branche
+nouvelle_feature_FINAL</pre></div></div>
+<div class="box"><b>Pourquoi le numéro ?</b> Il relie la branche à l'issue ou au ticket (GitHub, GitLab, Jira). Sur GitHub, écrire <code>Closes #12</code> dans la pull request ferme l'issue automatiquement à la fusion.</div>
+</section>
+
+<section class="s" id="conv-autres"><h2>Tags, dépôts, fichiers</h2>
+<h3>Tags de version : SemVer</h3>
+<p>Un tag marque une version précise. On suit le <b>versionnement sémantique</b> <code>vMAJEUR.MINEUR.CORRECTIF</code> :</p>
+<table class="t"><tr><th>On incrémente…</th><th>Quand</th><th>Exemple</th></tr>
+<tr><td>MAJEUR</td><td>changement incompatible avec l'existant</td><td><code>v1.4.2 → v2.0.0</code></td></tr>
+<tr><td>MINEUR</td><td>nouvelle fonctionnalité compatible</td><td><code>v1.4.2 → v1.5.0</code></td></tr>
+<tr><td>CORRECTIF</td><td>correction de bug compatible</td><td><code>v1.4.2 → v1.4.3</code></td></tr></table>
+<pre><span class="k">git</span> tag -a v1.0.0 -m "Première version publique"
+<span class="k">git</span> push origin v1.0.0     <span class="c"># les tags ne partent pas avec un push simple</span></pre>
+<h3>Noms de dépôts et de fichiers</h3>
+<ul><li>Dépôt : en minuscules, mots séparés par des tirets : <code>gestion-stock</code>, <code>portfolio-web</code> (pas <code>Projet Final V2</code>)</li>
+<li>Pas d'espaces ni d'accents dans les noms de fichiers versionnés : <code>page-contact.html</code></li>
+<li>Toujours un <code>README.md</code> (présentation, installation, utilisation) et un <code>.gitignore</code></li></ul>
+</section>
+</main></div></div>
+
+<!-- ======================= SIMULATEUR ======================= -->
+<div class="pane" id="pane-simulateur" data-pane="simulateur"><div class="wrap">
+<h2 style="margin-top:0">Simulateur de branches</h2>
+<p class="cmds" style="color:var(--r-text-2);max-width:72ch">Tape de vraies commandes Git et regarde le graphe se dessiner. Choisis une mission, ou expérimente librement. Commandes acceptées : <code>git commit</code>, <code>git branch &lt;nom&gt;</code>, <code>git switch &lt;nom&gt;</code> (ou <code>checkout</code>), <code>git switch -c &lt;nom&gt;</code> (ou <code>checkout -b</code>), <code>git merge &lt;nom&gt;</code>, <code>git rebase &lt;nom&gt;</code>, <code>git reset --hard HEAD~1</code>, <code>git revert HEAD</code>, <code>git log</code>, <code>git branch -d &lt;nom&gt;</code>, <code>clear</code>.</p>
+<div class="sim">
+  <div class="card"><b style="font-family:var(--r-font-display)">Missions</b><div class="missions" id="missions" style="margin-top:10px"></div></div>
+  <div>
+    <div class="card goal" id="goal"></div>
+    <div class="graph-box" id="sgraph" style="margin-top:14px"></div>
+    <div class="term"><div class="out" id="tout"></div><div class="in"><span>$</span><input id="tin" autocomplete="off" spellcheck="false" placeholder="git commit"></div></div>
+    <div class="qbtns" id="qbtns"></div>
+  </div>
+</div>
+</div></div>
+
+<!-- ======================= MÉMO ======================= -->
+<div class="pane" id="pane-memo" data-pane="memo"><div class="wrap"><h2 style="margin-top:0">Fiche mémo</h2><div class="memo" id="memo"></div></div></div>
+<!-- ======================= FLASHCARDS ======================= -->
+<div class="pane" id="pane-flashcards" data-pane="flashcards"><div class="wrap">
+  <h2 style="margin-top:0;text-align:center">Flashcards</h2>
+  <div class="fc-filter" id="fcf"></div>
+  <div class="fc-wrap"><div class="fc" id="fc"><div class="face"><div class="q" id="fcq"></div><p style="color:var(--r-text-3);font-size:.88rem;margin-top:14px">Clique ou Espace pour retourner</p></div><div class="face back"><div id="fca"></div></div></div></div>
+  <div class="fc-nav"><button class="btn ghost" id="fcp">← Précédente</button><button class="btn ghost" id="fcs">🔀 Mélanger</button><button class="btn" id="fcn">Suivante →</button></div>
+  <div class="fc-stat" id="fcst"></div>
+</div></div>
+<!-- ======================= EXERCICES ======================= -->
+<div class="pane" id="pane-exercices" data-pane="exercices"><div class="wrap"><h2 style="margin-top:0">Exercices</h2><div id="exos"></div></div></div>
+<!-- ======================= QUIZ ======================= -->
+<div class="pane" id="pane-quiz" data-pane="quiz"><div class="wrap" style="max-width:780px"><h2 style="margin-top:0">Quiz</h2><div class="card" id="quiz"></div></div></div>
+<script>
+(function () {
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+/* =================================================================
+   1. Dessin des graphes de commits (cours + simulateur)
+   spec = { c: [[id, colonne, voie, parent1, parent2…]], b: {branche: commit},
+            head: 'branche' ou 'commit', ghost: [ids], lbl: {id: texte}, hl: [ids],
+            remote: {'origin/main': id}, notes: [[col, voie, texte, dy]] }
+   ================================================================= */
+const LANE = ['var(--r-blue)', 'var(--r-green)', 'var(--r-violet)', 'var(--r-orange)', 'var(--r-teal)'];
+const brCol = (name, lane) => name === 'main' ? LANE[0] : name.startsWith('origin/') ? 'var(--r-text-3)' : LANE[lane % LANE.length] || LANE[1];
+function drawGraph(s, o = {}) {
+  const DX = o.dx || 78, DY = o.dy || 66, X0 = 42, Y0 = o.y0 || 74, R = 17;
+  const cs = s.c.map(a => ({ id: a[0], col: a[1], lane: a[2], par: a.slice(3) }));
+  const by = {}; cs.forEach(c => by[c.id] = c);
+  const X = c => X0 + c.col * DX, Y = c => Y0 + c.lane * DY;
+  const maxC = Math.max(...cs.map(c => c.col), 0), maxL = Math.max(...cs.map(c => c.lane), 0);
+  const W = X0 + maxC * DX + 120, H = Y0 + maxL * DY + 40;
+  const ghost = new Set(s.ghost || []), hl = new Set(s.hl || []);
+  let e = '', n = '', l = '';
+  cs.forEach(c => c.par.forEach(pid => {
+    const p = by[pid]; if (!p) return;
+    const g = ghost.has(c.id);
+    const d = p.lane === c.lane ? `M${X(p)},${Y(p)} L${X(c)},${Y(c)}` : `M${X(p)},${Y(p)} C${X(p) + DX * .55},${Y(p)} ${X(c) - DX * .55},${Y(c)} ${X(c)},${Y(c)}`;
+    e += `<path d="${d}" fill="none" stroke="${g ? 'var(--r-text-3)' : LANE[c.lane % LANE.length]}" stroke-width="2.5" ${g ? 'stroke-dasharray="5 4" opacity=".5"' : ''}/>`;
+  }));
+  cs.forEach(c => {
+    const g = ghost.has(c.id), col = LANE[c.lane % LANE.length], t = (s.lbl && s.lbl[c.id]) || c.id;
+    n += `<g ${g ? 'opacity=".45"' : ''}><circle cx="${X(c)}" cy="${Y(c)}" r="${R}" fill="${hl.has(c.id) ? 'var(--r-mark)' : 'var(--r-surface)'}" stroke="${g ? 'var(--r-text-3)' : col}" stroke-width="2.5" ${g ? 'stroke-dasharray="4 3"' : ''}/>` +
+      `<text x="${X(c)}" y="${Y(c) + 4.5}" text-anchor="middle" font-size="${t.length > 3 ? 10.5 : 12.5}" font-weight="700" fill="var(--r-text)">${esc(t)}</text></g>`;
+    if (c.par.length > 1 && !g) n += `<text x="${X(c)}" y="${Y(c) + R + 14}" text-anchor="middle" font-size="10" fill="var(--r-text-3)">2 parents</text>`;
+  });
+  /* étiquettes de branches empilées au-dessus du commit */
+  const stack = {};
+  const tags = Object.entries(s.b || {}).map(([name, id]) => ({ name, id, remote: false })).concat(Object.entries(s.remote || {}).map(([name, id]) => ({ name, id, remote: true })));
+  if (s.head && !(s.b || {})[s.head] && by[s.head]) tags.push({ name: 'HEAD', id: s.head, detached: true });
+  tags.forEach(t => {
+    const c = by[t.id]; if (!c) return;
+    const k = stack[t.id] = (stack[t.id] || 0) + 1;
+    const isHead = s.head === t.name, txt = (isHead ? 'HEAD → ' : '') + t.name;
+    const w = txt.length * 6.9 + 16, x = X(c) - w / 2, y = Y(c) - R - 8 - k * 24;
+    const col = t.detached ? 'var(--r-text)' : brCol(t.name, c.lane);
+    l += `<line x1="${X(c)}" y1="${y + 20}" x2="${X(c)}" y2="${Y(c) - R}" stroke="${col}" stroke-width="1.2" ${k > 1 ? 'opacity="0"' : ''}/>` +
+      `<rect x="${x}" y="${y}" width="${w}" height="20" rx="10" fill="${t.remote ? 'var(--r-surface)' : col}" stroke="${col}" ${t.remote ? 'stroke-dasharray="4 3"' : ''} ${isHead ? 'stroke-width="2.5"' : ''}/>` +
+      `<text x="${X(c)}" y="${y + 14}" text-anchor="middle" font-size="11.5" font-weight="${isHead ? 800 : 700}" fill="${t.remote ? 'var(--r-text-2)' : '#fff'}" font-family="var(--r-font-mono)">${esc(txt)}</text>`;
+  });
+  (s.notes || []).forEach(([col, lane, txt, dy]) => { l += `<text x="${X0 + col * DX}" y="${Y0 + lane * DY + (dy || 38)}" text-anchor="middle" font-size="11.5" fill="var(--r-text-2)" font-style="italic">${esc(txt)}</text>`; });
+  const top = Math.max(0, ...Object.values(stack)) * 24 + 4, extra = Math.max(0, ...(s.notes || []).map(x => (x[3] || 38) - 22));
+  return `<svg viewBox="0 ${Y0 - R - 12 - top} ${W} ${H - (Y0 - R - 12 - top) + extra}" width="${W}" role="img">${e}${n}${l}</svg>`;
+}
+const box = (x, y, w, h, t, sub, col) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="10" fill="var(--r-surface)" stroke="${col || 'var(--r-text)'}" stroke-width="1.6"/><text x="${x + w / 2}" y="${y + (sub ? h / 2 - 3 : h / 2 + 5)}" text-anchor="middle" font-weight="700" font-size="14" fill="var(--r-text)">${t}</text>${sub ? `<text x="${x + w / 2}" y="${y + h / 2 + 15}" text-anchor="middle" font-size="11.5" fill="var(--r-text-3)">${sub}</text>` : ''}`;
+const arrow = (x1, y1, x2, y2, t, col, dy, dash) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${col || 'var(--r-text)'}" stroke-width="1.8" marker-end="url(#ah)" ${dash ? 'stroke-dasharray="5 4"' : ''}/>${t ? `<text x="${(x1 + x2) / 2}" y="${(y1 + y2) / 2 + (dy || -7)}" text-anchor="middle" font-size="12.5" font-family="var(--r-font-mono)" font-weight="700" fill="${col || 'var(--r-text)'}">${t}</text>` : ''}`;
+const defs = `<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>`;
+const svg = (w, h, inner) => `<svg viewBox="0 0 ${w} ${h}" width="${w}">${defs}${inner}</svg>`;
+
+const FIGS = {
+  distribue: () => svg(640, 250, box(230, 14, 180, 56, 'Dépôt distant', 'GitHub · GitLab', 'var(--r-violet)') +
+    [['Ton PC', 40], ['Alice', 245], ['Bob', 450]].map(([t, x]) => box(x, 170, 150, 56, t, 'dépôt complet + historique', 'var(--r-blue)') +
+      arrow(x + 55, 168, 285 + (x - 245) * .25, 74, 'push', 'var(--r-green)', -4) + arrow(355 + (x - 245) * .25, 74, x + 100, 168, 'pull', 'var(--r-blue)', 14)).join('')),
+  zones: () => svg(820, 215, box(10, 50, 150, 66, 'Répertoire', 'de travail') + box(230, 50, 150, 66, 'Index', '(staging area)', 'var(--r-amber)') + box(450, 50, 150, 66, 'Dépôt local', '.git', 'var(--r-blue)') + box(665, 50, 145, 66, 'Dépôt distant', 'origin', 'var(--r-violet)') +
+    arrow(162, 70, 228, 70, 'git add', 'var(--r-text)', -10) + arrow(382, 70, 448, 70, 'git commit', 'var(--r-text)', -10) + arrow(602, 70, 663, 70, 'push', 'var(--r-text)', -10) +
+    arrow(228, 100, 162, 100, '', 'var(--r-red)') + `<text x="195" y="135" text-anchor="middle" font-size="11.5" font-family="var(--r-font-mono)" fill="var(--r-red)">restore --staged</text>` +
+    `<path d="M737,118 C737,185 85,185 85,120" fill="none" stroke="var(--r-blue)" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#ah)"/><rect x="320" y="190" width="190" height="20" rx="4" fill="var(--r-surface-2)"/><text x="415" y="204" text-anchor="middle" font-size="12.5" font-family="var(--r-font-mono)" font-weight="700" fill="var(--r-blue)">git pull (fetch + merge)</text>`),
+  etats: () => svg(700, 230, box(10, 80, 140, 56, 'Non suivi', 'untracked', 'var(--r-text-3)') + box(260, 10, 150, 56, 'Indexé', 'staged', 'var(--r-amber)') + box(530, 80, 160, 56, 'Non modifié', 'commité', 'var(--r-blue)') + box(260, 165, 150, 56, 'Modifié', 'modified', 'var(--r-red)') +
+    arrow(150, 100, 258, 45, '', 'var(--r-text)') + `<text x="175" y="58" font-size="12.5" font-family="var(--r-font-mono)" font-weight="700" fill="var(--r-text)">git add</text>` +
+    arrow(412, 40, 560, 78, '', 'var(--r-text)') + `<text x="500" y="44" font-size="12.5" font-family="var(--r-font-mono)" font-weight="700" fill="var(--r-text)">git commit</text>` +
+    arrow(560, 138, 412, 190, '', 'var(--r-text)') + `<text x="505" y="186" font-size="12.5" font-family="var(--r-font-mono)" font-weight="700" fill="var(--r-text)">tu édites</text>` +
+    arrow(335, 163, 335, 68, '', 'var(--r-text)') + `<text x="345" y="120" font-size="12.5" font-family="var(--r-font-mono)" font-weight="700" fill="var(--r-text)">git add</text>`),
+  chaine: () => drawGraph({ c: [['C0', 0, 0], ['C1', 1, 0, 'C0'], ['C2', 2, 0, 'C1'], ['C3', 3, 0, 'C2']], b: { main: 'C3' }, head: 'main', notes: [[0, 0, 'premier commit'], [3, 0, 'le plus récent']] }),
+  pointeurs: () => drawGraph({ c: [['C0', 0, 0], ['C1', 1, 0, 'C0'], ['C2', 2, 0, 'C1']], b: { main: 'C2', feature: 'C2' }, head: 'main', notes: [[2, 0, 'git branch feature']] }),
+  divergence: () => drawGraph({ c: [['C0', 0, 0], ['C1', 1, 0, 'C0'], ['C2', 2, 0, 'C1'], ['C3', 3, 1, 'C2'], ['C4', 3, 0, 'C2']], b: { main: 'C4', feature: 'C3' }, head: 'main' }),
+  ff: () => sub('Avant', drawGraph({ c: [['C0', 0, 0], ['C1', 1, 0, 'C0'], ['C2', 2, 0, 'C1'], ['C3', 3, 1, 'C2'], ['C4', 4, 1, 'C3']], b: { main: 'C2', feature: 'C4' }, head: 'main' })) +
+    sub('Après git merge feature', drawGraph({ c: [['C0', 0, 0], ['C1', 1, 0, 'C0'], ['C2', 2, 0, 'C1'], ['C3', 3, 0, 'C2'], ['C4', 4, 0, 'C3']], b: { main: 'C4', feature: 'C4' }, head: 'main', hl: ['C4'] })),
+  merge3: () => sub('Avant', drawGraph({ c: [['C0', 0, 0], ['C1', 1, 0, 'C0'], ['C2', 2, 0, 'C1'], ['C3', 3, 1, 'C2'], ['C4', 3, 0, 'C2']], b: { main: 'C4', feature: 'C3' }, head: 'main' })) +
+    sub('Après git merge feature', drawGraph({ c: [['C0', 0, 0], ['C1', 1, 0, 'C0'], ['C2', 2, 0, 'C1'], ['C3', 3, 1, 'C2'], ['C4', 3, 0, 'C2'], ['M', 4, 0, 'C4', 'C3']], b: { main: 'M', feature: 'C3' }, head: 'main', hl: ['M'] })),
+  fetch: () => sub('Après git fetch', drawGraph({ c: [['C0', 0, 0], ['C1', 1, 0, 'C0'], ['C2', 2, 0, 'C1'], ['C3', 3, 1, 'C2'], ['C4', 4, 1, 'C3']], b: { main: 'C2' }, remote: { 'origin/main': 'C4' }, head: 'main', notes: [[3.5, 1, 'commits des autres']] })) +
+    sub('Après git pull', drawGraph({ c: [['C0', 0, 0], ['C1', 1, 0, 'C0'], ['C2', 2, 0, 'C1'], ['C3', 3, 0, 'C2'], ['C4', 4, 0, 'C3']], b: { main: 'C4' }, remote: { 'origin/main': 'C4' }, head: 'main', hl: ['C4'] })),
+  rebase: () => sub('Avant', drawGraph({ c: [['C0', 0, 0], ['C1', 1, 0, 'C0'], ['C2', 2, 0, 'C1'], ['C3', 3, 1, 'C2'], ['C4', 3, 0, 'C2'], ['C5', 4, 1, 'C3']], b: { main: 'C4', feature: 'C5' }, head: 'feature' })) +
+    sub('Après git rebase main', drawGraph({ c: [['C0', 0, 0], ['C1', 1, 0, 'C0'], ['C2', 2, 0, 'C1'], ['C4', 3, 0, 'C2'], ['C3', 3, 2, 'C2'], ['C5', 4, 2, 'C3'], ["C3'", 4, 1, 'C4'], ["C5'", 5, 1, "C3'"]], b: { main: 'C4', feature: "C5'" }, head: 'feature', ghost: ['C3', 'C5'], hl: ["C3'", "C5'"], lbl: { "C3'": 'C3′', "C5'": 'C5′' } })),
+  workflow: () => drawGraph({ c: [['C0', 0, 0], ['C1', 1, 0, 'C0'], ['F1', 2, 1, 'C1'], ['F2', 3, 1, 'F1'], ['F3', 4, 1, 'F2'], ['M', 5, 0, 'C1', 'F3']], b: { main: 'M', 'feature/42-connexion': 'F3' }, head: 'main', hl: ['M'], notes: [[3, 1, 'push + pull request + relecture'], [5, 0, 'fusion']] }, { dx: 90 }),
+  revert: () => drawGraph({ c: [['C0', 0, 0], ['C1', 1, 0, 'C0'], ['C2', 2, 0, 'C1'], ['C3', 3, 0, 'C2'], ['R', 4, 0, 'C3']], b: { main: 'R' }, head: 'main', hl: ['R'], notes: [[3, 0, 'bug'], [4, 0, 'annule C3']] }),
+  resetmodes: () => sub('Avant', drawGraph({ c: [['C0', 0, 0], ['C1', 1, 0, 'C0'], ['C2', 2, 0, 'C1'], ['C3', 3, 0, 'C2']], b: { main: 'C3' }, head: 'main' })) +
+    sub('Après git reset HEAD~1', drawGraph({ c: [['C0', 0, 0], ['C1', 1, 0, 'C0'], ['C2', 2, 0, 'C1'], ['C3', 3, 0, 'C2']], b: { main: 'C2' }, head: 'main', ghost: ['C3'], notes: [[3, 0, '--soft : modifs indexées'], [3, 0, '--mixed : modifs gardées', 54], [3, 0, '--hard : modifs effacées', 70]] }, { dx: 90 })),
+};
+function sub(t, g) { return `<div class="sub"><b>${t}</b>${g}</div>`; }
+$$('.fig[data-fig]').forEach(f => { const fn = FIGS[f.dataset.fig]; if (fn) f.querySelector('.canvas').innerHTML = fn(); });
+
+/* =================================================================
+   2. Onglets et sommaire
+   ================================================================= */
+const TABS = ['cours', 'simulateur', 'memo', 'flashcards', 'exercices', 'quiz'];
+function openTab(t, anchor) {
+  if (!TABS.includes(t)) t = 'cours';
+  $$('.tab').forEach(a => a.classList.toggle('on', a.dataset.tab === t));
+  $$('.pane').forEach(p => p.classList.toggle('on', p.dataset.pane === t));
+  if (anchor) { const el = document.getElementById(anchor); if (el) el.scrollIntoView(); } else window.scrollTo(0, 0);
+}
+function route() { const h = location.hash.slice(1); if (TABS.includes(h)) openTab(h); else if (h && document.getElementById(h)) openTab('cours', h); else openTab('cours'); }
+window.addEventListener('hashchange', route);
+$$('.tab').forEach(a => a.addEventListener('click', e => { e.preventDefault(); history.replaceState(null, '', '#' + a.dataset.tab); openTab(a.dataset.tab); }));
+$$('.toc a').forEach(a => a.addEventListener('click', e => { e.preventDefault(); const id = a.getAttribute('href').slice(1); history.replaceState(null, '', '#' + id); document.getElementById(id).scrollIntoView({ behavior: 'smooth' }); if (innerWidth < 900) $('.toc').open = false; }));
+const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) $$('.toc a').forEach(a => a.classList.toggle('cur', a.getAttribute('href') === '#' + en.target.id)); }), { rootMargin: '-20% 0px -70% 0px' });
+$$('section.s').forEach(s => io.observe(s));
+
+/* =================================================================
+   3. Simulateur
+   ================================================================= */
+let G, mission = null, done = {};
+try { done = JSON.parse(localStorage.getItem('git-s1-missions')) || {}; } catch (e) {}
+function fresh() { G = { commits: {}, order: [], branches: { main: 'C0' }, lanes: { main: 0 }, head: { br: 'main' }, n: 1, nextLane: 1, reverts: {} }; G.commits.C0 = { id: 'C0', par: [], lane: 0, col: 0 }; G.order.push('C0'); }
+const headC = () => G.head.br ? G.branches[G.head.br] : G.head.c;
+const curLane = () => G.head.br ? G.lanes[G.head.br] : G.head.lane;
+function anc(id) { const s = new Set(), st = [id]; while (st.length) { const x = st.pop(); if (!x || s.has(x)) continue; s.add(x); st.push(...G.commits[x].par); } return s; }
+function newCommit(par, lane, name) { let id = name || 'C' + G.n++; while (G.commits[id]) id += '′'; G.commits[id] = { id, par, lane, col: G.order.length }; G.order.push(id); return id; }
+function advance(id) { if (G.head.br) G.branches[G.head.br] = id; else G.head.c = id; }
+function out(t, cls) { const o = $('#tout'); o.insertAdjacentHTML('beforeend', `<div class="${cls || ''}">${esc(t)}</div>`); o.scrollTop = o.scrollHeight; }
+function run(line, silent) {
+  const raw = line.trim(); if (!raw) return;
+  if (!silent) out('$ ' + raw, 'cmd');
+  if (raw === 'clear') { $('#tout').innerHTML = ''; return; }
+  const a = raw.replace(/\s+/g, ' ').split(' ');
+  if (a[0] !== 'git') return out('Commande inconnue : commence par « git ».', 'er');
+  const cmd = a[1], arg = a.filter((x, i) => i > 1 && !x.startsWith('-'))[0], flags = a.filter(x => x.startsWith('-'));
+  const say = (t, c) => { if (!silent) out(t, c); };
+  const exists = b => G.branches[b] !== undefined;
+  switch (cmd) {
+    case 'commit': { if (a.includes('--amend')) { const h = headC(), c = G.commits[h]; if (!c.par.length) return say('Rien à corriger.', 'er'); const id = newCommit(c.par.slice(), curLane(), h + '′'); advance(id); say(`[${G.head.br || 'HEAD détachée'} ${id}] commit corrigé (nouveau hash)`, 'ok'); break; }
+      const id = newCommit([headC()], curLane()); advance(id); say(`[${G.head.br || 'HEAD détachée'} ${id}] nouveau commit`, 'ok'); break; }
+    case 'branch': {
+      if (!arg) { Object.keys(G.branches).forEach(b => say((G.head.br === b ? '* ' : '  ') + b)); break; }
+      if (flags.includes('-d') || flags.includes('-D')) { if (!exists(arg)) return say(`erreur : la branche « ${arg} » n'existe pas`, 'er'); if (G.head.br === arg) return say('erreur : impossible de supprimer la branche courante', 'er'); if (flags.includes('-d') && !anc(headC()).has(G.branches[arg])) return say(`erreur : « ${arg} » n'est pas fusionnée (utilise -D pour forcer)`, 'er'); delete G.branches[arg]; say(`Branche ${arg} supprimée.`, 'ok'); break; }
+      if (exists(arg)) return say(`erreur : la branche « ${arg} » existe déjà`, 'er');
+      G.branches[arg] = headC(); G.lanes[arg] = G.nextLane++; say(`Branche ${arg} créée (sur ${headC()}).`, 'ok'); break; }
+    case 'switch': case 'checkout': {
+      const create = flags.includes('-c') || flags.includes('-b');
+      if (!arg) return say('Précise une branche.', 'er');
+      if (create) { if (exists(arg)) return say(`erreur : la branche « ${arg} » existe déjà`, 'er'); G.branches[arg] = headC(); G.lanes[arg] = G.nextLane++; G.head = { br: arg }; say(`Nouvelle branche ${arg}, tu es dessus.`, 'ok'); break; }
+      if (exists(arg)) { G.head = { br: arg }; say(`Basculement sur la branche « ${arg} »`, 'ok'); break; }
+      if (G.commits[arg] && cmd === 'checkout') { G.head = { c: arg, lane: G.nextLane++ }; say(`HEAD détachée sur ${arg}. Crée une branche pour garder tes commits.`, 'er'); break; }
+      return say(`erreur : la branche « ${arg} » n'existe pas`, 'er'); }
+    case 'merge': {
+      if (!arg || !exists(arg)) return say(`erreur : « ${arg || ''} » n'est pas une branche`, 'er');
+      const h = headC(), t = G.branches[arg];
+      if (anc(h).has(t)) return say('Déjà à jour.', 'ok');
+      if (anc(t).has(h)) { advance(t); say(`Mise à jour ${h}..${t}\nFast-forward (avance rapide)`, 'ok'); break; }
+      const id = newCommit([h, t], curLane()); advance(id); say(`Merge made by the 'ort' strategy. Commit de fusion ${id}.`, 'ok'); break; }
+    case 'rebase': {
+      if (!arg || !exists(arg)) return say(`erreur : « ${arg || ''} » n'est pas une branche`, 'er');
+      if (!G.head.br) return say('Place-toi sur une branche avant de rebaser.', 'er');
+      const h = headC(), t = G.branches[arg], A = anc(t);
+      if (A.has(h)) { advance(t); say('Avance rapide vers ' + arg + '.', 'ok'); break; }
+      if (anc(h).has(t)) return say('Déjà à jour : ta branche contient déjà ' + arg + '.', 'ok');
+      const mine = G.order.filter(id => anc(h).has(id) && !A.has(id) && G.commits[id].par.length < 2);
+      let base = t;
+      mine.forEach(id => { base = newCommit([base], curLane(), id.replace(/′+$/, '') + '′'.repeat((id.match(/′/g) || []).length + 1)); });
+      advance(base); say(`Rebase réussi : ${mine.length} commit${mine.length > 1 ? 's' : ''} rejoué${mine.length > 1 ? 's' : ''} sur ${arg} (${mine.join(', ')} → nouveaux hashs).`, 'ok'); break; }
+    case 'reset': {
+      const m = raw.match(/HEAD~(\d+)/), k = m ? +m[1] : (raw.includes('HEAD^') ? 1 : 0);
+      if (!k) return say('Utilise par exemple : git reset --hard HEAD~1', 'er');
+      let c = headC(); for (let i = 0; i < k; i++) { c = G.commits[c].par[0]; if (!c) return say('Pas assez de commits.', 'er'); }
+      advance(c); say(`HEAD est maintenant à ${c}` + (flags.includes('--hard') ? ' (modifications effacées)' : flags.includes('--soft') ? ' (modifications gardées dans l\'index)' : ' (modifications gardées dans le dossier)'), 'ok'); break; }
+    case 'revert': {
+      const target = arg === 'HEAD' || !arg ? headC() : arg;
+      if (!G.commits[target] || target === 'C0') return say('Commit introuvable (ou impossible à annuler).', 'er');
+      const id = newCommit([headC()], curLane()); G.reverts[id] = target; advance(id); say(`[${G.head.br} ${id}] Revert « ${target} »`, 'ok'); break; }
+    case 'log': { let c = headC(); const seen = new Set(), q = [c]; const lines = [];
+      while (q.length) { c = q.shift(); if (!c || seen.has(c)) continue; seen.add(c); const tags = Object.keys(G.branches).filter(b => G.branches[b] === c).map(b => (G.head.br === b ? 'HEAD -> ' : '') + b); lines.push(c + (tags.length ? ' (' + tags.join(', ') + ')' : '') + (G.reverts[c] ? ' Revert ' + G.reverts[c] : '') + (G.commits[c].par.length > 1 ? ' Merge' : '')); q.push(...G.commits[c].par); }
+      say(lines.join('\n')); break; }
+    case 'status': say(G.head.br ? 'Sur la branche ' + G.head.br + '\nrien à valider, la copie de travail est propre' : 'HEAD détachée sur ' + G.head.c); break;
+    case 'push': case 'pull': case 'fetch': case 'add': case 'init': case 'clone': say(`« git ${cmd} » existe bien, mais ce simulateur ne gère que l'historique local (commit, branches, merge, rebase…).`); break;
+    default: say(`git : « ${cmd || ''} » n'est pas une commande reconnue par le simulateur.`, 'er');
+  }
+  if (!silent) { draw(); check(); }
+}
+function draw() {
+  const reach = new Set(); Object.values(G.branches).forEach(b => anc(b).forEach(x => reach.add(x))); if (!G.head.br) anc(G.head.c).forEach(x => reach.add(x));
+  const ids = G.order;
+  const spec = { c: ids.map((id, i) => [id, i, G.commits[id].lane, ...G.commits[id].par]), b: G.branches, head: G.head.br || G.head.c, ghost: ids.filter(id => !reach.has(id)), lbl: {}, remote: mission && mission.remote ? mission.remote : {} };
+  ids.forEach(id => { if (G.reverts[id]) spec.lbl[id] = 'R'; });
+  /* compacter les voies réellement utilisées */
+  const used = [...new Set(spec.c.map(c => c[2]))].sort((a, b) => a - b), map = {}; used.forEach((l, i) => map[l] = i); spec.c.forEach(c => c[2] = map[c[2]]);
+  $('#sgraph').innerHTML = drawGraph(spec, { dx: 70 });
+}
+const MISSIONS = [
+  { id: 'libre', t: 'Bac à sable', goal: 'Expérimente librement : crée des branches, commite, fusionne, rebase. Le dépôt part d\'un seul commit C0 sur main.', setup: [], test: null, sol: [] },
+  { id: 'm1', t: '1 · Premiers commits', goal: 'Ajoute <b>3 commits</b> sur <code>main</code>.', setup: [], test: () => anc(G.branches.main).size >= 4, sol: ['git commit', 'git commit', 'git commit'] },
+  { id: 'm2', t: '2 · Une branche pour travailler', goal: 'Crée la branche <code>feature/login</code>, fais-y <b>2 commits</b>, puis reviens sur <code>main</code>.', setup: ['git commit'], test: () => { const f = G.branches['feature/login']; return f && G.head.br === 'main' && anc(f).has(G.branches.main) && anc(f).size - anc(G.branches.main).size === 2; }, sol: ['git switch -c feature/login', 'git commit', 'git commit', 'git switch main'] },
+  { id: 'm3', t: '3 · Fusion en avance rapide', goal: 'Tu es sur <code>main</code>. Intègre <code>feature/login</code> dans <code>main</code>. Ici, aucun commit de fusion ne doit être créé : observe pourquoi.', setup: ['git commit', 'git switch -c feature/login', 'git commit', 'git commit', 'git switch main'], test: () => G.branches.main === G.branches['feature/login'], sol: ['git merge feature/login'] },
+  { id: 'm4', t: '4 · Commit de fusion', goal: '<code>main</code> et <code>feature/login</code> ont divergé. Fusionne <code>feature/login</code> dans <code>main</code>.', setup: ['git commit', 'git switch -c feature/login', 'git commit', 'git commit', 'git switch main', 'git commit'], test: () => G.commits[G.branches.main].par.length === 2 && anc(G.branches.main).has(G.branches['feature/login']), sol: ['git merge feature/login'] },
+  { id: 'm5', t: '5 · Rebase puis avance rapide', goal: 'Même situation, mais on veut un <b>historique linéaire</b> : rebase <code>feature/login</code> sur <code>main</code>, puis intègre-la dans <code>main</code> sans commit de fusion.', setup: ['git commit', 'git switch -c feature/login', 'git commit', 'git commit', 'git switch main', 'git commit'], test: () => { const m = G.branches.main; return m === G.branches['feature/login'] && [...anc(m)].every(id => G.commits[id].par.length < 2) && anc(m).has('C4'); }, sol: ['git switch feature/login', 'git rebase main', 'git switch main', 'git merge feature/login'] },
+  { id: 'm6', t: '6 · Annuler un commit local', goal: 'Le dernier commit de <code>main</code> est une erreur et <b>n\'a pas encore été poussé</b>. Retire-le de la branche.', setup: ['git commit', 'git commit', 'git commit'], test: () => G.branches.main === 'C2', sol: ['git reset --hard HEAD~1'] },
+  { id: 'm7', t: '7 · Annuler un commit partagé', goal: 'Le dernier commit de <code>main</code> a <b>déjà été poussé</b> (voir <code>origin/main</code>). Annule-le sans réécrire l\'historique.', setup: ['git commit', 'git commit', 'git commit'], remote: { 'origin/main': 'C3' }, test: () => { const m = G.branches.main; return G.reverts[m] === 'C3' && anc(m).has('C3'); }, sol: ['git revert HEAD'] },
+];
+function loadMission(m) {
+  mission = m; fresh(); m.setup.forEach(c => run(c, true)); $('#tout').innerHTML = '';
+  out(m.id === 'libre' ? 'Bac à sable prêt. Tape une commande.' : 'Mission chargée. À toi !');
+  $('#goal').innerHTML = `<b style="font-family:var(--r-font-display);font-size:1.05rem">${m.t}</b><p style="margin:6px 0">${m.goal}</p>` + (m.sol.length ? `<button class="btn ghost" id="solb" style="padding:5px 12px;font-size:13px">Voir la solution</button> <button class="btn ghost" id="rstb" style="padding:5px 12px;font-size:13px">Recommencer</button><div id="solt" class="hint" style="display:none;margin-top:8px"><code>${m.sol.join('</code> → <code>')}</code></div>` : '<button class="btn ghost" id="rstb" style="padding:5px 12px;font-size:13px">Recommencer</button>') + '<div id="okm"></div>';
+  const sb = $('#solb'); if (sb) sb.onclick = () => $('#solt').style.display = 'block';
+  $('#rstb').onclick = () => loadMission(m);
+  $('#qbtns').innerHTML = ['git commit', 'git log', 'git branch', 'git switch main'].concat(m.sol.filter(s => !['git commit', 'git switch main'].includes(s))).filter((v, i, a) => a.indexOf(v) === i).map(c => `<button data-c="${c}">${c}</button>`).join('');
+  $$('#qbtns button').forEach(b => b.onclick = () => { run(b.dataset.c); $('#tin').focus(); });
+  $$('.mission').forEach(b => b.classList.toggle('on', b.dataset.id === m.id));
+  draw();
+}
+function check() {
+  if (!mission || !mission.test || !mission.test()) return;
+  if (!done[mission.id]) { done[mission.id] = 1; try { localStorage.setItem('git-s1-missions', JSON.stringify(done)); } catch (e) {} renderMissions(); }
+  $('#okm').innerHTML = '<div class="success">✅ Mission réussie ! ' + (MISSIONS[MISSIONS.indexOf(mission) + 1] ? 'Passe à la suivante.' : 'Tu as tout terminé.') + '</div>';
+}
+function renderMissions() { $('#missions').innerHTML = MISSIONS.map(m => `<button class="mission ${mission && mission.id === m.id ? 'on' : ''}" data-id="${m.id}">${m.t}${done[m.id] ? '<span class="ok">✓</span>' : ''}</button>`).join(''); $$('.mission').forEach(b => b.onclick = () => loadMission(MISSIONS.find(m => m.id === b.dataset.id))); }
+const hist = []; let hi = 0;
+$('#tin').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { const v = e.target.value; if (v.trim()) { hist.push(v); hi = hist.length; } e.target.value = ''; run(v); }
+  if (e.key === 'ArrowUp' && hi > 0) { hi--; e.target.value = hist[hi]; e.preventDefault(); }
+  if (e.key === 'ArrowDown') { hi = Math.min(hist.length, hi + 1); e.target.value = hist[hi] || ''; }
+});
+renderMissions(); loadMission(MISSIONS[1]);
+window.__gitSim = { run, G: () => G, MISSIONS, loadMission, mission: () => mission };
+
+/* =================================================================
+   4. Fiche mémo
+   ================================================================= */
+const MEMO = [
+  ['c-base', 'Démarrer', [['git config --global user.name "…"', 'nom dans les commits'], ['git init', 'créer un dépôt'], ['git clone url', 'copier un dépôt'], ['git status', 'état des fichiers'], ['git add fichier · git add .', 'indexer'], ['git commit -m "msg"', 'enregistrer un instantané'], ['git log --oneline --graph --all', 'historique'], ['git diff · --staged', 'voir les modifs']]],
+  ['c-br', 'Branches', [['git branch', 'lister'], ['git switch -c nom', 'créer et y aller'], ['git switch nom', 'changer de branche'], ['git merge nom', 'fusionner nom dans la branche courante'], ['git branch -d nom', 'supprimer'], ['git merge --abort', 'annuler une fusion en cours']]],
+  ['c-team', 'Distant', [['git remote add origin url', 'déclarer le distant'], ['git push -u origin main', '1er envoi'], ['git push', 'envoyer'], ['git fetch', 'récupérer sans fusionner'], ['git pull', 'fetch + merge'], ['git pull --rebase', 'fetch + rebase'], ['git rebase main', 'rejouer ses commits sur main'], ['git rebase -i HEAD~3', 'nettoyer ses 3 derniers commits']]],
+  ['c-undo', 'Annuler', [['git restore fichier', 'jeter les modifs (non indexées)'], ['git restore --staged fichier', 'retirer de l\'index'], ['git commit --amend', 'corriger le dernier commit'], ['git revert id', 'annuler un commit poussé (nouveau commit)'], ['git reset --soft HEAD~1', 'défaire le commit, garder l\'index'], ['git reset --hard HEAD~1', 'défaire et tout effacer'], ['git stash · stash pop', 'mettre de côté'], ['git reflog', 'retrouver un commit perdu']]],
+  ['c-conv', 'Conventions', [['feat: …', 'nouvelle fonctionnalité'], ['fix: …', 'correction de bug'], ['docs / style / refactor', 'doc · forme · restructuration'], ['test / chore / perf', 'tests · maintenance · performance'], ['feature/42-connexion', 'branche de fonctionnalité'], ['fix/57-total-panier', 'branche de correction'], ['hotfix/… · release/1.2.0', 'urgence · version'], ['v1.4.2', 'tag MAJEUR.MINEUR.CORRECTIF']]],
+];
+$('#memo').innerHTML = MEMO.map(([c, t, rows]) => `<div class="card"><h3 class="${c}"><span class="dot"></span>${t}</h3><table>${rows.map(r => `<tr><td>${esc(r[0])}</td><td>${r[1]}</td></tr>`).join('')}</table></div>`).join('') +
+  '<div class="card"><h3 class="c-undo"><span class="dot"></span>Les 4 règles d\'or</h3><ol style="margin:0;padding-left:18px"><li>On ne rebase et on ne <code>reset</code> jamais des commits déjà partagés.</li><li>On ne commit jamais de secrets (<code>.env</code>) : <code>.gitignore</code> d\'abord.</li><li>Un commit = une modification cohérente, avec un message clair.</li><li><code>git pull</code> avant de commencer, une branche par tâche.</li></ol></div>';
+
+/* =================================================================
+   5. Flashcards
+   ================================================================= */
+const FLASH = [
+  ['base', 'Git ou GitHub : lequel est installé sur ta machine ?', '<b>Git</b> est le logiciel de gestion de versions. GitHub (ou GitLab) est un site qui héberge des dépôts Git.'],
+  ['base', 'Les trois zones locales de Git ?', 'Répertoire de travail → <b>index</b> (staging) → dépôt local (.git).'],
+  ['base', 'Que fait <code>git add</code> ?', 'Il place une modification dans l\'<b>index</b> : elle fera partie du prochain commit.'],
+  ['base', 'Qu\'est-ce qu\'un commit ?', 'Un <b>instantané</b> du projet, avec auteur, date, message, parent(s), identifié par un hash.'],
+  ['base', '<code>git diff</code> vs <code>git diff --staged</code> ?', 'Sans option : modifs <b>non indexées</b>. Avec --staged : ce qui est <b>indexé</b> (le futur commit).'],
+  ['base', 'Un fichier déjà commité est ajouté au .gitignore. Est-il ignoré ?', 'Non. Il faut d\'abord <code>git rm --cached fichier</code> puis commiter.'],
+  ['base', 'Que fait <code>git clone url</code> ?', 'Il copie le dépôt <b>avec tout son historique</b> et nomme le distant <code>origin</code>.'],
+  ['br', 'Qu\'est-ce qu\'une branche pour Git ?', 'Un simple <b>pointeur</b> (étiquette) vers un commit, qui avance à chaque commit.'],
+  ['br', 'Que désigne <code>HEAD</code> ?', 'L\'endroit où tu es : en général la <b>branche courante</b>.'],
+  ['br', 'Créer une branche et y aller en une commande ?', '<code>git switch -c nom</code> (ou <code>git checkout -b nom</code>).'],
+  ['br', 'Quand une fusion est-elle en « fast-forward » ?', 'Quand la branche courante n\'a pas avancé : Git déplace juste l\'étiquette, <b>sans commit de fusion</b>.'],
+  ['br', 'Combien de parents a un commit de fusion ?', '<b>Deux</b>.'],
+  ['br', 'Les 3 marqueurs d\'un conflit ?', '<code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code> (ta version) · <code>=======</code> · <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code> (l\'autre branche).'],
+  ['br', 'Après avoir corrigé un conflit ?', '<code>git add</code> le fichier, puis <code>git commit</code> (ou <code>git rebase --continue</code>).'],
+  ['team', '<code>git fetch</code> vs <code>git pull</code> ?', 'fetch <b>récupère</b> sans toucher à ta branche. pull = <b>fetch + merge</b>.'],
+  ['team', 'À quoi sert <code>-u</code> dans <code>git push -u origin main</code> ?', 'Il lie la branche locale à la distante : ensuite <code>git push</code> et <code>git pull</code> suffisent.'],
+  ['team', 'Que fait <code>git rebase main</code> depuis <code>feature</code> ?', 'Il <b>rejoue</b> les commits de feature au-dessus de main : historique linéaire, <b>nouveaux hashs</b>.'],
+  ['team', 'La règle d\'or du rebase ?', 'Ne jamais rebaser des commits <b>déjà poussés et partagés</b>.'],
+  ['team', 'Pull request / merge request ?', 'Une demande de fusion d\'une branche, avec relecture du code, sur GitHub (PR) ou GitLab (MR).'],
+  ['team', 'Le push est refusé (« fetch first »). Que faire ?', '<code>git pull</code>, régler les conflits éventuels, puis <code>git push</code>. Pas de <code>--force</code> sur une branche partagée.'],
+  ['undo', 'Annuler un commit déjà poussé ?', '<code>git revert id</code> : crée un commit inverse, sans réécrire l\'historique.'],
+  ['undo', '<code>reset --soft</code>, <code>--mixed</code>, <code>--hard</code> ?', 'soft : modifs gardées <b>indexées</b> · mixed : gardées <b>non indexées</b> · hard : <b>effacées</b>.'],
+  ['undo', 'Corriger le message du dernier commit (pas encore poussé) ?', '<code>git commit --amend</code>.'],
+  ['undo', 'Mettre de côté un travail en cours pour changer de branche ?', '<code>git stash</code>, puis <code>git stash pop</code> pour le récupérer.'],
+  ['undo', 'Retrouver un commit « perdu » après un reset ?', '<code>git reflog</code> liste tous les déplacements de HEAD.'],
+  ['conv', 'Format Conventional Commits ?', '<code>type(portée): description</code>, ex. <code>fix(panier): corrige le total</code>.'],
+  ['conv', 'Type de commit pour une nouvelle fonctionnalité ? Une correction ?', '<code>feat</code> · <code>fix</code>.'],
+  ['conv', '<code>refactor</code> vs <code>style</code> ?', 'refactor : restructure le code sans changer son comportement. style : forme seulement (indentation, espaces).'],
+  ['conv', 'Longueur et forme de la 1re ligne d\'un message ?', 'Environ <b>50 caractères</b> (72 max), verbe à l\'<b>impératif</b>, pas de point final.'],
+  ['conv', 'Bon format de nom de branche ?', '<code>type/numero-description</code> en minuscules avec tirets : <code>feature/42-connexion</code>.'],
+  ['conv', 'v1.4.2 → nouvelle fonctionnalité compatible ?', '<b>v1.5.0</b> (SemVer : MAJEUR.MINEUR.CORRECTIF).'],
+];
+let fcF = 'all', fcD = [], fcI = 0;
+const FCN = { all: 'Toutes', base: 'Bases', br: 'Branches', team: 'À plusieurs', undo: 'Annuler', conv: 'Conventions' };
+$('#fcf').innerHTML = Object.entries(FCN).map(([k, v]) => `<button class="chip ${k === 'all' ? 'on' : ''}" data-f="${k}">${v}</button>`).join('');
+$$('#fcf .chip').forEach(b => b.onclick = () => { $$('#fcf .chip').forEach(x => x.classList.toggle('on', x === b)); fcF = b.dataset.f; fcBuild(); });
+function fcBuild() { fcD = FLASH.filter(f => fcF === 'all' || f[0] === fcF); fcI = 0; fcShow(); }
+function fcShow() { const f = fcD[fcI]; $('#fc').classList.remove('flip'); setTimeout(() => { $('#fcq').innerHTML = f[1]; $('#fca').innerHTML = f[2]; }, 120); $('#fcst').textContent = `${fcI + 1} / ${fcD.length}`; }
+$('#fc').onclick = () => $('#fc').classList.toggle('flip');
+$('#fcn').onclick = () => { fcI = (fcI + 1) % fcD.length; fcShow(); };
+$('#fcp').onclick = () => { fcI = (fcI - 1 + fcD.length) % fcD.length; fcShow(); };
+$('#fcs').onclick = () => { fcD = shuffle(fcD); fcI = 0; fcShow(); };
+document.addEventListener('keydown', e => { if (!$('#pane-flashcards').classList.contains('on') || e.target.tagName === 'INPUT') return; if (e.key === ' ') { e.preventDefault(); $('#fc').classList.toggle('flip'); } if (e.key === 'ArrowRight') $('#fcn').click(); if (e.key === 'ArrowLeft') $('#fcp').click(); });
+fcBuild();
+
+/* =================================================================
+   6. Exercices
+   ================================================================= */
+const EXOS = [
+  { t: 'order', titre: 'Du dossier vide au premier push', tag: 'Remettre dans l\'ordre', q: 'Tu crées un projet et tu veux le publier sur un dépôt GitHub vide.', o: ['git init', 'git add .', 'git commit -m "feat: premier commit"', 'git remote add origin https://github.com/moi/projet.git', 'git push -u origin main'], e: 'On ne peut pousser qu\'un commit, et seulement après avoir déclaré le distant.' },
+  { t: 'order', titre: 'Résoudre un conflit de fusion', tag: 'Remettre dans l\'ordre', q: '<code>git merge feature</code> vient d\'afficher « CONFLICT ».', o: ['git status (voir les fichiers en conflit)', 'Éditer les fichiers et supprimer les marqueurs <<<<<<< ======= >>>>>>>', 'git add les fichiers corrigés', 'git commit (termine la fusion)'] },
+  { t: 'order', titre: 'Une fonctionnalité de A à Z', tag: 'Remettre dans l\'ordre', q: 'Workflow d\'équipe sur GitHub pour la tâche n°42.', o: ['git switch main && git pull', 'git switch -c feature/42-connexion', 'git commit (plusieurs fois)', 'git push -u origin feature/42-connexion', 'Ouvrir une pull request et la faire relire', 'Fusionner dans main et supprimer la branche'] },
+  { t: 'fill', titre: 'Configurer Git', tag: 'Compléter', code: 'git [[config]] --global user.name "Ada Lovelace"\ngit config [[--global]] user.email "ada@exemple.fr"' },
+  { t: 'fill', titre: 'Créer une branche, commiter, partager', tag: 'Compléter', code: 'git [[switch]] -c fix/12-menu\ngit [[add]] menu.css\ngit [[commit]] -m "fix(menu): corrige l\'affichage mobile"\ngit push [[-u]] origin fix/12-menu' },
+  { t: 'fill', titre: 'Mettre son travail de côté', tag: 'Compléter', code: 'git [[stash]]\ngit switch main\n# … correction urgente …\ngit switch feature/profil\ngit stash [[pop]]' },
+  { t: 'pick', titre: 'Le meilleur message de commit', tag: 'Conventions', q: 'Tu as corrigé un bug : le total du panier ignorait les remises.', o: ['fix(panier): prend en compte les remises dans le total', 'correction', 'J\'ai modifié le fichier panier.js pour que ça marche', 'feat: panier'], a: 0, e: 'Type <code>fix</code>, portée, verbe à l\'impératif, message qui explique le but.' },
+  { t: 'pick', titre: 'Le meilleur nom de branche', tag: 'Conventions', q: 'Tâche n°31 : ajouter une page « mot de passe oublié ».', o: ['feature/31-mot-de-passe-oublie', 'Alban', 'nouvelle branche', 'Feature_MotDePasse_FINAL'], a: 0, e: 'Préfixe de type, numéro du ticket, description en minuscules avec tirets.' },
+  { t: 'pick', titre: 'Annuler proprement', tag: 'Annuler', q: 'Un commit buggé est déjà sur <code>origin/main</code> et tes coéquipiers l\'ont récupéré. Que fais-tu ?', o: ['git revert de ce commit, puis git push', 'git reset --hard HEAD~1 puis git push --force', 'Supprimer le dépôt et recommencer', 'git commit --amend'], a: 0, e: 'Sur une branche partagée on n\'efface pas l\'histoire : on ajoute un commit qui l\'annule.' },
+  { t: 'pick', titre: 'Le secret commité', tag: 'Bases', q: 'Tu as commité <code>.env</code> avec un mot de passe, <b>pas encore poussé</b>. Quelle est la meilleure réaction ?', o: ['git rm --cached .env, ajouter .env au .gitignore, git commit --amend', 'Ajouter .env au .gitignore, c\'est suffisant', 'git push puis supprimer le fichier sur GitHub', 'Renommer le fichier en .env2'], a: 0, e: 'Le fichier sort de l\'index, le .gitignore empêche qu\'il revienne, et --amend corrige le commit avant qu\'il soit partagé. S\'il avait été poussé : changer le mot de passe.' },
+  { t: 'pick', titre: 'Lire un graphe', tag: 'Branches', q: 'Sur <code>main</code>, <code>git merge feature</code> répond « Fast-forward ». Qu\'est-ce que ça veut dire ?', o: ['main n\'avait pas de nouveaux commits : son étiquette a juste avancé', 'Un commit de fusion a été créé', 'La fusion a échoué', 'feature a été supprimée'], a: 0 },
+  { t: 'pick', titre: 'Version suivante', tag: 'Conventions', q: 'Ton projet est en <code>v2.3.1</code>. Tu changes l\'API d\'une façon incompatible avec l\'existant. Nouveau tag ?', o: ['v3.0.0', 'v2.4.0', 'v2.3.2', 'v2.3.1-b'], a: 0 },
+];
+$('#exos').innerHTML = EXOS.map((x, i) => {
+  let body = '';
+  if (x.t === 'order') body = `<p>${x.q}</p><ol class="ord" id="ord${i}" style="padding:0;list-style:none"></ol>`;
+  if (x.t === 'fill') { let k = 0; body = '<pre class="fillc">' + x.code.split(/(\[\[.+?\]\])/g).map(s => { const m = s.match(/^\[\[(.+?)\]\]$/); return m ? `<input data-k="${k++}" data-a="${esc(m[1])}" style="width:${m[1].length + 3}ch" autocomplete="off" spellcheck="false">` : esc(s); }).join('') + '</pre>'; }
+  if (x.t === 'pick') body = `<p>${x.q}</p>` + shuffle(x.o.map((o, j) => j)).map(j => `<button class="opt" data-j="${j}">${esc(x.o[j])}</button>`).join('');
+  return `<div class="card exo" data-i="${i}"><span class="tag">${x.tag}</span><h3>${x.titre}</h3>${body}${x.t !== 'pick' ? '<button class="btn" data-check>Vérifier</button> <button class="btn ghost" data-show>Solution</button>' : ''}<div class="sol"></div></div>`;
+}).join('');
+EXOS.forEach((x, i) => {
+  const card = $(`.exo[data-i="${i}"]`), sol = card.querySelector('.sol');
+  if (x.t === 'order') {
+    let ord = shuffle(x.o.map((o, j) => j)); if (ord.every((v, j) => v === j)) ord.reverse();
+    const ol = card.querySelector('.ord');
+    const dr = () => { ol.innerHTML = ord.map((j, k) => `<li data-k="${k}"><span>${esc(x.o[j])}</span><span class="mv"><button data-d="-1" ${k ? '' : 'disabled'}>↑</button><button data-d="1" ${k < ord.length - 1 ? '' : 'disabled'}>↓</button></span></li>`).join(''); ol.querySelectorAll('.mv button').forEach(b => b.onclick = () => { const k = +b.closest('li').dataset.k, d = +b.dataset.d;[ord[k], ord[k + d]] = [ord[k + d], ord[k]]; dr(); }); };
+    dr();
+    card.querySelector('[data-check]').onclick = () => { ol.querySelectorAll('li').forEach((li, k) => li.className = ord[k] === k ? 'good' : 'bad'); const ok = ord.every((v, k) => v === k); sol.className = 'sol on'; sol.innerHTML = ok ? '✅ Parfait.' + (x.e ? ' ' + x.e : '') : '❌ Pas encore : les lignes en rouge ne sont pas à leur place.'; };
+    card.querySelector('[data-show]').onclick = () => { sol.className = 'sol on'; sol.innerHTML = '<ol>' + x.o.map(o => '<li><code>' + esc(o) + '</code></li>').join('') + '</ol>' + (x.e ? '<p>' + x.e + '</p>' : ''); };
+  }
+  if (x.t === 'fill') {
+    const ins = card.querySelectorAll('pre input');
+    card.querySelector('[data-check]').onclick = () => { let ok = 0; ins.forEach(inp => { const g = inp.dataset.a.split('|').some(a => a.toLowerCase() === inp.value.trim().toLowerCase()); inp.className = g ? 'good' : 'bad'; ok += g; }); sol.className = 'sol on'; sol.innerHTML = ok === ins.length ? '✅ Tout est juste.' : `${ok} / ${ins.length} correct${ok > 1 ? 's' : ''}.`; };
+    card.querySelector('[data-show]').onclick = () => { ins.forEach(inp => { inp.value = inp.dataset.a.split('|')[0]; inp.className = 'good'; }); };
+  }
+  if (x.t === 'pick') card.querySelectorAll('.opt').forEach(b => b.onclick = () => { card.querySelectorAll('.opt').forEach(o => { o.disabled = true; if (+o.dataset.j === x.a) o.classList.add('right'); }); if (+b.dataset.j !== x.a) b.classList.add('wrong'); sol.className = 'sol on'; sol.innerHTML = (+b.dataset.j === x.a ? '✅ ' : '❌ ') + (x.e || ''); });
+});
+
+/* =================================================================
+   7. Quiz
+   ================================================================= */
+const QUIZ = [
+  ['Que contient le dossier caché <code>.git</code> ?', ['Tout le dépôt : historique, branches, configuration', 'Uniquement la configuration', 'Une copie de sauvegarde du dossier', 'Les fichiers ignorés'], 0],
+  ['Tu as modifié <code>a.txt</code> et <code>b.txt</code>, mais seul <code>a.txt</code> doit partir dans le commit.', ['git add a.txt puis git commit', 'git commit -a', 'git add . puis git commit', 'git push a.txt'], 0],
+  ['Quelle commande montre ce qui partira dans le prochain commit ?', ['git diff --staged', 'git diff', 'git log', 'git show'], 0],
+  ['Créer une branche en Git, c\'est…', ['Créer une étiquette qui pointe vers un commit', 'Copier tous les fichiers du projet', 'Créer un nouveau dépôt', 'Créer un commit vide'], 0],
+  ['Tu es sur <code>main</code> et tu tapes <code>git merge feature</code>. Qui reçoit les changements ?', ['main', 'feature', 'Les deux', 'origin'], 0],
+  ['Un commit de fusion a…', ['Deux parents', 'Aucun parent', 'Un seul parent', 'Autant de parents que de fichiers'], 0],
+  ['Que signifie <code>=======</code> dans un fichier ?', ['La séparation entre les deux versions en conflit', 'Une ligne de commentaire Git', 'La fin du fichier', 'Un fichier corrompu'], 0],
+  ['<code>git pull</code> équivaut à…', ['git fetch + git merge', 'git push + git fetch', 'git clone', 'git add + git commit'], 0],
+  ['Après un rebase, les commits rejoués…', ['Ont de nouveaux hashs', 'Gardent leurs hashs', 'Sont supprimés', 'Deviennent des commits de fusion'], 0],
+  ['Pourquoi ne faut-il pas rebaser des commits déjà partagés ?', ['Cela réécrit une histoire que d\'autres ont déjà', 'Git l\'interdit techniquement', 'Cela supprime le dépôt distant', 'Cela fusionne toutes les branches'], 0],
+  ['Annuler un commit déjà poussé sur une branche partagée ?', ['git revert', 'git reset --hard', 'git commit --amend', 'git rebase -i'], 0],
+  ['<code>git reset --hard HEAD~1</code>…', ['Recule la branche d\'un commit et efface les modifications', 'Recule la branche et garde les modifs indexées', 'Crée un commit inverse', 'Supprime la branche'], 0],
+  ['Un fichier <code>.env</code> déjà commité est ajouté au .gitignore. Résultat ?', ['Il reste suivi tant qu\'on ne fait pas git rm --cached', 'Il est supprimé du dépôt', 'Il est ignoré immédiatement', 'Git affiche une erreur'], 0],
+  ['Quel message respecte Conventional Commits ?', ['feat(auth): ajoute la connexion Google', 'Ajout connexion.', 'FEAT - connexion', 'update'], 0],
+  ['Type de commit pour renommer des variables sans changer le comportement ?', ['refactor', 'feat', 'fix', 'chore'], 0],
+  ['Type de commit pour mettre à jour une dépendance ?', ['chore', 'feat', 'docs', 'style'], 0],
+  ['Quel nom de branche suit les conventions ?', ['fix/57-total-panier', 'Fix Total Panier', 'alban-branche', 'test'], 0],
+  ['v1.4.2 : tu corriges un bug sans rien casser. Version suivante ?', ['v1.4.3', 'v1.5.0', 'v2.0.0', 'v1.4.2.1'], 0],
+  ['Le push est refusé car le distant a des commits que tu n\'as pas.', ['git pull, régler les conflits, puis git push', 'git push --force', 'Supprimer la branche distante', 'git reset --hard'], 0],
+  ['<code>git switch -c dev</code>…', ['Crée la branche dev et s\'y place', 'Supprime la branche dev', 'Fusionne dev', 'Renomme la branche courante en dev'], 0],
+];
+let QZ;
+function qStart() { QZ = { qs: shuffle(QUIZ.map((q, i) => i)), i: 0, ok: 0 }; qShow(); }
+function qShow() {
+  const box = $('#quiz');
+  if (QZ.i >= QZ.qs.length) { const p = Math.round(QZ.ok / QZ.qs.length * 100); box.innerHTML = `<div style="text-align:center"><h3 style="font-size:2rem;margin:10px 0">${p >= 80 ? '🏆' : p >= 50 ? '👍' : '💪'} ${QZ.ok} / ${QZ.qs.length}</h3><p>${p} % de bonnes réponses</p><button class="btn" id="qr">Recommencer</button></div>`; $('#qr').onclick = qStart; return; }
+  const q = QUIZ[QZ.qs[QZ.i]], order = shuffle(q[1].map((o, j) => j));
+  box.innerHTML = `<div class="qhead"><span>Question ${QZ.i + 1} / ${QZ.qs.length}</span><span>${QZ.ok} ✓</span></div><div class="qbar"><i style="width:${QZ.i / QZ.qs.length * 100}%"></i></div><p style="font-weight:600;font-size:1.1rem">${q[0]}</p>` + order.map(j => `<button class="opt" data-j="${j}">${q[1][j]}</button>`).join('') + '<div id="qn" style="margin-top:12px"></div>';
+  $$('#quiz .opt').forEach(b => b.onclick = () => { const good = +b.dataset.j === q[2]; if (good) QZ.ok++; $$('#quiz .opt').forEach(o => { o.disabled = true; if (+o.dataset.j === q[2]) o.classList.add('right'); }); if (!good) b.classList.add('wrong'); $('#qn').innerHTML = '<button class="btn">Suivante →</button>'; $('#qn button').onclick = () => { QZ.i++; qShow(); }; });
+}
+qStart();
+route();
+})();
+</script>
+<script src="../scripts/revision.js"></script>
+</body>
+</html>

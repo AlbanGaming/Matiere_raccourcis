@@ -2,7 +2,7 @@
 window.TESTS = window.TESTS || {};
 TESTS.S1 = {
   titre: 'Semestre 1 — les fondamentaux',
-  sousTitre: 'Python, algorithmique, HTML/CSS, SQL, Merise, architecture, Linux, maths discrètes, gestion & économie.',
+  sousTitre: 'Python, algorithmique, HTML/CSS, SQL, Merise, Git, architecture, Linux, maths discrètes, gestion & économie.',
   matieres: {
     python: { nom: 'Python', couleur: 'cyan' },
     algo:   { nom: 'Algorithmique', couleur: 'violet' },
@@ -13,6 +13,7 @@ TESTS.S1 = {
     linux:  { nom: 'Linux / shell', couleur: 'red' },
     maths:  { nom: 'Maths discrètes', couleur: 'pink' },
     gestion:{ nom: 'Gestion & économie', couleur: 'amber' },
+    git:    { nom: 'Git', couleur: 'cyan', site: '../revision_git_S1.html' },
   },
   questions: [
   /* ---------------- PYTHON ---------------- */
@@ -151,5 +152,18 @@ TESTS.S1 = {
   { m: 'maths', gen: R => { const n = R.rnd(3, 8); return { t: 'num', q: `Combien de sous-ensembles a un ensemble de ${n} éléments ?`, a: 2 ** n, tol: 0, e: `2^${n}.` }; } },
   { m: 'maths', gen: R => { const a = R.rnd(2, 9), b = R.rnd(2, 9); return { t: 'num', q: `|A| = ${a} et |B| = ${b}. Combien d'éléments dans A × B ?`, a: a * b, tol: 0 }; } },
   { m: 'gestion', gen: R => { const p = R.rnd(20, 90) * 10000, c = Math.round(p * R.rnd(30, 75) / 100 / 1000) * 1000; return { t: 'num', u: '€', q: `Production ${R.fmt(p)} €, consommations intermédiaires ${R.fmt(c)} €. Valeur ajoutée ?`, a: p - c, tol: 0, e: 'VA = production − consommations intermédiaires.' }; } },
+  /* ---------------- GIT ---------------- */
+  { m: 'git', t: 'order', q: 'Remets dans l\'ordre le parcours d\'une modification.', o: ['Répertoire de travail', 'Index (staging area)', 'Dépôt local', 'Dépôt distant'], e: 'git add → index, git commit → dépôt local, git push → distant.' },
+  { m: 'git', t: 'fill', q: 'Indexe le fichier puis enregistre un commit.', code: `git [[add]] index.html\ngit [[commit]] -m "feat: ajoute la page d'accueil"` },
+  { m: 'git', q: 'Pour Git, une branche c\'est…', o: ['Un pointeur vers un commit, qui avance à chaque commit', 'Une copie complète du projet', 'Un dépôt distant', 'Un dossier caché'], a: 0 },
+  { m: 'git', t: 'fill', q: 'Crée la branche et place-toi dessus.', code: `git [[switch]] [[-c]] feature/12-profil`, e: 'Ancienne syntaxe : <code>git checkout -b</code>.' },
+  { m: 'git', q: 'Sur <code>main</code>, <code>git merge feature</code> répond « Fast-forward ». Que s\'est-il passé ?', o: ['main n\'avait pas avancé : son étiquette a été déplacée, sans commit de fusion', 'Un commit de fusion a été créé', 'Il y a eu un conflit', 'feature a été supprimée'], a: 0 },
+  { m: 'git', q: '<code>git pull</code> équivaut à…', o: ['git fetch puis git merge', 'git push puis git fetch', 'git clone', 'git add puis git commit'], a: 0 },
+  { m: 'git', q: 'Après un <code>git rebase main</code>, les commits rejoués…', o: ['Ont de nouveaux hashs', 'Gardent leurs hashs', 'Sont supprimés', 'Deviennent un commit de fusion'], a: 0, e: 'D\'où la règle : ne jamais rebaser des commits déjà partagés.' },
+  { m: 'git', q: 'Annuler un commit déjà poussé sur une branche partagée ?', o: ['git revert', 'git reset --hard', 'git commit --amend', 'git rebase -i'], a: 0 },
+  { m: 'git', q: 'Quel message de commit respecte Conventional Commits ?', o: ['fix(panier): corrige le total avec remise', 'correction', 'J\'ai corrigé le panier.', 'FIX PANIER'], a: 0 },
+  { m: 'git', q: 'Quel nom de branche suit les conventions ?', o: ['feature/42-connexion', 'Ma Branche', 'alban', 'nouvelle_feature_FINAL'], a: 0 },
+  { m: 'git', q: 'Un fichier <code>.env</code> déjà commité est ajouté au <code>.gitignore</code>. Que se passe-t-il ?', o: ['Il reste suivi : il faut faire git rm --cached .env', 'Il est ignoré immédiatement', 'Il est supprimé du disque', 'Git refuse le .gitignore'], a: 0 },
+  { m: 'git', gen: R => { const M = R.rnd(0, 4), m = R.rnd(0, 9), c = R.rnd(0, 9), k = R.pick([['correction de bug compatible', `v${M}.${m}.${c + 1}`], ['nouvelle fonctionnalité compatible', `v${M}.${m + 1}.0`], ['changement incompatible', `v${M + 1}.0.0`]]); return { t: 'fill', q: `Le projet est en <code>v${M}.${m}.${c}</code>. Tu publies une ${k[0]}. Nouveau tag (SemVer) ?`, code: `git tag [[${k[1]}]]`, e: 'SemVer : vMAJEUR.MINEUR.CORRECTIF. On remet à 0 les numéros à droite de celui qu\'on incrémente.' }; } },
   ]
 };

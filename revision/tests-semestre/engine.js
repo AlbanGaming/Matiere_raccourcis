@@ -64,7 +64,7 @@
       <div class="grid3">${SEMS.map(s => {
         const S = T[s], n = S.questions.length, nm = Object.keys(S.matieres).length, h = store.hist[s] || [], d = due(s).length;
         return `<div class="card sem" data-s="${s}"><div class="big">Test <span>${s}</span></div><p>${esc(S.sousTitre || '')}</p>
-          <div class="meta"><span class="tag">${n} questions</span><span class="tag">${nm} matières</span>${S.enCours ? '<span class="tag live">semestre en cours</span>' : ''}${h.length ? `<span class="tag hl">record ${Math.max(...h.map(x => x.p))} %</span>` : ''}${d ? `<span class="tag due">📒 ${d} à revoir</span>` : ''}</div></div>`;
+          <div class="meta"><span class="tag">${n} questions</span><span class="tag">${nm} matières</span>${h.length ? `<span class="tag hl">record ${Math.max(...h.map(x => x.p))} %</span>` : ''}${d ? `<span class="tag due">📒 ${d} à revoir</span>` : ''}</div></div>`;
       }).join('')}</div>`;
     app.querySelectorAll('.sem').forEach(c => c.onclick = () => config(c.dataset.s));
   }

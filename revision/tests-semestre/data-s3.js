@@ -1,11 +1,10 @@
-/* ====== TEST S3 (semestre en cours : ajouter des questions au fil des cours) ====== */
+/* ====== TEST S3 ====== */
 window.TESTS = window.TESTS || {};
 /* combinaisons C(n, k), utilisé par les questions aléatoires */
 function _comb3(n, k) { let r = 1; for (let i = 1; i <= k; i++) r = r * (n - k + i) / i; return Math.round(r); }
 TESTS.S3 = {
   titre: 'Semestre 3 — approfondir',
   sousTitre: 'COO & UML, réseau, probas, PL/SQL, Symfony, développement efficace, droit du numérique, management des SI.',
-  enCours: true,
   matieres: {
     coo:     { nom: 'COO & UML (R3.03)', couleur: 'green', site: '../revision_COO_UML_S3.html' },
     res:     { nom: 'Architecture réseau (R3.06)', couleur: 'orange', site: '../revision-reseau-s3/revision_reseau_S3.html' },
